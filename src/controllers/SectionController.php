@@ -1,6 +1,6 @@
 <?php
 
-namespace weebz\yii2basics\modules\common\controllers;
+namespace weebz\yii2basics\controllers;
 
 use app\models\Section;
 use app\models\SectionSearch;

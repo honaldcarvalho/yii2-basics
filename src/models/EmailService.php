@@ -1,6 +1,6 @@
 <?php
 
-namespace weebz\yii2basics\modules\common\models;
+namespace weebz\yii2basics\models;
 
 use Yii;
 

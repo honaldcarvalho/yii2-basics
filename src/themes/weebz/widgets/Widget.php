@@ -1,6 +1,6 @@
 <?php
 
-namespace weebz\yii2basics\modules\common\themes\weebz\widgets;
+namespace weebz\yii2basics\themes\weebz\widgets;
 
 class Widget extends \yii\bootstrap5\Widget
 {

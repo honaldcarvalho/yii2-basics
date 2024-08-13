@@ -1,5 +1,5 @@
 <?php
-namespace weebz\yii2basics\modules\common\themes\weebz\assets;
+namespace weebz\yii2basics\themes\weebz\assets;
 
 use yii\web\AssetBundle;
 

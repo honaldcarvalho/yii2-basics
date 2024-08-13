@@ -6,7 +6,7 @@
  * Example: CopyToClipboardNative::widget(['element_id'=>'#code','attr'=>'val','text'=>'Copy','message'=>'Copy to clipboard'])
  */
 
-namespace weebz\yii2basics\modules\common\widgets;
+namespace weebz\yii2basics\widgets;
 
 use Yii;
 use yii\helpers\Html;

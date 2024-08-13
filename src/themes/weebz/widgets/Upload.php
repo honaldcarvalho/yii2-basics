@@ -1,5 +1,5 @@
 <?php
-namespace weebz\yii2basics\modules\common\themes\weebz\widgets;
+namespace weebz\yii2basics\themes\weebz\widgets;
 
 use Yii;
 use yii\web\View;

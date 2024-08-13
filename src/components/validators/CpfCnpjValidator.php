@@ -1,6 +1,6 @@
 <?php
 
-namespace weebz\yii2basics\modules\common\components\validators;
+namespace weebz\yii2basics\components\validators;
 
 use Yii;
 use yii\validators\Validator;

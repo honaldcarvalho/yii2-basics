@@ -5,7 +5,7 @@
  * 
  */
 
-namespace weebz\yii2basics\modules\common\widgets;
+namespace weebz\yii2basics\widgets;
 
 use Yii;
 use yii\helpers\Html;

@@ -1,6 +1,6 @@
 <?php
 
-namespace weebz\yii2basics\modules\common\widgets;
+namespace weebz\yii2basics\widgets;
 
 use yii\helpers\Html;
 use yii\web\View;

@@ -6,7 +6,7 @@
  * and open the template in the editor.
  */
 
-namespace weebz\yii2basics\modules\common\components\gridview;
+namespace weebz\yii2basics\components\gridview;
 
 use Yii;
 use yii\helpers\Html;

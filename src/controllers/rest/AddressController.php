@@ -1,6 +1,6 @@
 <?php
 
-namespace weebz\yii2basics\modules\common\controllers\rest;
+namespace weebz\yii2basics\controllers\rest;
 use Yii;
 use weebz\yii2basics\modules\common\controllers\rest\ControllerCustom;
 use weebz\yii2basics\modules\common\models\City;
