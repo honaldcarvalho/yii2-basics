@@ -11,6 +11,9 @@ use yii\base\Model;
  */
 class LoginForm extends ModelCommon
 {
+    
+    public $verGroup = false;
+
     public $username;
     public $password;
     public $rememberMe = true;
