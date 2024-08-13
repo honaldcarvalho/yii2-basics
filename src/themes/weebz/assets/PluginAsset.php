@@ -5,7 +5,7 @@ use yii\web\AssetBundle;
 
 class PluginAsset extends AssetBundle
 {
-    public $sourcePath = '@vendor/weebz/yii2-basics/themes/weebz/web/dist/plugins';
+    public $sourcePath = '@vendor/weebz/yii2-basics/src/themes/weebz/web/dist/plugins';
 
     public $depends = [
         'weebz\yii2basics\themes\weebz\assets\BaseAsset'

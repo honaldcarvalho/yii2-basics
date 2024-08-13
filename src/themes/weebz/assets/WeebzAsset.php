@@ -6,7 +6,7 @@ use yii\web\AssetBundle;
 class WeebzAsset extends AssetBundle
 {
 
-    public $sourcePath = '@vendor/weebz/yii2-basics/themes/weebz/web/dist';
+    public $sourcePath = '@vendor/weebz/yii2-basics/src/themes/weebz/web/dist';
 
     public $css = [
         'css/dark.css',

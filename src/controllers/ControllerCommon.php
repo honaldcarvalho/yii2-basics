@@ -53,7 +53,7 @@ class ControllerCommon extends \yii\web\Controller
         $this->params = Params::findOne(1);
         $language = null;
 
-        self::$assetsDir = Yii::$app->assetManager->getPublishedUrl('@vendor/weebz/yii2-basics/themes/weebz/web/dist');
+        self::$assetsDir = Yii::$app->assetManager->getPublishedUrl('@vendor/weebz/yii2-basics/src/themes/weebz/weebz/web/dist');
         
         foreach ($this->params->attributes as $key => $param) {
             Yii::setAlias("@{$key}", "$param");
