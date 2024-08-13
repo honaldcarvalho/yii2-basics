@@ -1,2 +1,2 @@
 <?php
-echo $this->render('../../modules/common/views/menu/sidebar');
+echo $this->render('@vendor/weebz/yii2-basics/src/views/menu/sidebar');
