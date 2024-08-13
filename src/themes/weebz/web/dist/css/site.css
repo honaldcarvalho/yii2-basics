@@ -1,0 +1,299 @@
+.not-set {
+    color: #c55;
+    font-style: italic;
+}
+a, label,.content-header h1{
+    color: #395600;
+}
+
+a:hover{
+    color: #64af44;
+}
+/* add sorting icons to gridview sort links */
+a.asc:after, a.desc:after {
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    padding-left: 5px;
+}
+
+input[type="checkbox"]:focus {
+  border-color: rgba(0, 0, 0, 0.25);
+  outline: 0;
+  box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba(0,0,0,0.25)'/></svg>");
+}
+
+input[type="checkbox"]:checked {
+  background-color: #64af44;
+  border-color: #457032;
+  border: none;
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba(255,255,255,1.0)'/></svg>");
+}
+
+.grid-view th {
+    white-space: nowrap;
+}
+
+.hint-block {
+    display: block;
+    margin-top: 5px;
+    color: #999;
+}
+
+.error-summary {
+    color: #a94442;
+    background: #fdf7f7;
+    border-left: 3px solid #eed3d7;
+    padding: 10px 20px;
+    margin: 0 0 15px 0;
+}
+
+.w-100{
+    width: 100%!important;
+}
+
+/*LOADDING*/
+/* Absolute Center Spinner */
+.loading {
+  position: absolute;
+  z-index: 999;
+  overflow: show;
+  margin: auto;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.3);
+  bottom: 0;
+  right: 0;
+  display:none;
+}
+
+/* Transparent Overlay */
+.loading .bg {
+  content: '';
+  display: block;
+  position: fixed;
+
+}
+
+.loading i{
+  position: relative;
+  top: 50%;
+  margin: 0 auto;
+  content: '';
+  display: block;
+  font-size: 10px;
+  width: 1em;
+  height: 1em;
+  margin-top: -0.5em;
+  -webkit-animation: spinner 1500ms infinite linear;
+  -moz-animation: spinner 1500ms infinite linear;
+  -ms-animation: spinner 1500ms infinite linear;
+  -o-animation: spinner 1500ms infinite linear;
+  animation: spinner 1500ms infinite linear;
+  border-radius: 0.5em;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0, rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) 0 1.5em 0 0, rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.5) -1.5em 0 0 0, rgba(0, 0, 0, 0.5) -1.1em -1.1em 0 0, rgba(0, 0, 0, 0.75) 0 -1.5em 0 0, rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;
+  box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0, rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) 0 1.5em 0 0, rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) -1.5em 0 0 0, rgba(0, 0, 0, 0.75) -1.1em -1.1em 0 0, rgba(0, 0, 0, 0.75) 0 -1.5em 0 0, rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;
+}
+
+/* Animation */
+
+@-webkit-keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@-moz-keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@-o-keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+#grid-anexo{
+  position: relative;
+}
+/**
+.grid-view td a{
+    display: block;
+    font-size: 2.5em;
+    height: 1em;
+    overflow: visible;
+    width: 1.125em;
+    padding: 9px;
+    background: #0056b3;
+    color: #fff;
+    border-radius: 5px;
+    margin: 2px;
+    border: 1px solid #fff;
+}
+
+.grid-view td a:hover{
+    background: #fff;
+    color: #0056b3;
+    border: 1px solid #0056b3;
+}
+
+.grid-view td a svg {
+    display: block;
+    font-size: inherit;
+    height: auto!important;
+    overflow: visible;
+    vertical-align: 1em!important;
+    width: 100%!important;
+}
+
+.ministrante-grid img{
+    width: 100%;
+}
+
+.banner-grid img{
+    width: 50%;
+}
+**/
+.text-weebz{
+    color: #64af44;
+}
+
+a.text-weebz:hover{
+    color: #64af44;
+    text-decoration: underline;
+}
+
+
+.btn-weebz{
+    color: #fff!important;
+    background-color: #333333!important;
+    border-color: #000000!important;
+}
+
+.bg-weebz{
+    color: #95e000;
+    background-color: #333333;
+    border-color: #000000;
+}
+
+.btn-weebz:hover{
+    color: #fff!important;
+    background-color: #64af44!important;
+    border-color: #669900!important;
+}
+
+.btn-success {
+    color: #fff!important;
+    background-color: #64af44!important;
+    border-color: #669900!important;
+}
+
+.btn-success:hover{
+    color: #fff;
+    background-color: #333333;
+    border-color: #000000;
+}
+
+
+@media (max-width: 992px){
+    .col-lg-12 label{
+        -ms-flex: 0 0 100%;
+        flex: 0 0 100%;
+        width: 100%;
+    }
+}
+.nav-icon{
+    color: #6bc245;
+}
+
+.nav-link:hover .nav-icon{
+    color: #95e000;
+}
+
+.sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link.active, .sidebar-light-primary .nav-sidebar>.nav-item>.nav-link.active {
+    background-color: #222;
+}
+
+.page-link{
+    color: #395600;
+    border-color: #395600;
+}
+.page-link:hover{
+    color: #395600;
+    border-color: #395600;
+}
+.page-item.active .page-link {
+    z-index: 3;
+    color: #fff;
+    background-color: #395600;
+    border-color: #395600;
+}
+
+.grabbable {
+    cursor: move; /* fallback if grab cursor is unsupported */
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+}
+
+ /* (Optional) Apply a "closed-hand" cursor during drag operation. */
+.grabbable:active {
+    cursor: grabbing;
+    cursor: -moz-grabbing;
+    cursor: -webkit-grabbing;
+}

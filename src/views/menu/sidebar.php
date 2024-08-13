@@ -1,0 +1,197 @@
+<?php
+
+use app\controllers\Controller;
+use weebz\yii2basics\modules\common\controllers\ControllerCommon;
+use weebz\yii2basics\modules\common\models\Menu;
+use weebz\yii2basics\modules\common\models\Params;
+use weebz\yii2basics\modules\common\widgets\Menu as WidgetsMenu;
+use yii\web\View;
+
+if(Yii::$app->user->isGuest){
+    return false;
+}
+$params  = Params::get();
+$script = <<< JS
+JS;
+$this->registerJS($script);
+
+$css = <<< CSS
+    .sidebar-dark-primary i{
+        color:#64af44!important;
+    }
+    .sidebar-dark-primary i{
+        color:#64af44!important;
+    }
+    .sidebar-dark-primary .user-image{
+        font-size: 2em;
+    }
+    .sidebar-dark-primary a:hover,.sidebar-dark-primary a:hover i{
+        color:#6bc245!important;
+    }
+    .sidebar-dark-primary .nav-item>.nav-link.active, .sidebar-light-primary .nav-item>.nav-link.active i{
+        background: #202428!important;
+        color: #fff!important; 
+    }
+    .sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link.active, .sidebar-light-primary .nav-sidebar>.nav-item>.nav-link.active i{
+        background: #292929!important;
+        color: #fff!important; 
+    }
+    .dark-mode .table th, .dark-mode .table th a, .dark-mode .table td, .dark-mode .table td a{
+        color:  #ececec! important;
+        text-decoration: none;
+        background-color: transparent;
+    }
+    .dark-mode .table th a:hover, .table td a:hover{
+        color: #ffffff!important;
+    }
+CSS;
+$this->registerCss($css);
+
+if(!Yii::$app->user->isGuest){
+    $name_split = explode(' ',Yii::$app->user->identity->username);
+    $name_user = $name_split[0].(isset($name_split[1]) ? ' ' .end($name_split) : '');
+    $controller_id = Yii::$app->controller->id;
+    $group = Yii::$app->session->get('group');
+}
+$assetsDir = ControllerCommon::$assetsDir;
+if(!empty($params->file_id)){
+    $url = Yii::getAlias('@web').$params->file->urlThumb; 
+    $login_image = "<img alt='{$params->title}' class='brand-image img-circle elevation-3' src='{$url}' style='opacity: .8' />";
+}else{
+    $login_image = "<img src='{$assetsDir}/img/wcms_logo.png' alt='{$params->title}' class='brand-image img-circle elevation-3' style='opacity: .8'>";
+}
+
+?>
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="<?=Yii::getAlias('/');?>" class="brand-link">
+        <?= $login_image ?>
+        <span class="brand-text font-weight-light"><?= $params->title ?></span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <!-- Sidebar user panel (optional) -->
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+            <div class="image user-image">
+                <i class="fas fa-user-circle img-circle elevation-2" alt="User Image"></i>
+            </div>
+            <div class="info">
+                <?= yii\helpers\Html::a($name_user, ['/user/profile', 'id' =>Yii::$app->user->identity->id],["class"=>"d-block"]) ?><br>
+            </div>
+        </div>
+
+        <!-- SidebarSearch Form -->
+        <!-- href be escaped -->
+        <div class="form-inline">
+            <div class="input-group" data-widget="sidebar-search">
+                <input class="form-control form-control-sidebar" type="search" placeholder="<?=Yii::t('app','Search')?>" aria-label="<?=Yii::t('app','Search')?>">
+                <div class="input-group-append">
+                    <button class="btn btn-sidebar">
+                        <i class="fas fa-search fa-fw"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+            <?php
+
+                function getNodes($controller_id,$id = null){
+
+                    $items = Menu::find()->where(['menu_id'=>$id,'status'=>true])->orderBy(['order'=>SORT_ASC])->all();
+
+                    $nodes = [];
+                    foreach($items as $item){
+
+                        if($item['url'] == '#' || ($item['url'] != '#' && $item['menu_id'] == null)) {
+
+                            $visible_parts = explode(';',$item['visible']);
+                            $isVisible = true;
+                            $item_nodes = getNodes($controller_id,$item['id']);
+
+                            if(empty($item_nodes) && $item['url'] == '#'){
+                                $isVisible = false;
+                            }else {
+
+                                if(count($visible_parts) > 1){
+                                    $isVisible = ControllerCommon::getAuthorization($visible_parts[0],$visible_parts[1],null,$item['path']);
+                                }else if(count($visible_parts) === 1){
+                                    //verify if someone item is visible, case yes, show menu item 
+                                    foreach($item_nodes as $item_node){
+                                        if($item_node['visible']){
+                                            $isVisible = true;
+                                            break;
+                                        }
+                                        $isVisible = false;
+                                    }
+                                }else{
+                                    $isVisible = false;
+                                }
+                            }
+
+                            $node = [
+                                'label' => Yii::t('app', $item['label']),
+                                'icon'=> "{$item['icon']}",
+                                'iconStyle'=> "{$item['icon_style']}",
+                                'url' => ["{$item['url']}"],
+                                'visible'=> $isVisible,
+                                'items'=> $item_nodes,
+                            ];
+
+                            if($item['url'] != '#') {
+                                $node['active'] = ($controller_id == "{$item['active']}") || ($controller_id."/".Yii::$app->controller->action->id  == "{$item['active']}");
+                            }
+
+                            if(!$item['only_admin'] || $item['only_admin'] && ControllerCommon::isAdmin()) {
+                                $nodes[] = $node;
+                            }
+                                    
+                        }else{
+                            $visible_parts = explode(';',$item['visible']);
+                            $isVisible = true;
+                            
+                            if(count($visible_parts) > 1){
+                                $isVisible = ControllerCommon::getAuthorization($visible_parts[0],$visible_parts[1],null,$item['path']);
+                            }else if(empty($visible_parts)){
+                                $isVisible = false;
+                            }
+
+                            if(!$item['only_admin'] || $item['only_admin'] && ControllerCommon::isAdmin()) {
+                                $nodes[] = [
+                                    'label' => Yii::t('app', $item['label']),
+                                    'icon'=> "{$item['icon']}",
+                                    'iconStyle'=> "{$item['icon_style']}",
+                                    'url' => ["{$item['url']}"],
+                                    'visible'=> $isVisible,
+                                    'active'=>($controller_id == "{$item['active']}") || ($controller_id."/".Yii::$app->controller->action->id  == "{$item['active']}")
+                                ];
+                            }
+                        }
+                    }
+
+                    return $nodes;
+
+                }
+
+                $nodes = getNodes(Yii::$app->controller->id);
+
+                echo WidgetsMenu::widget([
+
+                    "options" =>   [
+                        'class' => 'nav nav-pills nav-sidebar flex-column nav-child-indent',
+                        'data-widget' => 'treeview',
+                        'role' => 'menu',
+                        'data-accordion' => 'false'
+                    ],
+
+                    'items'=> array_merge($nodes,[['label' => 'Logout','icon'=>'fas fa-sign-out-alt', 'url' => ['/site/logout']]])
+                ]);
+
+            ?>
+        </nav>
+        <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+</aside>

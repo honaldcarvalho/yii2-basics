@@ -1,0 +1,392 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : 03/06/2023, 12:59:36
+    Author     : honald
+*/
+
+a.btn-outline-secondary:hover {
+    background: none! important;
+    border: 1px solid #7beb00! important;
+    color: #7beb00!important;
+}
+
+.btn-outline-secondary:hover {
+    background: none! important;
+    border: 1px solid #7beb00! important;
+    color: #7beb00!important;
+}
+
+.dark-mode a {
+    color:  #ececec! important;
+    text-decoration: none;
+    background-color: transparent;
+}
+
+.dark-mode a:hover {
+    color: #7beb00!important;
+    text-decoration: none;
+    background-color: transparent;
+}
+
+.sidebar-dark-primary i{
+    color:#64af44!important;
+}
+
+.sidebar-dark-primary i{
+    color:#64af44!important;
+}
+
+.sidebar-dark-primary .user-image{
+    font-size: 2em;
+}
+
+.sidebar-dark-primary a:hover,.sidebar-dark-primary a:hover i{
+    color:#6bc245!important;
+}
+
+.sidebar-dark-primary .nav-item>.nav-link.active, .sidebar-light-primary .nav-item>.nav-link.active i{
+   background: #202428!important;
+   color: #fff!important; 
+}
+
+.sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link.active, .sidebar-light-primary .nav-sidebar>.nav-item>.nav-link.active i{
+    background: #292929!important;
+   color: #fff!important; 
+}
+
+.dark-mode .table th, .dark-mode .table th a, .dark-mode .table td, .dark-mode .table td a{
+    color:  #ececec! important;
+    text-decoration: none;
+    background-color: transparent;
+}
+
+.dark-mode .table th a:hover, .table td a:hover{
+    color: #ffffff!important;
+}
+
+.btn-success {
+    color: #fff! important;
+    background-color: #64af44! important;
+    border-color: #669900! important;
+}
+
+.btn-success:hover{
+    color: #fff! important;
+    background-color: #333333! important;
+    border-color: #64af44! important;
+}
+
+.btn-primary, a.btn-primary {
+    color: #fff! important;
+    background-color: #007bff! important;
+    border-color: #004895! important;
+}
+
+.btn-primary:hover, a.btn-primary:hover{
+    color: #fff! important;
+    background-color: #004895! important;
+    border-color: #007bff! important;
+}
+
+.btn-danger, a.btn-danger {
+    color: #fff! important;
+    background-color: #cb1717! important;
+    border-color: #7a0006! important;
+}
+
+.btn-danger:hover, a.btn-danger:hover{
+    color: #fff! important;
+    background-color: #7a0006! important;
+    border-color: #cb1717! important;
+}
+
+.btn-warning, a.btn-warning {
+    color: #fff! important;
+    background-color: #f9bb00! important;
+    border-color: #835a00! important;
+}
+
+.btn-warning:hover, a.btn-warning:hover{
+    color: #fff! important;
+    background-color: #835a00! important;
+    border-color: #f9bb00! important;
+}
+
+
+.dark-mode input:-webkit-autofill, .dark-mode input:-webkit-autofill:focus, .dark-mode input:-webkit-autofill:hover, .dark-mode select:-webkit-autofill, .dark-mode select:-webkit-autofill:focus, .dark-mode select:-webkit-autofill:hover, .dark-mode textarea:-webkit-autofill, .dark-mode textarea:-webkit-autofill:focus, .dark-mode textarea:-webkit-autofill:hover{
+    -webkit-text-fill-color:#000!important;
+}
+
+.btn-outline-secondary {
+    color: #6c757d;
+    border-color: #6c757d;
+}
+
+.card .overlay, .info-box .overlay, .overlay-wrapper .overlay, .small-box .overlay{
+    background-color: #20242894!important;
+}
+
+.ui-sortable tr:hover{
+    cursor: grab;
+}
+
+.ui-sortable tr:active{
+    cursor: grabbing;
+}
+
+.ui-sortable-helper{
+    background-color: #669900!important;
+    color: #fff!important;
+    font-weight: bold!important;
+    width: 100%!important;
+}
+
+.ui-sortable-helper{
+    background-color: #669900!important;
+    color: #fff!important;
+    font-weight: bold!important;
+    width: 100%!important;
+    display: table;
+    width: 100%;
+}
+
+.text-weebz{
+    color: #64af44!important;
+}
+
+a.text-weebz:hover{
+    color: #64af44!important;
+    text-decoration: underline!important;
+}
+
+
+.btn-weebz{
+    background-color: #333333!important;
+    border-color: #000000!important;
+    color: #fff!important;
+}
+
+.bg-weebz-black{
+    background-color: #333333!important;
+    border-color: #000000!important;
+    color: #95e000!important;
+}
+
+.bg-weebz{
+    background-color: #64af44!important;
+    border-color: #000000!important;
+    color: #333333!important;
+}
+
+.bg-weebz:hover{
+    background-color: #333333!important;
+    border-color: #000000!important;
+    color: #64af44!important;
+}
+
+.btn-weebz-black:hover{
+    background-color: #64af44!important;
+    border-color: #669900!important;
+    color: #fff!important;
+}
+
+.login-logo, .register-logo {
+    color: #495057;
+}
+.dark-mode .card-weebz.card-outline {
+    border-top: 3px solid #64af44!important;
+}
+.center {
+    display: flex!important;
+    flex-direction: column;
+    justify-content: center!important;
+    align-items: center!important;
+  }
+
+  .file_manager .file div:hover .hover,
+  .file_manager .file .file-name small{
+      display: block;
+  }
+  .file_manager .file {
+      padding: 0 !important;
+      cursor:pointer;
+      z-index:1;
+  }
+
+  .file_manager .file .icon{
+      text-align: center;
+  }
+
+
+  .file_manager .file {
+      position: relative;
+      border-radius: .55rem;
+      overflow: hidden;
+  }
+
+  .file_manager .file .image,
+  .file_manager .file .icon {
+      max-height: 180px;
+      overflow: hidden;
+      background-size: cover;
+      background-position: top;
+  }
+
+  .file_manager .file .hover {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      display: none;
+      transition: all 0.2s ease-in-out;
+  }
+
+  .file_manager .file div.link-file:hover .hover {
+      transition: all 0.2s ease-in-out;
+      z-index:3000;
+  }
+
+  .file_manager .file .icon {
+      padding: 15px 10px;
+      display: table;
+      width: 100%;
+  }
+
+  .file_manager .file .icon i {
+      display: table-cell;
+      font-size: 30px;
+      vertical-align: middle;
+      color: #777;
+      line-height: 100px;
+  }
+
+  .file_manager .file .file-name {
+      padding: 10px;
+      border-top: 1px solid #f7f7f7;
+  }
+
+  .file_manager .file .file-name small .date {
+      float: right;
+  }
+
+  .folder {
+      padding: 20px;
+      display: block;
+      color: #777;
+  }
+
+  @media only screen and (max-width: 992px) {
+      .file_manager .nav-tabs {
+          padding-left: 0;
+          padding-right: 0;
+      }
+      .file_manager .nav-tabs .nav-item {
+          display: inline-block;
+      }
+  }
+
+  .file_manager .card {
+      background: #fff;
+      transition: .5s;
+      border: 0;
+      margin-bottom: 30px;
+      border-radius: .55rem;
+      position: relative;
+      width: 100%;
+      box-shadow: 0 1px 2px 0 rgb(0 0 0 / 10%);
+  }
+  
+  .overlay {
+    display: flex;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 3000;
+    justify-content: center;
+    align-items: center;
+    background-color: #00000080;
+  }
+
+  
+@media print {
+    *,
+    *::before,
+    *::after {
+      text-shadow: none !important;
+      box-shadow: none !important;
+    }
+    a:not(.btn) {
+      text-decoration: underline;
+    }
+    abbr[title]::after {
+      content: " (" attr(title) ")";
+    }
+    pre {
+      white-space: pre-wrap !important;
+    }
+    pre,
+    blockquote {
+      border: 1px solid #adb5bd;
+      page-break-inside: avoid;
+    }
+    tr,
+    img {
+      page-break-inside: avoid;
+    }
+    p,
+    h2,
+    h3 {
+      orphans: 3;
+      widows: 3;
+    }
+    h2,
+    h3 {
+      page-break-after: avoid;
+    }
+    @page {
+      size: a3;
+    }
+    body {
+      min-width: 992px !important;
+    }
+    .container {
+      min-width: 992px !important;
+    }
+    .navbar {
+      display: none;
+    }
+    .badge {
+      border: 1px solid #000;
+    }
+    .table {
+      border-collapse: collapse !important;
+    }
+    .table td,
+    .table th {
+      background-color: #e9ecef !important;
+    }
+    .table-dark.table-striped tbody tr:nth-of-type(odd) {
+        background-color: rgba(255, 255, 255, 0.05)!important;
+      }
+    .table-bordered th,
+    .table-bordered td {
+      border: 1px solid #dee2e6 !important;
+    }
+    .table-dark {
+      color: inherit;
+    }
+    .table-dark th,
+    .table-dark td,
+    .table-dark thead th,
+    .table-dark tbody + tbody {
+      border-color: #dee2e6;
+    }
+    .table .thead-dark th {
+      color: inherit;
+      border-color: #dee2e6;
+    }
+  }
