@@ -2,13 +2,13 @@
 
 namespace weebz\yii2basics\controllers;
 
-use weebz\yii2basics\modules\common\models\License;
-use weebz\yii2basics\modules\common\models\Log;
-use weebz\yii2basics\modules\common\models\Params;
-use weebz\yii2basics\modules\common\models\Rule;
-use weebz\yii2basics\modules\common\models\User;
-use weebz\yii2basics\modules\common\models\UserGroup;
-use weebz\yii2basics\modules\common\models\ModelCommon;
+use weebz\yii2basics\models\License;
+use weebz\yii2basics\models\Log;
+use weebz\yii2basics\models\Params;
+use weebz\yii2basics\models\Rule;
+use weebz\yii2basics\models\User;
+use weebz\yii2basics\models\UserGroup;
+use weebz\yii2basics\models\ModelCommon;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -144,7 +144,7 @@ class ControllerCommon extends \yii\web\Controller
     }
 
     /**
-     * Cast \yii\web\IdentityInterface to \weebz\yii2basics\modules\common\models\User
+     * Cast \yii\web\IdentityInterface to \weebz\yii2basics\models\User
      */
     static function User(): User
     {

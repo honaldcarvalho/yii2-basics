@@ -3,8 +3,8 @@
 namespace weebz\yii2basics\controllers;
 
 use Yii;
-use weebz\yii2basics\modules\common\models\LicenseType;
-use weebz\yii2basics\modules\common\models\LicenseTypeSearch;
+use weebz\yii2basics\models\LicenseType;
+use weebz\yii2basics\models\LicenseTypeSearch;
 use yii\web\NotFoundHttpException;
 
 /**

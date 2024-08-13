@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\Rule */
+/* @var $model weebz\yii2basics\models\Rule */
 
 $this->title = Yii::t('app', 'Rule').': ' .$model->id;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Rules'), 'url' => ['index']];
@@ -20,7 +20,7 @@ $model->origin = str_replace(';', ' | ', $model->origin);
             <div class="row">
                 <div class="col-md-12">
                     <p>
-                        <?= weebz\yii2basics\modules\common\widgets\DefaultButtons::widget(['controller' => 'Rule','model'=>$model,'verGroup'=>false]) ?>
+                        <?= weebz\yii2basics\widgets\DefaultButtons::widget(['controller' => 'Rule','model'=>$model,'verGroup'=>false]) ?>
                     </p>
                     <?= DetailView::widget([
                         'model' => $model,

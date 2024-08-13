@@ -3,8 +3,8 @@
 /* @var $this \yii\web\View */
 /* @var $content string */
 
-use weebz\yii2basics\modules\common\controllers\ControllerCommon;
-use weebz\yii2basics\modules\common\models\Params;
+use weebz\yii2basics\controllers\ControllerCommon;
+use weebz\yii2basics\models\Params;
 use yii\helpers\Html;
 
 \hail812\adminlte3\assets\AdminLteAsset::register($this);

@@ -3,8 +3,8 @@
 namespace weebz\yii2basics\controllers;
 
 use Yii;
-use weebz\yii2basics\modules\common\models\Language;
-use weebz\yii2basics\modules\common\models\LanguageSearch;
+use weebz\yii2basics\models\Language;
+use weebz\yii2basics\models\LanguageSearch;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 

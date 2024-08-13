@@ -4,7 +4,7 @@ use yii\helpers\Html;
 
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\Usuario */
+/* @var $model weebz\yii2basics\models\Usuario */
 
 $this->title = 'Alteração de Senha';
 $this->params['breadcrumbs'][] = ['label' => 'Usuarios', 'url' => ['index']];

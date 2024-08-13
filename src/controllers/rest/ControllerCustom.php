@@ -4,8 +4,8 @@ namespace weebz\yii2basics\controllers\rest;
 
 use Yii;
 
-use weebz\yii2basics\modules\common\controllers\Controller as ControllerCommon;
-use weebz\yii2basics\modules\common\models\custom\Patient;
+use weebz\yii2basics\controllers\Controller as ControllerCommon;
+use weebz\yii2basics\models\custom\Patient;
 
 class ControllerCustom extends \yii\rest\Controller
 {

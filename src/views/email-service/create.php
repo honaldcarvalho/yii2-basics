@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\EmailService */
+/* @var $model weebz\yii2basics\models\EmailService */
 
 $this->title = Yii::t('app', 'Create Email Service');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Email Services'), 'url' => ['index']];

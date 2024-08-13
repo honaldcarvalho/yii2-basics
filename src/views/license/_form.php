@@ -1,12 +1,12 @@
 <?php
 
-use weebz\yii2basics\modules\common\models\Group;;
-use weebz\yii2basics\modules\common\models\LicenseType;
+use weebz\yii2basics\models\Group;;
+use weebz\yii2basics\models\LicenseType;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\License */
+/* @var $model weebz\yii2basics\models\License */
 /* @var $form yii\bootstrap4\ActiveForm */
 ?>
 

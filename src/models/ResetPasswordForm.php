@@ -5,7 +5,7 @@ namespace weebz\yii2basics\models;
 use yii\base\InvalidArgumentException;
 use yii\base\Model;
 use Yii;
-use weebz\yii2basics\modules\common\models\User;
+use weebz\yii2basics\models\User;
 
 /**
  * Password reset form
@@ -15,7 +15,7 @@ class ResetPasswordForm extends ModelCommon
     public $password;
 
     /**
-     * @var \weebz\yii2basics\modules\common\models\User
+     * @var \weebz\yii2basics\models\User
      */
     private $_user;
 

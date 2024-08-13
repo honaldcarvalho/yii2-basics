@@ -25,12 +25,12 @@ class m230911_192839_create_email_services_table extends Migration
         ]);
 
         $this->insert('email_services', [
-            'description' => 'HOSTINGER',
+            'description' => 'EMAIL',
             'scheme' => 'smtp',
             'enable_encryption'=>true,
             'encryption'=>'tls',
-            'host' => 'smtp.hostinger.com.br',
-            'username' => 'suporte@weebz.com.br',
+            'host' => 'smtp.email.com.br',
+            'username' => 'suporte@email.com.br',
             'password' => '',
             'port' => '465'
         ]);

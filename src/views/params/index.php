@@ -2,10 +2,10 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
-use weebz\yii2basics\modules\common\components\gridview\ActionColumn;
+use weebz\yii2basics\components\gridview\ActionColumn;
 
 /* @var $this yii\web\View */
-/* @var $searchModel weebz\yii2basics\modules\common\models\ParamSearch */
+/* @var $searchModel weebz\yii2basics\models\ParamSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = Yii::t('app', 'Params');

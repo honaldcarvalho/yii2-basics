@@ -1,11 +1,11 @@
 <?php
 
 /** @var yii\web\View $this */
-/** @var weebz\yii2basics\modules\common\models\Rule $model */
+/** @var weebz\yii2basics\models\Rule $model */
 /** @var yii\widgets\ActiveForm $form */
 
-use weebz\yii2basics\modules\common\models\Group;;
-use weebz\yii2basics\modules\common\models\User;
+use weebz\yii2basics\models\Group;;
+use weebz\yii2basics\models\User;
 use yii\helpers\Html;
 use yii\web\View;
 use yii\widgets\ActiveForm;

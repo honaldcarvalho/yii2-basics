@@ -6,7 +6,7 @@ use yii\helpers\Html;
 
 /**
  * Class SmallBox
- * @package weebz\yii2basics\modules\common\themes\weebz\widgets
+ * @package weebz\yii2basics\themes\weebz\widgets
  */
 class SmallBox extends Widget
 {

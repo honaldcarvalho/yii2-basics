@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\Group */
+/* @var $model weebz\yii2basics\models\Group */
 
 $this->title = Yii::t('app', 'Create Group');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Groups'), 'url' => ['index']];

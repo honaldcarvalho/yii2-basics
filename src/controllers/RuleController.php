@@ -2,9 +2,9 @@
 
 namespace weebz\yii2basics\controllers;;
 
-use weebz\yii2basics\modules\common\models\Menu;
-use weebz\yii2basics\modules\common\models\Rule;
-use weebz\yii2basics\modules\common\models\RuleSearch;
+use weebz\yii2basics\models\Menu;
+use weebz\yii2basics\models\Rule;
+use weebz\yii2basics\models\RuleSearch;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 

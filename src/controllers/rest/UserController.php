@@ -2,14 +2,14 @@
 
 namespace weebz\yii2basics\controllers\rest;
 use Yii;
-use weebz\yii2basics\modules\common\controllers\rest\Controller;
-use weebz\yii2basics\modules\common\models\User;
-use weebz\yii2basics\modules\common\models\Params;
-use weebz\yii2basics\modules\common\models\UserGroup;
+use weebz\yii2basics\controllers\rest\Controller;
+use weebz\yii2basics\models\User;
+use weebz\yii2basics\models\Params;
+use weebz\yii2basics\models\UserGroup;
 
 class UserController extends ControllerCommon{
 
-    public $modelClass = 'weebz\yii2basics\modules\common\models\User';
+    public $modelClass = 'weebz\yii2basics\models\User';
 
     public function actionList(){
         return User::findAll(['status'=>10]);

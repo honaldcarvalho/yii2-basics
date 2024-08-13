@@ -2,7 +2,7 @@
 
 use app\components\gridview\ActionColumn;
 use app\models\MercadoPago;
-use weebz\yii2basics\modules\common\widgets\DefaultButtons;
+use weebz\yii2basics\widgets\DefaultButtons;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -69,7 +69,7 @@ $this::registerCssFile(Yii::getAlias('@web/') . 'plugins/jquery-ui/jquery-ui.css
             <div class="row">
                 <div class="col-md-12">
                     <p>
-                        <?= weebz\yii2basics\modules\common\widgets\DefaultButtons::widget([
+                        <?= weebz\yii2basics\widgets\DefaultButtons::widget([
                             'controller' => Yii::$app->controller->id,'model'=>$model,'verGroup'=>false
                         ]) ?>
                     </p>

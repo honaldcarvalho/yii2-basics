@@ -18,7 +18,7 @@ $this->registerCssFile('https://code.ionicframework.com/ionicons/2.0.1/css/ionic
 $this->registerJsFile('@web/plugins/html2pdf/dist/html2pdf.bundle.min.js',['depends' => [\yii\web\JqueryAsset::class]]);
 
 \hail812\adminlte3\assets\PluginAsset::register($this)->add(['fontawesome', 'icheck-bootstrap']);
-$params = \weebz\yii2basics\modules\common\models\Params::findOne(1);
+$params = \weebz\yii2basics\models\Params::findOne(1);
 
 if(!empty($params->file_id)){
     $url = Yii::getAlias('@web').$params->file->urlThumb; 

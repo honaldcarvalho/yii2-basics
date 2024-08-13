@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 /* @var $this yii\web\View */
-/* @var $searchModel weebz\yii2basics\modules\common\models\GroupSearch */
+/* @var $searchModel weebz\yii2basics\models\GroupSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = Yii::t('app', 'Groups');
@@ -17,7 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="card-body">
                     <div class="row mb-2">
                         <div class="col-md-12">
-                            <?= weebz\yii2basics\modules\common\widgets\DefaultButtons::widget(
+                            <?= weebz\yii2basics\widgets\DefaultButtons::widget(
                                 [
                                     'controller' => 'group',
                                     'show'=>['create'],'buttons_name'=>['create'=>'Create Group']
@@ -37,7 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'name',
                             'status:boolean',
 
-                            ['class' => 'weebz\yii2basics\modules\common\components\gridview\ActionColumn','verGroup'=>false],
+                            ['class' => 'weebz\yii2basics\components\gridview\ActionColumn','verGroup'=>false],
                         ],
                         'summaryOptions' => ['class' => 'summary mb-2'],
                         'pager' => [

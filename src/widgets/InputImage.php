@@ -8,7 +8,7 @@ use yii\bootstrap5\BootstrapAsset;
 use yii\bootstrap4\Widget;
 
 /** @var yii\web\View $this */
-/** @var weebz\yii2basics\modules\common\models\File $model */
+/** @var weebz\yii2basics\models\File $model */
 /** @var yii\widgets\ActiveForm $form */
 
 class InputImage extends Widget

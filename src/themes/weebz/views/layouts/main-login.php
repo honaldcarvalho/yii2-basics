@@ -3,11 +3,11 @@
 /* @var $this \yii\web\View */
 /* @var $content string */
 
-use weebz\yii2basics\modules\common\controllers\ControllerCommon;
-use weebz\yii2basics\modules\common\themes\weebz\assets\FontAwesomeAsset;
-use weebz\yii2basics\modules\common\themes\weebz\assets\PluginAsset;
-use weebz\yii2basics\modules\common\themes\weebz\assets\WeebzAsset;
-use weebz\yii2basics\modules\common\widgets\Alert;
+use weebz\yii2basics\controllers\ControllerCommon;
+use weebz\yii2basics\themes\weebz\assets\FontAwesomeAsset;
+use weebz\yii2basics\themes\weebz\assets\PluginAsset;
+use weebz\yii2basics\themes\weebz\assets\WeebzAsset;
+use weebz\yii2basics\widgets\Alert;
 
 FontAwesomeAsset::register($this);
 WeebzAsset::register($this);

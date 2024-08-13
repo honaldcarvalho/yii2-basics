@@ -5,7 +5,7 @@ use yii\helpers\Url;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\File */
+/* @var $model weebz\yii2basics\models\File */
 
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Files'), 'url' => ['index']];
@@ -25,7 +25,7 @@ $this::registerJs($script,$this::POS_END);
             <div class="row">
                 <div class="col-md-12">
                     <p>
-                        <?= weebz\yii2basics\modules\common\widgets\DefaultButtons::widget(['controller' => 'File','model'=>$model]) ?>
+                        <?= weebz\yii2basics\widgets\DefaultButtons::widget(['controller' => 'File','model'=>$model]) ?>
                     </p>
                     <?= DetailView::widget([
                         'model' => $model,

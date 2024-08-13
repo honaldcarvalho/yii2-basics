@@ -1,7 +1,7 @@
 <?php
 
-use weebz\yii2basics\modules\common\controllers\ControllerCommon;
-use weebz\yii2basics\modules\common\models\Menu;
+use weebz\yii2basics\controllers\ControllerCommon;
+use weebz\yii2basics\models\Menu;
 use app\widgets\Menu as WidgetsMenu;
 use yii\web\View;
 

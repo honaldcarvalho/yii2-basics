@@ -1,7 +1,7 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\Menu */
+/* @var $model weebz\yii2basics\models\Menu */
 
 $this->title = Yii::t('app', 'Update Menu: {name}', [
     'name' => $model->id,

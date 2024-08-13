@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\File */
+/* @var $model weebz\yii2basics\models\File */
 
 $this->title = Yii::t('app', 'Create File');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Files'), 'url' => ['index']];

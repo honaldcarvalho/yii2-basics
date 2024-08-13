@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\Param */
+/* @var $model weebz\yii2basics\models\Param */
 
 $this->title = Yii::t('app', 'Create Param');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Params'), 'url' => ['index']];

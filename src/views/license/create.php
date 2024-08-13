@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\License */
+/* @var $model weebz\yii2basics\models\License */
 
 $this->title = Yii::t('app', 'Create License');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Licenses'), 'url' => ['index']];

@@ -1,7 +1,7 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\LicenseType */
+/* @var $model weebz\yii2basics\models\LicenseType */
 
 $this->title = Yii::t('app', 'Update License Type: {name}', [
     'name' => $model->name,

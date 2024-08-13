@@ -1,7 +1,7 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\Folder */
+/* @var $model weebz\yii2basics\models\Folder */
 
 $this->title = Yii::t('app', 'Update Folder: {name}', [
     'name' => $model->name,

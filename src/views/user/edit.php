@@ -1,11 +1,11 @@
 <?php
 
-use weebz\yii2basics\modules\common\models\Language;
+use weebz\yii2basics\models\Language;
 use yii\bootstrap5\ActiveForm;
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var weebz\yii2basics\modules\common\models\User $model */
+/** @var weebz\yii2basics\models\User $model */
 
 $this->title = Yii::t('app', 'Update User: {name}', [
     'name' => $model->fullname,

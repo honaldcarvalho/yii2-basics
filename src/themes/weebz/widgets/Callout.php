@@ -7,7 +7,7 @@ use yii\helpers\Html;
 
 /**
  * Class Callout
- * @package weebz\yii2basics\modules\common\themes\weebz\widgets
+ * @package weebz\yii2basics\themes\weebz\widgets
  * @example
  * <?= Callout::widget(['type'=>'info', 'head'=>'head string', 'body'=>'body string']) ?>
  * Also possible

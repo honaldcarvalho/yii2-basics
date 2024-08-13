@@ -3,8 +3,8 @@
 namespace weebz\yii2basics\controllers;
 
 use Yii;
-use weebz\yii2basics\modules\common\models\Message;
-use weebz\yii2basics\modules\common\models\MessageSearch;
+use weebz\yii2basics\models\Message;
+use weebz\yii2basics\models\MessageSearch;
 use yii\web\NotFoundHttpException;
 
 /**

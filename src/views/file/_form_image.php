@@ -5,7 +5,7 @@ use yii\web\View;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var weebz\yii2basics\modules\common\models\File $model */
+/** @var weebz\yii2basics\models\File $model */
 /** @var yii\widgets\ActiveForm $form */
 
 $this->registerJsFile(
@@ -121,7 +121,7 @@ $this->registerJs($script, View::POS_END);
 
   <?php $form = ActiveForm::begin(); ?>
     
-    <?= $form->field($model, 'folder_id')->dropDownList(yii\helpers\ArrayHelper::map(weebz\yii2basics\modules\common\models\Folder::find()->asArray()->all(), 
+    <?= $form->field($model, 'folder_id')->dropDownList(yii\helpers\ArrayHelper::map(weebz\yii2basics\models\Folder::find()->asArray()->all(), 
             'id', 'name'), ['prompt' => Yii::t('app','-- Select Folder --')]) ?>
     
   <?= $form->field($model, 'file',['enableClientValidation' => $model->isNewRecord])->fileInput(['onchange'=>"encodeImageFileAsURL(this)","accept"=>$accept])  ?>

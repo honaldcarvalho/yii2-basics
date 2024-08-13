@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\License */
+/* @var $model weebz\yii2basics\models\License */
 
 $this->title = $model->group->name.': '.$model->licenseType->name;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Licenses'), 'url' => ['index']];
@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="row">
                 <div class="col-md-12">
                     <p>
-                        <?= weebz\yii2basics\modules\common\widgets\DefaultButtons::widget(['controller' => Yii::$app->controller->id,'model'=>$model,'verGroup'=>false]) ?>
+                        <?= weebz\yii2basics\widgets\DefaultButtons::widget(['controller' => Yii::$app->controller->id,'model'=>$model,'verGroup'=>false]) ?>
                     </p>
                     <?= DetailView::widget([
                         'model' => $model,

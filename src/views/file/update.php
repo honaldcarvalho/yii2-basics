@@ -1,7 +1,7 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\File */
+/* @var $model weebz\yii2basics\models\File */
 
 $this->title = Yii::t('app', 'Update File: {name}', [
     'name' => $model->name,

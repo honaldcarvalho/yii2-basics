@@ -3,8 +3,8 @@
 namespace weebz\yii2basics\controllers;
 
 use Yii;
-use weebz\yii2basics\modules\common\models\Params;
-use weebz\yii2basics\modules\common\models\ParamsSearch;
+use weebz\yii2basics\models\Params;
+use weebz\yii2basics\models\ParamsSearch;
 use yii\web\NotFoundHttpException;
 
 /**

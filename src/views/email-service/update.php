@@ -1,7 +1,7 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\EmailService */
+/* @var $model weebz\yii2basics\models\EmailService */
 
 $this->title = Yii::t('app', 'Update Email Service: {name}', [
     'name' => $model->id,

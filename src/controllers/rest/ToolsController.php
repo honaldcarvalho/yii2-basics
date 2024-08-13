@@ -1,9 +1,9 @@
 <?php
 namespace weebz\yii2basics\controllers\rest;
 use Yii;
-use weebz\yii2basics\modules\common\controllers\rest\Controller ;
-use weebz\yii2basics\modules\common\models\Log;
-use weebz\yii2basics\modules\common\models\User;
+use weebz\yii2basics\controllers\rest\Controller ;
+use weebz\yii2basics\models\Log;
+use weebz\yii2basics\models\User;
 
 class ToolsController extends ControllerCommon
 {
@@ -21,7 +21,7 @@ class ToolsController extends ControllerCommon
     }
     
     // public function security($groups){
-    //     if(!\weebz\yii2basics\modules\common\models\Usuario::inGrupos($groups)){
+    //     if(!\weebz\yii2basics\models\Usuario::inGrupos($groups)){
     //         throw new \yii\web\ForbiddenHttpException();
     //     }     
     // }

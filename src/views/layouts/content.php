@@ -1,7 +1,7 @@
 <?php
 /* @var $content string */
 
-use weebz\yii2basics\modules\common\models\Menu;
+use weebz\yii2basics\models\Menu;
 use yii\bootstrap5\Breadcrumbs;
 use app\widgets\Alert;
 

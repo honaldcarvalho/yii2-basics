@@ -1,7 +1,7 @@
 <?php
 
-use weebz\yii2basics\modules\common\models\Language;
-use weebz\yii2basics\modules\common\models\SourceMessage;
+use weebz\yii2basics\models\Language;
+use weebz\yii2basics\models\SourceMessage;
 use yii\bootstrap5\ActiveForm;
 use yii\grid\GridView;
 use yii\helpers\Html;
@@ -9,7 +9,7 @@ use yii\widgets\DetailView;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\SourceMessage */
+/* @var $model weebz\yii2basics\models\SourceMessage */
 
 $this->title = Yii::t('app', 'Source Message #{name}', [
     'name' => $model->id,
@@ -170,7 +170,7 @@ $this::registerJs($script, $this::POS_END);
             <div class="row">
                 <div class="col-md-12">
                     <p>
-                        <?= weebz\yii2basics\modules\common\widgets\DefaultButtons::widget(['controller' => Yii::$app->controller->id, 'model' => $model, 'verGroup' => false]) ?>
+                        <?= weebz\yii2basics\widgets\DefaultButtons::widget(['controller' => Yii::$app->controller->id, 'model' => $model, 'verGroup' => false]) ?>
                         <button class="btn btn-success" onclick="javascript:modal.show();">
                             <i class="fas fa-plus-square"></i> <?= Yii::t('app', 'New Translate'); ?>
                         </button>
@@ -217,7 +217,7 @@ $this::registerJs($script, $this::POS_END);
                         'language',
                         'translation:ntext',
 
-                        ['class' => 'weebz\yii2basics\modules\common\components\gridview\ActionColumn', 'verGroup' => false, 'controller'=>'message',
+                        ['class' => 'weebz\yii2basics\components\gridview\ActionColumn', 'verGroup' => false, 'controller'=>'message',
                             'template' => '{view}{remove}',
                             'buttons' => [  
                                 'remove' => function ($url, $model, $key) {

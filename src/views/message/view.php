@@ -1,11 +1,11 @@
 <?php
 
-use weebz\yii2basics\modules\common\widgets\DefaultButtons;
+use weebz\yii2basics\widgets\DefaultButtons;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\Message */
+/* @var $model weebz\yii2basics\models\Message */
 
 $this->title = Yii::t('app',"Message #{$model->id}");
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Messages'), 'url' => ['index']];

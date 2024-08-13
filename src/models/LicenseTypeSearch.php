@@ -4,10 +4,10 @@ namespace weebz\yii2basics\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use weebz\yii2basics\modules\common\models\LicenseType;
+use weebz\yii2basics\models\LicenseType;
 
 /**
- * LicenseTypeSearch represents the model behind the search form of `weebz\yii2basics\modules\common\models\LicenseType`.
+ * LicenseTypeSearch represents the model behind the search form of `weebz\yii2basics\models\LicenseType`.
  */
 class LicenseTypeSearch extends LicenseType
 {

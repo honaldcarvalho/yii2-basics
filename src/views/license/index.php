@@ -1,12 +1,12 @@
 <?php
 
-use weebz\yii2basics\modules\common\components\gridview\ActionColumn;
-use weebz\yii2basics\modules\common\widgets\DefaultButtons;
+use weebz\yii2basics\components\gridview\ActionColumn;
+use weebz\yii2basics\widgets\DefaultButtons;
 use yii\helpers\Html;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
-/* @var $searchModel weebz\yii2basics\modules\common\models\LicenseSearch */
+/* @var $searchModel weebz\yii2basics\models\LicenseSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = Yii::t('app', 'Licenses');
@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="card-body">
                     <div class="row mb-2">
                     <div class="col-md-12">
-                            <?= weebz\yii2basics\modules\common\widgets\DefaultButtons::widget(
+                            <?= weebz\yii2basics\widgets\DefaultButtons::widget(
                             [
                                 'controller' => Yii::$app->controller->id,'show' => ['create'],'verGroup'=>false
                             ]) ?>

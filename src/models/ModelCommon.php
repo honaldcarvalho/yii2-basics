@@ -3,7 +3,7 @@
 namespace weebz\yii2basics\models;
 
 use Yii;
-use weebz\yii2basics\modules\common\controllers\ControllerCommon;
+use weebz\yii2basics\controllers\ControllerCommon;
 use yii\data\ActiveDataProvider;
 
 class ModelCommon extends \yii\db\ActiveRecord

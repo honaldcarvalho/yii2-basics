@@ -2,7 +2,7 @@
 
 namespace weebz\yii2basics\models;
 
-use weebz\yii2basics\modules\common\models\User;
+use weebz\yii2basics\models\User;
 use yii\base\InvalidArgumentException;
 use yii\base\Model;
 

@@ -2,7 +2,7 @@
 /* @var $content string */
 
 use yii\bootstrap5\Breadcrumbs;
-use weebz\yii2basics\modules\common\widgets\Alert;
+use weebz\yii2basics\widgets\Alert;
 ?>
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->

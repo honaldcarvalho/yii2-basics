@@ -34,7 +34,7 @@ class Group extends \yii\db\ActiveRecord
             [['name'], 'required'],
             [['status'], 'integer'],
             [['name'], 'string', 'max' => 255],
-            ['name', 'unique','targetClass'=>'weebz\yii2basics\modules\common\models\Group'],
+            ['name', 'unique','targetClass'=>'weebz\yii2basics\models\Group'],
         ];
     }
 

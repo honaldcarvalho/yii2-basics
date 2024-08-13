@@ -1,7 +1,7 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\Rule */
+/* @var $model weebz\yii2basics\models\Rule */
 
 $this->title = Yii::t('app', 'Update Rule: {name}', [
     'name' => $model->id,

@@ -2,10 +2,10 @@
 
 namespace weebz\yii2basics\models;
 
-use weebz\yii2basics\modules\common\controllers\ControllerCommon;
+use weebz\yii2basics\controllers\ControllerCommon;
 use Yii;
 use yii\base\Model;
-use weebz\yii2basics\modules\common\models\User;
+use weebz\yii2basics\models\User;
 
 /**
  * Password reset request form
@@ -24,7 +24,7 @@ class PasswordResetRequestForm extends ModelCommon
             ['email', 'required'],
             ['email', 'email'],
             ['email', 'exist',
-                'targetClass' => '\weebz\yii2basics\modules\common\models\User',
+                'targetClass' => '\weebz\yii2basics\models\User',
                 'filter' => ['status' => User::STATUS_ACTIVE],
                 'message' => 'There is no user with this email address.'
             ],

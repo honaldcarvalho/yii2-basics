@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\EmailService */
+/* @var $model weebz\yii2basics\models\EmailService */
 /* @var $form yii\bootstrap4\ActiveForm */
 ?>
 

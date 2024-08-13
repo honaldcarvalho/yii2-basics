@@ -2,10 +2,10 @@
 
 /** @var yii\web\View $this */
 
-use weebz\yii2basics\modules\common\controllers\ControllerCommon;
-use weebz\yii2basics\modules\common\models\custom\DashboarSearch;
+use weebz\yii2basics\controllers\ControllerCommon;
+use weebz\yii2basics\models\custom\DashboarSearch;
 
-$params = weebz\yii2basics\modules\common\models\Params::findOne(1);
+$params = weebz\yii2basics\models\Params::findOne(1);
 //dd($registrationPerDay );
 
 if (!empty($params->file_id)) {

@@ -2,8 +2,8 @@
 
 /** @var yii\web\View $this */
 
-use weebz\yii2basics\modules\common\models\Params;
-use weebz\yii2basics\modules\common\controllers\ControllerCommon;
+use weebz\yii2basics\models\Params;
+use weebz\yii2basics\controllers\ControllerCommon;
 
 $params = Params::get();
 $assetsDir = ControllerCommon::$assetsDir;

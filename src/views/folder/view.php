@@ -2,11 +2,11 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
-use weebz\yii2basics\modules\common\controllers\ControllerCommon;
+use weebz\yii2basics\controllers\ControllerCommon;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\Folder */
+/* @var $model weebz\yii2basics\models\Folder */
 
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Folders'), 'url' => ['index']];
@@ -72,7 +72,7 @@ $delete_files_button[] =
             <div class="row">
                 <div class="col-md-12">
                     <p>
-                        <?= weebz\yii2basics\modules\common\widgets\DefaultButtons::widget(['controller' => 'Folder','model'=>$model]) ?>
+                        <?= weebz\yii2basics\widgets\DefaultButtons::widget(['controller' => 'Folder','model'=>$model]) ?>
                     </p>
                     <?= DetailView::widget([
                         'model' => $model,
@@ -136,7 +136,7 @@ $delete_files_button[] =
             <div class="row">
                 <div class="col-md-12">
                     <p>
-                        <?= weebz\yii2basics\modules\common\widgets\DefaultButtons::widget(
+                        <?= weebz\yii2basics\widgets\DefaultButtons::widget(
                                 [
                                     'controller' => 'File',
                                     'show' => [],
@@ -206,7 +206,7 @@ $delete_files_button[] =
                                 'format' => 'date',
                                 'label' => Yii::t('app', 'Created At'),
                             ],
-                            ['class' => \weebz\yii2basics\modules\common\components\gridview\ActionColumn::class,
+                            ['class' => \weebz\yii2basics\components\gridview\ActionColumn::class,
                                 'headerOptions' => ['style' => 'width:10%'],
                                 'template' => '{view}{remove}{delete}',
                                 'path'=>'app',
@@ -287,7 +287,7 @@ $delete_files_button[] =
                                 'format' => 'date',
                                 'label' => Yii::t('app', 'Created At'),
                             ],
-                            ['class' => \weebz\yii2basics\modules\common\components\gridview\ActionColumn::class,
+                            ['class' => \weebz\yii2basics\components\gridview\ActionColumn::class,
                                 'headerOptions' => ['style' => 'width:10%'],
                                 'template' => '{view}{remove}{delete}',
                                 'path'=>'app',

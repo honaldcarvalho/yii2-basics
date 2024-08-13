@@ -1,7 +1,7 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\Message */
+/* @var $model weebz\yii2basics\models\Message */
 
 $this->title = Yii::t('app', 'Update Message: {name}', [
     'name' => $model->id,

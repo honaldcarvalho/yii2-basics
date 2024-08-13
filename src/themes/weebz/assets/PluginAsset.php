@@ -8,7 +8,7 @@ class PluginAsset extends AssetBundle
     public $sourcePath = '@app/modules/common/themes/weebz/web/dist/plugins';
 
     public $depends = [
-        'weebz\yii2basics\modules\common\themes\weebz\assets\BaseAsset'
+        'weebz\yii2basics\themes\weebz\assets\BaseAsset'
     ];
 
     public static $pluginMap = [

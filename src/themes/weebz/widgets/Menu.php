@@ -7,7 +7,7 @@ use yii\helpers\Url;
 
 /**
  * Class Menu
- * @package weebz\yii2basics\modules\common\themes\weebz\widgets
+ * @package weebz\yii2basics\themes\weebz\widgets
  *
  * For example,
  *

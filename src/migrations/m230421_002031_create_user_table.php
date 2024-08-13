@@ -64,7 +64,7 @@ class m230421_002031_create_user_table extends Migration
             'language_id' => 1,
             'email' => 'admin@email.com',
             'phone' => '55869999007567',
-            'password_hash' => Yii::$app->security->generatePasswordHash('cpmAdmin@2023!'),
+            'password_hash' => Yii::$app->security->generatePasswordHash('admin'),
             'auth_key' => Yii::$app->security->generateRandomString(),
         ]);
 

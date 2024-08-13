@@ -1,12 +1,12 @@
 <?php
 
-use weebz\yii2basics\modules\common\models\User;
-use weebz\yii2basics\modules\common\models\Rule;
+use weebz\yii2basics\models\User;
+use weebz\yii2basics\models\Rule;
 use yii\helpers\Html;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
-/* @var $searchModel weebz\yii2basics\modules\common\models\LogSearch */
+/* @var $searchModel weebz\yii2basics\models\LogSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = Yii::t('app', 'Logs');
@@ -45,7 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'data:ntext',
                             'created_at:datetime',
 
-                            ['class' =>'weebz\yii2basics\modules\common\components\gridview\ActionColumn',],
+                            ['class' =>'weebz\yii2basics\components\gridview\ActionColumn',],
                         ],
                         'summaryOptions' => ['class' => 'summary mb-2'],
                         'pager' => [

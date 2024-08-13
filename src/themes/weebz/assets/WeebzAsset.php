@@ -25,8 +25,8 @@ class WeebzAsset extends AssetBundle
     ];
 
     public $depends = [
-        'weebz\yii2basics\modules\common\themes\weebz\assets\BaseAsset',
-        'weebz\yii2basics\modules\common\themes\weebz\assets\PluginAsset',
+        'weebz\yii2basics\themes\weebz\assets\BaseAsset',
+        'weebz\yii2basics\themes\weebz\assets\PluginAsset',
         '\yii\web\JqueryAsset'
     ];
 }

@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\Page */
+/* @var $model weebz\yii2basics\models\Page */
 
 $this->title = $model->title;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Pages'), 'url' => ['index']];
@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="row">
                 <div class="col-md-12">
                     <p>
-                        <?= weebz\yii2basics\modules\common\widgets\DefaultButtons::widget(['controller' => 'Page','model'=>$model]) ?>
+                        <?= weebz\yii2basics\widgets\DefaultButtons::widget(['controller' => 'Page','model'=>$model]) ?>
                     </p>
                     <?= DetailView::widget([
                         'model' => $model,

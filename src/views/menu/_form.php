@@ -1,11 +1,11 @@
 <?php
 
-use weebz\yii2basics\modules\common\models\Menu;
+use weebz\yii2basics\models\Menu;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\Menu */
+/* @var $model weebz\yii2basics\models\Menu */
 /* @var $form yii\bootstrap4\ActiveForm */
 ?>
 

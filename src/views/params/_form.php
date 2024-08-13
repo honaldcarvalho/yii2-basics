@@ -1,13 +1,13 @@
 <?php
 
-use weebz\yii2basics\modules\common\models\EmailService;
-use weebz\yii2basics\modules\common\models\Group;;
-use weebz\yii2basics\modules\common\models\Language;
+use weebz\yii2basics\models\EmailService;
+use weebz\yii2basics\models\Group;;
+use weebz\yii2basics\models\Language;
 use yii\helpers\Html;
 use yii\bootstrap5\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\Param */
+/* @var $model weebz\yii2basics\models\Param */
 /* @var $form yii\bootstrap4\ActiveForm */
 ?>
 <?php $form = ActiveForm::begin(['class' => 'row mb-5']); ?>
@@ -15,7 +15,7 @@ use yii\bootstrap5\ActiveForm;
 
     <div class="col-md-4">
         <?= $form->field($model, 'file_id')->hiddenInput() ?>  
-        <?= weebz\yii2basics\modules\common\widgets\SelectFile::widget(['field' => '#params-file_id', 'preview_image' => 1, 'extensions' => ['jpeg', 'jpg', 'png'], 'model' => $model]); ?>
+        <?= weebz\yii2basics\widgets\SelectFile::widget(['field' => '#params-file_id', 'preview_image' => 1, 'extensions' => ['jpeg', 'jpg', 'png'], 'model' => $model]); ?>
     </div>
     
     <div class="col-md-8">

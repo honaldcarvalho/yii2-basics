@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var weebz\yii2basics\modules\common\models\User $model */
+/** @var weebz\yii2basics\models\User $model */
 
 $this->title = Yii::t('app', 'View User: {name}', [
     'name' => $model->fullname,

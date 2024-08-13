@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\Rule */
+/* @var $model weebz\yii2basics\models\Rule */
 
 $this->title = Yii::t('app', 'Create Rule');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Rules'), 'url' => ['index']];

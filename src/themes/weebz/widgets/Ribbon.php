@@ -6,7 +6,7 @@ use yii\helpers\Html;
 
 /**
  * Class Ribbon
- * @package weebz\yii2basics\modules\common\themes\weebz\widgets
+ * @package weebz\yii2basics\themes\weebz\widgets
  *
  * ```php
  * echo Ribbon::widget([

@@ -2,9 +2,9 @@
 
 namespace weebz\yii2basics\controllers\rest;
 use Yii;
-use weebz\yii2basics\modules\common\controllers\rest\Controller;
-use weebz\yii2basics\modules\common\models\custom\OnuUncfg;
-use weebz\yii2basics\modules\common\models\Ssh2;
+use weebz\yii2basics\controllers\rest\Controller;
+use weebz\yii2basics\models\custom\OnuUncfg;
+use weebz\yii2basics\models\Ssh2;
 
 class TerminalController extends ControllerCommon {
 

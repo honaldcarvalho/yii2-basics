@@ -2,10 +2,10 @@
 
 namespace weebz\yii2basics\controllers;
 
-use weebz\yii2basics\modules\common\models\File;
+use weebz\yii2basics\models\File;
 use Yii;
-use weebz\yii2basics\modules\common\models\Folder;
-use weebz\yii2basics\modules\common\models\FolderSearch;
+use weebz\yii2basics\models\Folder;
+use weebz\yii2basics\models\FolderSearch;
 use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
 

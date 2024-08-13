@@ -4,10 +4,10 @@ namespace weebz\yii2basics\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use weebz\yii2basics\modules\common\models\Rule;
+use weebz\yii2basics\models\Rule;
 
 /**
- * RuleSearch represents the model behind the search form of `weebz\yii2basics\modules\common\models\Rule`.
+ * RuleSearch represents the model behind the search form of `weebz\yii2basics\models\Rule`.
  */
 class RuleSearch extends Rule
 {

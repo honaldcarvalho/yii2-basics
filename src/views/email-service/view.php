@@ -1,11 +1,11 @@
 <?php
 
-use weebz\yii2basics\modules\common\widgets\DefaultButtons;
+use weebz\yii2basics\widgets\DefaultButtons;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\EmailService */
+/* @var $model weebz\yii2basics\models\EmailService */
 
 $this->title = "{$model->id}#{$model->description}";
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Email Services'), 'url' => ['index']];
@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="row">
                 <div class="col-md-12">
                     <p>
-<?= weebz\yii2basics\modules\common\widgets\DefaultButtons::widget([
+<?= weebz\yii2basics\widgets\DefaultButtons::widget([
                             'controller' => Yii::$app->controller->id,'model'=>$model,'verGroup'=>false
                         ]) ?>
                         <?= Html::a(Yii::t('app', 'Test'), ['test', 'id' => $model->id], ['class' => 'btn btn-default']) ?>

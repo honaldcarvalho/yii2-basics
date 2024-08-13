@@ -3,10 +3,10 @@
 use yii\helpers\Html;
 use yii\widgets\Pjax;
 use yii\grid\GridView;
-use weebz\yii2basics\modules\common\components\gridview\ActionColumn;
+use weebz\yii2basics\components\gridview\ActionColumn;
 
 /** @var yii\web\View $this */
-/** @var weebz\yii2basics\modules\common\models\PageSearch $searchModel */
+/** @var weebz\yii2basics\models\PageSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = 'Pages';

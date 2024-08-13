@@ -4,10 +4,10 @@ namespace weebz\yii2basics\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use weebz\yii2basics\modules\common\models\Message;
+use weebz\yii2basics\models\Message;
 
 /**
- * MessageSearch represents the model behind the search form of `weebz\yii2basics\modules\common\models\Message`.
+ * MessageSearch represents the model behind the search form of `weebz\yii2basics\models\Message`.
  */
 class MessageSearch extends Message
 {

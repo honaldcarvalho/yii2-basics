@@ -3,7 +3,7 @@
 use yii\bootstrap5\BootstrapAsset;
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\File */
+/* @var $model weebz\yii2basics\models\File */
 $this->registerJsFile(
     '@web/plugins/jquery-cropper/cropper.min.js',
     ['depends' => [\yii\web\JqueryAsset::class]]

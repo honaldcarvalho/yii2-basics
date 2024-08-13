@@ -1,7 +1,7 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\Page */
+/* @var $model weebz\yii2basics\models\Page */
 
 $this->title = Yii::t('app', 'Update Page: {name}', [
     'name' => $model->title,

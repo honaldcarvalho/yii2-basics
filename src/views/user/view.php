@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var weebz\yii2basics\modules\common\models\User $model */
+/** @var weebz\yii2basics\models\User $model */
 
 $this->title = Yii::t('app', 'View User: {name}', [
     'name' => $model->fullname,
@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="card-body">
             <div class="row mb-2">
                 <div class="col-md-12">
-                    <?= weebz\yii2basics\modules\common\widgets\DefaultButtons::widget(['controller' => 'User','model'=>$model,'verGroup'=>false]) ?>
+                    <?= weebz\yii2basics\widgets\DefaultButtons::widget(['controller' => 'User','model'=>$model,'verGroup'=>false]) ?>
                 </div>
             </div>
 
@@ -124,7 +124,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'rowOptions'=>['class'=>'grabbable'],
                         'columns' => [
                             'group.name',
-                            ['class' => \weebz\yii2basics\modules\common\components\gridview\ActionColumn::className(),
+                            ['class' => \weebz\yii2basics\components\gridview\ActionColumn::className(),
                                 'template' => '{delete}'  ,
                                 'buttons' => [  
                                     'delete' => function ($url, $model, $key) {

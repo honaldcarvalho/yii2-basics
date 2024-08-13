@@ -1,13 +1,13 @@
 <?php
 
-use weebz\yii2basics\modules\common\models\Language;
-use weebz\yii2basics\modules\common\models\Section;
+use weebz\yii2basics\models\Language;
+use weebz\yii2basics\models\Section;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use dosamigos\tinymce\TinyMce;
 
 /** @var yii\web\View $this */
-/** @var weebz\yii2basics\modules\common\models\Page $model */
+/** @var weebz\yii2basics\models\Page $model */
 /** @var yii\widgets\ActiveForm $form */
 ?>
 

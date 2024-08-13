@@ -2,10 +2,10 @@
 
 namespace weebz\yii2basics\controllers;
 
-use weebz\yii2basics\modules\common\models\Message;
+use weebz\yii2basics\models\Message;
 use Yii;
-use weebz\yii2basics\modules\common\models\SourceMessage;
-use weebz\yii2basics\modules\common\models\SourceMessageSearch;
+use weebz\yii2basics\models\SourceMessage;
+use weebz\yii2basics\models\SourceMessageSearch;
 use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
 

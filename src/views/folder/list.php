@@ -6,7 +6,7 @@ use yii\grid\GridView;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
-/* @var $searchModel weebz\yii2basics\modules\common\models\FolderSearch */
+/* @var $searchModel weebz\yii2basics\models\FolderSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = Yii::t('app', 'Folders');

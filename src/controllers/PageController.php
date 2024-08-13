@@ -2,8 +2,8 @@
 
 namespace weebz\yii2basics\controllers;
 
-use weebz\yii2basics\modules\common\models\Page;
-use weebz\yii2basics\modules\common\models\PageSearch;
+use weebz\yii2basics\models\Page;
+use weebz\yii2basics\models\PageSearch;
 use yii\web\NotFoundHttpException;
 
 /**

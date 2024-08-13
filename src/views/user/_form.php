@@ -1,14 +1,14 @@
 <?php
 
-use weebz\yii2basics\modules\common\controllers\ControllerCommon;
-use weebz\yii2basics\modules\common\models\Group;;
-use weebz\yii2basics\modules\common\models\Language;
-use weebz\yii2basics\modules\common\models\User;
+use weebz\yii2basics\controllers\ControllerCommon;
+use weebz\yii2basics\models\Group;;
+use weebz\yii2basics\models\Language;
+use weebz\yii2basics\models\User;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var weebz\yii2basics\modules\common\models\UserUpdate $model */
+/** @var weebz\yii2basics\models\UserUpdate $model */
 /** @var yii\widgets\ActiveForm $form */
 
 $query = Group::find();

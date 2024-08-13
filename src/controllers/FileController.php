@@ -4,10 +4,10 @@ namespace weebz\yii2basics\controllers;
 
 use Yii;
 
-use weebz\yii2basics\modules\common\models\File;
-use weebz\yii2basics\modules\common\models\FileSearch;
+use weebz\yii2basics\models\File;
+use weebz\yii2basics\models\FileSearch;
 use yii\web\NotFoundHttpException;
-use weebz\yii2basics\modules\common\models\UploadForm;
+use weebz\yii2basics\models\UploadForm;
 use FFMpeg\FFMpeg;
 use FFMpeg\FFProbe;
 use yii\web\UploadedFile;

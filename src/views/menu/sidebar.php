@@ -1,10 +1,10 @@
 <?php
 
 use app\controllers\Controller;
-use weebz\yii2basics\modules\common\controllers\ControllerCommon;
-use weebz\yii2basics\modules\common\models\Menu;
-use weebz\yii2basics\modules\common\models\Params;
-use weebz\yii2basics\modules\common\widgets\Menu as WidgetsMenu;
+use weebz\yii2basics\controllers\ControllerCommon;
+use weebz\yii2basics\models\Menu;
+use weebz\yii2basics\models\Params;
+use weebz\yii2basics\widgets\Menu as WidgetsMenu;
 use yii\web\View;
 
 if(Yii::$app->user->isGuest){

@@ -1,11 +1,11 @@
 <?php
 
-use weebz\yii2basics\modules\common\widgets\DefaultButtons;
+use weebz\yii2basics\widgets\DefaultButtons;
 use yii\helpers\Html;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
-/* @var $searchModel weebz\yii2basics\modules\common\models\EmailServiceSearch */
+/* @var $searchModel weebz\yii2basics\models\EmailServiceSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = Yii::t('app', 'Email Services');
@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="card-body">
                     <div class="row mb-2">
                      <div class="col-md-12">
-                            <?= weebz\yii2basics\modules\common\widgets\DefaultButtons::widget(
+                            <?= weebz\yii2basics\widgets\DefaultButtons::widget(
                             [
                                 'controller' => Yii::$app->controller->id,
                                 'show'=>['create'],'buttons_name'=>['create'=>Yii::t("backend","Create Email Sevice")]
@@ -41,7 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             //'password',
                             //'port',
 
-                            ['class' =>'weebz\yii2basics\modules\common\components\gridview\ActionColumn',],
+                            ['class' =>'weebz\yii2basics\components\gridview\ActionColumn',],
                         ],
                         'summaryOptions' => ['class' => 'summary mb-2'],
                         'pager' => [

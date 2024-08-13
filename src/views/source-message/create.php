@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\SourceMessage */
+/* @var $model weebz\yii2basics\models\SourceMessage */
 
 $this->title = Yii::t('app', 'Create Source Message');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Source Messages'), 'url' => ['index']];

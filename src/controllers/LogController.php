@@ -3,8 +3,8 @@
 namespace weebz\yii2basics\controllers;
 
 use Yii;
-use weebz\yii2basics\modules\common\models\Log;
-use weebz\yii2basics\modules\common\models\LogSearch;
+use weebz\yii2basics\models\Log;
+use weebz\yii2basics\models\LogSearch;
 use yii\web\NotFoundHttpException;
 /**
  * LogController implements the CRUD actions for Log model.

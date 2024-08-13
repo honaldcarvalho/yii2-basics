@@ -8,7 +8,7 @@ use yii\bootstrap5\BootstrapAsset;
 use yii\bootstrap4\Widget;
 
 /** @var yii\web\View $this */
-/** @var weebz\yii2basics\modules\common\models\File $model */
+/** @var weebz\yii2basics\models\File $model */
 /** @var yii\widgets\ActiveForm $form */
 
 class FileInput extends Widget
@@ -18,7 +18,7 @@ class FileInput extends Widget
      *    0: false
      * 
         <?=
-        weebz\yii2basics\modules\common\widgets\FileInput::widget(
+        weebz\yii2basics\widgets\FileInput::widget(
             [
                 'save_file_model' => 1, //indica se vai sarvar o modelo arquivo no banco
                 'model' => 'User', // nome do modelo que vai receber o dado do arquivo

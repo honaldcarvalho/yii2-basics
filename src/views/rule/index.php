@@ -1,15 +1,15 @@
 <?php
 
-use weebz\yii2basics\modules\common\models\Group;;
-use weebz\yii2basics\modules\common\models\Rule;
-use weebz\yii2basics\modules\common\models\User;
+use weebz\yii2basics\models\Group;;
+use weebz\yii2basics\models\Rule;
+use weebz\yii2basics\models\User;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 /** @var yii\web\View $this */
-/** @var weebz\yii2basics\modules\common\models\RuleSearch $searchModel */
+/** @var weebz\yii2basics\models\RuleSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = Yii::t('app', 'Rules');
@@ -23,7 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="card-body">
                     <div class="row mb-2">
                         <div class="col-md-12">
-                            <?= weebz\yii2basics\modules\common\widgets\DefaultButtons::widget([
+                            <?= weebz\yii2basics\widgets\DefaultButtons::widget([
                                 'controller' => 'Rule','show' => ['create'],
                                 'buttons_name' => ['create' => Yii::t('app', 'Create Rule')],
                                 'verGroup'=>false
@@ -88,7 +88,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             ],
                             'status:boolean',
                             [
-                                'class' =>'weebz\yii2basics\modules\common\components\gridview\ActionColumn','verGroup'=>false,
+                                'class' =>'weebz\yii2basics\components\gridview\ActionColumn','verGroup'=>false,
                                 'urlCreator' => function ($action, Rule $model, $key, $index, $column) {
                                     return Url::toRoute([$action, 'id' => $model->id]);
                                  }

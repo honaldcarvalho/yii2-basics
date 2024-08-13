@@ -1,11 +1,11 @@
 <?php
 
-use weebz\yii2basics\modules\common\controllers\ControllerCommon;
+use weebz\yii2basics\controllers\ControllerCommon;
 use yii\helpers\Html;
 use yii\bootstrap5\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\Folder */
+/* @var $model weebz\yii2basics\models\Folder */
 /* @var $form yii\bootstrap4\ActiveForm */
 ?>
 
@@ -13,7 +13,7 @@ use yii\bootstrap5\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'folder_id')->dropDownList(yii\helpers\ArrayHelper::map(weebz\yii2basics\modules\common\models\Folder::find()
+    <?= $form->field($model, 'folder_id')->dropDownList(yii\helpers\ArrayHelper::map(weebz\yii2basics\models\Folder::find()
     ->where(['in','group_id',ControllerCommon::userGroups()])
     ->asArray()->all(), 'id', 'name'), ['class'=>'form-control', 'prompt' => Yii::t('app','-- Select Folder --')]) ?>
 

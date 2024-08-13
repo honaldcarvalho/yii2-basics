@@ -1,11 +1,11 @@
 <?php
 
-use weebz\yii2basics\modules\common\widgets\DefaultButtons;
+use weebz\yii2basics\widgets\DefaultButtons;
 use yii\helpers\Html;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
-/* @var $searchModel weebz\yii2basics\modules\common\models\SourceMessageSearch */
+/* @var $searchModel weebz\yii2basics\models\SourceMessageSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = Yii::t('app', 'Source Messages');
@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="card-body">
                     <div class="row mb-2">
                     <div class="col-md-12">
-                            <?= weebz\yii2basics\modules\common\widgets\DefaultButtons::widget(
+                            <?= weebz\yii2basics\widgets\DefaultButtons::widget(
                             [
                                 'controller' => Yii::$app->controller->id,'verGroup'=>false,
                                 'show'=>['create'],'buttons_name'=>['create'=>Yii::t("backend","Create Source Message")]
@@ -36,7 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
                              'id',
                             'category',
                             'message:ntext',
-                            ['class' =>'weebz\yii2basics\modules\common\components\gridview\ActionColumn','verGroup'=>false]
+                            ['class' =>'weebz\yii2basics\components\gridview\ActionColumn','verGroup'=>false]
                         ],
                         'summaryOptions' => ['class' => 'summary mb-2'],
                         'pager' => [

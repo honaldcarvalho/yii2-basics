@@ -4,10 +4,10 @@ namespace weebz\yii2basics\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use weebz\yii2basics\modules\common\models\Params;
+use weebz\yii2basics\models\Params;
 
 /**
- * ParamsSearch represents the model behind the search form of `weebz\yii2basics\modules\common\models\Params`.
+ * ParamsSearch represents the model behind the search form of `weebz\yii2basics\models\Params`.
  */
 class ParamsSearch extends Params
 {

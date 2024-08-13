@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
-/* @var $searchModel weebz\yii2basics\modules\common\models\FolderSearch */
+/* @var $searchModel weebz\yii2basics\models\FolderSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = Yii::t('app', 'Files');
@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="card-body">
                     <div class="row mb-2">
                         <div class="col-md-12">
-                            <?= weebz\yii2basics\modules\common\widgets\DefaultButtons::widget(['controller' => 'Folder','show'=>['create'],'buttons_name'=>['create'=>'Create Folder']]) ?>
+                            <?= weebz\yii2basics\widgets\DefaultButtons::widget(['controller' => 'Folder','show'=>['create'],'buttons_name'=>['create'=>'Create Folder']]) ?>
                         </div>
                     </div>
                     
@@ -49,7 +49,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             ],
                             'status:boolean',
 
-                            ['class' =>'weebz\yii2basics\modules\common\components\gridview\ActionColumn',],
+                            ['class' =>'weebz\yii2basics\components\gridview\ActionColumn',],
                         ],
                         'summaryOptions' => ['class' => 'summary mb-2'],
                         'pager' => [

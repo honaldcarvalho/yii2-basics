@@ -1,7 +1,7 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\Param */
+/* @var $model weebz\yii2basics\models\Param */
 
 $this->title = Yii::t('app', 'Update Param: {name}', [
     'name' => $model->title,

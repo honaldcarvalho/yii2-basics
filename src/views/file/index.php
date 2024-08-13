@@ -1,16 +1,16 @@
 <?php
 
-use weebz\yii2basics\modules\common\controllers\Controller as ControllersController;
+use weebz\yii2basics\controllers\Controller as ControllersController;
 use yii\helpers\Html;
 use yii\grid\GridView;
-use weebz\yii2basics\modules\common\components\gridview\ActionColumn;
-use weebz\yii2basics\modules\common\controllers\ControllerCommon;
-use weebz\yii2basics\modules\common\models\Folder;
+use weebz\yii2basics\components\gridview\ActionColumn;
+use weebz\yii2basics\controllers\ControllerCommon;
+use weebz\yii2basics\models\Folder;
 use yii\helpers\Url;
 use yii\web\View;
 use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
-/* @var $searchModel weebz\yii2basics\modules\common\models\FileSearch */
+/* @var $searchModel weebz\yii2basics\models\FileSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = Yii::t('app', 'Files');
@@ -92,7 +92,7 @@ $delete_files_button[] =
                     <div class="row mb-2">
                         <div class="col">
 
-                            <?= weebz\yii2basics\modules\common\widgets\DefaultButtons::widget(
+                            <?= weebz\yii2basics\widgets\DefaultButtons::widget(
                                 [
                                     'controller' => 'File',
                                     'show' => ['create'],

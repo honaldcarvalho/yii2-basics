@@ -2,12 +2,12 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
-use weebz\yii2basics\modules\common\controllers\ControllerCommon;
+use weebz\yii2basics\controllers\ControllerCommon;
 use yii\widgets\Pjax;
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\Folder */
+/* @var $model weebz\yii2basics\models\Folder */
 
-$query = weebz\yii2basics\modules\common\models\File::find();
+$query = weebz\yii2basics\models\File::find();
 $dataProvider = new \yii\data\ActiveDataProvider([
     'query' => $query,
 ]);

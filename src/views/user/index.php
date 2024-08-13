@@ -1,13 +1,13 @@
 <?php
 
-use weebz\yii2basics\modules\common\components\gridview\ActionColumn;
-use weebz\yii2basics\modules\common\models\User;
+use weebz\yii2basics\components\gridview\ActionColumn;
+use weebz\yii2basics\models\User;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\GridView;
 
 /** @var yii\web\View $this */
-/** @var weebz\yii2basics\modules\common\models\UserSearch $searchModel */
+/** @var weebz\yii2basics\models\UserSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = Yii::t('app', 'Users');
@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="row">
                 <div class="col-md-12">
                     <p>
-                        <?= weebz\yii2basics\modules\common\widgets\DefaultButtons::widget(['controller' => 'User','show'=>['create'],'buttons_name'=>['create'=>'Create User']]) ?>
+                        <?= weebz\yii2basics\widgets\DefaultButtons::widget(['controller' => 'User','show'=>['create'],'buttons_name'=>['create'=>'Create User']]) ?>
                     </p>
                     
                     <?= GridView::widget([
@@ -50,7 +50,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             ],
                             'status:boolean',
                             [
-                                'class' =>'weebz\yii2basics\modules\common\components\gridview\ActionColumn',
+                                'class' =>'weebz\yii2basics\components\gridview\ActionColumn',
                 /*                 'urlCreator' => function ($action, User $model, $key, $index, $column) {
                                     return Url::toRoute([$action, 'id' => $model->id]);
                                  } */

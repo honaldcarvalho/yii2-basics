@@ -2,9 +2,9 @@
 
 namespace weebz\yii2basics\controllers\rest;
 use Yii;
-use weebz\yii2basics\modules\common\controllers\rest\ControllerCustom;
-use weebz\yii2basics\modules\common\models\City;
-use weebz\yii2basics\modules\common\models\State;
+use weebz\yii2basics\controllers\rest\ControllerCustom;
+use weebz\yii2basics\models\City;
+use weebz\yii2basics\models\State;
 
 class AddressController extends ControllerCommonCustom {
     

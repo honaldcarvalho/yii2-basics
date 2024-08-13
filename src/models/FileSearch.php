@@ -2,13 +2,13 @@
 
 namespace weebz\yii2basics\models;
 
-use weebz\yii2basics\modules\common\controllers\ControllerCommon;
+use weebz\yii2basics\controllers\ControllerCommon;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use weebz\yii2basics\modules\common\models\File;
+use weebz\yii2basics\models\File;
 
 /**
- * FileSearch represents the model behind the search form of `weebz\yii2basics\modules\common\models\File`.
+ * FileSearch represents the model behind the search form of `weebz\yii2basics\models\File`.
  */
 class FileSearch extends File
 {

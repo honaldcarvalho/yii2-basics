@@ -1,7 +1,7 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\SourceMessage */
+/* @var $model weebz\yii2basics\models\SourceMessage */
 
 $this->title = Yii::t('app', 'Update Source Message: {name}', [
     'name' => $model->id,

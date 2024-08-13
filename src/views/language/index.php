@@ -1,11 +1,11 @@
 <?php
 
-use weebz\yii2basics\modules\common\widgets\DefaultButtons;
+use weebz\yii2basics\widgets\DefaultButtons;
 use yii\helpers\Html;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
-/* @var $searchModel weebz\yii2basics\modules\common\models\LanguageSearch */
+/* @var $searchModel weebz\yii2basics\models\LanguageSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = Yii::t('app', 'Languages');
@@ -39,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'name',
                             'status:boolean',
 
-                            ['class' =>'weebz\yii2basics\modules\common\components\gridview\ActionColumn',],
+                            ['class' =>'weebz\yii2basics\components\gridview\ActionColumn',],
                         ],
                         'summaryOptions' => ['class' => 'summary mb-2'],
                         'pager' => [

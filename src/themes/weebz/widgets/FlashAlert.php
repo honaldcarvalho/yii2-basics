@@ -5,7 +5,7 @@ use yii\bootstrap5\Widget;
 
 /**
  * Class FlashAlert
- * @package weebz\yii2basics\modules\common\themes\weebz\widgets
+ * @package weebz\yii2basics\themes\weebz\widgets
  *
  * Alert widget renders a message from session flash. All flash messages are displayed
  * in the sequence they were assigned using setFlash. You can set message as following:

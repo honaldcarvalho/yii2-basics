@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model weebz\yii2basics\modules\common\models\Log */
+/* @var $model weebz\yii2basics\models\Log */
 
 $this->title = Yii::t('app', 'Create Log');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Logs'), 'url' => ['index']];

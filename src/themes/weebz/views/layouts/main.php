@@ -2,8 +2,8 @@
 /* @var $this \yii\web\View */
 /* @var $content string */
 
-use weebz\yii2basics\modules\common\themes\weebz\assets\FontAwesomeAsset;
-use weebz\yii2basics\modules\common\themes\weebz\assets\WeebzAsset;
+use weebz\yii2basics\themes\weebz\assets\FontAwesomeAsset;
+use weebz\yii2basics\themes\weebz\assets\WeebzAsset;
 use yii\helpers\Html;
 
 FontAwesomeAsset::register($this);

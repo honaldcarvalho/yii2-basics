@@ -2,11 +2,11 @@
 
 namespace weebz\yii2basics\controllers;;
 
-use weebz\yii2basics\modules\common\models\Group;
-use weebz\yii2basics\modules\common\models\GroupSearch;
-use weebz\yii2basics\modules\common\models\User;
-use weebz\yii2basics\modules\common\models\UserGroup;
-use weebz\yii2basics\modules\common\models\UserSearch;
+use weebz\yii2basics\models\Group;
+use weebz\yii2basics\models\GroupSearch;
+use weebz\yii2basics\models\User;
+use weebz\yii2basics\models\UserGroup;
+use weebz\yii2basics\models\UserSearch;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;

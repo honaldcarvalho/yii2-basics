@@ -10,7 +10,7 @@ namespace weebz\yii2basics\components\gridview;
 
 use Yii;
 use yii\helpers\Html;
-use weebz\yii2basics\modules\common\controllers\ControllerCommon;
+use weebz\yii2basics\controllers\ControllerCommon;
 
 class ActionColumn extends \yii\grid\ActionColumn
 {

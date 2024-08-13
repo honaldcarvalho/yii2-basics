@@ -2,7 +2,7 @@
 
 /** @var yii\web\View $this */
 
-use weebz\yii2basics\modules\common\models\SystemInfo;
+use weebz\yii2basics\models\SystemInfo;
 
 $sysInfo = new SystemInfo();
 $diskInfo = $sysInfo->diskInfo('/');
@@ -10,7 +10,7 @@ $memoryInfo = $sysInfo->memoryInfo();
 $cpuInfo = $sysInfo->cpuInfo();
 $osInfo = $sysInfo->getOSInformation();
 
-$params = weebz\yii2basics\modules\common\models\Params::findOne(1);
+$params = weebz\yii2basics\models\Params::findOne(1);
 
 if (!empty($params->file_id)) {
     $url = Yii::getAlias('@web') . $params->file->urlThumb;

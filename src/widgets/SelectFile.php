@@ -7,7 +7,7 @@ use yii\helpers\Html;
 use yii\web\View;
 use yii\bootstrap5\BootstrapAsset;
 use yii\web\JqueryAsset;
-use weebz\yii2basics\modules\common\models\Folder;
+use weebz\yii2basics\models\Folder;
 use yii\helpers\ArrayHelper;
 
 class SelectFile extends Widget
