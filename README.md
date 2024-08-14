@@ -29,7 +29,11 @@ Once the extension is installed, you can config the path mappings of the view co
 
 ```php
     'modules' => [
-        //'common' => [ 'class' => 'app\modules\common\Module', ],
         'common' => [ 'class' => '\weebz\yii2basics\Module', ]
     ],
+```
+Run migration
+
+```
+    yii migrate --migrationPath=@vendor/weebz/yii2-basics/src/migrations
 ```
