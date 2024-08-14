@@ -16,7 +16,7 @@ class m240807_161427_add_admin_rules extends Migration
         $this->insert('rules', [
             'group_id' => 2,
             'controller' => 'site',
-            'path' => 'app',
+            'path' => 'weebz/controllers',
             'actions' => 'index;dashboard;dashboard-captive',
             'status'=>true
         ]);
@@ -24,7 +24,7 @@ class m240807_161427_add_admin_rules extends Migration
         $this->insert('rules', [
             'group_id' => 2,
             'controller' => 'menu',
-            'path' => 'app',
+            'path' => 'weebz/controllers',
             'actions' => 'create;delete;index;order-menu;update;view',
             'status'=>true
         ]);
@@ -32,7 +32,7 @@ class m240807_161427_add_admin_rules extends Migration
         $this->insert('rules', [
             'group_id' => 2,
             'controller' => 'folder',
-            'path' => 'app',
+            'path' => 'weebz/controllers',
             'actions' => 'index;create;view;update;delete;edit;add',
             'status'=>true
         ]);
@@ -40,7 +40,7 @@ class m240807_161427_add_admin_rules extends Migration
         $this->insert('rules', [
             'group_id' => 2,
             'controller' => 'file',
-            'path' => 'app',
+            'path' => 'weebz/controllers',
             'actions' => 'index;create;view;update;delete;list;upload;move;remove-file;delete-files;form;send;edit;add',
             'status'=>true
         ]);
@@ -48,7 +48,7 @@ class m240807_161427_add_admin_rules extends Migration
         $this->insert('rules', [
             'group_id' => 2,
             'controller' => 'group',
-            'path' => 'app',
+            'path' => 'weebz/controllers',
             'actions' => 'index;create;view;update;delete',
             'status'=>true
         ]);
@@ -56,7 +56,7 @@ class m240807_161427_add_admin_rules extends Migration
         $this->insert('rules', [
             'group_id' => 2,
             'controller' => 'language',
-            'path' => 'app',
+            'path' => 'weebz/controllers',
             'actions' => 'index;create;view;update;delete',
             'status'=>true
         ]);
@@ -64,7 +64,7 @@ class m240807_161427_add_admin_rules extends Migration
         $this->insert('rules', [
             'group_id' => 2,
             'controller' => 'message',
-            'path' => 'app',
+            'path' => 'weebz/controllers',
             'actions' => 'index;create;view;update;delete',
             'status'=>true
         ]);
@@ -72,7 +72,7 @@ class m240807_161427_add_admin_rules extends Migration
         $this->insert('rules', [
             'group_id' => 2,
             'controller' => 'source-message',
-            'path' => 'app',
+            'path' => 'weebz/controllers',
             'actions' => 'index;create;view;update;delete;add-translation',
             'status'=>true
         ]);
@@ -80,7 +80,7 @@ class m240807_161427_add_admin_rules extends Migration
         $this->insert('rules', [
             'group_id' => 2,
             'controller' => 'user',
-            'path' => 'app',
+            'path' => 'weebz/controllers',
             'actions' => 'index;create;view;update;delete;add-group;remove-group;profile;edit',
             'status'=>true
         ]);
@@ -88,7 +88,7 @@ class m240807_161427_add_admin_rules extends Migration
         $this->insert('rules', [
             'group_id' => 2,
             'controller' => 'rule',
-            'path' => 'app',
+            'path' => 'weebz/controllers',
             'actions' => 'index;create;view;update;delete',
             'status'=>true
         ]);
@@ -96,7 +96,7 @@ class m240807_161427_add_admin_rules extends Migration
         $this->insert('rules', [
             'group_id' => 2,
             'controller' => 'log',
-            'path' => 'app',
+            'path' => 'weebz/controllers',
             'actions' => 'index;create;view;update;delete',
             'status'=>true
         ]);
@@ -104,7 +104,7 @@ class m240807_161427_add_admin_rules extends Migration
         $this->insert('rules', [
             'group_id' => 2,
             'controller' => 'email-service',
-            'path' => 'app',
+            'path' => 'weebz/controllers',
             'actions' => 'index;create;view;update;delete;test',
             'status'=>true
         ]);
@@ -112,7 +112,7 @@ class m240807_161427_add_admin_rules extends Migration
         $this->insert('rules', [
             'group_id' => 2,
             'controller' => 'params',
-            'path' => 'app',
+            'path' => 'weebz/controllers',
             'actions' => 'index;create;view;update;delete',
             'status'=>true
         ]);
@@ -120,7 +120,7 @@ class m240807_161427_add_admin_rules extends Migration
         $this->insert('rules', [
             'group_id' => 2,
             'controller' => 'license-type',
-            'path' => 'app',
+            'path' => 'weebz/controllers',
             'actions' => 'index;create;view;update;delete',
             'status'=>true
         ]);
@@ -128,7 +128,7 @@ class m240807_161427_add_admin_rules extends Migration
         $this->insert('rules', [
             'group_id' => 2,
             'controller' => 'license',
-            'path' => 'app',
+            'path' => 'weebz/controllers',
             'actions' => 'index;create;view;update;delete',
             'status'=>true
         ]);

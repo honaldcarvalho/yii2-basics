@@ -131,7 +131,18 @@ class ModelCommon extends \yii\db\ActiveRecord
                 } else if($field_type == 'between'){
                     $query->andFilterWhere(['between', "$table.$field", $search[0], $search[1]]);
                 } else if($field_type == 'string'){
-                    $query->andFilterWhere(['like', "$table.$field", $search]);
+
+                    if(str_contains($field,'sod') || str_contains($field,'eod')){
+                        [$field_date,$pos] = explode('FDT',$field);
+                        if($pos == 'sod'){
+                            $query->andFilterWhere(['>=', "$table.$field_date", $search]);
+                        }else if($pos == 'eod'){
+                            $query->andFilterWhere(['<=', "$table.$field_date", $search]);
+                        }
+                    } else {
+                        $query->andFilterWhere(['like', "$table.$field", $search]);
+                    }
+
                 } else {
                     $query->andFilterWhere(["$table.$field" => $search]);
                 }
