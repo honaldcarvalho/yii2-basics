@@ -38,7 +38,7 @@ class m230420_193757_create_group_table extends Migration
             'icon'    => 'fas fa-users',
             'visible' => 'group;index',
             'url'     => '/group/index',
-            'path'  => 'app',
+            'path'  => 'weebz/controllers',
             'active'  => 'group',
             'order'   => 0,
             'status'  => true

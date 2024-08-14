@@ -43,7 +43,7 @@ class m230911_192839_create_email_services_table extends Migration
             'icon'    => 'fas fa-keyboard',
             'visible' => 'email-service;index',
             'url'     => '/email-service/index',
-            'path'  => 'app',
+            'path'  => 'weebz/controllers',
             'active'  => 'email-service',
             'order'   => 5,
             'status'  => true

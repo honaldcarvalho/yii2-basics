@@ -55,7 +55,7 @@ class m231223_143408_create_licenses_table extends Migration
             'icon'    => 'fas fa-certificate',
             'visible' => 'license;index',
             'url'     => '/license/index',
-            'path'  => 'app',
+            'path'  => 'weebz/controllers',
             'active'  => 'license',
             'order'   => 6,
             'status'  => true

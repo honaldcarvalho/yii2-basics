@@ -76,7 +76,7 @@ class m230421_002031_create_user_table extends Migration
             'icon'    => 'fas fa-user',
             'visible' => 'user;index',
             'url'     => '/user/index',
-            'path'  => 'app',
+            'path'  => 'weebz/controllers',
             'active'  => 'user',
             'order'   => 1,
             'status'  => true

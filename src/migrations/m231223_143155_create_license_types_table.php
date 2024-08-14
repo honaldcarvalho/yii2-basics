@@ -64,7 +64,7 @@ class m231223_143155_create_license_types_table extends Migration
             'icon'    => 'fas fa-certificate',
             'visible' => 'license-type;index',
             'url'     => '/license-type/index',
-            'path'  => 'app',
+            'path'  => 'weebz/controllers',
             'active'  => 'license-type',
             'order'   => 5,
             'status'  => true

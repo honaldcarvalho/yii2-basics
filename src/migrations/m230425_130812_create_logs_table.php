@@ -40,7 +40,7 @@ class m230425_130812_create_logs_table extends Migration
             'icon'    => 'fas fa-keyboard',
             'visible' => 'log;index',
             'url'     => '/log/index',
-            'path'  => 'app',
+            'path'  => 'weebz/controllers',
             'active'  => 'log',
             'order'   => 1000,
             'status'  => true

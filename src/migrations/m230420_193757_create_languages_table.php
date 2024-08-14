@@ -45,7 +45,7 @@ class m230420_193757_create_languages_table extends Migration
             'icon'    => 'fas fa-globe',
             'visible' => '',
             'url'     => '#',
-            'path'  => 'app',
+            'path'  => 'weebz/controllers',
             'active'  => '',
             'order'   => 4,
             'status'  => true
@@ -59,7 +59,7 @@ class m230420_193757_create_languages_table extends Migration
             'icon'    => 'fas fa-language',
             'visible' => 'language;index',
             'url'     => '/language/index',
-            'path'  => 'app',
+            'path'  => 'weebz/controllers',
             'active'  => 'language',
             'order'   => 0,
             'status'  => true

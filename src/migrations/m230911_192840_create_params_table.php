@@ -96,7 +96,7 @@ class m230911_192840_create_params_table extends Migration
             'icon'    => 'fas fa-cogs',
             'visible' => 'params;index',
             'url'     => '/params/index',
-            'path'  => 'app',
+            'path'  => 'weebz/controllers',
             'active'  => 'params',
             'order'   => 2,
             'status'  => true

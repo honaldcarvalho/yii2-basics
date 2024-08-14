@@ -47,7 +47,7 @@ class m230420_193739_create_menus_table extends Migration
             'icon'    => 'fas fa-cogs',
             'visible' => '',
             'url'     => '#',
-            'path'  => 'app',
+            'path'  => 'weebz/controllers',
             'active'  => '',
             'order'   => 1000,
             'status'  => true
@@ -61,7 +61,7 @@ class m230420_193739_create_menus_table extends Migration
             'icon'    => 'fas fa-key',
             'visible' => '',
             'url'     => '#',
-            'path'  => 'app',
+            'path'  => 'weebz/controllers',
             'active'  => '',
             'order'   => 1,
             'status'  => true
@@ -75,7 +75,7 @@ class m230420_193739_create_menus_table extends Migration
             'icon'    => 'fas fa-bars',
             'visible' => 'menu;index',
             'url'     => '/menu/index',
-            'path'  => 'app',
+            'path'  => 'weebz/controllers',
             'active'  => 'menu',
             'order'   => 0,
             'status'  => true

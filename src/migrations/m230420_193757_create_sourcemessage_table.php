@@ -28,7 +28,7 @@ class m230420_193757_create_sourcemessage_table extends Migration
             'icon'    => 'fas fa-comment',
             'visible' => 'source-message;index',
             'url'     => '/source-message/index',
-            'path'  => 'app',
+            'path'  => 'weebz/controllers',
             'active'  => 'source-message',
             'order'   => 2,
             'status'  => true

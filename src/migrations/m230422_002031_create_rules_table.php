@@ -51,7 +51,7 @@ class m230422_002031_create_rules_table extends Migration
             'icon'    => 'fas fa-person-booth',
             'visible' => 'rule;index',
             'url'     => '/rule/index',
-            'path'  => 'app',
+            'path'  => 'weebz/controllers',
             'active'  => 'rule',
             'order'   => 2,
             'status'  => true
