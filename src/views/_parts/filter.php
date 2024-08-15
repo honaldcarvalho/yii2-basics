@@ -38,8 +38,8 @@
     <div class="col-md-12">
 
         <div class="card <?= $collapsed ?>">
-            <div class="btn card-header" data-card-widget="collapse" title="Collapse">
-                <label class="card-title text-white"><i class="fa-solid fa-filter"></i> <?= Yii::t('app','Filters')?></label>
+            <div class="card-header" style="cursor:pointer;" data-card-widget="collapse" title="Collapse">
+                <h1 class="card-title"><i class="fa-solid fa-filter"></i> <?= Yii::t('app','Filters')?></h1>
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
                         <i class="fas fa-plus"></i>
