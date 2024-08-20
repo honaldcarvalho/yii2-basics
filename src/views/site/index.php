@@ -7,11 +7,13 @@ use weebz\yii2basics\models\custom\DashboarSearch;
 
 $params = weebz\yii2basics\models\Params::findOne(1);
 
+$assetsDir = ControllerCommon::$assetsDir;
+
 if (!empty($params->file_id)) {
     $url = Yii::getAlias('@web') . $params->file->urlThumb;
     $logo_image = "<img alt='{$params->title}' width='150px' class='brand-image img-circle elevation-3' src='{$url}' style='opacity: .8' />";
 } else {
-    $logo_image = "<img src='/images/logo_weebz.png' width='150px' alt='{$params->title}' class='brand-image img-circle elevation-3' style='opacity: .8'>";
+    $logo_image = "<img src=''{$assetsDir}/img/wcms_logo.png' width='150px' alt='{$params->title}' class='brand-image img-circle elevation-3' style='opacity: .8'>";
 }
 $this->title = '';
 
