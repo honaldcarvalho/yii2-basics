@@ -1,12 +1,13 @@
 <?php
+
 require __DIR__ . '/enviroments.php';
 require __DIR__ . '/urls_custom.php';
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
 $config = [
-    'id' => 'app-cpm',
-    'name' => 'Captive Portal Manager',
+    'id' => 'app-basic',
+    'name' => 'Basic Application',
     'language'=>'en-US',
     'sourceLanguage' => 'en-US',
     'basePath' => dirname(__DIR__),
@@ -81,14 +82,9 @@ $config = [
             'showScriptName' => false,
             'enableStrictParsing' => false,
             'rules' => array_merge(
-                customControllersUrl(['captive','user-pap','nas','radacct','radcheck']),
                 customControllersUrl(['site','group','user','rule','language','source-message','message','menu','params','email-service','license-type','license','log'],'common'),
             [
                 "page/show/<id:\w+>" => "page/show",
-                "captive/<id:\d+>" => "custom/captive/view",
-                "captive/<action>/<id:\d+>" => "custom/captive/<action>",
-                "captive/<action>" => "custom/captive/<action>",
-                "captive" => "custom/captive",
                 '<controller:\w+>/<id:\d+>' => '<controller>/view',			
                 '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',			
                 '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
@@ -98,7 +94,7 @@ $config = [
 
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-            'cookieValidationKey' => 'CPMSAD4yGYlKtTP03x7I9tIH3gv7Zw3XoR3CPM',
+            'cookieValidationKey' => '',
             //'enableCookieValidation' => false,
             'enableCsrfValidation' => false,
             // 'csrfParam' => '_csrf-backend',
