@@ -1,0 +1,32 @@
+services:
+  php:
+    build: .
+    ports:
+      - 7072:80
+      - 7073:443
+    volumes:
+      - ~/.composer-docker/cache:/root/.composer/cache:delegated
+      - ./:/app:delegated
+    secrets:
+      - enviroments
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+  # mariadb:
+  #   image: mariadb
+  #   restart: always
+  #   ports:
+  #       - "${DATABASE_PORT}"
+  #   environment:  
+  #     MARIADB_ROOT_PASSWORD: "${DATABASE_ROOT_PASSWORD}"
+  #     MARIADB_DATABASE: "${DATABASE_NAME}"
+  #     MARIADB_USER: "${DATABASE_USER}"
+  #     MARIADB_PASSWORD: "${DATABASE_PASSWORD}"
+
+secrets:
+  enviroments:
+    file: ./.env
