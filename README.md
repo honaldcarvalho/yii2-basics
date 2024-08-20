@@ -10,7 +10,7 @@ The preferred way to install this extension is through [composer](http://getcomp
 Either run
 
 ```
-composer require weebz/yii2-basics
+composer require weebz/yii2-basics  --with-all-dependencies
 ```
 
 or add
