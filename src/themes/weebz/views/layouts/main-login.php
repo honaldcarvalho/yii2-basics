@@ -40,7 +40,7 @@ PluginAsset::register($this)->add(['fontawesome', 'icheck-bootstrap']);
 <div class="login-box">
     <div class="login-logo">
         <a href="<?=Yii::$app->homeUrl?>">
-        <img src="<?= ControllerCommon::$assetsDir; ?>/img/wcms_logo.png" alt="AdminLTE Logo" class="w-50 brand-image img-circle elevation-3">
+        <img src="<?= ControllerCommon::$assetsDir; ?>/img/logo_weebz.png" alt="" class="w-50 brand-image img-circle elevation-3">
         </a>
     </div>
     <!-- /.login-logo -->
