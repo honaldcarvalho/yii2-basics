@@ -20,7 +20,7 @@ services:
     image: mariadb
     restart: always
     ports:
-        - "${DATABASE_PORT}"
+        - "${DB_PORT}"
     environment:  
       MARIADB_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
       MARIADB_DATABASE: "${DB_NAME}"

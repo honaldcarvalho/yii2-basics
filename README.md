@@ -32,6 +32,12 @@ Once the extension is installed, you can config the path mappings of the view co
         'common' => [ 'class' => '\weebz\yii2basics\Module', ]
     ],
 ```
+Up Docker
+
+```
+    docker compose -f vendor/weebz/yii2-basics/src/server/docker-compose.yml up -d
+```
+
 Run migration
 
 ```
