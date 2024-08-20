@@ -11,6 +11,7 @@ $config = [
     'language'=>'en-US',
     'sourceLanguage' => 'en-US',
     'basePath' => dirname(__DIR__),
+    'layoutPath' => '@vendor/weebz/yii2-basics/src/themes/weebz/views/layouts',
     'controllerNamespace' => 'app\controllers',
     'bootstrap' => ['log'],
     'modules' => [],
@@ -19,7 +20,10 @@ $config = [
         '@npm'   => '@vendor/npm-asset'
     ],
     'modules' => [
-        'common' => [ 'class' => '\weebz\yii2basics\Module', ],
+        'common' => [ 
+            'class' => '\weebz\yii2basics\Module',
+            'layoutPath' => '@vendor/weebz/yii2-basics/src/themes/weebz/views/layouts', 
+        ],
         'gridview' =>  [
              'class' => '\kartik\grid\Module',
              // enter optional module parameters below - only if you need to  
