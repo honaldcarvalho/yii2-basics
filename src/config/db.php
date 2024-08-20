@@ -1,4 +1,5 @@
 <?php
+
 $enviroments = enviroments();
 return [
     'class' => \yii\db\Connection::class,
