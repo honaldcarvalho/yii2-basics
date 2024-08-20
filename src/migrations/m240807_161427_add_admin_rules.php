@@ -17,7 +17,7 @@ class m240807_161427_add_admin_rules extends Migration
             'group_id' => 2,
             'controller' => 'site',
             'path' => 'weebz/controllers',
-            'actions' => 'index;dashboard;dashboard-captive',
+            'actions' => 'index;dashboard',
             'status'=>true
         ]);
 
