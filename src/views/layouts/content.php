@@ -15,19 +15,19 @@ use app\widgets\Alert;
                 <div class="col-sm-6">
                     <h1 class="m-0">
                         <?php
-                        $controller_parts = explode('/',$this->context->id);
-                        $controller = end($controller_parts);
+                            $controller_parts = explode('/',$this->context->id);
+                            $controller = end($controller_parts);
 
-                        $menu = Menu::find()->where(['LIKE','url',$controller])->one();
+                            $menu = Menu::find()->where(['LIKE','url',$controller])->one();
 
-                        if (!is_null($menu)) {
-                            echo "<i class='{$menu->icon} mr-2'></i> ";
-                        }
-                        if (!is_null($this->title)) {
-                            echo \yii\helpers\Html::encode($this->title);
-                        } else {
-                            echo \yii\helpers\Inflector::camelize($this->context->id);
-                        }
+                            if (!is_null($menu)) {
+                                echo "<i class='{$menu->icon} mr-2'></i> ";
+                            }
+                            if (!is_null($this->title)) {
+                                echo \yii\helpers\Html::encode($this->title);
+                            } else {
+                                echo \yii\helpers\Inflector::camelize($this->context->id);
+                            }
                         ?>
                     </h1>
                 </div><!-- /.col -->

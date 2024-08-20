@@ -186,24 +186,34 @@ class ControllerCommon extends \yii\web\Controller
         return false;
     }
 
+    static function getLicense($model)
+    {
+        $license_valid = null;
+        $licenses = $model->group->getLicenses()->all();
+        foreach ($licenses as $key => $license) {
+            if (strtotime($license->validate) >= strtotime(date('Y-m-d')) && $license->status) {
+                $license_valid = $license;
+            }
+        }
+        return $license_valid;
+    }
+
     static function verifyLicense()
     {
-        $group = self::User()::userGroups()->andWhere(['<>','group_id',1])->one();
-
-        if (in_array($group->group_id, [2])) {
+        $user_groups = self::User()::userGroups()->all();
+        $license_valid = null;
+        if (ControllerCommon::isAdmin()) {
             return true;
         }
 
-        $licenses = License::find()->where(['group_id' => $group->group_id])->all();
+        $licenses = License::find()->andWhere(['in', 'group_id', $user_groups])->all();
         //se não tiver licensa libera
         foreach ($licenses as $key => $license) {
             if (strtotime($license->validate) >= strtotime(date('Y-m-d')) && $license->status) {
-                return true;
-            }else{
-                return false;
+                $license_valid = $license;
             }
         }
-        return true;
+        return $license_valid;
     }
 
     static function userGroups()
@@ -275,7 +285,7 @@ class ControllerCommon extends \yii\web\Controller
 
         if (!Yii::$app->user->isGuest) {
 
-            if (!$this->verifyLicense()) {
+            if (self::verifyLicense() === null) {
                 Yii::$app->session->setFlash('warning', Yii::t('app', 'License expired!'));
                 return [];
             }
@@ -411,21 +421,24 @@ class ControllerCommon extends \yii\web\Controller
 
     public static function getAuthorizationActions($controller, $params = null, $app_path = 'app')
     {
-
-        $model_name = str_replace('controllers','models',Yii::$app->controller::class);
-        $model_name = str_replace('Controller','',$model_name);
-
-        /** @var ModelCommon $model_name */
-
         $actions = [];
         $groups = [];
         $model = null;
         $path = '';
 
         if (!Yii::$app->user->isGuest) {
+
+            if (self::verifyLicense() === null) {
+                Yii::$app->session->setFlash('warning', Yii::t('app', 'License expired!'));
+                return [];
+            }
+            
             $groups = self::getUserGroups();
 
             $remote_addr =  $_SERVER['REMOTE_ADDR'] ?? null;
+
+            $model_name = str_replace('controllers','models',Yii::$app->controller::class);
+            $model_name = str_replace('Controller','',$model_name);
 
             if(gettype($controller) != 'string'){
                 $controller_parts = explode('/',$controller->id );
@@ -433,9 +446,13 @@ class ControllerCommon extends \yii\web\Controller
             }
 
             if($params != null && !empty($params) && isset($params['id']) && $controller != 'site' && (new $model_name())->verGroup) {
-                $model = $model_name::find()->select('group_id')->where(['id'=>$params['id']])->one();
+                if(gettype($params) == 'object'){
+                    $model = $params;
+                } else{
+                    $model = $model_name::find()->where(['id'=>$params['id']])->one();
+                }
             }
-            
+
             $query_rules = Rule::find()
                 ->where(['path' => $app_path, 'controller' => $controller, 'status' => 1]);
 
@@ -448,6 +465,7 @@ class ControllerCommon extends \yii\web\Controller
                 // if($controller == 'captive')
                 //     dd([$model,$rules,'path' => $app_path, 'controller' => $controller, 'status' => 1]);
             }
+ 
 
             if ($rules === null) {
                 return [];
