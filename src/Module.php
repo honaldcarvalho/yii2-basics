@@ -40,22 +40,30 @@ class Module extends \yii\base\Module
 
     public static function generateCookieValidationKey()
     {
-        $configs = func_get_args();
         $key = self::generateRandomString();
-        foreach ($configs as $config) {
-            if (is_file($config)) {
-                $content = preg_replace('/(("|\')cookieValidationKey("|\')\s*=>\s*)(""|\'\')/', "\\1'$key'", file_get_contents($config), -1, $count);
-                if ($count > 0) {
-                    file_put_contents($config, $content);
-                }
-            }
-        }
+        $content = preg_replace('/(("|\')cookieValidationKey("|\')\s*=>\s*)(""|\'\')/', "\\1'$key'", file_get_contents(__DIR__ . '\\config.web'), -1, $count);
+        if ($count > 0) {
+            file_put_contents(__DIR__ . '\\config.web', $content);
+        }   
     }
 
     public static function postPackageInstall()
     {
-        //file_exists('@app/.env') || copy('@vendor/weebz/yii2-basics/src/server/.env.example', './.env');
+        self::generateCookieValidationKey();
         file_exists(__DIR__ . '\\..\\..\\..\\..\\.env') || copy(__DIR__ . '\\server\\.env.example', __DIR__ . '\\..\\..\\..\\..\\.env');
+    }
+
+    public static function execCommand($command){
+        $output=null;
+        $retval=null;
+        exec($command, $output, $retval);
+        echo "Returned with status $retval and output:\n";
+        print_r($output);
+    }
+    
+    public static function postPackageUpdate()
+    {
+        self::execCommand("@php yii migrate --migrationPath=@vendor/weebz/yii2-basics/src/migrations");
     }
 
 }
