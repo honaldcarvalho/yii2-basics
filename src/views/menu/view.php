@@ -1,8 +1,6 @@
 <?php
 
-use app\components\gridview\ActionColumn;
-use app\models\MercadoPago;
-use weebz\yii2basics\widgets\DefaultButtons;
+use weebz\yii2basics\components\gridview\ActionColumn;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
