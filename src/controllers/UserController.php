@@ -16,6 +16,12 @@ use yii\web\NotFoundHttpException;
  */
 class UserController extends ControllerCommon
 {
+    public function __construct($id, $module, $config = array()) {
+        parent::__construct($id, $module, $config);
+        $this->access = $this->getAccess($id); 
+        $this->free = ['change-theme'];
+    }
+    
     /**
      * Lists all User models.
      *
@@ -32,6 +38,16 @@ class UserController extends ControllerCommon
         ]);
     }
 
+    public function actionChangeTheme()
+    {           
+        $theme = Yii::$app->request->post('theme');
+        $model = Controller::User();
+        if($theme !== null && !empty($theme)){
+            $model->theme = $theme;
+        }
+        return $model->save();
+    }
+    
     /**
      * Displays a single User model.
      * @param int $id
