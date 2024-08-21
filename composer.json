@@ -29,5 +29,11 @@
         "psr-4": {
             "weebz\\yii2basics\\": "src"
         }
+    },
+    "scripts": {
+        "post-update-cmd": ">php yii migrate --migrationPath=@vendor/weebz/yii2-basics/src/migrations",
+        "post-install-cmd": [
+            "php yii migrate --migrationPath=@vendor/weebz/yii2-basics/src/migrations"
+        ]
     }
 }
