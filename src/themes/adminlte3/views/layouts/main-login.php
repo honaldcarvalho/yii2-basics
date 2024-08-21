@@ -13,7 +13,8 @@ FontAwesomeAsset::register($this);
 WeebzAsset::register($this);
 $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700');
 $this->registerCssFile('https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css');
-PluginAsset::register($this)->add(['fontawesome']);
+PluginAsset::register($this)->add(['fontawesome','toastr']);
+$params = Params::get();
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -21,7 +22,7 @@ PluginAsset::register($this)->add(['fontawesome']);
 <head>
     <meta charset="<?= Yii::$app->charset ?>">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>WCMS | Log in</title>
+    <title><?= $params->tile; ?> | Log in</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex">
