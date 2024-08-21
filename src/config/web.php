@@ -112,8 +112,9 @@ $config = [
         ],
 
         'errorHandler' => [
-            'errorAction' => 'site/error',
+            'errorAction' => 'common/site/error',
         ],
+
         'mailer' => [
             'class' => \yii\symfonymailer\Mailer::class,
             'viewPath' => '@app/mail',
