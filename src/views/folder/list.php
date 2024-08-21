@@ -63,7 +63,7 @@ $script = <<< JS
             type: "POST",
             url: "/folder/add",
             data: formData,
-        }).success(function(response) {        
+        }).done(function(response) {        
                 toastr.success("Folder Created!");
                 $.pjax.reload({container: "#list-files-grid", async: true});
                 clearForms();
@@ -86,7 +86,7 @@ $script = <<< JS
         $.ajax({
             type: "POST",
             url: e.data('link'),
-        }).success(function(response) {     
+        }).done(function(response) {     
             if(response == 0){
                 toastr.error("Error on delete!");
                 return false;
@@ -125,7 +125,7 @@ $script = <<< JS
         //             type: "POST",
         //             url: `\${e.data('link')}` ,
         //             data: formData,
-        //         }).success(function(response) {        
+        //         }).done(function(response) {        
         //             if(response == 1){
         //                 Fancybox.close();
         //                 toastr.success("Salvo!");
@@ -147,7 +147,7 @@ $script = <<< JS
         //             type: "POST",
         //             url: "/file/edit/" + event.data.id,
         //             data: formData,
-        //         }).success(function(response) {        
+        //         }).done(function(response) {        
         //             if(response == 1){
         //                 Fancybox.close();
         //                 toastr.success("Salvo!");

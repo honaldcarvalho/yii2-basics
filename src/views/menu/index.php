@@ -31,7 +31,7 @@ $script = <<< JS
                     method: "POST",
                     url: '/menu/order-menu',
                     data: {'items':items}
-                }).success(function(response) {        
+                }).done(function(response) {        
                     toastr.success("atualizado");
                 }).fail(function (response) {
                     toastr.error("Error ao atualizar a ordem. Recarregue a pagina");
