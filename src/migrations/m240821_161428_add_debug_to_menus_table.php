@@ -4,7 +4,7 @@ use app\models\Menu;
 use yii\db\Migration;
 
 
-class m240807_161428_add_debug_to_menus_table extends Migration
+class m240821_161428_add_debug_to_menus_table extends Migration
 {
     /**
      * {@inheritdoc}
