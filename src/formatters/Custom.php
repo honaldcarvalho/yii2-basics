@@ -1,5 +1,6 @@
 <?php
-namespace \weebz\yii2basics\formatters;
+
+namespace weebz\yii2basics\formatters;
 
 use Yii;
 use yii\web\View;
