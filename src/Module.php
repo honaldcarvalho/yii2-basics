@@ -40,9 +40,9 @@ class Module extends \yii\base\Module
     public static function generateCookieValidationKey()
     {
         $key = self::generateRandomString();
-        $content = preg_replace('/(("|\')cookieValidationKey("|\')\s*=>\s*)(""|\'\')/', "\\1'$key'", file_get_contents(__DIR__ . '\\config.web'), -1, $count);
+        $content = preg_replace('/(("|\')cookieValidationKey("|\')\s*=>\s*)(""|\'\')/', "\\1'$key'", file_get_contents(__DIR__ . '\\config\\web.php'), -1, $count);
         if ($count > 0) {
-            file_put_contents(__DIR__ . '\\config.web', $content);
+            file_put_contents(__DIR__ . '\\config\\web.php', $content);
         }   
     }
 
