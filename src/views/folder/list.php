@@ -1,5 +1,6 @@
 <?php
 
+use weebz\yii2basics\controllers\ControllerCommon;
 use yii\bootstrap5\ActiveForm;
 use yii\helpers\Html;
 use yii\grid\GridView;
@@ -167,8 +168,10 @@ $script = <<< JS
   
 JS;
 
-$this::registerJsFile(Yii::getAlias('@web/') . 'plugins/jquery-ui/jquery-ui.min.js', ['depends' => [\yii\web\JqueryAsset::class]]);
-$this::registerCssFile(Yii::getAlias('@web/') . 'plugins/jquery-ui/jquery-ui.min.css');
+$assetsDir = ControllerCommon::$assetsDir;
+
+$this::registerJsFile($assetsDir . '/plugins/jquery-ui/jquery-ui.min.js', ['depends' => [\yii\web\JqueryAsset::class]]);
+$this::registerCssFile($assetsDir . '/plugins/jquery-ui/jquery-ui.min.css');
 $this::registerJs($script, $this::POS_END);
 $this::registerCss($style);
 

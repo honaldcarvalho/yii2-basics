@@ -49,9 +49,11 @@ $script = <<< JS
   
 JS;
 
+$assetsDir = ControllerCommon::$assetsDir;
+
 $this::registerJs($script, $this::POS_END);
-$this::registerJsFile(Yii::getAlias('@web/') . 'plugins/jquery-ui/jquery-ui.min.js', ['depends' => [\yii\web\JqueryAsset::class]]);
-$this::registerCssFile(Yii::getAlias('@web/') . 'plugins/jquery-ui/jquery-ui.min.css');
+$this::registerJsFile($assetsDir . '/plugins/jquery-ui/jquery-ui.min.js', ['depends' => [\yii\web\JqueryAsset::class]]);
+$this::registerCssFile($assetsDir . '/plugins/jquery-ui/jquery-ui.min.css');
 
 // $MP = new MercadoPago('TEST-3935825493019834-122811-a58b6ebfb2ce4572be4dec4a221a1f2c-25239504');
 // // echo "ADD PAYMENT\n";
