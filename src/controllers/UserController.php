@@ -41,13 +41,13 @@ class UserController extends ControllerCommon
     public function actionChangeTheme()
     {           
         $theme = Yii::$app->request->post('theme');
-        $model = Controller::User();
+        $model = ControllerCommon::User();
         if($theme !== null && !empty($theme)){
             $model->theme = $theme;
         }
         return $model->save();
     }
-    
+
     /**
      * Displays a single User model.
      * @param int $id
