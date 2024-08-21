@@ -29,13 +29,5 @@
         "psr-4": {
             "weebz\\yii2basics\\": "src"
         }
-    },
-    "scripts": {
-        "post-update-cmd": "@php yii migrate --migrationPath=@vendor/weebz/yii2-basics/src/migrations",
-        "post-install-cmd": [
-            "php -r \"file_exists('.env') || copy('config/.env.example', '.env');\"",
-            "@php yii migrate --migrationPath=@vendor/weebz/yii2-basics/src/migrations"
-        ],
-        "migrate":"@php yii migrate --migrationPath=@vendor/weebz/yii2-basics/src/migrations"
     }
 }
