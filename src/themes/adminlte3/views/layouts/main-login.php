@@ -37,20 +37,18 @@ $params = Params::get();
     <link href="<?= Yii::getAlias('@web') ?>/css/site.css" rel="stylesheet">
 </head>
 <body class="hold-transition login-page">
-<?= Alert::widget() ?>
 <?php  $this->beginBody() ?>
+<?= Alert::widget() ?>
 <div class="login-box">
     <div class="login-logo">
-        <a href="<?=Yii::$app->homeUrl?>">
-        <img src="<?= ControllerCommon::$assetsDir; ?>/img/logo_weebz.png" alt="" class="w-50 brand-image img-circle elevation-3">
-        </a>
+        <?=$logo_image;?><br>
+        <b><?=$params->title;?></b> | LOGIN</a>
     </div>
     <!-- /.login-logo -->
 
     <?= $content ?>
 </div>
 <!-- /.login-box -->
-
 <?php $this->endBody() ?>
 </body>
 </html>
