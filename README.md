@@ -41,5 +41,5 @@ Up Docker
 Run migration
 
 ```
-    php yii migrate --migrationPath=@vendor/weebz/yii2-basics/src/migrations
+    php yii migrate --migrationPath=@vendor/weebz/yii2-basics/src/migrations --interactive=0
 ```
