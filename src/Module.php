@@ -52,7 +52,7 @@ class Module extends \yii\base\Module
         }
     }
 
-    public static function postInstall()
+    public static function postPackageInstall()
     {
         file_exists('/app/.env') || copy('/app/vendor/weebz/yii2-basics/src/server/.env.example', './.env');
     }
