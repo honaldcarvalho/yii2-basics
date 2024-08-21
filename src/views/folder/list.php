@@ -170,8 +170,6 @@ JS;
 
 $assetsDir = ControllerCommon::$assetsDir;
 
-$this::registerJsFile($assetsDir . '/plugins/jquery-ui/jquery-ui.min.js', ['depends' => [\yii\web\JqueryAsset::class]]);
-$this::registerCssFile($assetsDir . '/plugins/jquery-ui/jquery-ui.min.css');
 $this::registerJs($script, $this::POS_END);
 $this::registerCss($style);
 

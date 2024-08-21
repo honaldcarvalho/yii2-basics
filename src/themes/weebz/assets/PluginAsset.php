@@ -12,6 +12,25 @@ class PluginAsset extends AssetBundle
     ];
 
     public static $pluginMap = [
+        'tinymce' => [
+            'js' => 'tinymce/tinymce.min.js',
+        ],
+        'jquery-ui' => [
+            'css' => 'jquery-ui/jquery-ui.css',
+            'js' => 'jquery-ui/jquery-ui.js',
+        ],
+        'cropperjs' => [
+            'css' => 'cropperjs/css/cropper.css',
+            'js' => 'cropperjs/js/cropper.js',
+        ],
+        'select2' => [
+            'css' => 'select2/css/select2.min.css',
+            'js' => 'select2/js/select2.min.js',
+        ],
+        'fancybox' => [
+            'css' => 'fancybox5/fancybox.css',
+            'js' => 'fancybox5/fancybox.umd.js',
+        ],
         'fancybox' => [
             'css' => 'fancybox5/fancybox.css',
             'js' => 'fancybox5/fancybox.umd.js',

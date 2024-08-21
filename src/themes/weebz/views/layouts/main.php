@@ -3,11 +3,13 @@
 /* @var $content string */
 
 use weebz\yii2basics\themes\weebz\assets\FontAwesomeAsset;
+use weebz\yii2basics\themes\weebz\assets\PluginAsset;
 use weebz\yii2basics\themes\weebz\assets\WeebzAsset;
 use yii\helpers\Html;
 
 FontAwesomeAsset::register($this);
 WeebzAsset::register($this);
+PluginAsset::register($this)->add(['fontawesome', 'icheck-bootstrap','fancybox','jquery-ui']);
 $this->metaTags = '';
 $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback');
 
