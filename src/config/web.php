@@ -54,7 +54,7 @@ $config = [
             'decimalSeparator' => '.',
             'thousandSeparator' => '',
             'currencyCode' => 'R$',
-            'class' => 'app\formatters\Custom',
+            'class' => '\weebz\yii2basics\formatters\Custom',
         ],
         
         'i18n' => [
