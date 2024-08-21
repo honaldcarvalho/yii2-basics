@@ -72,7 +72,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         'summaryOptions' => ['class' => 'summary mb-2'],
                         'pager' => [
-                        'class' => 'yii\bootstrap4\LinkPager',
+                        'class' => 'yii\bootstrap5\LinkPager',
                         ]
                         ]); ?>
                     <?php else: ?>
@@ -84,7 +84,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         return Html::a(Html::encode($model-><?= $nameAttribute ?>), ['view', <?= $urlParams ?>]);
                         },
                         'pager' => [
-                        'class' => 'yii\bootstrap4\LinkPager',
+                        'class' => 'yii\bootstrap5\LinkPager',
                         'options' => ['class' => 'pagination mt-3'],
                         ]
                         ]) ?>

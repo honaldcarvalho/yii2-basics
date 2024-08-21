@@ -63,7 +63,7 @@ class UploadFiles extends Widget
         );
 
         \Yii::$app->view->registerCssFile("@web/plugins/jquery-cropper/cropper.min.css", [
-          'depends' => [\yii\bootstrap4\BootstrapAsset::class],
+          'depends' => [\yii\bootstrap5\BootstrapAsset::class],
         ], 'cropper');
 
         $script = <<< JS

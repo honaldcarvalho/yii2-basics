@@ -234,7 +234,7 @@ $this::registerJs($script, $this::POS_END);
                     ],
                     'summaryOptions' => ['class' => 'summary mb-2'],
                     'pager' => [
-                        'class' => 'yii\bootstrap4\LinkPager',
+                        'class' => 'yii\bootstrap5\LinkPager',
                     ]
                 ]); ?>
             <?php Pjax::end() ?>
