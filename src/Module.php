@@ -50,6 +50,7 @@ class Module extends \yii\base\Module
     {
         self::generateCookieValidationKey();
         file_exists(__DIR__ . '\\..\\..\\..\\..\\.env') || copy(__DIR__ . '\\server\\.env.example', __DIR__ . '\\..\\..\\..\\..\\.env');
+        self::execCommand("php yii migrate --migrationPath=" .__DIR__ . '\\migrations --interactive=0');
     }
 
     public static function execCommand($command){
