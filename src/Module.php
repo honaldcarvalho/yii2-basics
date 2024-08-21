@@ -62,7 +62,7 @@ class Module extends \yii\base\Module
     
     public static function postPackageUpdate()
     {
-        self::execCommand("php yii migrate --migrationPath=@vendor/weebz/yii2-basics/src/migrations --interactive=0");
+        self::execCommand("php yii migrate --migrationPath=" .__DIR__ . '\\migrations --interactive=0');
     }
 
 }
