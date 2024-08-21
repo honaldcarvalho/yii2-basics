@@ -32,6 +32,13 @@ class PluginAsset extends AssetBundle
             'js' => 'chart.js/Chart.min.js',
             'js' => 'chart.js/Chart.bundle.min.js',
         ],
+        'toastr' => [
+            'toastr/toastr.min.js',
+            'toastr/toastr.min.css'
+        ],
+        'multiselect' => [
+            'css'=>'multiselect/multiselect.min.js'
+        ],
         'select2' => [
             'css' => 'select2/css/select2.min.css',
             'js' => 'select2/js/select2.min.js',

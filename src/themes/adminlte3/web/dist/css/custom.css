@@ -474,6 +474,7 @@ a.text-weebz:hover {
     max-height: 300px
 }
 
+
 .theme-switch {
     display: inline-block;
     height: 24px;
@@ -486,7 +487,7 @@ a.text-weebz:hover {
 }
 
 .slider {
-    background-color: #343a40;
+    background-color: #1c2a3a;
     bottom: 0;
     cursor: pointer;
     left: 0;
@@ -508,14 +509,14 @@ a.text-weebz:hover {
 }
 
 input:checked+.slider {
-    background-color: #64af44;
+    background-color: #6EB43F;
 }
 
 input:checked+.slider::before {
     transform: translateX(26px);
     font-family: "Font Awesome 5 Free";
     content: "\f186";
-    color: #202428;
+    color: #1c2a3a;
 }
 
 .slider.round {
