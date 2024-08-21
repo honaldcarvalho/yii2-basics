@@ -1,5 +1,5 @@
 <?php
-namespace weebz\yii2basics\themes\weebz\widgets;
+namespace weebz\yii2basics\themes\adminlte3\widgets;
 
 use yii\base\ErrorException;
 use yii\bootstrap5\Widget;
@@ -7,7 +7,7 @@ use yii\helpers\Html;
 
 /**
  * Class Callout
- * @package weebz\yii2basics\themes\weebz\widgets
+ * @package weebz\yii2basics\themes\adminlte3\widgets
  * @example
  * <?= Callout::widget(['type'=>'info', 'head'=>'head string', 'body'=>'body string']) ?>
  * Also possible

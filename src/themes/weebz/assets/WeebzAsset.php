@@ -1,12 +1,12 @@
 <?php
-namespace weebz\yii2basics\themes\weebz\assets;
+namespace weebz\yii2basics\themes\adminlte3\assets;
 
 use yii\web\AssetBundle;
 
 class WeebzAsset extends AssetBundle
 {
 
-    public $sourcePath = '@vendor/weebz/yii2-basics/src/themes/weebz/web/dist';
+    public $sourcePath = '@vendor/weebz/yii2-basics/src/themes/adminlte3/web/dist';
 
     public $css = [
         'css/dark.css',
@@ -25,8 +25,8 @@ class WeebzAsset extends AssetBundle
     ];
 
     public $depends = [
-        'weebz\yii2basics\themes\weebz\assets\BaseAsset',
-        'weebz\yii2basics\themes\weebz\assets\PluginAsset',
+        'weebz\yii2basics\themes\adminlte3\assets\BaseAsset',
+        'weebz\yii2basics\themes\adminlte3\assets\PluginAsset',
         '\yii\web\JqueryAsset'
     ];
 }

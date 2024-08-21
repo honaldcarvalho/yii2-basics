@@ -1,6 +1,6 @@
 <?php
 
-namespace weebz\yii2basics\themes\weebz\widgets;
+namespace weebz\yii2basics\themes\adminlte3\widgets;
 
 use yii\helpers\Html;
 

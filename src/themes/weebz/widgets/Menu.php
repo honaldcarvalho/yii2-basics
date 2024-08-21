@@ -1,5 +1,5 @@
 <?php
-namespace weebz\yii2basics\themes\weebz\widgets;
+namespace weebz\yii2basics\themes\adminlte3\widgets;
 
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -7,7 +7,7 @@ use yii\helpers\Url;
 
 /**
  * Class Menu
- * @package weebz\yii2basics\themes\weebz\widgets
+ * @package weebz\yii2basics\themes\adminlte3\widgets
  *
  * For example,
  *

@@ -1,12 +1,12 @@
 <?php
 
-namespace weebz\yii2basics\themes\weebz\widgets;
+namespace weebz\yii2basics\themes\adminlte3\widgets;
 
 use yii\helpers\Html;
 
 /**
  * Class Ribbon
- * @package weebz\yii2basics\themes\weebz\widgets
+ * @package weebz\yii2basics\themes\adminlte3\widgets
  *
  * ```php
  * echo Ribbon::widget([

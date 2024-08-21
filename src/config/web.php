@@ -11,7 +11,7 @@ $config = [
     'language'=>'en-US',
     'sourceLanguage' => 'en-US',
     'basePath' => dirname(__DIR__),
-    'layoutPath' => '@vendor/weebz/yii2-basics/src/themes/weebz/views/layouts',
+    'layoutPath' => '@vendor/weebz/yii2-basics/src/themes/adminlte3/views/layouts',
     'controllerNamespace' => 'app\controllers',
     'bootstrap' => ['log'],
     'modules' => [],
@@ -22,7 +22,7 @@ $config = [
     'modules' => [
         'common' => [ 
             'class' => '\weebz\yii2basics\Module',
-            'layoutPath' => '@vendor/weebz/yii2-basics/src/themes/weebz/views/layouts', 
+            'layoutPath' => '@vendor/weebz/yii2-basics/src/themes/adminlte3/views/layouts', 
         ],
         'gridview' =>  [
              'class' => '\kartik\grid\Module',
@@ -37,10 +37,10 @@ $config = [
 
         'view' => [
             'theme' => [
-                'basePath' => '@vendor/weebz/yii2-basics/src/themes/weebz',
-                'baseUrl' => '@vendor/weebz/yii2-basics/src/themes/weebz/web',
+                'basePath' => '@vendor/weebz/yii2-basics/src/themes/adminlte3',
+                'baseUrl' => '@vendor/weebz/yii2-basics/src/themes/adminlte3/web',
                 'pathMap' => [
-                    '@app/views' => '@vendor/weebz/yii2-basics/src/themes/weebz/views',
+                    '@app/views' => '@vendor/weebz/yii2-basics/src/themes/adminlte3/views',
                 ],  
             ],
         ],

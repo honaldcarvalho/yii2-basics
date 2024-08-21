@@ -4,9 +4,9 @@
 /* @var $content string */
 
 use weebz\yii2basics\controllers\ControllerCommon;
-use weebz\yii2basics\themes\weebz\assets\FontAwesomeAsset;
-use weebz\yii2basics\themes\weebz\assets\PluginAsset;
-use weebz\yii2basics\themes\weebz\assets\WeebzAsset;
+use weebz\yii2basics\themes\adminlte3\assets\FontAwesomeAsset;
+use weebz\yii2basics\themes\adminlte3\assets\PluginAsset;
+use weebz\yii2basics\themes\adminlte3\assets\WeebzAsset;
 use weebz\yii2basics\widgets\Alert;
 
 FontAwesomeAsset::register($this);

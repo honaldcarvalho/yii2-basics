@@ -1,14 +1,14 @@
 <?php
-namespace weebz\yii2basics\themes\weebz\assets;
+namespace weebz\yii2basics\themes\adminlte3\assets;
 
 use yii\web\AssetBundle;
 
 class PluginAsset extends AssetBundle
 {
-    public $sourcePath = '@vendor/weebz/yii2-basics/src/themes/weebz/web/dist/plugins';
+    public $sourcePath = '@vendor/weebz/yii2-basics/src/themes/adminlte3/web/dist/plugins';
 
     public $depends = [
-        'weebz\yii2basics\themes\weebz\assets\BaseAsset'
+        'weebz\yii2basics\themes\adminlte3\assets\BaseAsset'
     ];
 
     public static $pluginMap = [

@@ -1,6 +1,6 @@
 <?php
 
-namespace weebz\yii2basics\themes\weebz\assets;
+namespace weebz\yii2basics\themes\adminlte3\assets;
 
 use yii\web\AssetBundle;
 

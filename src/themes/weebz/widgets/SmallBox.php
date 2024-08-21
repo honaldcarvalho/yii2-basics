@@ -1,12 +1,12 @@
 <?php
 
-namespace weebz\yii2basics\themes\weebz\widgets;
+namespace weebz\yii2basics\themes\adminlte3\widgets;
 
 use yii\helpers\Html;
 
 /**
  * Class SmallBox
- * @package weebz\yii2basics\themes\weebz\widgets
+ * @package weebz\yii2basics\themes\adminlte3\widgets
  */
 class SmallBox extends Widget
 {
