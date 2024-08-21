@@ -49,7 +49,14 @@ class Module extends \yii\base\Module
     public static function postPackageInstall()
     {
         self::generateCookieValidationKey();
-        file_exists(__DIR__ . '\\..\\..\\..\\..\\.env') || copy(__DIR__ . '\\server\\.env.example', __DIR__ . '\\..\\..\\..\\..\\.env');
+        if(file_exists(__DIR__ . '\\..\\..\\..\\..\\.env')){
+            if(copy(__DIR__ . '\\server\\.env.example', __DIR__ . '\\..\\..\\..\\..\\.env')){
+                echo "File '.env' copied.";    
+            }
+        }else{
+            echo "File '.env' has existe!";
+        }
+        
     }
 
     public static function execCommand($command){
