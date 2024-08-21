@@ -167,8 +167,8 @@ $script = <<< JS
   
 JS;
 
-$this::registerJsFile(Yii::getAlias('@web/') . 'plugins/jquery-ui/jquery-ui.js', ['depends' => [\yii\web\JqueryAsset::class]]);
-$this::registerCssFile(Yii::getAlias('@web/') . 'plugins/jquery-ui/jquery-ui.css');
+$this::registerJsFile(Yii::getAlias('@web/') . 'plugins/jquery-ui/jquery-ui.min.js', ['depends' => [\yii\web\JqueryAsset::class]]);
+$this::registerCssFile(Yii::getAlias('@web/') . 'plugins/jquery-ui/jquery-ui.min.css');
 $this::registerJs($script, $this::POS_END);
 $this::registerCss($style);
 

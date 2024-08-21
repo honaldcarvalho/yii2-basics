@@ -12,6 +12,10 @@ class PluginAsset extends AssetBundle
     ];
 
     public static $pluginMap = [
+        'fancybox' => [
+            'css' => 'fancybox5/fancybox.css',
+            'js' => 'fancybox5/fancybox.umd.js',
+        ],
         'fontawesome' => [
             'css' => 'fontawesome-free/css/all.min.css'
         ],
