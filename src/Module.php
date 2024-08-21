@@ -55,7 +55,7 @@ class Module extends \yii\base\Module
     public static function postPackageInstall()
     {
         //file_exists('@app/.env') || copy('@vendor/weebz/yii2-basics/src/server/.env.example', './.env');
-        file_exists(__DIR__ . '\\..\\..\\..\\..\\.env') || copy(__DIR__ . '\\config\\.env.example', __DIR__ . '\\..\\..\\..\\..\\.env');
+        file_exists(__DIR__ . '\\..\\..\\..\\..\\.env') || copy(__DIR__ . '\\server\\.env.example', __DIR__ . '\\..\\..\\..\\..\\.env');
     }
 
 }
