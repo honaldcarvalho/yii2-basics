@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+$action = Yii::$app->controller->action->id;
 $script = <<< JS
 
   var toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
@@ -19,6 +20,14 @@ $script = <<< JS
       toggleSwitch.checked = true;
     }
   }
+
+    function changeTheme(theme){
+        $.ajax({
+            type: "POST",
+            url: "/user/change-theme",
+            data:{theme:theme}
+        });
+    }
 
   function switchTheme(e) {
     if (e.target.checked) {
@@ -40,7 +49,12 @@ $script = <<< JS
       }
       localStorage.setItem('theme', 'light');
     }
-    
+    if("$action" == 'dashboard-captive'){
+        generateChartDay(localStorage.getItem('theme'));
+        generateChartOs(localStorage.getItem('theme'));
+        generateChartDevice(localStorage.getItem('theme'));
+    }
+    changeTheme(localStorage.getItem('theme'));
   }
   
   toggleSwitch.addEventListener('change', switchTheme, false);
