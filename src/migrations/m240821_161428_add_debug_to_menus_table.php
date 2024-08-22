@@ -1,6 +1,6 @@
 <?php
 
-use app\models\Menu;
+use weebz\yii2basics\models\Menu;
 use yii\db\Migration;
 
 
