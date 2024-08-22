@@ -12,7 +12,26 @@ use FFMpeg\FFProbe;
 use FFMpeg\Format\Video\X264;
 use weebz\yii2basics\models\File;
 
-class UploadController extends ControllerRest {
+class StorageController extends ControllerRest {
+
+    public function actionGetFile(){
+
+        if ($this->request->isPost) {
+            $post = $this->request->post();
+            $file_name = $post['file_name'] ?? false;
+            $description = $post['description'] ?? false;
+            $id = $post['id'] ?? false;
+            
+            if($file_name) {
+                $file = File::find()->where(['name'=>$file_name])->all();
+            } else if($description) {
+                $file = File::find()->where(['like','description',$description])->all();
+            } else if($id) {
+                $file = File::find()->where(['id'=> $id])->one();
+            }
+        }
+        throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
+    }
 
     public function actionSend()
     {
