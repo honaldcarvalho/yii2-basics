@@ -91,6 +91,12 @@ class UploadController extends ControllerRest {
 
             } else if ($type == 'video') {
 
+                if (!empty($file_name)) {
+                    $name = "{$file_name}.mp4";
+                } else {
+                    $name = 'file_' . date('dmYhims') . \Yii::$app->security->generateRandomString(6) . ".mp4";
+                }
+
                 $path = "{$files_folder}/videos";
                 $filePath = "{$path}/{$name}";
                 $fileTemp = "{$path}/{$temp_file->name}";
@@ -101,16 +107,13 @@ class UploadController extends ControllerRest {
                     FileHelper::createDirectory($path);
                 }
 
-                if (!file_exists($pathThumb)) {
-                    FileHelper::createDirectory($pathThumb);
-                }
-
                 if ($ext != 'mp4') {
                     $errors[] = $temp_file->saveAs($fileTemp, ['quality' => 90]);
                     $ffmpeg = FFMpeg::create();
                     $video = $ffmpeg->open($fileTemp);
                     $video->save(new X264(), $filePath);
                     unlink($fileTemp);
+                    $ext = 'mp4';
                 } else {
                     $errors[] = $temp_file->saveAs($filePath, ['quality' => 90]);
                 }
@@ -121,6 +124,10 @@ class UploadController extends ControllerRest {
                 $fileThumbUrl = "{$web}/videos/{$name}";
                 $filePathThumb = "{$pathThumb}/{$video_thumb_name}";
 
+                if (!file_exists($pathThumb)) {
+                    FileHelper::createDirectory($pathThumb);
+                }
+                
                 $ffmpeg = FFMpeg::create();
                 $video = $ffmpeg->open($filePath);
                 $frame = $video->frame(TimeCode::fromSeconds($sec));
