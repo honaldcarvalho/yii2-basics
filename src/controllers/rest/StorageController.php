@@ -36,7 +36,7 @@ class StorageController extends ControllerRest {
             }
             throw new \yii\web\HttpException(400, Yii::t('app', 'Bad Request.'));
         } catch (\Throwable $th) {
-            throw new \yii\web\HttpException(500,Yii::t('app', 'Server Error.'));
+            throw new \yii\web\HttpException($th->statusCode,Yii::t('app', $th->getMessage()));
         }
     }
 
@@ -281,7 +281,7 @@ class StorageController extends ControllerRest {
             }
             throw new \yii\web\HttpException(400, Yii::t('app', 'Bad Request.'));
         } catch (\Throwable $th) {
-            throw new \yii\web\HttpException(500,Yii::t('app', 'Server Error.'));
+            throw new \yii\web\HttpException($th->statusCode,Yii::t('app', $th->getMessage()));
         }
     }
 
