@@ -34,9 +34,9 @@ class StorageController extends ControllerRest {
                     return $file;
                 }
             }
-            throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
+            throw new \yii\web\HttpException(400, Yii::t('app', 'Bad Request.'));
         } catch (\Throwable $th) {
-            throw new \yii\web\ServerErrorHttpException(Yii::t('app', 'Server Error.'));
+            throw new \yii\web\HttpException(500,Yii::t('app', 'Server Error.'));
         }
     }
 
@@ -279,10 +279,9 @@ class StorageController extends ControllerRest {
                 return $file_uploaded;
 
             }
-            
-            throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
+            throw new \yii\web\HttpException(400, Yii::t('app', 'Bad Request.'));
         } catch (\Throwable $th) {
-            throw new \yii\web\ServerErrorHttpException(Yii::t('app', 'Server Error.'));
+            throw new \yii\web\HttpException(500,Yii::t('app', 'Server Error.'));
         }
     }
 
