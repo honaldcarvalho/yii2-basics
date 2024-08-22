@@ -98,4 +98,14 @@ class AuthController extends ControllerRest {
 
     }
 
+    static function getUserByToken() {
+        $user = null;
+        $token = Yii::$app->request->headers["authorization"];
+        [$type,$value] = explode(' ',$token);
+        if($type == 'Bearer'){
+            $user = User::find()->where(['status'=>User::STATUS_ACTIVE])->filterwhere(['or',['access_token'=>$value],['auth_key'=>$value]])->one();
+        }
+        return $user;
+    }
+
 }

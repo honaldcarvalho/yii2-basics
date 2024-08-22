@@ -44,15 +44,5 @@ class ControllerRest extends \yii\rest\Controller
 
         return $behaviors;
     }
-
-    static function getUserByToken() {
-        $user = null;
-        $token = Yii::$app->request->headers["authorization"];
-        [$type,$value] = explode(' ',$token);
-        if($type == 'Bearer'){
-            $user = User::findOne(['auth_key'=>$value]);
-        }
-        return $user;
-    }
     
 }
