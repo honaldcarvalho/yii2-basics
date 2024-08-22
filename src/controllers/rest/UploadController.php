@@ -154,6 +154,11 @@ class UploadController extends ControllerRest {
                     ->save($filePathThumb, ['quality' => 100]);
                 }
 
+                $ffprobe = FFProbe::create();
+                $duration = $ffprobe
+                    ->format($filePath) // extracts file informations
+                    ->get('duration');
+                    
             } else {
 
             }
