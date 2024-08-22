@@ -10,5 +10,8 @@ return [
     'bsVersion' => '5.x',
     'bsDependencyEnabled' => false,
     'user.passwordResetTokenExpire' => 3600,
-    'user.passwordMinLength'=>6
+    'user.passwordMinLength'=>6,
+    'upload.folder' => 'files',
+    'upload.quality' => 90,
+    'upload.thumb.quality' => 90
 ];

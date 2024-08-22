@@ -33,6 +33,16 @@ class AuthController extends ControllerRest {
                 $model->password = $post['password'];
 
                 if($model->login()){
+
+                    $extends = '+30 days';
+                    $expires = strtotime($extends, strtotime($user->token_validate));
+                    if( $expires < time() ||  $user->access_token == null){
+                        $user->scenario = $user::SCENARIO_AUTH;
+                        $user->access_token = Yii::$app->security->generateRandomString();
+                        $user->token_validate = date('Y-m-d H:i:s',strtotime('now'));
+                        $user->save();
+                    }
+
                     return [
                         'fullname'=> $user->fullname,
                         'username'=> $user->username,

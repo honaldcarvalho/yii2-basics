@@ -3,7 +3,6 @@
 namespace weebz\yii2basics\controllers\rest;
 
 use Yii;
-use weebz\yii2basics\models\File;
 use yii\web\UploadedFile;
 use yii\helpers\FileHelper;
 use yii\imagine\Image;
@@ -11,6 +10,7 @@ use FFMpeg\Coordinate\TimeCode;
 use FFMpeg\FFMpeg;
 use FFMpeg\FFProbe;
 use FFMpeg\Format\Video\X264;
+use weebz\yii2basics\models\File;
 
 class UploadController extends ControllerRest {
 
@@ -19,24 +19,39 @@ class UploadController extends ControllerRest {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
         $webroot = Yii::getAlias('@webroot');
-        $web = Yii::getAlias('@web/files');
-        $files_folder = "{$webroot}/files";
+        $upload_folder = Yii::$app->params['upload.folder'];
+        $web = Yii::getAlias('@web');
+
+        $files_folder = "/{$upload_folder}";
+        $upload_root = "{$webroot}{$files_folder}";
+        $webFiles = "{$web}{$files_folder}";
+
+        $group_id = null;
+        $folder_id = null;
         $duration = 0;
+        $save  = 0;
+        $name = '';
+        $description = '';
+        $filePath = '';
+        $filePathThumb = '';
+        $fileUrl = '';
+        $fileThumbUrl = '';
+        $ext = '';
+        $type = '';
 
         $model = new File();
 
-        if ($this->request->isPost) {
+        if ($this->request->isPost && ($temp_file = UploadedFile::getInstanceByName('file')) !== null) {
 
             $post = $this->request->post();
 
             $file_name = $post['file_name'] ?? false;
             $description = $post['description'] ?? false;
             $folder_id = $post['folder_id'] ?? null;
+            $save = $post['save'] ?? 0;
             $convert_video = $post['convert_video'] ?? false;
             $convert_video_format = $post['convert_video_format'] ?? 'mp4';
             
-            $temp_file = UploadedFile::getInstanceByName('file');
-
             //dd([$temp_file,$post]);
 
             $ext = $temp_file->extension;
@@ -54,17 +69,23 @@ class UploadController extends ControllerRest {
 
                 $path = "{$files_folder}/images";
                 $pathThumb = "{$files_folder}/images/thumbs";
+                $pathRoot = "{$upload_root}/images";
+                $pathThumbRoot = "{$upload_root}/images/thumbs";
+
                 $filePath = "{$path}/{$name}";
                 $filePathThumb = "{$pathThumb}/{$name}";
-                $fileUrl = "{$web}/images/{$name}";
-                $fileThumbUrl = "{$web}/images/{$name}";
+                $filePathRoot = "{$pathRoot}/{$name}";
+                $filePathThumbRoot = "{$pathThumbRoot}/{$name}";
 
-                if (!file_exists($path)) {
-                    FileHelper::createDirectory($path);
+                $fileUrl = "{$webFiles}/images/{$name}";
+                $fileThumbUrl = "{$webFiles}/images/{$name}";
+
+                if (!file_exists($pathRoot)) {
+                    FileHelper::createDirectory($pathRoot);
                 }
 
-                if (!file_exists($pathThumb)) {
-                    FileHelper::createDirectory($pathThumb);
+                if (!file_exists($pathThumbRoot)) {
+                    FileHelper::createDirectory($pathThumbRoot);
                 }
 
                 $image_size = getimagesize($temp_file->tempName);
@@ -79,14 +100,14 @@ class UploadController extends ControllerRest {
                     $mov = ($major - $min) / 2;
                     $point = [0, $mov];
                 }
-
-                $errors[] = $temp_file->saveAs($filePath, ['quality' => 90]);
-                $errors[] = Image::crop($filePath, $min, $min, $point)
-                ->save($filePathThumb, ['quality' => 100]);
-
+                
+                $errors[] = $temp_file->saveAs($filePathRoot, ['quality' => 90]);
+                $errors[] = Image::crop($filePathRoot, $min, $min, $point)
+                ->save($filePathThumbRoot, ['quality' => 100]);
+                
                 if($min > 300){
-                    $errors[] = Image::thumbnail($filePathThumb, 300, 300)
-                    ->save($filePathThumb, ['quality' => 100]);
+                    $errors[] = Image::thumbnail($filePathThumbRoot, 300, 300)
+                    ->save($filePathThumbRoot, ['quality' => 100]);
                 }
 
             } else if ($type == 'video') {
@@ -97,43 +118,48 @@ class UploadController extends ControllerRest {
                     $name = 'file_' . date('dmYhims') . \Yii::$app->security->generateRandomString(6) . ".mp4";
                 }
 
+                $fileTemp = "{$upload_root}/{$temp_file->name}";
+
                 $path = "{$files_folder}/videos";
+                $pathRoot = "{$upload_root}/videos";
                 $filePath = "{$path}/{$name}";
-                $fileTemp = "{$path}/{$temp_file->name}";
+                $filePathRoot = "{$pathRoot}/{$name}";
 
                 $fileUrl = "{$web}/videos/{$name}";
 
-                if (!file_exists($path)) {
-                    FileHelper::createDirectory($path);
+                if (!file_exists($pathRoot)) {
+                    FileHelper::createDirectory($pathRoot);
                 }
 
                 if ($ext != 'mp4') {
                     $errors[] = $temp_file->saveAs($fileTemp, ['quality' => 90]);
                     $ffmpeg = FFMpeg::create();
                     $video = $ffmpeg->open($fileTemp);
-                    $video->save(new X264(), $filePath);
+                    $video->save(new X264(), $filePathRoot);
                     unlink($fileTemp);
                     $ext = 'mp4';
                 } else {
-                    $errors[] = $temp_file->saveAs($filePath, ['quality' => 90]);
+                    $errors[] = $temp_file->saveAs($filePathRoot, ['quality' => 90]);
                 }
 
                 $sec = 2;
                 $video_thumb_name = str_replace('.', '_', $name) . '.jpg';
                 $pathThumb = "{$files_folder}/videos/thumbs";
-                $fileThumbUrl = "{$web}/videos/{$name}";
+                $pathThumbRoot = "{$upload_root}/videos/thumbs";
                 $filePathThumb = "{$pathThumb}/{$video_thumb_name}";
+                $filePathThumbRoot = "{$pathThumbRoot}/{$video_thumb_name}";
+                $fileThumbUrl = "{$web}/videos/{$name}";
 
-                if (!file_exists($pathThumb)) {
-                    FileHelper::createDirectory($pathThumb);
+                if (!file_exists($pathThumbRoot)) {
+                    FileHelper::createDirectory($pathThumbRoot);
                 }
                 
                 $ffmpeg = FFMpeg::create();
-                $video = $ffmpeg->open($filePath);
+                $video = $ffmpeg->open($filePathRoot);
                 $frame = $video->frame(TimeCode::fromSeconds($sec));
-                $frame->save($filePathThumb);
+                $frame->save($filePathThumbRoot);
 
-                $image_size = getimagesize($filePathThumb);
+                $image_size = getimagesize($filePathThumbRoot);
                 $major = $image_size[0]; //width
                 $min = $image_size[1]; //height
                 $mov = ($major - $min) / 2;
@@ -146,38 +172,62 @@ class UploadController extends ControllerRest {
                     $point = [0, $mov];
                 }
 
-                $errors[] = Image::crop($filePathThumb, $min, $min, $point)
-                ->save($filePathThumb, ['quality' => 100]);
+                $errors[] = Image::crop($filePathThumbRoot, $min, $min, $point)
+                ->save($filePathThumbRoot, ['quality' => 100]);
 
                 if($min > 300){
-                    $errors[] = Image::thumbnail($filePathThumb, 300, 300)
-                    ->save($filePathThumb, ['quality' => 100]);
+                    $errors[] = Image::thumbnail($filePathThumbRoot, 300, 300)
+                    ->save($filePathThumbRoot, ['quality' => 100]);
                 }
 
                 $ffprobe = FFProbe::create();
                 $duration = $ffprobe
-                    ->format($filePath) // extracts file informations
+                    ->format($filePathRoot) // extracts file informations
                     ->get('duration');
                     
             } else {
 
+                $path = "{$files_folder}/docs";
+                $pathRoot = "{$upload_root}/docs";
+                $filePath = "{$path}/{$name}";
+                $filePathRoot = "{$pathRoot}/{$name}";
+                $fileUrl = "{$webFiles}/images/{$name}";
+
+                if (!file_exists($pathRoot)) {
+                    FileHelper::createDirectory($pathRoot);
+                }
+                
+                $errors[] = $temp_file->saveAs($filePathRoot, ['quality' => 90]);
             }
 
-            return [
+            $file_uploaded = [
+                'group_id' => $group_id,
+                'folder_id' => $folder_id,
                 'name' => $name,
                 'description' => $description,
                 'path' => $filePath,
-                'pathThumb' => $filePathThumb,
                 'url' => $fileUrl,
+                'pathThumb' => $filePathThumb,
                 'urlThumb' => $fileThumbUrl,
                 'extension' => $ext,
                 'type' => $type,
-                'duration' => intval($duration),
                 'size' => $temp_file->size,
+                'duration' => intval($duration),
                 'created_at' => \Yii::$app->formatter->asDate(date('Y-m-d h:i:s'))
             ];
 
+            if($save){
+                $user = ControllerRest::getUserByToken();
+                $file_uploaded['class'] = File::class;
+                //$file_uploaded['group_id'] = AuthController::getUserByToken();
+                $model = Yii::createObject($file_uploaded);
+                dd($model,$user);
+            }
+
+            return $file_uploaded;
+
         }
+        throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
     }
 }
 
