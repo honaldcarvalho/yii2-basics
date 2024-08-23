@@ -27,7 +27,7 @@ class StorageController extends ControllerRest {
                     $file = File::find()->where(['name'=>$file_name])->all();
                     return $file;
                 } else if($description) {
-                    $file = File::find()->where(['like','description',$description])->all();
+                    $file = File::find()->where(['description'=>$description])->all();
                     return $file;
                 } else if($id) {
                     $file = File::find()->where(['id'=> $id])->one();
@@ -36,7 +36,37 @@ class StorageController extends ControllerRest {
             }
             throw new \yii\web\HttpException(400, Yii::t('app', 'Bad Request.'));
         } catch (\Throwable $th) {
-            throw new \yii\web\HttpException($th->statusCode,Yii::t('app', $th->getMessage()));
+            throw new \yii\web\ServerErrorHttpException(Yii::t('app', $th->getMessage()));
+        }
+    }
+
+    public function actionListFiles(){
+        try {
+            if ($this->request->isPost) {
+
+                $post = $this->request->post();
+                $group_id = $post['group_id'] ?? null;
+                $folder_id = $post['folder_id'] ?? null;
+                $type = $post['type'] ?? null;
+                $query = $post['query'] ?? false;
+
+                $queryObj = File::find()->where(['or',['like','name',$query],['like','description',$query]]);
+                if ($group_id !== null) {
+                    $queryObj->andWhere(['group_id'=>$group_id]);
+                }
+                if ($folder_id !== null) {
+                    $queryObj->andWhere(['folder_id'=>$folder_id]);
+                }
+                if ($type !== null) {
+                    $queryObj->andWhere(['type'=>$type]);
+                }
+                return $queryObj->all();
+                
+            }
+            throw new \yii\web\HttpException(400, Yii::t('app', 'Bad Request.'));
+        } catch (\Throwable $th) {
+            throw $th;
+            throw new \yii\web\ServerErrorHttpException(Yii::t('app', $th->getMessage()));
         }
     }
 
@@ -281,7 +311,7 @@ class StorageController extends ControllerRest {
             }
             throw new \yii\web\HttpException(400, Yii::t('app', 'Bad Request.'));
         } catch (\Throwable $th) {
-            throw new \yii\web\HttpException($th->statusCode,Yii::t('app', $th->getMessage()));
+            throw new \yii\web\ServerErrorHttpException(Yii::t('app', $th->getMessage()));
         }
     }
 
