@@ -11,6 +11,8 @@ use FFMpeg\FFMpeg;
 use FFMpeg\FFProbe;
 use FFMpeg\Format\Video\X264;
 use weebz\yii2basics\models\File;
+use weebz\yii2basics\models\Folder;
+use weebz\yii2basics\controllers\ControllerCommon;
 
 class StorageController extends ControllerRest {
     
@@ -23,20 +25,25 @@ class StorageController extends ControllerRest {
                 $description = $post['description'] ?? false;
                 $id = $post['id'] ?? false;
                 $file = null;
+                $user_groups = AuthController::getUserByToken()->getUserGroupsId();
+
                 if($file_name) {
-                    $file = File::find()->where(['name'=>$file_name])->all();
-                    return $file;
+                    $file = File::find()->where(['name'=>$file_name])->andWhere(['in','group_id',$user_groups])->one();
                 } else if($description) {
-                    $file = File::find()->where(['description'=>$description])->all();
-                    return $file;
+                    $file = File::find()->where(['description'=>$description])->andWhere(['in','group_id',$user_groups])->one();
                 } else if($id) {
-                    $file = File::find()->where(['id'=> $id])->one();
+                    $file = File::find()->where(['id'=> $id])->andWhere(['in','group_id',$user_groups])->one();
+                }
+
+                if($file !== null) {
                     return $file;
+                }else{
+                    throw new \yii\web\NotFoundHttpException(Yii::t('app', 'Not Found.'));
                 }
             }
-            throw new \yii\web\HttpException(400, Yii::t('app', 'Bad Request.'));
+            throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
         } catch (\Throwable $th) {
-            throw new \yii\web\ServerErrorHttpException(Yii::t('app', $th->getMessage()));
+            ControllerCommon::error($th);
         }
     }
 
@@ -49,6 +56,7 @@ class StorageController extends ControllerRest {
                 $folder_id = $post['folder_id'] ?? null;
                 $type = $post['type'] ?? null;
                 $query = $post['query'] ?? false;
+                $user_groups = AuthController::getUserByToken()->getUserGroupsId();
 
                 $queryObj = File::find()->where(['or',['like','name',$query],['like','description',$query]]);
                 if ($group_id !== null) {
@@ -60,13 +68,81 @@ class StorageController extends ControllerRest {
                 if ($type !== null) {
                     $queryObj->andWhere(['type'=>$type]);
                 }
-                return $queryObj->all();
+                return $queryObj->andWhere(['in','group_id',$user_groups])->all();
                 
             }
-            throw new \yii\web\HttpException(400, Yii::t('app', 'Bad Request.'));
+            throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
         } catch (\Throwable $th) {
-            throw $th;
-            throw new \yii\web\ServerErrorHttpException(Yii::t('app', $th->getMessage()));
+            ControllerCommon::error($th);
+        }
+    }
+
+    public function actionRemoveFile($id)
+    {
+        try {
+            if ($this->request->isPost) {
+
+                $file = false;
+                
+                $user_groups = AuthController::getUserByToken()->getUserGroupsId();
+                $model = File::find()->where(['id'=>$id])->andWhere(['or',['in','group_id',$user_groups]])->one();
+                if($model !== null) {
+                    $id = $model->name;
+                    $file_name = $model->name;
+
+                    $message = "Could not remove model #{$id}";
+                    $thumb = "Could not remove thumb file {$file_name}.";
+                    $file = "Could not remove file {$file_name}.";
+
+                    if($model->delete()){
+
+                        $message = "Model #{$id} removed.";
+                        
+                        if(@unlink(Yii::getAlias('@webroot').$model->path))
+                            $file = "File {$file_name} removed.";
+
+                        if($model->pathThumb){
+                            if(@unlink(Yii::getAlias('@webroot').$model->pathThumb))
+                                $thumb = "Thumb file {$file_name} removed.";
+                        }
+                    }
+
+                    return [
+                        'message'=>$message,
+                        'file'=>$file,
+                        'thumb'=>$thumb
+                    ];
+                } else {
+                    throw new \yii\web\NotFoundHttpException(Yii::t('app', 'Not Found.'));
+                }
+            }
+            throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
+        } catch (\Throwable $th) {
+            ControllerCommon::error($th);
+        }
+    }
+    
+
+    public function actionListFolder($id){
+        try {
+
+            $user_groups = AuthController::getUserByToken()->getUserGroupsId();
+            $folder = Folder::find()->where(['id'=>$id])->andWhere(['or',['in','group_id',$user_groups],['folder_id'=>null]])->one();
+            
+            if($folder !== null){
+                $folders = Folder::find()->where(['folder_id'=>$id])->andWhere(['or',['in','group_id',$user_groups]])->one();
+                $files = File::find()->where(['folder_id'=>$id])->andWhere(['or',['in','group_id',$user_groups]])->all();
+                return [
+                    'folder'=>$folder,
+                    'folders'=>$folders,
+                    'files'=>$files
+                ];
+            }else{
+                throw new \yii\web\NotFoundHttpException(Yii::t('app', 'Not Found.'));
+            }
+
+        } catch (\Throwable $th) {
+            ControllerCommon::error($th);
         }
     }
 
@@ -108,11 +184,8 @@ class StorageController extends ControllerRest {
                 $description = $post['description'] ?? $temp_file->name;
                 $folder_id = $post['folder_id'] ?? 1;
                 $save = $post['save'] ?? 0;
-                $convert_video = $post['convert_video'] ?? false;
-                $convert_video_format = $post['convert_video_format'] ?? 'mp4';
+                $convert_video = $post['convert_video'] ?? true;
                 
-                //dd([$temp_file,$post]);
-
                 $ext = $temp_file->extension;
 
                 if (!empty($file_name)) {
@@ -198,7 +271,7 @@ class StorageController extends ControllerRest {
                         FileHelper::createDirectory($pathRoot);
                     }
 
-                    if ($ext != 'mp4') {
+                    if ($convert_video && $ext != 'mp4') {
                         $errors[] = $temp_file->saveAs($fileTemp, ['quality' => 90]);
                         $ffmpeg = FFMpeg::create();
                         $video = $ffmpeg->open($fileTemp);
@@ -309,9 +382,9 @@ class StorageController extends ControllerRest {
                 return $file_uploaded;
 
             }
-            throw new \yii\web\HttpException(400, Yii::t('app', 'Bad Request.'));
+            throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
         } catch (\Throwable $th) {
-            throw new \yii\web\ServerErrorHttpException(Yii::t('app', $th->getMessage()));
+            ControllerCommon::error($th);
         }
     }
 

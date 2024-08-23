@@ -143,6 +143,22 @@ class ControllerCommon extends \yii\web\Controller
         ];
     }
 
+    public static function error($th)
+    {   
+        if(isset($th->statusCode )){
+            if($th->statusCode == 400){
+                throw new \yii\web\BadRequestHttpException($th->getMessage());
+            } else if($th->statusCode == 401){
+                throw new \yii\web\MethodNotAllowedHttpException($th->getMessage());
+            } else if($th->statusCode == 403){
+                throw new \yii\web\ForbiddenHttpException($th->getMessage());
+            } else if($th->statusCode == 404){
+                throw new \yii\web\NotFoundHttpException($th->getMessage());
+            }
+        }
+        throw new \yii\web\ServerErrorHttpException(Yii::t('app', $th->getMessage()));
+    
+    }
     /**
      * Cast \yii\web\IdentityInterface to \weebz\yii2basics\models\User
      */

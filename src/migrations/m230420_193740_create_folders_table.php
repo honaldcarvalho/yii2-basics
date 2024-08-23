@@ -50,6 +50,20 @@ class m230420_193740_create_folders_table extends Migration
             'status'=>true
         ]);
 
+        $this->insert('menus', [
+            'id'=> 6,
+            'menu_id' => 2,
+            'label'   => 'Folders',
+            'icon_style'=> 'fas',
+            'icon'    => 'fas fa-folder',
+            'visible' => 'folder;index',
+            'url'     => '/folder/index',
+            'path'  => 'weebz/controllers',
+            'active'  => 'folder',
+            'order'   => 0,
+            'status'  => true
+        ]);
+
     }
 
     /**
