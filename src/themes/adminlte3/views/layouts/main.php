@@ -49,7 +49,7 @@ $theme = Yii::$app->user->identity->theme;
     <!-- /.control-sidebar -->
 
     <!-- Main Footer -->
-    <?= $this->render('footer', [ 'assetDir' => $assetDir,'theme'=>$theme]) ?>
+    <?= $this->render('footer', [ 'assetDir' => $assetDir,'theme'=>$theme,'params'=>$params]) ?>
 </div>
 
 <?php $this->endBody() ?>

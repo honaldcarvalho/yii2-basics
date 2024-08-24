@@ -4,8 +4,9 @@
 
 use weebz\yii2basics\controllers\ControllerCommon;
 use weebz\yii2basics\models\custom\DashboarSearch;
+use weebz\yii2basics\models\Params;
 
-$params = weebz\yii2basics\models\Params::findOne(1);
+$params = Params::get();
 
 $assetsDir = ControllerCommon::$assetsDir;
 

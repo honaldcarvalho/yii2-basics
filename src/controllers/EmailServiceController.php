@@ -46,7 +46,7 @@ class EmailServiceController extends ControllerCommon
     {
 
         $model = $this->findModel($id);
-        $params = Params::findOne(1);
+        $params = Params::get();
         $mailer = new Mailer;
 
         $mailer->transport = [
