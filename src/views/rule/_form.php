@@ -32,8 +32,8 @@ if(!$model->isNewRecord){
     }
 
     $origins = explode(';',$model->origin);
-
     $model->origin = $origins;
+    $controller_value = "{$model->path}:{$model->controller}";
 }
 
 $json = json_encode($controller_actions['controllers_actions']);
@@ -142,12 +142,8 @@ $this->registerJs ($script, View::POS_LOAD);
     <?= $form->field($model, 'group_id')->dropDownList(yii\helpers\ArrayHelper::map(Group::find()->asArray()->all(), 'id', 'name'), ['prompt' => '-- selecione um grupo --']) ?>
 
     <?= $form->field($model, 'user_id')->dropDownList(yii\helpers\ArrayHelper::map(User::find()->select('id,username')->asArray()->all(), 'id', 'username'), ['prompt' => '-- selecione um usuario --']) ?>
-    
-    <?php if($model->isNewRecord): ?>
-        <?= $form->field($model, 'controller')->dropDownList($controller_actions_opts, ['multiple'=>false,'prompt' => '-- CONTROLLER --']) ?>
-    <?php else: ?>
-        <?= $form->field($model, 'controller')->textInput(['readonly'=>true]) ?>
-    <?php endif; ?>
+
+    <?= $form->field($model, 'controller')->dropDownList($controller_actions_opts, ['multiple'=>false,'prompt' => '-- CONTROLLER --','value'=>$controller_value]) ?>
 
     <?= $form->field($model, 'path')->textInput() ?>
 
