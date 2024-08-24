@@ -27,11 +27,13 @@ use yii\bootstrap5\ActiveForm;
 
     <?= $form->field($model, 'icon')->textInput(['maxlength' => true]) ?>
     
-    <?= $form->field($model, 'icon_style')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'icon_style')->textInput(['maxlength' => true,'value'=>$model->isNewRecord ? 'fas' : $model->path]) ?>
 
     <?= $form->field($model, 'visible')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'url')->textInput(['maxlength' => true,'value'=>$model->isNewRecord ? '#' : $model->url]) ?>
+
+    <?= $form->field($model, 'path')->textInput(['maxlength' => true,'value'=>$model->isNewRecord ? 'app' : $model->path]) ?>
 
     <?= $form->field($model, 'order')->input('number') ?>
 
