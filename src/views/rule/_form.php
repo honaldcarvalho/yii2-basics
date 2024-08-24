@@ -13,6 +13,7 @@ use yii\widgets\ActiveForm;
 
 $actions_diff = [];
 $actions_model = [];
+$origins = [];
 $controller_actions = $model->getControllers();
 PluginAsset::register($this)->add(['multiselect']);
 
@@ -31,8 +32,10 @@ if(!$model->isNewRecord){
         }
     }
 
-    $origins = explode(';',$model->origin);
-    $model->origin = $origins;
+    foreach( explode(';',$model->origin) as $origin){
+        $origins[$origin] = $origin;
+    } 
+
     $controller_value = "{$model->path}:{$model->controller}";
 }
 
@@ -128,7 +131,7 @@ $script = <<< JS
             
         });
         $('#rule-controller').select2({width:'100%',allowClear:true,placeholder:'-- Select one Controller --'});
-        $('#rule-origin').select2({width:'100%',allowClear:true,placeholder:''});
+        $('#rule-origin').select2({width:'100%',allowClear:true,placeholder:'',multiple:true});
     });
 JS;
 $this->registerJs ($script, View::POS_LOAD);
@@ -152,7 +155,7 @@ $this->registerJs ($script, View::POS_LOAD);
         <?= Html::textInput('add_origin','',['id'=>'add_origin','class'=>'form-control']) ?>
     </div>
 
-    <?= $form->field($model, 'origin', ['enableClientValidation'=>false])->dropDownList([])->label('Origins');
+    <?= $form->field($model, 'origin[]', ['enableClientValidation'=>false])->dropDownList($origins)->label('Origins');
     ?>
 
     <div id="actions" class="form-group">

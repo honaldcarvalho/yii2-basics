@@ -83,11 +83,15 @@ class RuleController extends ControllerCommon
             $post = $this->request->post();
 
             if ($this->request->isPost && $model->load($post)) {
+                if(isset($post['to'])){
+                    $model->actions = implode(';',$post['to']);
+                }
                 $controller_parts = explode(':',$model->controller);
                 $model->path = strtolower($controller_parts[0]);
                 $model->controller = end($controller_parts);
                 $model->actions = implode(';',$post['to']);
-                $model->origin = $post['Rule']['origin'] ? implode(';',$post['Rule']['origin']) : '*';
+                
+                $model->origin = isset($post['Rule']['origin']) ? implode(';',$post['Rule']['origin']) : '*';
             }
 
             if ($model->save()) {
@@ -112,16 +116,20 @@ class RuleController extends ControllerCommon
      */
     public function actionUpdate($id)
     {
+        
         $model = $this->findModel($id);
         $post = $this->request->post();
-
-        if ($this->request->isPost && $model->load($this->request->post())) {
+        
+        if ($this->request->isPost && $model->load($post)) {
             if(isset($post['to'])){
                 $model->actions = implode(';',$post['to']);
             }
-            if(isset($post['Rule']['origin'])){
-                $model->origin = $post['Rule']['origin'] ? implode(';',$post['Rule']['origin']) : '*';
-            }
+            $controller_parts = explode(':',$model->controller);
+            $model->path = strtolower($controller_parts[0]);
+            $model->controller = end($controller_parts);
+            $model->actions = implode(';',$post['to']);
+            
+            $model->origin = isset($post['Rule']['origin']) ? implode(';',$post['Rule']['origin']) : '*';
         }
 
         if ($this->request->isPost && $model->save()) {
