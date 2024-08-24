@@ -23,6 +23,14 @@ class m240807_161427_add_admin_rules extends Migration
 
         $this->insert('rules', [
             'group_id' => 2,
+            'controller' => 'site',
+            'path' => 'weebz/controllers',
+            'actions' => 'index;dashboard',
+            'status'=>true
+        ]);
+
+        $this->insert('rules', [
+            'group_id' => 2,
             'controller' => 'menu',
             'path' => 'weebz/controllers',
             'actions' => 'create;delete;index;order-menu;update;view',
