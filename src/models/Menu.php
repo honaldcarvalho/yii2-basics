@@ -15,6 +15,7 @@ use Yii;
  * @property string|null $visible
  * @property string|null $url
  * @property string|null $active
+ * @property string|null $path
  * @property int $order
  * @property int|null $onlyAdmin
  * @property int|null $status
