@@ -10,7 +10,7 @@ use yii\helpers\Html;
 
 FontAwesomeAsset::register($this);
 WeebzAsset::register($this);
-PluginAsset::register($this)->add(['fontawesome', 'icheck-bootstrap','fancybox','jquery-ui','toastr']);
+PluginAsset::register($this)->add(['fontawesome', 'icheck-bootstrap','fancybox','jquery-ui','toastr','select2']);
 $params = Params::get();
 $this->metaTags = '';
 $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback');
