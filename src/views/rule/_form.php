@@ -6,6 +6,7 @@
 
 use weebz\yii2basics\models\Group;;
 use weebz\yii2basics\models\User;
+use weebz\yii2basics\themes\adminlte3\assets\PluginAsset;
 use yii\helpers\Html;
 use yii\web\View;
 use yii\widgets\ActiveForm;
@@ -13,6 +14,7 @@ use yii\widgets\ActiveForm;
 $actions_diff = [];
 $actions_model = [];
 $controller_actions = $model->getControllers();
+PluginAsset::register($this)->add(['multiselect']);
 
 foreach ($controller_actions['controllers'] as $key => $controller) {
     $controller_actions_opts[$key] = $key;
