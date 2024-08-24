@@ -149,6 +149,8 @@ $this->registerJs ($script, View::POS_LOAD);
         <?= $form->field($model, 'controller')->textInput(['readonly'=>true]) ?>
     <?php endif; ?>
 
+    <?= $form->field($model, 'path')->textInput() ?>
+
     <div id="actions" class="form-group">    
         <?= Html::label(Yii::t('app','Enter origin and digit enter:'), 'add_origin')?>
         <?= Html::textInput('add_origin','',['id'=>'add_origin','class'=>'form-control']) ?>
