@@ -20,7 +20,7 @@ foreach ($controller_actions['controllers'] as $key => $controller) {
 
 if(!$model->isNewRecord){
     
-    $actions_controller = $controller_actions['controllers_actions'][strtoupper($model->path).":{$model->controller}"];
+    $actions_controller = $controller_actions['controllers_actions'][$model->path.":{$model->controller}"];
     $actions_model = explode(';',$model->actions);
 
     foreach($actions_controller as $action){

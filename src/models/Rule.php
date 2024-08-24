@@ -90,6 +90,7 @@ class Rule extends \yii\db\ActiveRecord
         // $controllers_backend_rest = \yii\helpers\FileHelper::findFiles(Yii::getAlias('@backend/controllers/rest'));
         // $controllers_backend_custom = \yii\helpers\FileHelper::findFiles(Yii::getAlias('@backend/controllers/custom'));
         // $controllers_common = \yii\helpers\FileHelper::findFiles(Yii::getAlias('@app/controllers'));
+        $controllers_weebz = \yii\helpers\FileHelper::findFiles(Yii::getAlias('@vendor/weebz/yii2-basics/src/controllers'));
         $controllers_app = \yii\helpers\FileHelper::findFiles(Yii::getAlias('@app/controllers'));
         $controllers_app_custom = \yii\helpers\FileHelper::findFiles(Yii::getAlias('@app/controllers/custom'));
         //$controllers_common_custom = \yii\helpers\FileHelper::findFiles(Yii::getAlias('@common/controllers/custom'));
@@ -99,8 +100,9 @@ class Rule extends \yii\db\ActiveRecord
             // 'BACKEND/REST'=>$controllers_backend_rest,
             // 'BACKEND/CUSTOM'=>$controllers_backend_custom,
             // 'COMMON'=>$controllers_common,
-            'APP'=>$controllers_app,
-            'APP/CUSTOM'=>$controllers_app_custom,
+            'app'=>$controllers_app,
+            'app/custom'=>$controllers_app_custom,
+            'weebz/controllers'=>$controllers_weebz,
         ];
         //dd($file_lists);
         foreach ($file_lists as $key => $list) {
