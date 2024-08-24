@@ -43,7 +43,7 @@ class Menu extends \yii\db\ActiveRecord
             [['menu_id', 'order','only_admin', 'status'], 'integer'],
             [['label'], 'required'],
             [['label', 'icon', 'visible','icon_style'], 'string', 'max' => 60],
-            [['url'], 'string', 'max' => 255],
+            [['url','path'], 'string', 'max' => 255],
             [['active'], 'string', 'max' => 60],
             [['menu_id'], 'exist', 'skipOnError' => true, 'targetClass' => Menu::class, 'targetAttribute' => ['menu_id' => 'id']],
         ];

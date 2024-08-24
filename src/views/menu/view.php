@@ -84,6 +84,7 @@ $this::registerJs($script, $this::POS_END);
                             'icon',
                             'visible',
                             'url:url',
+                            'path',
                             'active',
                             'status:boolean',
                         ],
