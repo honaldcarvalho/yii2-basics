@@ -146,10 +146,8 @@ class StorageController extends ControllerRest {
         }
     }
 
-    public function actionSend()
+    public static function upload($file, $options)
     {
-        
-        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
         try {
 
@@ -160,7 +158,7 @@ class StorageController extends ControllerRest {
             $files_folder = "/{$upload_folder}";
             $upload_root = "{$webroot}{$files_folder}";
             $webFiles = "{$web}{$files_folder}";
-
+            $temp_file = $file;
             $group_id = null;
             $folder_id = null;
             $duration = 0;
@@ -176,15 +174,13 @@ class StorageController extends ControllerRest {
 
             $model = new File();
 
-            if ($this->request->isPost && ($temp_file = UploadedFile::getInstanceByName('file')) !== null) {
+            if (($temp_file = $file) !== null) {
 
-                $post = $this->request->post();
-
-                $file_name = $post['file_name'] ?? false;
-                $description = $post['description'] ?? $temp_file->name;
-                $folder_id = $post['folder_id'] ?? 1;
-                $save = $post['save'] ?? 0;
-                $convert_video = $post['convert_video'] ?? true;
+                $file_name = isset($options['file_name']) ? $options['file_name'] : false;
+                $description = isset($options['description']) ? $options['description'] : $temp_file->name;
+                $folder_id = isset($options['folder_id']) ? $options['folder_id'] :  1;
+                $save = isset($options['save']) ? $options['save'] :  0;
+                $convert_video = isset($options['convert_video']) ? $options['convert_video'] : true;
                 
                 $ext = $temp_file->extension;
 
@@ -372,14 +368,38 @@ class StorageController extends ControllerRest {
                     $model = Yii::createObject($file_uploaded);
 
                     if($model->save()){
-                        return $model;
+                        return ['code'=>200,'success'=>true,'data'=>$model];
                     }else{
-                        return $model->getErrors();
+                        return ['code'=>200,'success'=>false,'data'=>$model->getErrors()];
                     }
                     
                 }
+                return ['code'=>200,'success'=>true,'data'=>$file_uploaded];
 
-                return $file_uploaded;
+            }
+        } catch (\Throwable $th) {
+            return ['code'=>500,'data'=>$th];
+        }
+    }
+
+    public function actionSend()
+    {
+        
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        try {
+
+            if ($this->request->isPost && ($temp_file = UploadedFile::getInstanceByName('file')) !== null) {
+
+                $post = $this->request->post();
+                $options = [];
+                $options['file_name']= $post['file_name'] ?? false;
+                $options['description'] = $post['description'] ?? $temp_file->name;
+                $options['folder_id'] = $post['folder_id'] ?? 1;
+                $options['save'] = $post['save'] ?? 0;
+                $options['convert_video'] = $post['convert_video'] ?? true;
+
+                return self::upload($temp_file, $options);
 
             }
             throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
