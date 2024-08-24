@@ -14,6 +14,7 @@ use yii\widgets\ActiveForm;
 $actions_diff = [];
 $actions_model = [];
 $origins = [];
+$controller_value = '';
 $controller_actions = $model->getControllers();
 PluginAsset::register($this)->add(['multiselect']);
 
