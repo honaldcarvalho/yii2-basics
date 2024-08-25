@@ -27,7 +27,6 @@ class UploadFoto extends \yii\bootstrap5\Widget
   public function run()
   {
     $reload = '';
-    $baseUrl = Yii::$app->params['rootUrl'];
     if (array_count_values($this->reloadGrid) > 0) {
       foreach ($this->reloadGrid as $item) {
         $reload .= "$.pjax.reload({container: '#{$item}', async: false});";

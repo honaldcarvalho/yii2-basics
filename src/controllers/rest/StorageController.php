@@ -146,7 +146,15 @@ class StorageController extends ControllerRest {
         }
     }
 
-    public static function upload($file, $options)
+    public static function upload($file, 
+        $options = [
+            'file_name' => null,//custom file name
+            'description'=> null,//custom file description
+            'folder_id'=> 1,//common
+            'save'=> 0,//salve model
+            'convert_video'=>1 //convert video if not is mp4 type
+        ]
+    )
     {
 
         try {
