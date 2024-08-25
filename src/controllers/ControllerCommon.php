@@ -197,9 +197,7 @@ class ControllerCommon extends \yii\web\Controller
 
     static function isGuest()
     {
-        if (!Yii::$app->user->isGuest && Yii::$app->user->identity->level != 'administrator')
-            return true;
-        return false;
+        return Yii::$app->user->isGuest;
     }
 
     static function getLicense($model)

@@ -366,9 +366,11 @@ class StorageController extends ControllerRest {
 
                 if($save){
 
-                    if($group_id === null){
+                    if($group_id === null && ControllerCommon::isGuest()){
                         $user_groups = AuthController::getUserByToken()->getUserGroupsId();
                         $file_uploaded['group_id'] = end($user_groups);
+                    }else if($group_id === null && !ControllerCommon::isGuest()){
+                        $file_uploaded['group_id'] = end(ControllerCommon::userGroup());
                     }
                     
                     $file_uploaded['class'] = File::class;
@@ -386,7 +388,7 @@ class StorageController extends ControllerRest {
 
             }
         } catch (\Throwable $th) {
-            return ['code'=>500,'data'=>$th];
+            return ['code'=>500,'success'=>false,'data'=>$th];
         }
     }
 
