@@ -11,6 +11,7 @@ return [
     'bsDependencyEnabled' => false,
     'user.passwordResetTokenExpire' => 3600,
     'user.passwordMinLength'=>6,
+    'upload.group' => false,
     'upload.folder' => 'files',
     'upload.quality' => 90,
     'upload.thumb.quality' => 90

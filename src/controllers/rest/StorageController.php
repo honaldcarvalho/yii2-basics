@@ -25,14 +25,14 @@ class StorageController extends ControllerRest {
                 $description = $post['description'] ?? false;
                 $id = $post['id'] ?? false;
                 $file = null;
-                $user_groups = AuthController::getUserByToken()->getUserGroupsId();
+                $user_groups = ControllerCommon::getUserGroups();
 
                 if($file_name) {
-                    $file = File::find()->where(['name'=>$file_name])->andWhere(['in','group_id',$user_groups])->one();
+                    $file = File::find()->where(['name'=>$file_name])->andWhere('or',['in','group_id',$user_groups],['group_id'=>1])->one();
                 } else if($description) {
-                    $file = File::find()->where(['description'=>$description])->andWhere(['in','group_id',$user_groups])->one();
+                    $file = File::find()->where(['description'=>$description])->andWhere('or',['in','group_id',$user_groups],['group_id'=>1])->one();
                 } else if($id) {
-                    $file = File::find()->where(['id'=> $id])->andWhere(['in','group_id',$user_groups])->one();
+                    $file = File::find()->where(['id'=> $id])->andWhere(['or',['in','group_id',$user_groups],['group_id'=>1]])->one();
                 }
 
                 if($file !== null) {
@@ -56,19 +56,19 @@ class StorageController extends ControllerRest {
                 $folder_id = $post['folder_id'] ?? null;
                 $type = $post['type'] ?? null;
                 $query = $post['query'] ?? false;
-                $user_groups = AuthController::getUserByToken()->getUserGroupsId();
+                $user_groups = ControllerCommon::getUserGroups();
 
                 $queryObj = File::find()->where(['or',['like','name',$query],['like','description',$query]]);
-                if ($group_id !== null) {
-                    $queryObj->andWhere(['group_id'=>$group_id]);
-                }
+                // if ($group_id !== null) {
+                //     $queryObj->andWhere(['group_id'=>$group_id]);
+                // }
                 if ($folder_id !== null) {
                     $queryObj->andWhere(['folder_id'=>$folder_id]);
                 }
                 if ($type !== null) {
                     $queryObj->andWhere(['type'=>$type]);
                 }
-                return $queryObj->andWhere(['in','group_id',$user_groups])->all();
+                return $queryObj->andWhere(['or',['group_id'=>$group_id],['group_id'=>1]])->all();
                 
             }
             throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
@@ -76,65 +76,6 @@ class StorageController extends ControllerRest {
             ControllerCommon::error($th);
         }
     }
-
-    public static function removeFile($id)
-    {
-        try {
-
-            $file = false;
-            $success = false;
-            $user_groups = ControllerCommon::getUserGroups();
-            $model = File::find()->where(['id'=>$id])->andWhere(['or',['in','group_id',$user_groups]])->one();
-            
-            if($model !== null) {
-                $id = $model->name;
-                $file_name = $model->name;
-
-                $message = "Could not remove model #{$id}";
-                $thumb = "Could not remove thumb file {$file_name}.";
-                $file = "Could not remove file {$file_name}.";
-
-                if(($success == $model->delete())){
-
-                    $message = "Model #{$id} removed.";
-                    
-                    if(@unlink(Yii::getAlias('@webroot').$model->path))
-                        $file = "File {$file_name} removed.";
-
-                    if($model->pathThumb){
-                        if(@unlink(Yii::getAlias('@webroot').$model->pathThumb))
-                            $thumb = "Thumb file {$file_name} removed.";
-                    }
-                }
-
-                return [
-                    'code'=>200,
-                    'success'=>$success,
-                    'message'=>$message,
-                    'file'=>$file,
-                    'thumb'=>$thumb
-                ];
-            } else {
-                return ['code'=>404,'success'=>false];
-            }
-
-        } catch (\Throwable $th) {
-            return ['code'=>500,'success'=>false,'data'=>$th];
-        }
-    }
-
-    public function actionRemoveFile($id)
-    {
-        try {
-            if ($this->request->isPost) {
-                return self::removeFile($id);
-            }
-            throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
-        } catch (\Throwable $th) {
-            ControllerCommon::error($th);
-        }
-    }
-    
 
     public function actionListFolder($id){
         try {
@@ -378,8 +319,11 @@ class StorageController extends ControllerRest {
                 ];
 
                 if($save){
-                    
-                    $file_uploaded['group_id'] = ControllerCommon::userGroup();
+
+                    $file_uploaded['group_id'] = 1; //common
+                    if(Yii::$app->params['upload.group'])
+                        $file_uploaded['group_id'] = ControllerCommon::userGroup();
+
                     
                     $file_uploaded['class'] = File::class;
                     $file_uploaded['file'] = $temp_file;
@@ -425,6 +369,72 @@ class StorageController extends ControllerRest {
             ControllerCommon::error($th);
         }
     }
+
+    public static function removeFile($id)
+    {
+        try {
+
+            $file = false;
+            $success = false;
+            $user_groups = ControllerCommon::getUserGroups();
+            $model = File::find()->where(['id'=>$id])->andWhere(['or',['in','group_id',$user_groups],['group_id'=>1]])->one();
+            
+            if($model !== null) {
+                $id = $model->name;
+                $file_name = $model->name;
+
+                $message = "Could not remove model #{$id}";
+                $thumb = "Could not remove thumb file {$file_name}.";
+                $file = "Could not remove file {$file_name}.";
+
+                if($model->delete() !== false) {
+
+                    $message = "Model #{$id} removed.";
+                    
+                    if(@unlink(Yii::getAlias('@webroot').$model->path))
+                        $file = "File {$file_name} removed.";
+
+                    if($model->pathThumb){
+                        if(@unlink(Yii::getAlias('@webroot').$model->pathThumb))
+                            $thumb = "Thumb file {$file_name} removed.";
+                    }
+                } else {
+                    return [
+                        'code'=>500,
+                        'success'=>false,
+                        'message'=>$model->getErrors(),
+                    ];
+                }
+
+                return [
+                    'code'=>200,
+                    'success'=>true,
+                    'message'=>$message,
+                    'file'=>$file,
+                    'thumb'=>$thumb
+                ];
+
+            } else {
+                return ['code'=>404,'success'=>false];
+            }
+
+        } catch (\Throwable $th) {
+            return ['code'=>500,'success'=>false,'data'=>$th];
+        }
+    }
+
+    public function actionRemoveFile($id)
+    {
+        try {
+            if ($this->request->isPost) {
+                return self::removeFile($id);
+            }
+            throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
+        } catch (\Throwable $th) {
+            ControllerCommon::error($th);
+        }
+    }
+    
 
 }
 
