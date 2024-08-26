@@ -1,35 +1,6 @@
 <?php
 
-    /** FOR ALL BOOLEAN ATTRIBUTES
-     *  1: true
-     *    0: false
-     * 
-        <?=
-        weebz\yii2basics\widgets\FileInput::widget(
-            [
-                'save_file_model' => 1, //indica se vai sarvar o modelo arquivo no banco
-                'model' => 'User', // nome do modelo que vai receber o dado do arquivo
-                'model_field' => 'file_id', // campo que vai receber o dado do arquivo
-                'model_id' => $model->id ?? null, // valor para o campo que vai receber o dado do arquivo
-                'value' => $model->file_id ?? null, // valor inicial para o campo que recebe o valor do arquivo
-                'preview' => $model->file->url  ?? null,
-                'field_id' => 'user-file_id', // id do input
-                'field_name' => 'User[file_id]', // nome do input
-                'file_name' => '', // nome arquivo caso não queira randomico
-                'label' => 'Logo',
-                'folder_id' => 3,
-                //'action' => 'file/send',
-                'as_type' => 0, Tipo do valo que o campo input vai receber: 0 => id, 1 => blob, 2 =>url
-                'aspectRatio' => '1/1',
-                'extensions' => ['jpeg', 'jpg', 'png'],
-                'class'=> '' //css extra class
-
-            ]
-        );
-        ?>
-     */
-
-namespace app\widgets;
+namespace weebz\yii2basics\widgets;
 
 use Yii;
 use yii\web\View;
@@ -37,15 +8,11 @@ use yii\bootstrap5\BootstrapAsset;
 use yii\bootstrap5\Widget;
 
 /** @var yii\web\View $this */
-/** @var common\models\File $model */
+/** @var weebz\yii2basics\models\File $model */
 /** @var yii\widgets\ActiveForm $form */
 
 class FileInput extends Widget
 {
-    /** FOR ALL BOOLEAN ATTRIBUTES
-     *  1: true
-     *    0: false
-     */
     public $value = null;
     public $field_name = 'file';
     public $label = '';
