@@ -2,6 +2,7 @@
 
 namespace weebz\yii2basics\controllers;
 
+use weebz\yii2basics\controllers\rest\AuthController;
 use weebz\yii2basics\models\License;
 use weebz\yii2basics\models\Log;
 use weebz\yii2basics\models\Params;
@@ -246,7 +247,13 @@ class ControllerCommon extends \yii\web\Controller
 
     static function userGroup()
     {
-        return Yii::$app->session->get('group')->id;
+        if(ControllerCommon::isGuest()){
+            $user_groups = AuthController::getUserByToken()->getUserGroupsId();
+            return end($user_groups);
+        }else {
+            return Yii::$app->session->get('group')->id;
+        }
+
     }
 
     static function addSlashUpperLower($string)
@@ -272,18 +279,18 @@ class ControllerCommon extends \yii\web\Controller
         return false;
     }
 
+    /** 
+        return id of user group's
+    */
     public static function getUserGroups()
     {
-        $groups = [];
-        $user_groups = [];
+        
+        if(ControllerCommon::isGuest()){
+           return AuthController::getUserByToken()->getUserGroupsId();
+        }else {
+           return self::User()->getUserGroupsId();
+        }
 
-        if (Yii::$app->user->identity != null) {
-            $user_groups = self::User()::userGroups()->all();
-        }
-        foreach ($user_groups as $user_group) {
-            $groups[] = $user_group->group_id;
-        }
-        return $groups;
     }
 
     public function getAccess($controller, $path = 'backend')

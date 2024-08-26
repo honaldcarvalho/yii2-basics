@@ -77,44 +77,57 @@ class StorageController extends ControllerRest {
         }
     }
 
+    public static function removeFile($id)
+    {
+        try {
+
+            $file = false;
+            $success = false;
+            $user_groups = ControllerCommon::getUserGroups();
+            $model = File::find()->where(['id'=>$id])->andWhere(['or',['in','group_id',$user_groups]])->one();
+            
+            if($model !== null) {
+                $id = $model->name;
+                $file_name = $model->name;
+
+                $message = "Could not remove model #{$id}";
+                $thumb = "Could not remove thumb file {$file_name}.";
+                $file = "Could not remove file {$file_name}.";
+
+                if(($success == $model->delete())){
+
+                    $message = "Model #{$id} removed.";
+                    
+                    if(@unlink(Yii::getAlias('@webroot').$model->path))
+                        $file = "File {$file_name} removed.";
+
+                    if($model->pathThumb){
+                        if(@unlink(Yii::getAlias('@webroot').$model->pathThumb))
+                            $thumb = "Thumb file {$file_name} removed.";
+                    }
+                }
+
+                return [
+                    'code'=>200,
+                    'success'=>$success,
+                    'message'=>$message,
+                    'file'=>$file,
+                    'thumb'=>$thumb
+                ];
+            } else {
+                return ['code'=>404,'success'=>false];
+            }
+
+        } catch (\Throwable $th) {
+            return ['code'=>500,'success'=>false,'data'=>$th];
+        }
+    }
+
     public function actionRemoveFile($id)
     {
         try {
             if ($this->request->isPost) {
-
-                $file = false;
-                
-                $user_groups = AuthController::getUserByToken()->getUserGroupsId();
-                $model = File::find()->where(['id'=>$id])->andWhere(['or',['in','group_id',$user_groups]])->one();
-                if($model !== null) {
-                    $id = $model->name;
-                    $file_name = $model->name;
-
-                    $message = "Could not remove model #{$id}";
-                    $thumb = "Could not remove thumb file {$file_name}.";
-                    $file = "Could not remove file {$file_name}.";
-
-                    if($model->delete()){
-
-                        $message = "Model #{$id} removed.";
-                        
-                        if(@unlink(Yii::getAlias('@webroot').$model->path))
-                            $file = "File {$file_name} removed.";
-
-                        if($model->pathThumb){
-                            if(@unlink(Yii::getAlias('@webroot').$model->pathThumb))
-                                $thumb = "Thumb file {$file_name} removed.";
-                        }
-                    }
-
-                    return [
-                        'message'=>$message,
-                        'file'=>$file,
-                        'thumb'=>$thumb
-                    ];
-                } else {
-                    throw new \yii\web\NotFoundHttpException(Yii::t('app', 'Not Found.'));
-                }
+                return self::removeFile($id);
             }
             throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
         } catch (\Throwable $th) {
@@ -146,7 +159,7 @@ class StorageController extends ControllerRest {
         }
     }
 
-    public static function upload($file, 
+    public static function uploadFile($file, 
         $options = [
             'file_name' => null,//custom file name
             'description'=> null,//custom file description
@@ -218,7 +231,7 @@ class StorageController extends ControllerRest {
                     $filePathThumbRoot = "{$pathThumbRoot}/{$name}";
 
                     $fileUrl = "{$webFiles}/images/{$name}";
-                    $fileThumbUrl = "{$webFiles}/images/{$name}";
+                    $fileThumbUrl = "{$webFiles}/images/thumbs/{$name}";
 
                     if (!file_exists($pathRoot)) {
                         FileHelper::createDirectory($pathRoot);
@@ -365,13 +378,8 @@ class StorageController extends ControllerRest {
                 ];
 
                 if($save){
-
-                    if($group_id === null && ControllerCommon::isGuest()){
-                        $user_groups = AuthController::getUserByToken()->getUserGroupsId();
-                        $file_uploaded['group_id'] = end($user_groups);
-                    }else if($group_id === null && !ControllerCommon::isGuest()){
-                        $file_uploaded['group_id'] = end(ControllerCommon::userGroup());
-                    }
+                    
+                    $file_uploaded['group_id'] = ControllerCommon::userGroup();
                     
                     $file_uploaded['class'] = File::class;
                     $file_uploaded['file'] = $temp_file;
@@ -409,7 +417,7 @@ class StorageController extends ControllerRest {
                 $options['save'] = $post['save'] ?? 0;
                 $options['convert_video'] = $post['convert_video'] ?? true;
 
-                return self::upload($temp_file, $options);
+                return self::uploadFile($temp_file, $options);
 
             }
             throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
