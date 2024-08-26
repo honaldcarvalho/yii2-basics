@@ -30,6 +30,7 @@ use Yii;
  */
 class File extends ModelCommon
 {
+    public $verGroup = Yii::$app->params['upload.group'];
     public $file;
     public $preview;
     public $extensions = [];

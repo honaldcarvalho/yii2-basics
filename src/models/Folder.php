@@ -23,6 +23,7 @@ use Yii;
  */
 class Folder extends \yii\db\ActiveRecord
 {
+    public $verGroup = Yii::$app->params['upload.group'];
     /**
      * {@inheritdoc}
      */
