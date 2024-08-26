@@ -11,6 +11,9 @@ class PluginAsset extends AssetBundle
     ];
 
     public static $pluginMap = [
+        'axios' => [
+            'js' => 'axios/axios.min.js',
+        ],
         'tinymce' => [
             'css' => 'tinymce/content/default/content.min.css',
             'js' => 'tinymce/content/default/content.js',

@@ -1,441 +1,128 @@
 <?php
 
-namespace weebz\yii2basics\controllers\rest;
+namespace weebz\yii2basics\widgets;
 
-use Yii;
-use yii\web\UploadedFile;
-use yii\helpers\FileHelper;
-use yii\imagine\Image;
-use FFMpeg\Coordinate\TimeCode;
-use FFMpeg\FFMpeg;
-use FFMpeg\FFProbe;
-use FFMpeg\Format\Video\X264;
-use weebz\yii2basics\models\File;
-use weebz\yii2basics\models\Folder;
 use weebz\yii2basics\controllers\ControllerCommon;
+use weebz\yii2basics\themes\adminlte3\assets\PluginAsset;
+use Yii;
+use yii\web\View;
+use yii\bootstrap5\BootstrapAsset;
+use yii\bootstrap5\Widget;
 
-class StorageController extends ControllerRest {
-    
-    public function actionGetFile(){
-        try {
-            if ($this->request->isPost) {
+/** @var yii\web\View $this */
+/** @var weebz\yii2basics\models\File $model */
+/** @var yii\widgets\ActiveForm $form */
 
-                $post = $this->request->post();
-                $file_name = $post['file_name'] ?? false;
-                $description = $post['description'] ?? false;
-                $id = $post['id'] ?? false;
-                $file = null;
-                $user_groups = ControllerCommon::getUserGroups();
+class StorageUpload extends Widget
+{
+    public $token;
+    public $random;
+    public $folder_id = 1;
+    public $ajax_grid_reload = '#list-files-grid';
 
-                if($file_name) {
-                    $file = File::find()->where(['name'=>$file_name])->andWhere('or',['in','group_id',$user_groups],['group_id'=>1])->one();
-                } else if($description) {
-                    $file = File::find()->where(['description'=>$description])->andWhere('or',['in','group_id',$user_groups],['group_id'=>1])->one();
-                } else if($id) {
-                    $file = File::find()->where(['id'=> $id])->andWhere(['or',['in','group_id',$user_groups],['group_id'=>1]])->one();
-                }
-
-                if($file !== null) {
-                    return $file;
-                }else{
-                    throw new \yii\web\NotFoundHttpException(Yii::t('app', 'Not Found.'));
-                }
-            }
-            throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
-        } catch (\Throwable $th) {
-            ControllerCommon::error($th);
-        }
-    }
-
-    public function actionListFiles(){
-        try {
-            if ($this->request->isPost) {
-
-                $post = $this->request->post();
-                $group_id = $post['group_id'] ?? null;
-                $folder_id = $post['folder_id'] ?? null;
-                $type = $post['type'] ?? null;
-                $query = $post['query'] ?? false;
-                $user_groups = ControllerCommon::getUserGroups();
-
-                $queryObj = File::find()->where(['or',['like','name',$query],['like','description',$query]]);
-                // if ($group_id !== null) {
-                //     $queryObj->andWhere(['group_id'=>$group_id]);
-                // }
-                if ($folder_id !== null) {
-                    $queryObj->andWhere(['folder_id'=>$folder_id]);
-                }
-                if ($type !== null) {
-                    $queryObj->andWhere(['type'=>$type]);
-                }
-                return $queryObj->andWhere(['or',['group_id'=>$group_id],['group_id'=>1]])->all();
-                
-            }
-            throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
-        } catch (\Throwable $th) {
-            ControllerCommon::error($th);
-        }
-    }
-
-    public function actionListFolder($id){
-        try {
-
-            $user_groups = AuthController::getUserByToken()->getUserGroupsId();
-            $folder = Folder::find()->where(['id'=>$id])->andWhere(['or',['in','group_id',$user_groups],['folder_id'=>null]])->one();
-            
-            if($folder !== null){
-                $folders = Folder::find()->where(['folder_id'=>$id])->andWhere(['or',['in','group_id',$user_groups]])->one();
-                $files = File::find()->where(['folder_id'=>$id])->andWhere(['or',['in','group_id',$user_groups]])->all();
-                return [
-                    'folder'=>$folder,
-                    'folders'=>$folders,
-                    'files'=>$files
-                ];
-            }else{
-                throw new \yii\web\NotFoundHttpException(Yii::t('app', 'Not Found.'));
-            }
-
-        } catch (\Throwable $th) {
-            ControllerCommon::error($th);
-        }
-    }
-
-    public static function uploadFile($file, 
-        $options = [
-            'file_name' => null,//custom file name
-            'description'=> null,//custom file description
-            'folder_id'=> 1,//common
-            'save'=> 0,//salve model
-            'convert_video'=>1 //convert video if not is mp4 type
-        ]
-    )
+    public function init()
     {
-
-        try {
-
-            $webroot = Yii::getAlias('@webroot');
-            $upload_folder = Yii::$app->params['upload.folder'];
-            $web = Yii::getAlias('@web');
-
-            $files_folder = "/{$upload_folder}";
-            $upload_root = "{$webroot}{$files_folder}";
-            $webFiles = "{$web}{$files_folder}";
-            $temp_file = $file;
-            $group_id = null;
-            $folder_id = null;
-            $duration = 0;
-            $save  = 0;
-            $name = '';
-            $description = '';
-            $filePath = '';
-            $filePathThumb = '';
-            $fileUrl = '';
-            $fileThumbUrl = '';
-            $ext = '';
-            $type = '';
-
-            $model = new File();
-
-            if (($temp_file = $file) !== null) {
-
-                $file_name = isset($options['file_name']) ? $options['file_name'] : false;
-                $description = isset($options['description']) ? $options['description'] : $temp_file->name;
-                $folder_id = isset($options['folder_id']) ? $options['folder_id'] :  1;
-                $save = isset($options['save']) ? $options['save'] :  0;
-                $convert_video = isset($options['convert_video']) ? $options['convert_video'] : true;
-                
-                $ext = $temp_file->extension;
-
-                if (!empty($file_name)) {
-                    $name = "{$file_name}.{$ext}";
-                } else {
-                    $name = 'file_' . date('dmYhims') . \Yii::$app->security->generateRandomString(6) . ".{$ext}";
-                }
-
-                $type = 'unknow';
-                [$type,$format] = explode('/',$temp_file->type);
-
-                if ($type == 'image') {
-
-                    if($folder_id === 1){
-                        $folder_id = 2;
-                    }
-
-                    $path = "{$files_folder}/images";
-                    $pathThumb = "{$files_folder}/images/thumbs";
-                    $pathRoot = "{$upload_root}/images";
-                    $pathThumbRoot = "{$upload_root}/images/thumbs";
-
-                    $filePath = "{$path}/{$name}";
-                    $filePathThumb = "{$pathThumb}/{$name}";
-                    $filePathRoot = "{$pathRoot}/{$name}";
-                    $filePathThumbRoot = "{$pathThumbRoot}/{$name}";
-
-                    $fileUrl = "{$webFiles}/images/{$name}";
-                    $fileThumbUrl = "{$webFiles}/images/thumbs/{$name}";
-
-                    if (!file_exists($pathRoot)) {
-                        FileHelper::createDirectory($pathRoot);
-                    }
-
-                    if (!file_exists($pathThumbRoot)) {
-                        FileHelper::createDirectory($pathThumbRoot);
-                    }
-
-                    $image_size = getimagesize($temp_file->tempName);
-                    $major = $image_size[0]; //width
-                    $min = $image_size[1]; //height
-                    $mov = ($major - $min) / 2;
-                    $point = [$mov, 0];
-
-                    if ($major < $min) {
-                        $major = $image_size[1];
-                        $min = $image_size[0];
-                        $mov = ($major - $min) / 2;
-                        $point = [0, $mov];
-                    }
-                    
-                    $errors[] = $temp_file->saveAs($filePathRoot, ['quality' => 90]);
-                    $errors[] = Image::crop($filePathRoot, $min, $min, $point)
-                    ->save($filePathThumbRoot, ['quality' => 100]);
-                    
-                    if($min > 300){
-                        $errors[] = Image::thumbnail($filePathThumbRoot, 300, 300)
-                        ->save($filePathThumbRoot, ['quality' => 100]);
-                    }
-
-                } else if ($type == 'video') {
-
-                    if($folder_id === 1){
-                        $folder_id = 3;
-                    }
-
-                    if (!empty($file_name)) {
-                        $name = "{$file_name}.mp4";
-                    } else {
-                        $name = 'file_' . date('dmYhims') . \Yii::$app->security->generateRandomString(6) . ".mp4";
-                    }
-
-                    $fileTemp = "{$upload_root}/{$temp_file->name}";
-
-                    $path = "{$files_folder}/videos";
-                    $pathRoot = "{$upload_root}/videos";
-                    $filePath = "{$path}/{$name}";
-                    $filePathRoot = "{$pathRoot}/{$name}";
-
-                    $fileUrl = "{$web}/videos/{$name}";
-
-                    if (!file_exists($pathRoot)) {
-                        FileHelper::createDirectory($pathRoot);
-                    }
-
-                    if ($convert_video && $ext != 'mp4') {
-                        $errors[] = $temp_file->saveAs($fileTemp, ['quality' => 90]);
-                        $ffmpeg = FFMpeg::create();
-                        $video = $ffmpeg->open($fileTemp);
-                        $video->save(new X264(), $filePathRoot);
-                        unlink($fileTemp);
-                        $ext = 'mp4';
-                    } else {
-                        $errors[] = $temp_file->saveAs($filePathRoot, ['quality' => 90]);
-                    }
-
-                    $sec = 2;
-                    $video_thumb_name = str_replace('.', '_', $name) . '.jpg';
-                    $pathThumb = "{$files_folder}/videos/thumbs";
-                    $pathThumbRoot = "{$upload_root}/videos/thumbs";
-                    $filePathThumb = "{$pathThumb}/{$video_thumb_name}";
-                    $filePathThumbRoot = "{$pathThumbRoot}/{$video_thumb_name}";
-                    $fileThumbUrl = "{$web}/videos/{$name}";
-
-                    if (!file_exists($pathThumbRoot)) {
-                        FileHelper::createDirectory($pathThumbRoot);
-                    }
-                    
-                    $ffmpeg = FFMpeg::create();
-                    $video = $ffmpeg->open($filePathRoot);
-                    $frame = $video->frame(TimeCode::fromSeconds($sec));
-                    $frame->save($filePathThumbRoot);
-
-                    $image_size = getimagesize($filePathThumbRoot);
-                    $major = $image_size[0]; //width
-                    $min = $image_size[1]; //height
-                    $mov = ($major - $min) / 2;
-                    $point = [$mov, 0];
-
-                    if ($major < $min) {
-                        $major = $image_size[1];
-                        $min = $image_size[0];
-                        $mov = ($major - $min) / 2;
-                        $point = [0, $mov];
-                    }
-
-                    $errors[] = Image::crop($filePathThumbRoot, $min, $min, $point)
-                    ->save($filePathThumbRoot, ['quality' => 100]);
-
-                    if($min > 300){
-                        $errors[] = Image::thumbnail($filePathThumbRoot, 300, 300)
-                        ->save($filePathThumbRoot, ['quality' => 100]);
-                    }
-
-                    $ffprobe = FFProbe::create();
-                    $duration = $ffprobe
-                        ->format($filePathRoot) // extracts file informations
-                        ->get('duration');
-                        
-                } else {
-
-                    if($folder_id === 1){
-                        $folder_id = 4;
-                    }
-
-                    $path = "{$files_folder}/docs";
-                    $pathRoot = "{$upload_root}/docs";
-                    $filePath = "{$path}/{$name}";
-                    $filePathRoot = "{$pathRoot}/{$name}";
-                    $fileUrl = "{$webFiles}/images/{$name}";
-
-                    if (!file_exists($pathRoot)) {
-                        FileHelper::createDirectory($pathRoot);
-                    }
-                    
-                    $errors[] = $temp_file->saveAs($filePathRoot, ['quality' => 90]);
-                }
-
-                $file_uploaded = [
-                    'group_id' => $group_id,
-                    'folder_id' => $folder_id,
-                    'name' => $name,
-                    'description' => $description,
-                    'path' => $filePath,
-                    'url' => $fileUrl,
-                    'pathThumb' => $filePathThumb,
-                    'urlThumb' => $fileThumbUrl,
-                    'extension' => $ext,
-                    'type' => $type,
-                    'size' => $temp_file->size,
-                    'duration' => intval($duration),
-                    'created_at' => date('Y-m-d h:i:s')
-                ];
-
-                if($save){
-
-                    $file_uploaded['group_id'] = 1; //common
-                    if(Yii::$app->params['upload.group'])
-                        $file_uploaded['group_id'] = ControllerCommon::userGroup();
-
-                    
-                    $file_uploaded['class'] = File::class;
-                    $file_uploaded['file'] = $temp_file;
-                    $model = Yii::createObject($file_uploaded);
-
-                    if($model->save()){
-                        return ['code'=>200,'success'=>true,'data'=>$model];
-                    }else{
-                        return ['code'=>200,'success'=>false,'data'=>$model->getErrors()];
-                    }
-                    
-                }
-                return ['code'=>200,'success'=>true,'data'=>$file_uploaded];
-
-            }
-        } catch (\Throwable $th) {
-            return ['code'=>500,'success'=>false,'data'=>$th];
-        }
+        parent::init();
+        $this->token = ControllerCommon::User()->access_token;
+        $this->random = Yii::$app->security->generateRandomString(10);
+        PluginAsset::register(Yii::$app->view)->add(['axios']);
     }
 
-    public function actionSend()
+    public function run()
     {
+        $css = <<< CSS
+            #progress-container-{$this->random} {
+                width: 100%;
+                background: #f3f3f3;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                margin-top: 10px;
+                height: 25px;
+                position: relative;
+            }
+            #progress-bar-{$this->random} {
+                height: 100%;
+                background: #4caf50;
+                width: 0%;
+                transition: width 0.4s;
+                border-radius: 4px;
+            }
+        CSS;
+
+        \Yii::$app->view->registerCss($css);
         
-        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $script = <<< JS
+            document.getElementById('upload-button-{$this->random}').addEventListener('click', () => {
+                const file_input = document.getElementById('file-input-{$this->random}');
+                const file = file_input.files[0];
 
-        try {
-
-            if ($this->request->isPost && ($temp_file = UploadedFile::getInstanceByName('file')) !== null) {
-
-                $post = $this->request->post();
-                $options = [];
-                $options['file_name']= $post['file_name'] ?? false;
-                $options['description'] = $post['description'] ?? $temp_file->name;
-                $options['folder_id'] = $post['folder_id'] ?? 1;
-                $options['save'] = $post['save'] ?? 0;
-                $options['convert_video'] = $post['convert_video'] ?? true;
-
-                return self::uploadFile($temp_file, $options);
-
-            }
-            throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
-        } catch (\Throwable $th) {
-            ControllerCommon::error($th);
-        }
-    }
-
-    public static function removeFile($id)
-    {
-        try {
-
-            $file = false;
-            $success = false;
-            $user_groups = ControllerCommon::getUserGroups();
-            $model = File::find()->where(['id'=>$id])->andWhere(['or',['in','group_id',$user_groups],['group_id'=>1]])->one();
-            
-            if($model !== null) {
-                $id = $model->name;
-                $file_name = $model->name;
-
-                $message = "Could not remove model #{$id}";
-                $thumb = "Could not remove thumb file {$file_name}.";
-                $file = "Could not remove file {$file_name}.";
-
-                if($model->delete() !== false) {
-
-                    $message = "Model #{$id} removed.";
-                    
-                    if(@unlink(Yii::getAlias('@webroot').$model->path))
-                        $file = "File {$file_name} removed.";
-
-                    if($model->pathThumb){
-                        if(@unlink(Yii::getAlias('@webroot').$model->pathThumb))
-                            $thumb = "Thumb file {$file_name} removed.";
-                    }
-                } else {
-                    return [
-                        'code'=>500,
-                        'success'=>false,
-                        'message'=>$model->getErrors(),
-                    ];
+                if (!file) {
+                    alert('Please select a file first.');
+                    return;
                 }
 
-                return [
-                    'code'=>200,
-                    'success'=>true,
-                    'message'=>$message,
-                    'file'=>$file,
-                    'thumb'=>$thumb
-                ];
+                // Create a FormData object
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('folder_id', $this->folder_id);
+                formData.append('save', 1);
 
-            } else {
-                return ['code'=>404,'success'=>false];
-            }
+                // Select the progress bar element
+                const progressBar = document.getElementById('progress-bar-{$this->random}');
+                const progressContainer = document.getElementById('progress-{$this->random}');
+                const inputContainer = document.getElementById('input-{$this->random}');
 
-        } catch (\Throwable $th) {
-            return ['code'=>500,'success'=>false,'data'=>$th];
-        }
+                inputContainer.classList.add('d-none');
+                progressContainer.classList.remove('d-none');
+
+                axios.post('/rest/storage/send', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'Authorization': `Bearer {$this->token}`
+                    },
+                    onUploadProgress: (progressEvent) => {
+                        // Calculate the progress percentage
+                        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                        // Update the progress bar width
+                        progressBar.style.width = `\${percentCompleted}%`;
+                    }
+                })
+                .then(response => {
+                    if(response.data.success){
+                        toastr.success("File sended! " + response.data['message']);    
+                    }else{
+                        toastr.error("Error on send file! " + response.data['message']); 
+                    }
+                    progressBar.style.width = '0%';
+                    $.pjax.reload({container: "{$this->ajax_grid_reload}", async: true,timeout : false});
+                })
+                .catch(error => {
+                    toastr.error("Error on send file! " + response.data['message']);
+                }).then(response => {
+                    inputContainer.classList.remove('d-none');
+                    progressContainer.classList.add('d-none');
+                });
+
+            });
+        JS;
+
+        \Yii::$app->view->registerJs($script, View::POS_END);
+
+        $form_upload = <<< HTML
+
+            <h1>Upload Blob File via AJAX</h1>
+            <div class="row" id="input-{$this->random}">
+                <div class="col-md-12">
+                    <input type="file" id="file-input-{$this->random}" />
+                    <button id="upload-button-{$this->random}">Upload</button>
+                </div>
+            </div>
+            <div class="row d-none" id="progress-{$this->random}">
+                <div id="progress-container-{$this->random}">
+                    <div id="progress-bar-{$this->random}"></div>
+                </div>
+            </div>
+        HTML;
+        echo $form_upload;
     }
-
-    public function actionRemoveFile($id)
-    {
-        try {
-            if ($this->request->isPost) {
-                return self::removeFile($id);
-            }
-            throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
-        } catch (\Throwable $th) {
-            ControllerCommon::error($th);
-        }
-    }
-    
-
 }
-
-?>
