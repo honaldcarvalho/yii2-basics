@@ -30,12 +30,16 @@ use Yii;
  */
 class File extends ModelCommon
 {
-    public $verGroup = Yii::$app->params['upload.group'];
     public $file;
     public $preview;
     public $extensions = [];
     public $max_size = 5;
-    
+    public $verGroup = false;
+
+    public function __construct() {
+        parent::__construct();
+        $this->verGroup = Yii::$app->params['upload.group'];
+    }
     /**
      * {@inheritdoc}
      */

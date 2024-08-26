@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use weebz\yii2basics\controllers\ControllerCommon;
+use weebz\yii2basics\widgets\UploadFiles;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 /* @var $this yii\web\View */
@@ -102,7 +103,7 @@ $delete_files_button[] =
       <div class="card-body">
           <div class="row">
               <div class="col-md-12">
-                  <?= app\widgets\UploadFiles::widget(
+                  <?= UploadFiles::widget(
                           [
                               'folder_id'=>$model->id,
                               'show_list'=>1,
