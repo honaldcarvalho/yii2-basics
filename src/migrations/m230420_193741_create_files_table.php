@@ -39,7 +39,7 @@ class m230420_193741_create_files_table extends Migration
         );
         
         $this->insert('menus', [
-            'id'=> 131,
+            'id'=> 132,
             'menu_id' => 13,
             'label'   => 'Files',
             'icon_style'=> 'fas',
