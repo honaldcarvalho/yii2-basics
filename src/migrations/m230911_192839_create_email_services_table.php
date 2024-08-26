@@ -36,7 +36,7 @@ class m230911_192839_create_email_services_table extends Migration
         ]);
 
         $this->insert('menus', [
-            'id'=> 15,
+            'id'=> 16,
             'menu_id' => 1,
             'label'   => 'Email Services',
             'icon_style'=> 'fas',

@@ -33,7 +33,7 @@ class m230425_130812_create_logs_table extends Migration
         );
 
         $this->insert('menus', [
-            'id'=> 14,
+            'id'=> 15,
             'menu_id' => 1,
             'label'   => 'Logs',
             'icon_style'=> 'fas',
