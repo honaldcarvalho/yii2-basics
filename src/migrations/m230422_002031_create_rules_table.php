@@ -44,8 +44,8 @@ class m230422_002031_create_rules_table extends Migration
         );
 
         $this->insert('menus', [
-            'id'=> 11,
-            'menu_id' => 2,
+            'id'=> 123,
+            'menu_id' => 12,
             'label'   => 'Rules',
             'icon_style'=> 'fas',
             'icon'    => 'fas fa-person-booth',

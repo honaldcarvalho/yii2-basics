@@ -31,8 +31,8 @@ class m230420_193757_create_group_table extends Migration
         ]);
 
         $this->insert('menus', [
-            'id'=> 6,
-            'menu_id' => 2,
+            'id'=> 121,
+            'menu_id' => 12,
             'label'   => 'Groups',
             'icon_style'=> 'fas',
             'icon'    => 'fas fa-users',

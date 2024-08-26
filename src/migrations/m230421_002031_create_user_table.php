@@ -69,8 +69,8 @@ class m230421_002031_create_user_table extends Migration
         ]);
 
         $this->insert('menus', [
-            'id'=> 10,
-            'menu_id' => 2,
+            'id'=> 122,
+            'menu_id' => 12,
             'label'   => 'Users',
             'icon_style'=> 'fas',
             'icon'    => 'fas fa-user',

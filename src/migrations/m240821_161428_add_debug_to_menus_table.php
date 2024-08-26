@@ -15,7 +15,7 @@ class m240821_161428_add_debug_to_menus_table extends Migration
         $count = Menu::find()->select('id')->orderBy(['id'=>SORT_DESC])->one();
         $id = $count->id;
         $this->insert('menus', [
-            'id'=> $id + 1,
+            'id'=> 999,
             'menu_id' => null,
             'label'   => 'Development',
             'icon_style'=> 'fas',
@@ -30,8 +30,8 @@ class m240821_161428_add_debug_to_menus_table extends Migration
         ]);
 
         $this->insert('menus', [
-            'id'=> $id + 3,
-            'menu_id' => $id + 1,
+            'id'=> 9991,
+            'menu_id' => 999,
             'label'   => 'Gii',
             'icon_style'=> 'fas',
             'icon'    => 'fas fa-file-code',
@@ -45,8 +45,8 @@ class m240821_161428_add_debug_to_menus_table extends Migration
         ]);
 
         $this->insert('menus', [
-            'id'=> $id + 2,
-            'menu_id' => $id + 1,
+            'id'=> 9992,
+            'menu_id' => 999,
             'label'   => 'Debug',
             'icon_style'=> 'fas',
             'icon'    => 'fas fa-file-code',

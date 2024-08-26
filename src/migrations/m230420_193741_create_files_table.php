@@ -38,6 +38,19 @@ class m230420_193741_create_files_table extends Migration
             'CASCADE'
         );
         
+        $this->insert('menus', [
+            'id'=> 131,
+            'menu_id' => 13,
+            'label'   => 'Files',
+            'icon_style'=> 'fas',
+            'icon'    => 'fas fa-file',
+            'visible' => 'file;index',
+            'url'     => '/file/index',
+            'path'  => 'weebz/controllers',
+            'active'  => 'file',
+            'order'   => 0,
+            'status'  => true
+        ]);
     }
     /**
      * {@inheritdoc}

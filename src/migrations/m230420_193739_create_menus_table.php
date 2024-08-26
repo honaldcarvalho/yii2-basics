@@ -16,7 +16,7 @@ class m230420_193739_create_menus_table extends Migration
         //$sql = file_get_contents(__DIR__ . '/query_menus_insert.sql');
 
         $this->createTable('{{%menus}}', [
-            'id' => $this->primaryKey(),
+            'id' => this->integer()->notNull(),
             'menu_id' => $this->integer(),
             'label' => $this->string(60)->notNull(),
             'icon_style'=> $this->string(3)->defaultValue('fas'),
@@ -29,7 +29,9 @@ class m230420_193739_create_menus_table extends Migration
             'only_admin' => $this->integer()->defaultValue(0),
             'status' => $this->integer()->defaultValue(0),
         ]);
-        //$this->execute($sql);
+
+        $this->addPrimaryKey('PRIMARY', 'menus', 'id');
+
         $this->addForeignKey(
             'fk-menus-menu_id',
             'menus',
@@ -54,7 +56,21 @@ class m230420_193739_create_menus_table extends Migration
         ]);
 
         $this->insert('menus', [
-            'id'=> 2,
+            'id'=> 11,
+            'menu_id' => 1,
+            'label'   => 'Menus',
+            'icon_style'=> 'fas',
+            'icon'    => 'fas fa-bars',
+            'visible' => 'menu;index',
+            'url'     => '/menu/index',
+            'path'  => 'weebz/controllers',
+            'active'  => 'menu',
+            'order'   => 0,
+            'status'  => true
+        ]);
+        
+        $this->insert('menus', [
+            'id'=> 12,
             'menu_id' => 1,
             'label'   => 'Authentication',
             'icon_style'=> 'fas',
@@ -68,16 +84,16 @@ class m230420_193739_create_menus_table extends Migration
         ]);
 
         $this->insert('menus', [
-            'id'=> 3,
+            'id'=> 13,
             'menu_id' => 1,
-            'label'   => 'Menus',
+            'label'   => 'Storage',
             'icon_style'=> 'fas',
-            'icon'    => 'fas fa-bars',
-            'visible' => 'menu;index',
-            'url'     => '/menu/index',
+            'icon'    => 'fas fa-hdd',
+            'visible' => '',
+            'url'     => '#',
             'path'  => 'weebz/controllers',
-            'active'  => 'menu',
-            'order'   => 0,
+            'active'  => '',
+            'order'   => 1,
             'status'  => true
         ]);
 

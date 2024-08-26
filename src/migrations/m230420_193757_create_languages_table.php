@@ -38,7 +38,7 @@ class m230420_193757_create_languages_table extends Migration
         ]);
 
         $this->insert('menus', [
-            'id'=> 5,
+            'id'=> 14,
             'menu_id' => 1,
             'label'   => 'Translations',
             'icon_style'=> 'fas',
@@ -52,8 +52,8 @@ class m230420_193757_create_languages_table extends Migration
         ]);
 
         $this->insert('menus', [
-            'id'=> 7,
-            'menu_id' => 5,
+            'id'=> 141,
+            'menu_id' => 14,
             'label'   => 'Languages',
             'icon_style'=> 'fas',
             'icon'    => 'fas fa-language',

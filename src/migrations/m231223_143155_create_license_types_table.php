@@ -57,8 +57,8 @@ class m231223_143155_create_license_types_table extends Migration
         ]);
 
         $this->insert('menus', [
-            'id'=> 15,
-            'menu_id' => 1,
+            'id'=> 124,
+            'menu_id' => 12,
             'label'   => 'License Types',
             'icon_style'=> 'fas',
             'icon'    => 'fas fa-certificate',

@@ -48,8 +48,8 @@ class m231223_143408_create_licenses_table extends Migration
         ]);
 
         $this->insert('menus', [
-            'id'=> 16,
-            'menu_id' => 1,
+            'id'=> 125,
+            'menu_id' => 12,
             'label'   => 'Licenses',
             'icon_style'=> 'fas',
             'icon'    => 'fas fa-certificate',

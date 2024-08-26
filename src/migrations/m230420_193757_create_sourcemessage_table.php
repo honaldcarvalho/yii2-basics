@@ -21,8 +21,8 @@ class m230420_193757_create_sourcemessage_table extends Migration
         $this->execute($sql);
 
         $this->insert('menus', [
-            'id'=> 9,
-            'menu_id' => 5,
+            'id'=> 142,
+            'menu_id' => 14,
             'label'   => 'Source Messages',
             'icon_style'=> 'fas',
             'icon'    => 'fas fa-comment',
