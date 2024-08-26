@@ -28,9 +28,8 @@ class m230420_193739_create_menus_table extends Migration
             'order' => $this->integer()->defaultValue(0),
             'only_admin' => $this->integer()->defaultValue(0),
             'status' => $this->integer()->defaultValue(0),
+            'PRIMARY KEY(id)',
         ]);
-
-        $this->addPrimaryKey('PRIMARY', 'menus', 'id');
 
         $this->addForeignKey(
             'fk-menus-menu_id',
