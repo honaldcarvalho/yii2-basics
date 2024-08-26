@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use weebz\yii2basics\controllers\ControllerCommon;
+use weebz\yii2basics\widgets\StorageUpload;
 use weebz\yii2basics\widgets\UploadFiles;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
@@ -28,19 +29,22 @@ $script = <<< JS
 
         $('#delete-files').click(function(e){
 
-            var items = $('.file-item:checked');
-            if(items.length > 0){     
-                var form = document.createElement('form');
-                form.setAttribute('action','/file/delete-files?folder=$model->id');
-                form.setAttribute('method','post');
-                form.setAttribute('id','form-move');
-                document.body.appendChild(form);
+            var keys1 = $('#grid-files').yiiGridView('getSelectedRows');
+            var keys2 = $('#grid-image-files').yiiGridView('getSelectedRows');
+            var mergedArray = [...keys1, ...keys2];
+            console.log(mergedArray);
+            // if(items.length > 0){     
+            //     var form = document.createElement('form');
+            //     form.setAttribute('action','/file/delete-files?folder=$model->id');
+            //     form.setAttribute('method','post');
+            //     form.setAttribute('id','form-move');
+            //     document.body.appendChild(form);
                 
-                $('.file-item:checked').each(function(i){
-                    $(this).clone().appendTo('#form-move');
-                });
-                form.submit(); 
-            }
+            //     $('.file-item:checked').each(function(i){
+            //         $(this).clone().appendTo('#form-move');
+            //     });
+            //     form.submit(); 
+            // }
             return false;
         });
 
@@ -103,14 +107,7 @@ $delete_files_button[] =
       <div class="card-body">
           <div class="row">
               <div class="col-md-12">
-                  <?= UploadFiles::widget(
-                          [
-                              'folder_id'=>$model->id,
-                              'show_list'=>1,
-                              'auto'=>0,
-                              'show_upload_label'=>1,
-                              'callback'=>'$.pjax.reload({container: "#list-files-grid", async: true,timeout : false});'
-                         ]); ?>
+                  <?= StorageUpload::widget(['folder_id'=>$model->id]); ?>
               </div>
           </div>
           <!--.row-->
@@ -148,18 +145,10 @@ $delete_files_button[] =
                     </p>
                     
                     <?php Pjax::begin(['id' => 'list-files-grid']) ?>
-                    <?=     yii\grid\GridView::widget([
+                    <?= yii\grid\GridView::widget([
+                        'id'=> 'grid-folders',
                         'dataProvider' =>  $dataProviderFolders,
                         'columns' => [
-                            [
-                                'headerOptions' => ['style' => 'width:1%'],
-                                'header' => '',
-                                'format' => 'raw',
-                                'value' => function ($data) {
-                                    return Html::checkbox('file_selected[]', false, ['value' => $data->id, 'class' => 'file-item']);
-                                },
-                                //'visible'=> ControllerCommon::getPermission('file','delete-files')
-                            ],
                             [
                                 'headerOptions' => ['style' => 'width:4%'],
                                 'attribute'=>'folder_id',
@@ -214,7 +203,7 @@ $delete_files_button[] =
                                 'controller'=>'folder',
                                 'buttons' => [  
                                     'remove' => function ($url, $model, $key) {
-                                        return ControllerCommon::getPermission('file','remove-file') ? 
+                                        return ControllerCommon::getPermission('file','remove-file',$model) ? 
                                                 Html::a('<i class="fas fa-unlink"></i>', yii\helpers\Url::to(['file/remove-file', 'id' => $model->id, 'folder' => $model->folder_id]),
                                                         ['class'=>'btn btn-outline-secondary',"data-toggle"=>"tooltip","data-placement"=>"top", "title"=>\Yii::t('app','Remove from folder')]) : '';
                                     },    
@@ -222,18 +211,13 @@ $delete_files_button[] =
                             ],
                         ],
                     ]); ?>
-                    <?=     yii\grid\GridView::widget([
+                    <?= yii\grid\GridView::widget([
+                        'id'=> 'grid-files',
                         'dataProvider' =>  $dataProvider,
-                        
                         'columns' => [
                             [
-                                'headerOptions' => ['style' => 'width:1%'],
-                                'header' => '',
-                                'format' => 'raw',
-                                'value' => function ($data) {
-                                    return Html::checkbox('file_selected[]', false, ['value' => $data->id, 'class' => 'file-item']);
-                                },
-                                //'visible'=> ControllerCommon::getPermission('file','delete-files')
+                                'class' => 'yii\grid\CheckboxColumn',
+                                // you may configure additional properties here
                             ],
                             [
                                 'headerOptions' => ['style' => 'width:4%'],
@@ -255,7 +239,7 @@ $delete_files_button[] =
                                 'header' => 'Preview',
                                 'format' => 'raw',
                                 'value' => function ($data) {
-                                    if ($data->urlThumb) {
+                                    if (!empty($data->urlThumb)) {
                                         $url = Yii::getAlias('@web') . $data->urlThumb;
                                         return Html::a("<img class='brand-image img-circle elevation-3' width='50' src='{$url}' />",Yii::getAlias('@web').$data->url,
                                         ['class'=>'btn btn-outline-secondary',"data-fancybox "=>"", "title"=>\Yii::t('app','View')]);
@@ -295,7 +279,7 @@ $delete_files_button[] =
                                 'controller'=>'file',
                                 'buttons' => [  
                                     'remove' => function ($url, $model, $key) {
-                                        return ControllerCommon::getPermission('file','remove-file') ? 
+                                        return ControllerCommon::getPermission('file','remove-file',$model) ? 
                                                 Html::a('<i class="fas fa-unlink"></i>', yii\helpers\Url::to(['file/remove-file', 'id' => $model->id, 'folder' => $model->folder_id]),
                                                         ['class'=>'btn btn-outline-secondary',"data-toggle"=>"tooltip","data-placement"=>"top", "title"=>\Yii::t('app','Remove from folder')]) : '';
                                     },
