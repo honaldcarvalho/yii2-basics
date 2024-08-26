@@ -16,7 +16,7 @@ class m230420_193739_create_menus_table extends Migration
         //$sql = file_get_contents(__DIR__ . '/query_menus_insert.sql');
 
         $this->createTable('{{%menus}}', [
-            'id' => this->integer()->notNull(),
+            'id' => $this->integer()->notNull(),
             'menu_id' => $this->integer(),
             'label' => $this->string(60)->notNull(),
             'icon_style'=> $this->string(3)->defaultValue('fas'),

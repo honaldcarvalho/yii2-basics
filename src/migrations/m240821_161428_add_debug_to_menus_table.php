@@ -13,7 +13,7 @@ class m240821_161428_add_debug_to_menus_table extends Migration
     public function safeUp()
     {
         $count = Menu::find()->select('id')->orderBy(['id'=>SORT_DESC])->one();
-        $id = $count->id;
+
         $this->insert('menus', [
             'id'=> 999,
             'menu_id' => null,
