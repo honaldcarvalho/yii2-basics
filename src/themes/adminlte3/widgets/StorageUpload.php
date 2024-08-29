@@ -17,15 +17,19 @@ use yii\bootstrap5\Widget;
  *      'folder_id' => $model->id, //Folder model id
  *      'grid_reload'=>1, //Enable auto reload GridView. disable = 0; enable = 1;
  *      'grid_reload_id'=>'#list-files-grid', //ID of GridView will reload
- *      'crop_aspect_ratio'=>'1/1' //Aspect ratio for crop image
+ *      'crop_aspect_ratio'=>'1/1', //Aspect ratio for crop image
+   *    'crop_force' => 0 //Force crop image
  *     ]); ?>
  */
 class StorageUpload extends Widget
 {
     public $token;
     public $random;
+
     /** Aspect ratio for crop image */
     public $crop_aspect_ratio = 'null';
+    /** Force crop image */
+    public $crop_force = 0;
     /** Folder model id */
     public $folder_id = 1;
     /** Enable auto reload GridView. disable = 0; enable = 1; */
@@ -44,18 +48,9 @@ class StorageUpload extends Widget
     public function run()
     {
         $css = <<< CSS
-            #progress-container-{$this->random} {
-                width: 100%;
-                background: #f3f3f3;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                margin-top: 10px;
-                height: 25px;
-                position: relative;
-            }
+
             #progress-bar-{$this->random} {
                 height: 100%;
-                background: #7beb00;
                 width: 0%;
                 transition: width 0.4s;
                 border-radius: 4px;
@@ -163,21 +158,33 @@ class StorageUpload extends Widget
             }
 
             async function encodeImageFileAsURL(file,preview) {
-                var reader = new FileReader();            
-                reader.onloadend = await function () {
-                    preview.src = reader.result;
-                }
-                reader.readAsDataURL(file);
+                return new Promise((resolve, reject) => {
+                    var reader = new FileReader();            
+                    reader.onloadend = function () {
+                        preview.src = reader.result;
+                        resolve(); // Resolving the promise when the encoding is complete
+                    };
+                    reader.onerror = reject; // Rejecting the promise in case of an error
+                    reader.readAsDataURL(file);
+                });
             }
 
-            file_input.addEventListener('change', function(event) {
+            file_input.addEventListener('change', async function(event) {
 
                 var files = event.target.files;
                 if (files.length > 0) {
                     if(isImage(files[0])){
-                        encodeImageFileAsURL(files[0],preview);
-                        encodeImageFileAsURL(files[0],img_crop);
-                        crop_button.disabled = false;
+                        if($this->crop_force == 1){
+                            await encodeImageFileAsURL(files[0],img_crop);
+                            modal_crop.show();
+                            startCrop();
+                            editing = true;
+                            crop_button.disabled = false;
+                        } else{
+                            await encodeImageFileAsURL(files[0],preview);
+                            await encodeImageFileAsURL(files[0],img_crop);
+                            crop_button.disabled = false;
+                        }
                     }else{
                         preview.src = '/dummy/code.php?x=150x150/fff/000.jpg&text=NO PREVIEW';
                         crop_button.disabled = true;
@@ -192,6 +199,7 @@ class StorageUpload extends Widget
             });
 
             /*CROP FUNTIONS*/
+
             function startCrop() {
                 temp_image = $("#img-crop-{$this->random}");
                 temp_image.cropper({
@@ -202,17 +210,18 @@ class StorageUpload extends Widget
                 });
                 cropperImage = temp_image.data('cropper');
             }
-
-            el('modal-crop-{$this->random}').addEventListener('shown.bs.modal', function () {
-                cropper = new Cropper(temp_image, {
-                    initialAspectRatio: $this->crop_aspect_ratio,
-                    aspectRatio: $this->crop_aspect_ratio,
-                    viewMode: 3,
-                });
-            });
             
             function cancelCrop() {
                 temp_image.cropper("destroy");
+
+                if($this->crop_force == 1){
+                    file_input.value = '';
+                    upload_button.disabled = true;
+                    crop_button.disabled = true;
+                    input_container.classList.remove('d-none');
+                    progress_container.classList.add('d-none');
+                    card_info.classList.add('d-none');
+                }
             }
             
             function setCrop() {
@@ -377,11 +386,10 @@ class StorageUpload extends Widget
                 <button class="btn btn-default" id="crop-button-{$this->random}" disabled="true"> <i class="fas fa-cut m-2"></i> Crop</button>
             </div>
 
-            <div class="row d-none" id="progress-{$this->random}">
-                <div id="progress-container-{$this->random}">
-                    <div id="progress-bar-{$this->random}"></div>
-                </div>
+            <div class="progress d-none" id="progress-{$this->random}">
+                <div id="progress-bar-{$this->random}" class="progress-bar progress-bar-striped bg-success progress-bar-animated"></div>
             </div>
+
         HTML;
         echo $form_upload;
     }

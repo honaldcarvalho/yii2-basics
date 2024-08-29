@@ -131,7 +131,14 @@ $this::registerJs($script, $this::POS_END);
         <div class="card-body">
             <div class="row">
                 <div class="col-md-12">
-                    <?= StorageUpload::widget(['folder_id' => $model->id,'grid_reload'=>1,'grid_reload_id'=>'#list-files-grid','crop_aspect_ratio'=>'1/1']); ?>
+                    <?= StorageUpload::widget([
+                        'folder_id' => $model->id,
+                        'grid_reload'=>1,
+                        'grid_reload_id'=>'#list-files-grid',
+                        'crop_aspect_ratio'=>'1/1',
+                        'crop_force'=>1
+                        
+                        ]); ?>
                 </div>
             </div>
             <!--.row-->
