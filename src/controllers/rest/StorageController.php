@@ -435,6 +435,28 @@ class StorageController extends ControllerRest {
             ControllerCommon::error($th);
         }
     }
+
+    public function actionRemoveFiles()
+    {
+        $results = [];
+        try {
+            if ($this->request->isPost) {
+
+                $post = $this->request->post();
+
+                if(isset($post['keys'])){
+                    foreach($post['keys'] as $key){
+                        $results[] = self::removeFile($key);
+                    }
+                    return $results;
+                }
+                
+            }
+            throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
+        } catch (\Throwable $th) {
+            ControllerCommon::error($th);
+        }
+    }
     
 
 }

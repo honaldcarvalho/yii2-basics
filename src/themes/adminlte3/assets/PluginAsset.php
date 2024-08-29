@@ -26,9 +26,17 @@ class PluginAsset extends AssetBundle
         'icheck-bootstrap' => [
             'css' => ['icheck-bootstrap/icheck-bootstrap.css']
         ],
+        'jquery-cropper' => [
+            'css' => 'jquery-cropper/cropper.min.css',
+            'js' => 'jquery-cropper/cropper.min.js',
+        ],
         'cropperjs' => [
             'css' => 'cropperjs/css/cropper.css',
             'js' => 'cropperjs/js/cropper.js',
+        ],
+        'cropper' => [
+            'css' => 'cropper/cropper.min.css',
+            'js' => 'cropper/cropper.min.js',
         ],
         'chart.js' => [
             'css' => 'chart.js/Chart.min.css',
