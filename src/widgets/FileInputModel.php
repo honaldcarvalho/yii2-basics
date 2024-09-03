@@ -5,7 +5,7 @@ namespace  weebz\yii2basics\widgets;
 use Yii;
 use yii\web\View;
 use yii\bootstrap5\BootstrapAsset;
-use yii\bootstrap4\Widget;
+use yii\bootstrap5\Widget;
 
 /** @var yii\web\View $this */
 /** @var weebz\yii2basics\models\File $model */
