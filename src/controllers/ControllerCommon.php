@@ -768,7 +768,7 @@ class ControllerCommon extends \yii\web\Controller
         return $ip;
     }
 
-    function generateRandomString($length = 10)
+    static function generateRandomString($length = 10)
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);

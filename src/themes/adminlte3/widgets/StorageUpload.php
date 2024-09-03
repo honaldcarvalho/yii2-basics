@@ -18,7 +18,7 @@ use yii\bootstrap5\Widget;
  *      'grid_reload'=>1, //Enable auto reload GridView. disable = 0; enable = 1;
  *      'grid_reload_id'=>'#list-files-grid', //ID of GridView will reload
  *      'crop_aspect_ratio'=>'1/1', //Aspect ratio for crop image
-   *    'crop_force' => 0 //Force crop image
+   *     'crop_force' => 0 //Force crop image
  *     ]); ?>
  */
 class StorageUpload extends Widget
@@ -41,7 +41,7 @@ class StorageUpload extends Widget
     {
         parent::init();
         $this->token = ControllerCommon::User()->access_token;
-        $this->random = Yii::$app->security->generateRandomString(10);
+        $this->random = ControllerCommon::generateRandomString(6);
         PluginAsset::register(Yii::$app->view)->add(['axios','jquery-cropper']);
     }
 
