@@ -21,7 +21,7 @@ class SiteController extends ControllerCommon
     public function __construct($id, $module, $config = array()) {
         parent::__construct($id, $module, $config);
         $this->access = $this->getAccess($id); 
-         $this->free = ['reset-password','request-password-reset','verify-email'];
+         $this->free = ['reset-password','request-password-reset','verify-email','index'];
     }
 
     /**
