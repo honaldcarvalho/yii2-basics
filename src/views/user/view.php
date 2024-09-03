@@ -27,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="row">
                 <div class="col-md-2">
                     <?=
-                    app\widgets\FileInputModel::widget(
+                    weebz\yii2basics\widgets\FileInputModel::widget(
                         [
                             'model' => 'User',
                             'model_field' => 'file_id',
