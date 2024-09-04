@@ -12,7 +12,7 @@ use yii\web\NotFoundHttpException;
 /**
  * FolderController implements the CRUD actions for Folder model.
  */
-class FolderController extends ControllerCommon
+class FolderController extends AuthController
 {
 
     /**
@@ -49,7 +49,7 @@ class FolderController extends ControllerCommon
 
         $dataProvider = new \yii\data\ActiveDataProvider([
             'query' => File::find()->andFilterWhere(['folder_id'=>$model->id])
-            ->andWhere(['or',['in','group_id',ControllerCommon::getUserGroups()],['group_id'=>null], ['group_id'=>1]]),
+            ->andWhere(['or',['in','group_id',AuthController::getUserGroups()],['group_id'=>null], ['group_id'=>1]]),
         ]);
         
         return $this->render('view', [
@@ -150,29 +150,14 @@ class FolderController extends ControllerCommon
      */
     public function actionDelete($id)
     {
-        Folder::find()->where(['id'=>$id])->andWhere(['or',['in','group_id',ControllerCommon::getUserGroups()]])->one()->delete();
+        $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
     }
 
     public function actionRemove($id)
     {
-        return Folder::find()->where(['id'=>$id])->andWhere(['or',['in','group_id',ControllerCommon::getUserGroups()]])->one()->delete();
+        return Folder::find()->where(['id'=>$id])->andWhere(['or',['in','group_id',AuthController::getUserGroups()]])->one()->delete();
     }
 
-    /**
-     * Finds the Folder model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
-     * @return Folder the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        if (($model = Folder::find()->where(['id'=>$id])->andWhere(['or',['in','group_id',ControllerCommon::getUserGroups()],['group_id'=>null], ['group_id'=>1]])->one()) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
-    }
 }

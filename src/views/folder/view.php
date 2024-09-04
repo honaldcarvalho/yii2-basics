@@ -1,9 +1,11 @@
 <?php
 
+use weebz\yii2basics\controllers\AuthController;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use weebz\yii2basics\controllers\ControllerCommon;
 use weebz\yii2basics\widgets\StorageUpload;
+use weebz\yii2basics\widgets\StorageUploadMultiple;
 use weebz\yii2basics\widgets\UploadFiles;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
@@ -131,14 +133,11 @@ $this::registerJs($script, $this::POS_END);
         <div class="card-body">
             <div class="row">
                 <div class="col-md-12">
-                    <?= StorageUpload::widget([
+                    <?= StorageUploadMultiple::widget([
                         'folder_id' => $model->id,
                         'grid_reload'=>1,
-                        'grid_reload_id'=>'#list-files-grid',
-                        'crop_aspect_ratio'=>'1/1',
-                        'crop_force'=>1
-                        
-                        ]); ?>
+                        'grid_reload_id'=>'#list-files-grid'
+                    ]); ?>
                 </div>
             </div>
             <!--.row-->
@@ -349,14 +348,14 @@ $this::registerJs($script, $this::POS_END);
                                 'label' => Yii::t('app', 'Created At'),
                             ],
                             [
-                                'class' => \weebz\yii2basics\components\gridview\ActionColumn::class,
+                                'class' => \weebz\yii2basics\components\ActionColumn::class,
                                 'headerOptions' => ['style' => 'width:10%'],
                                 'template' => '{view}{remove}{delete}',
                                 'path' => 'app',
                                 'controller' => 'file',
                                 'buttons' => [
                                     'remove' => function ($url, $model, $key) {
-                                        return ControllerCommon::getPermission('file', 'remove-file', $model) ?
+                                        return AuthController::verAuth('file', 'remove-file', $model) ?
                                             Html::a(
                                                 '<i class="fas fa-unlink"></i>',
                                                 yii\helpers\Url::to(['file/remove-file', 'id' => $model->id, 'folder' => $model->folder_id]),

@@ -49,7 +49,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             ],
                             'status:boolean',
 
-                            ['class' =>'weebz\yii2basics\components\gridview\ActionColumn',],
+                            ['class' =>'weebz\yii2basics\components\ActionColumn',],
                         ],
                         'summaryOptions' => ['class' => 'summary mb-2'],
                         'pager' => [

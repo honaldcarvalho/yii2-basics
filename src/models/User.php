@@ -354,7 +354,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * Gets query for [[UserGroups]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return array
      */
     public function getUserGroupsId()
     {

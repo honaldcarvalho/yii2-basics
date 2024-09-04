@@ -5,10 +5,15 @@
 /* @var $message string */
 /* @var $exception Exception */
 
+use weebz\yii2basics\controllers\ControllerCommon;
 use yii\helpers\Html;
 
 $this->title = \Yii::t('app',$name);
 $this->params['breadcrumbs'] = [['label' => $this->title]];
+
+if(ControllerCommon::isGuest())
+    $this->context->layout = '@vendor/weebz/yii2-basics/src/themes/adminlte3/views/layouts/main-login'; // Use a specific layout for error pages
+
 ?>
 
 <div class="error-page">
@@ -16,8 +21,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
         <h3><i class="fas fa-exclamation-triangle text-danger"></i> <?= \Yii::t('app',$name); ?></h3>
 
         <p>
-            <?= \Yii::t('app','The above error occurred while the Web server was processing your request. Please contact us if you think this is a server error. Thank you. Meanwhile, you may '); ?>
-            <b><?= Html::a( \Yii::t('app','return to dashboard'), Yii::$app->homeUrl,['class'=>"active"]); ?></b>.
+            <?= \Yii::t('app','The above error occurred while the Web server was processing your request.'); ?></b>
         </p>
     </div>
 </div>
