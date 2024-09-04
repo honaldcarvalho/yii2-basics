@@ -2,6 +2,7 @@
 
 namespace weebz\yii2basics\models;
 
+use weebz\yii2basics\controllers\AuthController;
 use Yii;
 use weebz\yii2basics\controllers\ControllerCommon;
 use yii\data\ActiveDataProvider;
@@ -86,12 +87,7 @@ class ModelCommon extends \yii\db\ActiveRecord
         
         // grid filtering conditions
         if($this->verGroup) {
-            $groups = ControllerCommon::userGroups();
-            $users_groups = UserGroup::find()->where(['in','group_id',$groups])->asArray()->all();
-            $group_ids = [];
-            foreach ($users_groups as $key => $value) {
-                $group_ids[] = $value['group_id'];
-            }    
+            $group_ids = AuthController::User()->getUserGroupsId();
             if(isset($options['groupModel'])){
                 $query->andFilterWhere(['in', "{$options['groupModel']['table']}.group_id", $group_ids]);
             }else{

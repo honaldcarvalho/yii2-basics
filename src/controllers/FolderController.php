@@ -21,10 +21,9 @@ class FolderController extends AuthController
      */
     public function actionIndex()
     {
-        $searchModel = new FolderSearch();
+        $searchModel = new Folder();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $model_folder = new Folder();
-        $dataProvider->query->where(['folder_id'=>null]);
 
         return $this->render('index', [
             'searchModel' => $searchModel,

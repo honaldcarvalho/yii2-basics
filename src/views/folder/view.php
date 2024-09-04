@@ -227,7 +227,7 @@ $this::registerJs($script, $this::POS_END);
                                 'controller' => 'folder',
                                 'buttons' => [
                                     'remove' => function ($url, $model, $key) {
-                                        return ControllerCommon::getPermission('file', 'remove-file', $model) ?
+                                        return AuthController::verAuth('file', 'remove-file', $model) ?
                                             Html::a(
                                                 '<i class="fas fa-unlink"></i>',
                                                 yii\helpers\Url::to(['file/remove-file', 'id' => $model->id, 'folder' => $model->folder_id]),
