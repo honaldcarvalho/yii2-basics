@@ -15,7 +15,7 @@ use weebz\yii2basics\models\VerifyEmailForm;
 /**
  * Site controller
  */
-class SiteController extends ControllerCommon
+class SiteController extends AuthController
 {
 
     public function __construct($id, $module, $config = array()) {
