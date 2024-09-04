@@ -21,7 +21,7 @@ use Yii;
  * @property Folder $folder
  * @property Files[] $files
  */
-class Folder extends \yii\db\ActiveRecord
+class Folder extends ModelCommon
 {
     public $verGroup = false;
 
