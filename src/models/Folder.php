@@ -23,7 +23,7 @@ use Yii;
  */
 class Folder extends ModelCommon
 {
-    public $verGroup = false;
+    public $verGroup = true;
 
     // public function __construct() {
     //     parent::__construct();

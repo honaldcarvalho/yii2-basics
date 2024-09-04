@@ -2,6 +2,7 @@
 /* @var $this \yii\web\View */
 /* @var $content string */
 
+use weebz\yii2basics\controllers\AuthController;
 use weebz\yii2basics\models\Params;
 use weebz\yii2basics\themes\adminlte3\assets\FontAwesomeAsset;
 use weebz\yii2basics\themes\adminlte3\assets\PluginAsset;
@@ -16,7 +17,11 @@ $this->metaTags = '';
 $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback');
 
 $assetDir = Yii::$app->assetManager->getPublishedUrl('@vendor/weebz/yii2-basics/src/themes/adminlte3/web/dist');
-$theme = Yii::$app->user->identity->theme;
+
+if(!AuthController::isGuest()){
+    $theme = Yii::$app->user->identity->theme;
+}
+
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
