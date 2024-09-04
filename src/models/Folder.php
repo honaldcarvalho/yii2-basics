@@ -25,10 +25,10 @@ class Folder extends ModelCommon
 {
     public $verGroup = false;
 
-    public function __construct() {
-        parent::__construct();
-        $this->verGroup = Yii::$app->params['upload.group'];
-    }
+    // public function __construct() {
+    //     parent::__construct();
+    //     $this->verGroup = Yii::$app->params['upload.group'];
+    // }
 
     /**
      * {@inheritdoc}

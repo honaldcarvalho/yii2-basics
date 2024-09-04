@@ -88,6 +88,7 @@ class ModelCommon extends \yii\db\ActiveRecord
         // grid filtering conditions
         if($this->verGroup) {
             $group_ids = AuthController::User()->getUserGroupsId();
+            $group_ids[] = 1;
             if(isset($options['groupModel'])){
                 $query->andFilterWhere(['in', "{$options['groupModel']['table']}.group_id", $group_ids]);
             }else{
