@@ -20,6 +20,8 @@ $assetDir = Yii::$app->assetManager->getPublishedUrl('@vendor/weebz/yii2-basics/
 $theme = 'light';
 if(!AuthController::isGuest()){
     $theme = Yii::$app->user->identity->theme;
+}else{
+    $this->goHome();
 }
 
 ?>
