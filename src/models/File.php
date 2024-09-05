@@ -34,12 +34,12 @@ class File extends ModelCommon
     public $preview;
     public $extensions = [];
     public $max_size = 5;
-    public $verGroup = false;
+    public $verGroup = true;
 
-    public function __construct() {
-        parent::__construct();
-        $this->verGroup = Yii::$app->params['upload.group'];
-    }
+    // public function __construct() {
+    //     parent::__construct();
+    //     $this->verGroup = Yii::$app->params['upload.group'];
+    // }
     /**
      * {@inheritdoc}
      */

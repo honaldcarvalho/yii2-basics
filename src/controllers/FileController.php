@@ -353,10 +353,7 @@ class FileController extends AuthController
             return $this->redirect(["index"]);
         }
 
-
     }
-
-    
 
     public function actionList()
     {
