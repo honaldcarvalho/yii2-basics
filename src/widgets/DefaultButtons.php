@@ -3,7 +3,7 @@
 namespace weebz\yii2basics\widgets;
 
 use Yii;
-use weebz\yii2basics\controllers\ AuthController;
+use weebz\yii2basics\controllers\AuthController;
 use yii\base\Widget;
 use yii\helpers\Html;
 

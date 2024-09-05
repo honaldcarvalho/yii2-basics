@@ -4,7 +4,7 @@ use weebz\yii2basics\controllers\Controller as ControllersController;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use weebz\yii2basics\components\gridview\ActionColumn;
-use weebz\yii2basics\controllers\ AuthController;
+use weebz\yii2basics\controllers\AuthController;
 use weebz\yii2basics\models\Folder;
 use yii\helpers\Url;
 use yii\web\View;

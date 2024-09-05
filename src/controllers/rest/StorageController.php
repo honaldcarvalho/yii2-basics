@@ -12,7 +12,7 @@ use FFMpeg\FFProbe;
 use FFMpeg\Format\Video\X264;
 use weebz\yii2basics\models\File;
 use weebz\yii2basics\models\Folder;
-use weebz\yii2basics\controllers\ AuthController;
+use weebz\yii2basics\controllers\AuthController;
 
 class StorageController extends ControllerRest {
     

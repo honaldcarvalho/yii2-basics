@@ -2,7 +2,7 @@
 
 namespace weebz\yii2basics\controllers;
 
-use weebz\yii2basics\controllers\ AuthController;
+use weebz\yii2basics\controllers\AuthController;
 use weebz\yii2basics\models\File;
 use Yii;
 use weebz\yii2basics\models\User;

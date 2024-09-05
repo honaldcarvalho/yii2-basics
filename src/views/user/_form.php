@@ -1,6 +1,6 @@
 <?php
 
-use weebz\yii2basics\controllers\ AuthController;
+use weebz\yii2basics\controllers\AuthController;
 use weebz\yii2basics\models\Group;;
 use weebz\yii2basics\models\Language;
 use weebz\yii2basics\models\User;

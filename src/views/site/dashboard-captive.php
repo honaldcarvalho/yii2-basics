@@ -2,7 +2,7 @@
 
 /** @var yii\web\View $this */
 
-use weebz\yii2basics\controllers\ AuthController;
+use weebz\yii2basics\controllers\AuthController;
 use weebz\yii2basics\models\custom\DashboarSearch;
 use weebz\yii2basics\models\Params;
 

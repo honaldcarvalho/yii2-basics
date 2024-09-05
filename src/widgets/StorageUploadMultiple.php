@@ -2,7 +2,7 @@
 
 namespace weebz\yii2basics\widgets;
 
-use weebz\yii2basics\controllers\ AuthController;
+use weebz\yii2basics\controllers\AuthController;
 use weebz\yii2basics\themes\adminlte3\assets\PluginAsset;
 use Yii;
 use yii\web\View;

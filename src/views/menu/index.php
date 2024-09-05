@@ -3,7 +3,7 @@
 use yii\grid\GridView;
 use weebz\yii2basics\widgets\DefaultButtons;
 use weebz\yii2basics\components\gridview\ActionColumn;
-use weebz\yii2basics\controllers\ AuthController;
+use weebz\yii2basics\controllers\AuthController;
 
 /* @var $this yii\web\View */
 /* @var $searchModel weebz\yii2basics\models\MenuSearch */

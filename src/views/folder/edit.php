@@ -3,7 +3,7 @@
 /* @var $this yii\web\View */
 /* @var $model weebz\yii2basics\models\Folder */
 
-use weebz\yii2basics\controllers\ AuthController;
+use weebz\yii2basics\controllers\AuthController;
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
 

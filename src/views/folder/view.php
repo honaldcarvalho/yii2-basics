@@ -3,7 +3,7 @@
 use weebz\yii2basics\controllers\AuthController;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
-use weebz\yii2basics\controllers\ AuthController;
+use weebz\yii2basics\controllers\AuthController;
 use weebz\yii2basics\widgets\StorageUpload;
 use weebz\yii2basics\widgets\StorageUploadMultiple;
 use weebz\yii2basics\widgets\UploadFiles;

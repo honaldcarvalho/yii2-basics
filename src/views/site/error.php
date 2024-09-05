@@ -5,7 +5,7 @@
 /* @var $message string */
 /* @var $exception Exception */
 
-use weebz\yii2basics\controllers\ AuthController;
+use weebz\yii2basics\controllers\AuthController;
 use yii\helpers\Html;
 
 $this->title = \Yii::t('app',$name);

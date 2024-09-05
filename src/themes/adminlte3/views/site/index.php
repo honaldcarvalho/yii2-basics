@@ -3,7 +3,7 @@
 /** @var yii\web\View $this */
 
 use weebz\yii2basics\models\Params;
-use weebz\yii2basics\controllers\ AuthController;
+use weebz\yii2basics\controllers\AuthController;
 
 $params = Params::get();
 $assetsDir =  AuthController::$assetsDir;

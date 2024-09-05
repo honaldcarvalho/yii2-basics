@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
-use weebz\yii2basics\controllers\ AuthController;
+use weebz\yii2basics\controllers\AuthController;
 use yii\widgets\Pjax;
 /* @var $this yii\web\View */
 /* @var $model weebz\yii2basics\models\Folder */
