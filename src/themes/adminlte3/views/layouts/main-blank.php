@@ -3,7 +3,7 @@
 /* @var $this \yii\web\View */
 /* @var $content string */
 
-use weebz\yii2basics\controllers\AuthController;
+use weebz\yii2basics\controllers\ControllerCommon;
 use weebz\yii2basics\models\Params;
 use weebz\yii2basics\themes\adminlte3\assets\FontAwesomeAsset;
 use weebz\yii2basics\themes\adminlte3\assets\PluginAsset;
@@ -41,7 +41,7 @@ $params = Params::get();
 <?= Alert::widget() ?>
 <div class="login-box">
     <div class="login-logo">
-    <img src="<?=  AuthController::$assetsDir; ?>/img/logo_weebz.png" alt="" class="w-50 brand-image img-circle elevation-3"><br>
+    <img src="<?=  ControllerCommon::$assetsDir; ?>/img/logo_weebz.png" alt="" class="w-50 brand-image img-circle elevation-3"><br>
         <b><?=$params->title;?></b></a>
     </div>
     <!-- /.login-logo -->

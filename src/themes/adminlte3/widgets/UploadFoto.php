@@ -17,8 +17,8 @@ class UploadFoto extends \yii\bootstrap5\Widget
   
   public function init()
   {
-      \Yii::$app->view->registerJsFile(\weebz\yii2basics\controllers\ AuthController::$assetsDir . '/plugins/cropper/cropper.min.js');
-      \Yii::$app->view->registerCssFile(\weebz\yii2basics\controllers\ AuthController::$assetsDir . '/plugins/cropper/cropper.min.css');
+      \Yii::$app->view->registerJsFile(\weebz\yii2basics\controllers\ControllerCommon::$assetsDir . '/plugins/cropper/cropper.min.js');
+      \Yii::$app->view->registerCssFile(\weebz\yii2basics\controllers\ControllerCommon::$assetsDir . '/plugins/cropper/cropper.min.css');
   }
 
   /**$

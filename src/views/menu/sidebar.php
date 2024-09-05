@@ -1,7 +1,7 @@
 <?php
 
 use app\controllers\Controller;
-use weebz\yii2basics\controllers\AuthController;
+use weebz\yii2basics\controllers\ControllerCommon;
 use weebz\yii2basics\models\Menu;
 use weebz\yii2basics\models\Params;
 use weebz\yii2basics\widgets\Menu as WidgetsMenu;
@@ -53,7 +53,7 @@ if(!Yii::$app->user->isGuest){
     $controller_id = Yii::$app->controller->id;
     $group = Yii::$app->session->get('group');
 }
-$assetsDir =  AuthController::$assetsDir;
+$assetsDir =  ControllerCommon::$assetsDir;
 if(!empty($params->file_id)){
     $url = Yii::getAlias('@web').$params->file->urlThumb; 
     $login_image = "<img alt='{$params->title}' class='brand-image img-circle elevation-3' src='{$url}' style='opacity: .8' />";
