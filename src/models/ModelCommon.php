@@ -2,10 +2,8 @@
 
 namespace weebz\yii2basics\models;
 
-use weebz\yii2basics\controllers\AuthController;
-use Yii;
-use weebz\yii2basics\controllers\AuthController;
 use yii\data\ActiveDataProvider;
+use weebz\yii2basics\controllers\AuthController;
 
 class ModelCommon extends \yii\db\ActiveRecord
 {
