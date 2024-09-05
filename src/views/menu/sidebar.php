@@ -1,7 +1,7 @@
 <?php
 
-use app\controllers\Controller;
 use weebz\yii2basics\controllers\ControllerCommon;
+use weebz\yii2basics\controllers\AuthController;
 use weebz\yii2basics\models\Menu;
 use weebz\yii2basics\models\Params;
 use weebz\yii2basics\widgets\Menu as WidgetsMenu;
