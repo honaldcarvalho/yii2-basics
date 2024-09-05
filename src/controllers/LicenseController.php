@@ -10,7 +10,7 @@ use yii\web\NotFoundHttpException;
 /**
  * LicenseController implements the CRUD actions for License model.
  */
-class LicenseController extends ControllerCommon
+class LicenseController extends AuthController
 {
     /**
      * Lists all License models.

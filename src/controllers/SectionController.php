@@ -9,7 +9,7 @@ use yii\web\NotFoundHttpException;
 /**
  * SectionController implements the CRUD actions for Section model.
  */
-class SectionController extends ControllerCommon
+class SectionController extends AuthController
 {
     /**
      * Lists all Section models.

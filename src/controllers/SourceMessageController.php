@@ -12,7 +12,7 @@ use yii\web\NotFoundHttpException;
 /**
  * SourceMessageController implements the CRUD actions for SourceMessage model.
  */
-class SourceMessageController extends ControllerCommon
+class SourceMessageController extends AuthController
 {
 
     /**

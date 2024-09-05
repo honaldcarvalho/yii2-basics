@@ -8,13 +8,14 @@ use weebz\yii2basics\models\Rule;
 use weebz\yii2basics\models\User;
 use weebz\yii2basics\models\UserGroup;
 use yii\filters\AccessControl;
-use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 
 /**
  * Common controller
  */
 class AuthController extends Controller {
+
+    public $free = ['login', 'signup','error'];
 
     public static function getClassPath()
     {
@@ -98,36 +99,44 @@ class AuthController extends Controller {
     
     public function behaviors()
     {
-        self::pageAuth();
+        $request = Yii::$app->request;
+        $controller = Yii::$app->controller->id;
+        $action = Yii::$app->controller->action->id;
+
+        $show = $this->pageAuth();
+        if(in_array($action,$this->free)){
+            $show = true;
+        }
+        
+        
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['login', 'logout', 'signup'],
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['login', 'signup'],
+                        'actions' => $this->free,
                         'roles' => ['?'],
                     ],
                     [
-                        'allow' => true,
-                        'actions' => ['logout'],
+                        'allow' => $show,
+                        'actions' => ["{$action}"],
                         'roles' => ['@'],
                     ],
                 ],
             ],
         ];
     }
-
-    public static function pageAuth()
+    
+    public function pageAuth()
     {
+        $show = false;
         if(!self::isGuest()){
 
             $app_path = self::getPath();
             $request_controller = Yii::$app->controller->id;
             $request_action = Yii::$app->controller->action->id;
-            $groups = self::User()::userGroups()->all();
-
+            $groups = self::User()->getUserGroupsId();
             $query_rules = Rule::find()->where(['path' => $app_path, 'controller' => $request_controller, 'status' => 1]);
 
             if (!self::isAdmin()) {
@@ -135,23 +144,25 @@ class AuthController extends Controller {
             } else {
                 $rules = $query_rules->all();
             }
-            
+
             foreach ($rules as $key => $rule) {
 
                 $actions = explode(';',$rule->actions);
 
                 foreach($actions as $action) {
-                    if($action == $request_action){
-                        return true;
+                    if(trim($action) == trim($request_action)){
+                        $show = true;
+                        break;
                     }
                 }                
             }
-
         }
-        return throw new ForbiddenHttpException(Yii::t('app','Ação não permitida!'));
+
+        return $show;
+
     }
 
-    public static function verAuth($request_controller, $request_action, $model = null, $app_path = 'app')
+    public static function verAuthorization($request_controller, $request_action, $model = null, $app_path = 'app')
     {
         if(!self::isGuest()){
 
@@ -175,9 +186,7 @@ class AuthController extends Controller {
             }
 
             foreach ($rules as $key => $rule) {
-
                 $actions = explode(';',$rule->actions);
-
                 foreach($actions as $action) {
 
                     if($action == $request_action){
@@ -209,8 +218,11 @@ class AuthController extends Controller {
          $model = $path_model::find()->where([$model_obj->tableSchema->primaryKey[0] => $id]);
  
          if ($model_obj->verGroup !== null && $model_obj->verGroup && !self::isAdmin()) {
-             $groups = self::User()->getUserGroupsId();
-             $model = $model->andFilterWhere(['in', 'group_id', $groups]);
+            $groups = self::User()->getUserGroupsId();
+            if(Yii::$app->controller->action->id == 'view') {
+                $groups[] = 1;
+            }
+            $model->andFilterWhere(['in', 'group_id', $groups]);
          }
  
          $model = $model->one();

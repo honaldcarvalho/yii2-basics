@@ -2,13 +2,13 @@
 
 /** @var yii\web\View $this */
 
-use weebz\yii2basics\controllers\ControllerCommon;
+use weebz\yii2basics\controllers\ AuthController;
 use weebz\yii2basics\models\custom\DashboarSearch;
 use weebz\yii2basics\models\Params;
 
 $params = Params::get();
 
-$assetsDir = ControllerCommon::$assetsDir;
+$assetsDir =  AuthController::$assetsDir;
 
 if (!empty($params->file_id)) {
     $url = Yii::getAlias('@web') . $params->file->urlThumb;

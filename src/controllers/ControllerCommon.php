@@ -85,7 +85,7 @@ class ControllerCommon extends \yii\web\Controller
 
         $this->fixed = ['login', 'logout', 'error', 'gcaptcha', 'about', 'contact', 'signup', 'request-password-reset', 'resend-verification-email'];
         $app_path = self::getPath();
-        $this->access = $this->getAuthorizationActions(Yii::$app->controller,$get,$app_path);
+        $this->access = $this->verAuthorizationActions(Yii::$app->controller,$get,$app_path);
 
         $this->access = array_merge($this->access, $this->fixed);
         $this->access = array_merge($this->access, $this->free);
@@ -350,11 +350,11 @@ class ControllerCommon extends \yii\web\Controller
         return [];
     }
 
-    public static function getAuthorization($controller, $action, $model, $path = 'backend')
+    public static function verAuthorization($controller, $action, $model, $path = 'backend')
     {
 
         if (!Yii::$app->user->isGuest) {
-            $actions = self::getAuthorizationActions($controller, $model, $path);
+            $actions = self::verAuthorizationActions($controller, $model, $path);
             if (isset($actions) && !empty($actions)) {
                 if (in_array($action, $actions)) {
                     return true;
@@ -364,7 +364,7 @@ class ControllerCommon extends \yii\web\Controller
         return false;
     }
 
-    public static function getAuthorizationActions($controller, $params = null, $app_path = 'app')
+    public static function verAuthorizationActions($controller, $params = null, $app_path = 'app')
     {
         $actions = [];
         $groups = [];

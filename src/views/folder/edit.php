@@ -3,7 +3,7 @@
 /* @var $this yii\web\View */
 /* @var $model weebz\yii2basics\models\Folder */
 
-use weebz\yii2basics\controllers\ControllerCommon;
+use weebz\yii2basics\controllers\ AuthController;
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
 
@@ -52,7 +52,7 @@ $this::registerJs($script);
                         <?php $form = ActiveForm::begin(['id' => 'form-file']); ?>
 
                         <?= $form->field($model, 'folder_id')->dropDownList(yii\helpers\ArrayHelper::map(weebz\yii2basics\models\Folder::find()
-                            ->where(['in', 'group_id', ControllerCommon::userGroups()])
+                            ->where(['in', 'group_id',  AuthController::userGroups()])
                             ->asArray()->all(), 'id', 'name'), ['class' => 'form-control', 'prompt' => Yii::t('app', '-- Select Folder --')]) ?>
 
                         <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>

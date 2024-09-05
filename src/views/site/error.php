@@ -5,13 +5,13 @@
 /* @var $message string */
 /* @var $exception Exception */
 
-use weebz\yii2basics\controllers\ControllerCommon;
+use weebz\yii2basics\controllers\ AuthController;
 use yii\helpers\Html;
 
 $this->title = \Yii::t('app',$name);
 $this->params['breadcrumbs'] = [['label' => $this->title]];
 
-if(ControllerCommon::isGuest())
+if( AuthController::isGuest())
     $this->context->layout = '@vendor/weebz/yii2-basics/src/themes/adminlte3/views/layouts/main-blank'; // Use a specific layout for error pages
 
 ?>

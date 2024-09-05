@@ -11,7 +11,7 @@ use yii\filters\VerbFilter;
 /**
  * NotificationController implements the CRUD actions for Notification model.
  */
-class NotificationController extends ControllerCommon
+class NotificationController extends AuthController
 {
     /**
      * Lists all Notification models.

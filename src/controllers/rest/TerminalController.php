@@ -6,7 +6,7 @@ use weebz\yii2basics\controllers\rest\Controller;
 use weebz\yii2basics\models\custom\OnuUncfg;
 use weebz\yii2basics\models\Ssh2;
 
-class TerminalController extends ControllerCommon {
+class TerminalController extends AuthController {
 
     public function actionGetUnconfig(){
         $items = [];

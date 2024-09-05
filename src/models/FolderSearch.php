@@ -2,7 +2,7 @@
 
 namespace weebz\yii2basics\models;
 
-use weebz\yii2basics\controllers\ControllerCommon;
+use weebz\yii2basics\controllers\ AuthController;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use weebz\yii2basics\models\Folder;
@@ -66,7 +66,7 @@ class FolderSearch extends Folder
 
         $query->andFilterWhere(['like', 'name', $this->name])
             ->andFilterWhere(['like', 'description', $this->description])
-            ->andWhere(['or',['in','group_id',ControllerCommon::getUserGroups()],['group_id'=>null], ['group_id'=>1]]);
+            ->andWhere(['or',['in','group_id', AuthController::getUserGroups()],['group_id'=>null], ['group_id'=>1]]);
 
         if(isset($this->created_at) && !empty($this->created_at)){ 
             $query->andFilterWhere(['>=', 'created_at', $this->created_at. ' 00:00:00']);

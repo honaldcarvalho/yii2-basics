@@ -9,7 +9,7 @@ use yii\web\NotFoundHttpException;
 /**
  * PageController implements the CRUD actions for Page model.
  */
-class PageController extends ControllerCommon
+class PageController extends AuthController
 {
     /**
      * Lists all Page models.

@@ -10,7 +10,7 @@ use yii\web\NotFoundHttpException;
 /**
  * ParamsController implements the CRUD actions for Params model.
  */
-class ParamsController extends ControllerCommon
+class ParamsController extends AuthController
 {
     /**
      * {@inheritdoc}

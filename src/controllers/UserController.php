@@ -2,7 +2,7 @@
 
 namespace weebz\yii2basics\controllers;
 
-use weebz\yii2basics\controllers\ControllerCommon;
+use weebz\yii2basics\controllers\ AuthController;
 use weebz\yii2basics\models\File;
 use Yii;
 use weebz\yii2basics\models\User;
@@ -14,7 +14,7 @@ use yii\web\NotFoundHttpException;
 /**
  * UserController implements the CRUD actions for User model.
  */
-class UserController extends ControllerCommon
+class UserController extends AuthController
 {
     public function __construct($id, $module, $config = array()) {
         parent::__construct($id, $module, $config);
@@ -41,7 +41,7 @@ class UserController extends ControllerCommon
     public function actionChangeTheme()
     {           
         $theme = Yii::$app->request->post('theme');
-        $model = ControllerCommon::User();
+        $model =  AuthController::User();
         if($theme !== null && !empty($theme)){
             $model->theme = $theme;
         }

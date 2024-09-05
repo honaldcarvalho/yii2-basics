@@ -10,7 +10,7 @@ namespace weebz\yii2basics\components\gridview;
 
 use Yii;
 use yii\helpers\Html;
-use weebz\yii2basics\controllers\ControllerCommon;
+use weebz\yii2basics\controllers\AuthController;
 
 class ActionColumn extends \yii\grid\ActionColumn
 {
@@ -42,6 +42,7 @@ class ActionColumn extends \yii\grid\ActionColumn
      */
     protected function initDefaultButton($name, $iconName, $additionalOptions = [])
     {
+
         if($this->controller === null) {
             $controller_parts = explode('\\',get_class(Yii::$app->controller));
             if($this->path === null){
@@ -52,7 +53,7 @@ class ActionColumn extends \yii\grid\ActionColumn
             }
             $controller_parts = explode('Controller',end($controller_parts));
             $this->controller = strtolower($controller_parts[0]);
-            if(($tranformed = ControllerCommon::addSlashUpperLower($controller_parts[0])) != false){
+            if(($tranformed = AuthController::addSlashUpperLower($controller_parts[0])) != false){
                 $this->controller = $tranformed;
             }
 
@@ -93,12 +94,14 @@ class ActionColumn extends \yii\grid\ActionColumn
                 $icon = isset($this->icons[$iconName])
                     ? $this->icons[$iconName]
                     : $icon;
-                if($this->verGroup && !ControllerCommon::isAdmin()){
-                    return ( ControllerCommon::getAuthorization($this->controller,$name,$model,$this->path)) ? Html::a($icon, $url, $options) : '';
-                }else{
+                if($this->verGroup && !AuthController::isAdmin()){
+                    return ( AuthController::verAuthorization($this->controller,$name,$model,$this->path)) ? Html::a($icon, $url, $options) : '';
+                }else if(!AuthController::isAdmin()){
                     return (
-                        ControllerCommon::getAuthorization($this->controller,$name,null,$this->path)
+                        AuthController::verAuthorization($this->controller,$name,null,$this->path)
                         ) ? Html::a($icon, $url, $options) : '';
+                }else{
+                    return Html::a($icon, $url, $options);
                 }
             };
         }

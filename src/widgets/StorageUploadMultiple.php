@@ -2,7 +2,7 @@
 
 namespace weebz\yii2basics\widgets;
 
-use weebz\yii2basics\controllers\ControllerCommon;
+use weebz\yii2basics\controllers\ AuthController;
 use weebz\yii2basics\themes\adminlte3\assets\PluginAsset;
 use Yii;
 use yii\web\View;
@@ -34,8 +34,8 @@ class StorageUploadMultiple extends Widget
     public function init()
     {
         parent::init();
-        $this->token = ControllerCommon::User()->access_token;
-        $this->random = ControllerCommon::generateRandomString(6);
+        $this->token =  AuthController::User()->access_token;
+        $this->random =  AuthController::generateRandomString(6);
         PluginAsset::register(Yii::$app->view)->add(['axios','jquery-cropper']);
     }
 

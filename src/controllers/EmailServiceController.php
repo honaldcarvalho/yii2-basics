@@ -12,7 +12,7 @@ use yii\symfonymailer\Mailer;
 /**
  * EmailServiceController implements the CRUD actions for EmailService model.
  */
-class EmailServiceController extends ControllerCommon
+class EmailServiceController extends AuthController
 {
     /**
      * Lists all EmailService models.

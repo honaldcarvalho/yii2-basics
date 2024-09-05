@@ -6,7 +6,7 @@ use weebz\yii2basics\controllers\rest\ControllerCustom;
 use weebz\yii2basics\models\City;
 use weebz\yii2basics\models\State;
 
-class AddressController extends ControllerCommonCustom {
+class AddressController extends AuthControllerCustom {
     
     public function __construct($id, $module, $config = array())
     {

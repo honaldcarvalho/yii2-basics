@@ -1,6 +1,6 @@
 <?php
 
-use weebz\yii2basics\controllers\ControllerCommon;
+use weebz\yii2basics\controllers\ AuthController;
 use yii\helpers\Html;
 use yii\bootstrap5\ActiveForm;
 
@@ -14,7 +14,7 @@ use yii\bootstrap5\ActiveForm;
     <?php $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'folder_id')->dropDownList(yii\helpers\ArrayHelper::map(weebz\yii2basics\models\Folder::find()
-    ->where(['in','group_id',ControllerCommon::userGroups()])
+    ->where(['in','group_id', AuthController::userGroups()])
     ->asArray()->all(), 'id', 'name'), ['class'=>'form-control', 'prompt' => Yii::t('app','-- Select Folder --')]) ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>

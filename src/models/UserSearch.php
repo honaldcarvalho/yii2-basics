@@ -2,7 +2,7 @@
 
 namespace weebz\yii2basics\models;
 
-use weebz\yii2basics\controllers\ControllerCommon;
+use weebz\yii2basics\controllers\ AuthController;
 use weebz\yii2basics\models\User;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -74,9 +74,9 @@ class UserSearch extends User
             ->andFilterWhere(['like', 'email', $this->email])
             ->andFilterWhere(['like', 'verification_token', $this->verification_token]);
 
-        if(!ControllerCommon::isAdmin()) {
+        if(! AuthController::isAdmin()) {
 
-            $groups = ControllerCommon::userGroups();
+            $groups =  AuthController::userGroups();
             $users_groups = UserGroup::find()->where(['in','group_id',$groups])->asArray()->all();
             $user_ids = [];
             foreach ($users_groups as $key => $value) {

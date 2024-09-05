@@ -10,7 +10,7 @@ use yii\web\NotFoundHttpException;
 /**
  * MessageController implements the CRUD actions for Message model.
  */
-class MessageController extends ControllerCommon
+class MessageController extends AuthController
 {
 
     /**

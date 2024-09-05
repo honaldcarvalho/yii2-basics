@@ -4,7 +4,7 @@ namespace weebz\yii2basics\models;
 
 use weebz\yii2basics\controllers\AuthController;
 use Yii;
-use weebz\yii2basics\controllers\ControllerCommon;
+use weebz\yii2basics\controllers\ AuthController;
 use yii\data\ActiveDataProvider;
 
 class ModelCommon extends \yii\db\ActiveRecord
@@ -74,7 +74,7 @@ class ModelCommon extends \yii\db\ActiveRecord
         }
 
         if(isset($options['groupModel'])){
-            $field = ControllerCommon::addSlashUpperLower($className);
+            $field =  AuthController::addSlashUpperLower($className);
             $query->leftJoin($options['groupModel']['table'], "{$table}.{$options['groupModel']['field']} = {$options['groupModel']['table']}.id");
         }
         // add conditions that should always apply here

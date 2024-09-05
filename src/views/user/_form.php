@@ -1,6 +1,6 @@
 <?php
 
-use weebz\yii2basics\controllers\ControllerCommon;
+use weebz\yii2basics\controllers\ AuthController;
 use weebz\yii2basics\models\Group;;
 use weebz\yii2basics\models\Language;
 use weebz\yii2basics\models\User;
@@ -46,7 +46,7 @@ $this->registerJs($script);
 
         <div class="col-md-12">
             
-            <?= ControllerCommon::isAdmin() ? $form->field($model, 'group_id')->dropDownList(yii\helpers\ArrayHelper::map(
+            <?=  AuthController::isAdmin() ? $form->field($model, 'group_id')->dropDownList(yii\helpers\ArrayHelper::map(
             $groups, 'id', 'name'), ['prompt' => '-- Selecione um Grupo --']) : ''?>
             
             <?= $form->field($model, 'fullname')->textInput() ?>
@@ -66,7 +66,7 @@ $this->registerJs($script);
             <?= $form->field($model, 'password')->passwordInput() ?>
             <?= $form->field($model, 'password_confirm')->passwordInput() ?>
 
-            <?= ControllerCommon::isAdmin() ? $form->field($model, 'status')->dropDownList([9 => Yii::t('app', 'Inactive'), 10 => Yii::t('app', 'Active'), 20 => Yii::t('app', 'No system user')]) : '' ?>
+            <?=  AuthController::isAdmin() ? $form->field($model, 'status')->dropDownList([9 => Yii::t('app', 'Inactive'), 10 => Yii::t('app', 'Active'), 20 => Yii::t('app', 'No system user')]) : '' ?>
 
             <div class="form-group">
                 <?= Html::submitButton('<i class="fas fa-save mr-2"></i>' . Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>

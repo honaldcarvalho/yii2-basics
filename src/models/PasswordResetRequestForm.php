@@ -2,7 +2,7 @@
 
 namespace weebz\yii2basics\models;
 
-use weebz\yii2basics\controllers\ControllerCommon;
+use weebz\yii2basics\controllers\ AuthController;
 use Yii;
 use yii\base\Model;
 use weebz\yii2basics\models\User;
@@ -39,7 +39,7 @@ class PasswordResetRequestForm extends ModelCommon
     public function sendEmail()
     {
         $params = Params::findOne(1);
-        $mailer = ControllerCommon::mailer();
+        $mailer =  AuthController::mailer();
         /* @var $user User */
         $user = User::findOne([
             'status' => User::STATUS_ACTIVE,

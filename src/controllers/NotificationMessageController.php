@@ -10,7 +10,7 @@ use yii\web\NotFoundHttpException;
 /**
  * NotificationMessageController implements the CRUD actions for NotificationMessage model.
  */
-class NotificationMessageController extends ControllerCommon
+class NotificationMessageController extends AuthController
 {
 
     /**

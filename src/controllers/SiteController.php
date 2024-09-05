@@ -20,8 +20,7 @@ class SiteController extends AuthController
 
     public function __construct($id, $module, $config = array()) {
         parent::__construct($id, $module, $config);
-        $this->access = $this->getAccess($id); 
-         $this->free = ['reset-password','request-password-reset','verify-email','index'];
+        $this->free = array_merge($this->free,['reset-password','request-password-reset','verify-email','login','logout']);
     }
 
     /**
@@ -64,6 +63,7 @@ class SiteController extends AuthController
      */
     public function actionLogin()
     {
+        
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }

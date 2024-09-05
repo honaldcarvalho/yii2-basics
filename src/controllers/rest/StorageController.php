@@ -12,7 +12,7 @@ use FFMpeg\FFProbe;
 use FFMpeg\Format\Video\X264;
 use weebz\yii2basics\models\File;
 use weebz\yii2basics\models\Folder;
-use weebz\yii2basics\controllers\ControllerCommon;
+use weebz\yii2basics\controllers\ AuthController;
 
 class StorageController extends ControllerRest {
     
@@ -25,7 +25,7 @@ class StorageController extends ControllerRest {
                 $description = $post['description'] ?? false;
                 $id = $post['id'] ?? false;
                 $file = null;
-                $user_groups = ControllerCommon::getUserGroups();
+                $user_groups =  AuthController::getUserGroups();
 
                 if($file_name) {
                     $file = File::find()->where(['name'=>$file_name])->andWhere('or',['in','group_id',$user_groups],['group_id'=>1])->one();
@@ -43,7 +43,7 @@ class StorageController extends ControllerRest {
             }
             throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
         } catch (\Throwable $th) {
-            ControllerCommon::error($th);
+             AuthController::error($th);
         }
     }
 
@@ -56,7 +56,7 @@ class StorageController extends ControllerRest {
                 $folder_id = $post['folder_id'] ?? null;
                 $type = $post['type'] ?? null;
                 $query = $post['query'] ?? false;
-                $user_groups = ControllerCommon::getUserGroups();
+                $user_groups =  AuthController::getUserGroups();
 
                 $queryObj = File::find()->where(['or',['like','name',$query],['like','description',$query]]);
                 // if ($group_id !== null) {
@@ -73,7 +73,7 @@ class StorageController extends ControllerRest {
             }
             throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
         } catch (\Throwable $th) {
-            ControllerCommon::error($th);
+             AuthController::error($th);
         }
     }
 
@@ -96,7 +96,7 @@ class StorageController extends ControllerRest {
             }
 
         } catch (\Throwable $th) {
-            ControllerCommon::error($th);
+             AuthController::error($th);
         }
     }
 
@@ -323,7 +323,7 @@ class StorageController extends ControllerRest {
 
                     $file_uploaded['group_id'] = 1; //common
                     if(Yii::$app->params['upload.group'])
-                        $file_uploaded['group_id'] = ControllerCommon::userGroup();
+                        $file_uploaded['group_id'] =  AuthController::userGroup();
 
                     
                     $file_uploaded['class'] = File::class;
@@ -367,7 +367,7 @@ class StorageController extends ControllerRest {
             }
             throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
         } catch (\Throwable $th) {
-            ControllerCommon::error($th);
+             AuthController::error($th);
         }
     }
 
@@ -377,7 +377,7 @@ class StorageController extends ControllerRest {
 
             $file = false;
             $success = false;
-            $user_groups = ControllerCommon::getUserGroups();
+            $user_groups =  AuthController::getUserGroups();
             $model = File::find()->where(['id'=>$id])->andWhere(['or',['in','group_id',$user_groups],['group_id'=>1]])->one();
             
             if($model !== null) {
@@ -432,7 +432,7 @@ class StorageController extends ControllerRest {
             }
             throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
         } catch (\Throwable $th) {
-            ControllerCommon::error($th);
+             AuthController::error($th);
         }
     }
 
@@ -454,7 +454,7 @@ class StorageController extends ControllerRest {
             }
             throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
         } catch (\Throwable $th) {
-            ControllerCommon::error($th);
+             AuthController::error($th);
         }
     }
     

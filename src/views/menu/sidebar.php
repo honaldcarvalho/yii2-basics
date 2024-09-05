@@ -1,7 +1,7 @@
 <?php
 
 use app\controllers\Controller;
-use weebz\yii2basics\controllers\ControllerCommon;
+use weebz\yii2basics\controllers\ AuthController;
 use weebz\yii2basics\models\Menu;
 use weebz\yii2basics\models\Params;
 use weebz\yii2basics\widgets\Menu as WidgetsMenu;
@@ -53,7 +53,7 @@ if(!Yii::$app->user->isGuest){
     $controller_id = Yii::$app->controller->id;
     $group = Yii::$app->session->get('group');
 }
-$assetsDir = ControllerCommon::$assetsDir;
+$assetsDir =  AuthController::$assetsDir;
 if(!empty($params->file_id)){
     $url = Yii::getAlias('@web').$params->file->urlThumb; 
     $login_image = "<img alt='{$params->title}' class='brand-image img-circle elevation-3' src='{$url}' style='opacity: .8' />";
@@ -116,7 +116,7 @@ if(!empty($params->file_id)){
                             }else {
 
                                 if(count($visible_parts) > 1){
-                                    $isVisible = ControllerCommon::getAuthorization($visible_parts[0],$visible_parts[1],null,$item['path']);
+                                    $isVisible =  AuthController::verAuthorization($visible_parts[0],$visible_parts[1],null,$item['path']);
                                 }else if(count($visible_parts) === 1){
                                     //verify if someone item is visible, case yes, show menu item 
                                     foreach($item_nodes as $item_node){
@@ -144,7 +144,7 @@ if(!empty($params->file_id)){
                                 $node['active'] = ($controller_id == "{$item['active']}") || ($controller_id."/".Yii::$app->controller->action->id  == "{$item['active']}");
                             }
 
-                            if(!$item['only_admin'] || $item['only_admin'] && ControllerCommon::isAdmin()) {
+                            if(!$item['only_admin'] || $item['only_admin'] &&  AuthController::isAdmin()) {
                                 $nodes[] = $node;
                             }
                                     
@@ -153,12 +153,12 @@ if(!empty($params->file_id)){
                             $isVisible = true;
                             
                             if(count($visible_parts) > 1){
-                                $isVisible = ControllerCommon::getAuthorization($visible_parts[0],$visible_parts[1],null,$item['path']);
+                                $isVisible =  AuthController::verAuthorization($visible_parts[0],$visible_parts[1],null,$item['path']);
                             }else if(empty($visible_parts)){
                                 $isVisible = false;
                             }
 
-                            if(!$item['only_admin'] || $item['only_admin'] && ControllerCommon::isAdmin()) {
+                            if(!$item['only_admin'] || $item['only_admin'] &&  AuthController::isAdmin()) {
                                 $nodes[] = [
                                     'label' => Yii::t('app', $item['label']),
                                     'icon'=> "{$item['icon']}",

@@ -3,7 +3,7 @@
 use weebz\yii2basics\controllers\AuthController;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
-use weebz\yii2basics\controllers\ControllerCommon;
+use weebz\yii2basics\controllers\ AuthController;
 use weebz\yii2basics\widgets\StorageUpload;
 use weebz\yii2basics\widgets\StorageUploadMultiple;
 use weebz\yii2basics\widgets\UploadFiles;
@@ -17,7 +17,7 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Folders'), 'url' => 
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 
-$token = ControllerCommon::User()->access_token;
+$token =  AuthController::User()->access_token;
 
 $script = <<< JS
 
@@ -227,7 +227,7 @@ $this::registerJs($script, $this::POS_END);
                                 'controller' => 'folder',
                                 'buttons' => [
                                     'remove' => function ($url, $model, $key) {
-                                        return AuthController::verAuth('file', 'remove-file', $model) ?
+                                        return AuthController::verAuthorization('file', 'remove-file', $model) ?
                                             Html::a(
                                                 '<i class="fas fa-unlink"></i>',
                                                 yii\helpers\Url::to(['file/remove-file', 'id' => $model->id, 'folder' => $model->folder_id]),
@@ -355,7 +355,7 @@ $this::registerJs($script, $this::POS_END);
                                 'controller' => 'file',
                                 'buttons' => [
                                     'remove' => function ($url, $model, $key) {
-                                        return AuthController::verAuth('file', 'remove-file', $model) ?
+                                        return AuthController::verAuthorization('file', 'remove-file', $model) ?
                                             Html::a(
                                                 '<i class="fas fa-unlink"></i>',
                                                 yii\helpers\Url::to(['file/remove-file', 'id' => $model->id, 'folder' => $model->folder_id]),

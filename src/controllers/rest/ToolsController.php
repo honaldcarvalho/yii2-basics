@@ -5,7 +5,7 @@ use weebz\yii2basics\controllers\rest\Controller ;
 use weebz\yii2basics\models\Log;
 use weebz\yii2basics\models\User;
 
-class ToolsController extends ControllerCommon
+class ToolsController extends AuthController
 {
 
     public function behaviors()

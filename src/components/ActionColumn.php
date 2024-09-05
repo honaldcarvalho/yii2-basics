@@ -95,10 +95,10 @@ class ActionColumn extends \yii\grid\ActionColumn
                     ? $this->icons[$iconName]
                     : $icon;
                 if($this->verGroup && !AuthController::isAdmin()){
-                    return ( AuthController::verAuth($this->controller,$name,$model,$this->path)) ? Html::a($icon, $url, $options) : '';
+                    return ( AuthController::verAuthorization($this->controller,$name,$model,$this->path)) ? Html::a($icon, $url, $options) : '';
                 }else if(!AuthController::isAdmin()){
                     return (
-                        AuthController::verAuth($this->controller,$name,null,$this->path)
+                        AuthController::verAuthorization($this->controller,$name,null,$this->path)
                         ) ? Html::a($icon, $url, $options) : '';
                 }else{
                     return Html::a($icon, $url, $options);

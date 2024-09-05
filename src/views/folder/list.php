@@ -1,6 +1,6 @@
 <?php
 
-use weebz\yii2basics\controllers\ControllerCommon;
+use weebz\yii2basics\controllers\ AuthController;
 use yii\bootstrap5\ActiveForm;
 use yii\helpers\Html;
 use yii\grid\GridView;
@@ -168,7 +168,7 @@ $script = <<< JS
   
 JS;
 
-$assetsDir = ControllerCommon::$assetsDir;
+$assetsDir =  AuthController::$assetsDir;
 
 $this::registerJs($script, $this::POS_END);
 $this::registerCss($style);

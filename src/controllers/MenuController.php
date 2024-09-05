@@ -11,7 +11,7 @@ use yii\filters\VerbFilter;
 /**
  * MenuController implements the CRUD actions for Menu model.
  */
-class MenuController extends ControllerCommon
+class MenuController extends AuthController
 {
     /**
      * Lists all Menu models.

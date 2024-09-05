@@ -11,7 +11,7 @@ use yii\filters\VerbFilter;
 /**
  * RuleController implements the CRUD actions for Rule model.
  */
-class RuleController extends ControllerCommon
+class RuleController extends AuthController
 {
     public function __construct($id, $module, $config = array()) {
         parent::__construct($id, $module, $config);

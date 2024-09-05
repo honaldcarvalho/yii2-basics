@@ -7,7 +7,7 @@ use weebz\yii2basics\models\User;
 use weebz\yii2basics\models\Params;
 use weebz\yii2basics\models\UserGroup;
 
-class UserController extends ControllerCommon{
+class UserController extends AuthController{
 
     public $modelClass = 'weebz\yii2basics\models\User';
 

@@ -4,7 +4,7 @@ namespace weebz\yii2basics\controllers\rest;
 
 use Yii;
 
-use weebz\yii2basics\controllers\Controller as ControllerCommon;
+use weebz\yii2basics\controllers\Controller as  AuthController;
 use weebz\yii2basics\models\custom\Patient;
 
 class ControllerCustom extends \yii\rest\Controller
@@ -122,7 +122,7 @@ class ControllerCustom extends \yii\rest\Controller
 
     public function getPermission($controller, $action)
     {
-        $crtl = new ControllerCommon(0,0);
+        $crtl = new  AuthController(0,0);
         return $crtl->getPermission($controller, $action);
     }
 

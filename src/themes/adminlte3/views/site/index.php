@@ -3,10 +3,10 @@
 /** @var yii\web\View $this */
 
 use weebz\yii2basics\models\Params;
-use weebz\yii2basics\controllers\ControllerCommon;
+use weebz\yii2basics\controllers\ AuthController;
 
 $params = Params::get();
-$assetsDir = ControllerCommon::$assetsDir;
+$assetsDir =  AuthController::$assetsDir;
 $logo_image = "<img src='{$assetsDir}/img/wcms_logo.png' width='150px' alt='{$params->title}' class='brand-image img-circle elevation-3' style='opacity: .8'>";
 $this->title = '';
 

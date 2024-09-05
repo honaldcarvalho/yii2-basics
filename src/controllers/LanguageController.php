@@ -11,7 +11,7 @@ use yii\filters\VerbFilter;
 /**
  * LanguageController implements the CRUD actions for Language model.
  */
-class LanguageController extends ControllerCommon
+class LanguageController extends AuthController
 {
 
     /**

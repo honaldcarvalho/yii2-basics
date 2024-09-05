@@ -9,7 +9,7 @@ use yii\web\NotFoundHttpException;
 /**
  * PageController implements the CRUD actions for Page model.
  */
-class PageController extends ControllerCommon
+class PageController extends AuthController
 {
     /**
      * Lists all Page models.
@@ -127,7 +127,7 @@ class PageController extends ControllerCommon
      */
     public function actionDelete($id)
     {
-        Page::find()->where(['id'=>$id])->andWhere(['or',['in','group_id',ControllerCommon::getUserGroups()]])->one()->delete();
+        Page::find()->where(['id'=>$id])->andWhere(['or',['in','group_id', AuthController::getUserGroups()]])->one()->delete();
 
         return $this->redirect(['index']);
     }
@@ -141,7 +141,7 @@ class PageController extends ControllerCommon
      */
     protected function findModel($id)
     {
-        if (($model = Page::find()->where(['id'=>$id])->andWhere(['or',['in','group_id',ControllerCommon::getUserGroups()],['group_id'=>null], ['group_id'=>1]])->one()) !== null) {
+        if (($model = Page::find()->where(['id'=>$id])->andWhere(['or',['in','group_id', AuthController::getUserGroups()],['group_id'=>null], ['group_id'=>1]])->one()) !== null) {
             return $model;
         }
 

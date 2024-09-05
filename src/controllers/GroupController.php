@@ -13,7 +13,7 @@ use yii\web\NotFoundHttpException;
 /**
  * GroupController implements the CRUD actions for Group model.
  */
-class GroupController extends ControllerCommon
+class GroupController extends AuthController
 {
     public function __construct($id, $module, $config = array()) {
         parent::__construct($id, $module, $config);

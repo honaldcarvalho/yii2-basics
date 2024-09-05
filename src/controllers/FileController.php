@@ -14,7 +14,7 @@ use yii\web\UploadedFile;
 /**
  * FileController implements the CRUD actions for File model.
  */
-class FileController extends ControllerCommon
+class FileController extends AuthController
 {
 
     /**
