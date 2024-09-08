@@ -33,13 +33,13 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'filter'=>yii\helpers\ArrayHelper::map(User::find()->asArray()->all(), 'id', 'fullname'),
                                 'value'=> function($data){return $data->user->fullname;}
                             ],
-                            [   
-                                'attribute'=>'controller',
-                                'header'=>Yii::t('app','Controller'),
-                                'filter'=> Html::dropDownList('LogSearch[controller]',null,(new Rule)->getControllers()['controllers_array'],['class'=>'form-control']) ,
-                                //'filter'=> yii\helpers\ArrayHelper::map((new Rule)->getControllers()['controllers_array'], 'id', 'name') ,
-                                'value'=> function($data){return $data->controller;}
-                            ],
+                            // [   
+                            //     'attribute'=>'controller',
+                            //     'header'=>Yii::t('app','Controller'),
+                            //     'filter'=> Html::dropDownList('LogSearch[controller]',null,(new Rule)->getControllers()['controllers_array'],['class'=>'form-control']) ,
+                            //     //'filter'=> yii\helpers\ArrayHelper::map((new Rule)->getControllers()['controllers_array'], 'id', 'name') ,
+                            //     'value'=> function($data){return $data->controller;}
+                            // ],
                             'controller',
                             'action',
                             'data:ntext',

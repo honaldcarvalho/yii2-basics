@@ -141,6 +141,38 @@ class m240807_161427_add_admin_rules extends Migration
             'status'=>true
         ]);
 
+        $this->insert('rules', [
+            'group_id' => 2,
+            'controller' => 'page',
+            'path' => 'weebz/controllers',
+            'actions' => 'index;create;view;update;delete',
+            'status'=>true
+        ]);
+
+        $this->insert('rules', [
+            'group_id' => 2,
+            'controller' => 'section',
+            'path' => 'weebz/controllers',
+            'actions' => 'index;create;view;update;delete',
+            'status'=>true
+        ]);
+
+        $this->insert('rules', [
+            'group_id' => 2,
+            'controller' => 'notification',
+            'path' => 'weebz/controllers',
+            'actions' => 'index;create;view;update;delete',
+            'status'=>true
+        ]);
+
+        $this->insert('rules', [
+            'group_id' => 2,
+            'controller' => 'notification-message',
+            'path' => 'weebz/controllers',
+            'actions' => 'index;create;view;update;delete',
+            'status'=>true
+        ]);
+
     }
 
     /**

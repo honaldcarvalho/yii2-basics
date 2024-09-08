@@ -16,6 +16,7 @@ $this->metaTags = '';
 $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback');
 
 $assetDir = Yii::$app->assetManager->getPublishedUrl('@vendor/weebz/yii2-basics/src/themes/adminlte3/web/dist');
+
 $theme = Yii::$app->user->identity->theme;
 ?>
 <?php $this->beginPage() ?>

@@ -3,10 +3,10 @@
 use yii\helpers\Html;
 use yii\widgets\Pjax;
 use yii\grid\GridView;
-use weebz\yii2basics\components\gridview\ActionColumn;
+use app\components\gridview\ActionColumn;
 
 /** @var yii\web\View $this */
-/** @var weebz\yii2basics\models\PageSearch $searchModel */
+/** @var app\models\PageSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = 'Pages';
@@ -43,13 +43,13 @@ $this->params['breadcrumbs'][] = $this->title;
                             [
                                 'attribute'=>'created_at',
                                 'format' => 'date',
-                                'label' => Yii::t('app', 'Created At'),
+                                'label' => Yii::t('app', 'Created at'),
                                 'filter' =>Html::input('date', ucfirst(Yii::$app->controller->id).'Search[created_at]',$searchModel->created_at,['class'=>'form-control dateandtime'])
                             ],
                             [
                                 'attribute'=>'updated_at',
                                 'format' => 'date',
-                                'label' => Yii::t('app', 'Updated At'),
+                                'label' => Yii::t('app', 'Updated at'),
                                 'filter' =>Html::input('date',ucfirst(Yii::$app->controller->id).'Search[updated_at]',$searchModel->updated_at,['class'=>'form-control dateandtime'])
                             ],
                             'status:boolean',

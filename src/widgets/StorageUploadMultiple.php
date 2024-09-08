@@ -27,6 +27,8 @@ class StorageUploadMultiple extends Widget
 
     /** Folder model id */
     public $folder_id = 1;
+    /** Folder group id */
+    public $group_id = 1;
     /** Enable auto reload GridView. disable = 0; enable = 1; */
     public $grid_reload = 0;
     /** ID of GridView will reload */
@@ -191,6 +193,7 @@ class StorageUploadMultiple extends Widget
                 var formData = new FormData();
                 formData.append('file', file);
                 formData.append('folder_id', $this->folder_id);
+                formData.append('group_id', $this->group_id);
                 formData.append('save', 1);
 
                 uploadButton.disabled = true;

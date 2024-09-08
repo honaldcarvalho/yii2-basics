@@ -1,0 +1,59 @@
+a:10:{s:6:"config";s:443:"a:5:{s:10:"phpVersion";s:6:"8.3.11";s:10:"yiiVersion";s:10:"2.0.52-dev";s:11:"application";a:8:{s:3:"yii";s:10:"2.0.52-dev";s:4:"name";s:14:"My Application";s:7:"version";s:3:"1.0";s:8:"language";s:5:"en-US";s:14:"sourceLanguage";s:5:"en-US";s:7:"charset";s:5:"UTF-8";s:3:"env";s:3:"dev";s:5:"debug";b:1;}s:3:"php";a:5:{s:7:"version";s:6:"8.3.11";s:6:"xdebug";b:0;s:3:"apc";b:0;s:8:"memcache";b:0;s:9:"memcached";b:0;}s:10:"extensions";a:0:{}}";s:3:"log";s:6394:"a:1:{s:8:"messages";a:10:{i:0;a:6:{i:0;s:33:"Bootstrap with yii\log\Dispatcher";i:1;i:8;i:2;s:31:"yii\base\Application::bootstrap";i:3;d:1725750255.447166;i:4;a:0:{}i:5;i:898952;}i:1;a:6:{i:0;s:19:"Loading module: gii";i:1;i:8;i:2;s:26:"yii\base\Module::getModule";i:3;d:1725750255.447194;i:4;a:0:{}i:5;i:899432;}i:2;a:6:{i:0;s:42:"Bootstrap with yii\gii\Module::bootstrap()";i:1;i:8;i:2;s:31:"yii\base\Application::bootstrap";i:3;d:1725750255.449211;i:4;a:0:{}i:5;i:900808;}i:3;a:6:{i:0;s:21:"Loading module: debug";i:1;i:8;i:2;s:26:"yii\base\Module::getModule";i:3;d:1725750255.44924;i:4;a:0:{}i:5;i:901824;}i:4;a:6:{i:0;s:44:"Bootstrap with yii\debug\Module::bootstrap()";i:1;i:8;i:2;s:31:"yii\base\Application::bootstrap";i:3;d:1725750255.474991;i:4;a:0:{}i:5;i:1054600;}i:5;a:6:{i:0;s:24:"Route to run: migrate/up";i:1;i:8;i:2;s:30:"yii\base\Controller::runAction";i:3;d:1725750255.511198;i:4;a:0:{}i:5;i:1196696;}i:6;a:6:{i:0;s:69:"Running action: yii\console\controllers\MigrateController::actionUp()";i:1;i:8;i:2;s:36:"yii\base\InlineAction::runWithParams";i:3;d:1725750255.524541;i:4;a:0:{}i:5;i:1201144;}i:7;a:6:{i:0;s:34:"SHOW FULL COLUMNS FROM `migration`";i:1;i:4;i:2;s:21:"yii\db\Command::query";i:3;d:1725750255.544008;i:4;a:0:{}i:5;i:1338080;}i:8;a:6:{i:0;s:72:"Opening DB connection: mysql:host=0.0.0.0;dbname=dbyii2basics;port=6666;";i:1;i:4;i:2;s:23:"yii\db\Connection::open";i:3;d:1725750255.544072;i:4;a:0:{}i:5;i:1338496;}i:11;a:6:{i:0;s:4839:"PDOException: SQLSTATE[HY000] [2002] Connection refused in /app/vendor/yiisoft/yii2/db/Connection.php:722
+Stack trace:
+#0 /app/vendor/yiisoft/yii2/db/Connection.php(722): PDO->__construct('mysql:host=0.0....', 'basic', Object(SensitiveParameterValue), NULL)
+#1 /app/vendor/yiisoft/yii2/db/Connection.php(637): yii\db\Connection->createPdoInstance()
+#2 /app/vendor/yiisoft/yii2/db/Connection.php(1067): yii\db\Connection->open()
+#3 /app/vendor/yiisoft/yii2/db/Connection.php(1054): yii\db\Connection->getMasterPdo()
+#4 /app/vendor/yiisoft/yii2/db/Command.php(261): yii\db\Connection->getSlavePdo(true)
+#5 /app/vendor/yiisoft/yii2/db/Command.php(1181): yii\db\Command->prepare(true)
+#6 /app/vendor/yiisoft/yii2/db/Command.php(417): yii\db\Command->queryInternal('fetchAll', NULL)
+#7 /app/vendor/yiisoft/yii2/db/mysql/Schema.php(366): yii\db\Command->queryAll()
+#8 /app/vendor/yiisoft/yii2/db/mysql/Schema.php(134): yii\db\mysql\Schema->findColumns(Object(yii\db\TableSchema))
+#9 /app/vendor/yiisoft/yii2/db/Schema.php(756): yii\db\mysql\Schema->loadTableSchema('migration')
+#10 /app/vendor/yiisoft/yii2/db/Schema.php(192): yii\db\Schema->getTableMetadata('{{%migration}}', 'schema', true)
+#11 /app/vendor/yiisoft/yii2/console/controllers/MigrateController.php(211): yii\db\Schema->getTableSchema('{{%migration}}', true)
+#12 /app/vendor/yiisoft/yii2/console/controllers/BaseMigrateController.php(908): yii\console\controllers\MigrateController->getMigrationHistory(NULL)
+#13 /app/vendor/yiisoft/yii2/console/controllers/BaseMigrateController.php(183): yii\console\controllers\BaseMigrateController->getNewMigrations()
+#14 [internal function]: yii\console\controllers\BaseMigrateController->actionUp(0)
+#15 /app/vendor/yiisoft/yii2/base/InlineAction.php(57): call_user_func_array(Array, Array)
+#16 /app/vendor/yiisoft/yii2/base/Controller.php(178): yii\base\InlineAction->runWithParams(Array)
+#17 /app/vendor/yiisoft/yii2/console/Controller.php(180): yii\base\Controller->runAction('', Array)
+#18 /app/vendor/yiisoft/yii2/base/Module.php(552): yii\console\Controller->runAction('', Array)
+#19 /app/vendor/yiisoft/yii2/console/Application.php(180): yii\base\Module->runAction('migrate', Array)
+#20 /app/vendor/yiisoft/yii2/console/Application.php(147): yii\console\Application->runAction('migrate', Array)
+#21 /app/vendor/yiisoft/yii2/base/Application.php(384): yii\console\Application->handleRequest(Object(yii\console\Request))
+#22 /app/yii(20): yii\base\Application->run()
+#23 {main}
+
+Next yii\db\Exception: SQLSTATE[HY000] [2002] Connection refused in /app/vendor/yiisoft/yii2/db/Connection.php:648
+Stack trace:
+#0 /app/vendor/yiisoft/yii2/db/Connection.php(1067): yii\db\Connection->open()
+#1 /app/vendor/yiisoft/yii2/db/Connection.php(1054): yii\db\Connection->getMasterPdo()
+#2 /app/vendor/yiisoft/yii2/db/Command.php(261): yii\db\Connection->getSlavePdo(true)
+#3 /app/vendor/yiisoft/yii2/db/Command.php(1181): yii\db\Command->prepare(true)
+#4 /app/vendor/yiisoft/yii2/db/Command.php(417): yii\db\Command->queryInternal('fetchAll', NULL)
+#5 /app/vendor/yiisoft/yii2/db/mysql/Schema.php(366): yii\db\Command->queryAll()
+#6 /app/vendor/yiisoft/yii2/db/mysql/Schema.php(134): yii\db\mysql\Schema->findColumns(Object(yii\db\TableSchema))
+#7 /app/vendor/yiisoft/yii2/db/Schema.php(756): yii\db\mysql\Schema->loadTableSchema('migration')
+#8 /app/vendor/yiisoft/yii2/db/Schema.php(192): yii\db\Schema->getTableMetadata('{{%migration}}', 'schema', true)
+#9 /app/vendor/yiisoft/yii2/console/controllers/MigrateController.php(211): yii\db\Schema->getTableSchema('{{%migration}}', true)
+#10 /app/vendor/yiisoft/yii2/console/controllers/BaseMigrateController.php(908): yii\console\controllers\MigrateController->getMigrationHistory(NULL)
+#11 /app/vendor/yiisoft/yii2/console/controllers/BaseMigrateController.php(183): yii\console\controllers\BaseMigrateController->getNewMigrations()
+#12 [internal function]: yii\console\controllers\BaseMigrateController->actionUp(0)
+#13 /app/vendor/yiisoft/yii2/base/InlineAction.php(57): call_user_func_array(Array, Array)
+#14 /app/vendor/yiisoft/yii2/base/Controller.php(178): yii\base\InlineAction->runWithParams(Array)
+#15 /app/vendor/yiisoft/yii2/console/Controller.php(180): yii\base\Controller->runAction('', Array)
+#16 /app/vendor/yiisoft/yii2/base/Module.php(552): yii\console\Controller->runAction('', Array)
+#17 /app/vendor/yiisoft/yii2/console/Application.php(180): yii\base\Module->runAction('migrate', Array)
+#18 /app/vendor/yiisoft/yii2/console/Application.php(147): yii\console\Application->runAction('migrate', Array)
+#19 /app/vendor/yiisoft/yii2/base/Application.php(384): yii\console\Application->handleRequest(Object(yii\console\Request))
+#20 /app/yii(20): yii\base\Application->run()
+#21 {main}
+Additional Information:
+Array
+(
+    [0] => HY000
+    [1] => 2002
+    [2] => Connection refused
+)
+";i:1;i:1;i:2;s:16:"yii\db\Exception";i:3;d:1725750255.546399;i:4;a:0:{}i:5;i:1098288;}}}";s:9:"profiling";s:456:"a:3:{s:6:"memory";i:1658536;s:4:"time";d:0.18629193305969238;s:8:"messages";a:2:{i:9;a:6:{i:0;s:72:"Opening DB connection: mysql:host=0.0.0.0;dbname=dbyii2basics;port=6666;";i:1;i:80;i:2;s:23:"yii\db\Connection::open";i:3;d:1725750255.544078;i:4;a:0:{}i:5;i:1338872;}i:10;a:6:{i:0;s:72:"Opening DB connection: mysql:host=0.0.0.0;dbname=dbyii2basics;port=6666;";i:1;i:96;i:2;s:23:"yii\db\Connection::open";i:3;d:1725750255.544638;i:4;a:0:{}i:5;i:1352832;}}}";s:2:"db";s:27:"a:1:{s:8:"messages";a:0:{}}";s:5:"event";s:573:"a:3:{i:0;a:5:{s:4:"time";d:1725750255.491005;s:4:"name";s:13:"beforeRequest";s:5:"class";s:14:"yii\base\Event";s:8:"isStatic";s:1:"0";s:11:"senderClass";s:23:"yii\console\Application";}i:1;a:5:{s:4:"time";d:1725750255.51831;s:4:"name";s:12:"beforeAction";s:5:"class";s:20:"yii\base\ActionEvent";s:8:"isStatic";s:1:"0";s:11:"senderClass";s:23:"yii\console\Application";}i:2;a:5:{s:4:"time";d:1725750255.518363;s:4:"name";s:12:"beforeAction";s:5:"class";s:20:"yii\base\ActionEvent";s:8:"isStatic";s:1:"0";s:11:"senderClass";s:41:"yii\console\controllers\MigrateController";}}";s:4:"mail";s:6:"a:0:{}";s:8:"timeline";s:90:"a:3:{s:5:"start";d:1725750255.40887;s:3:"end";d:1725750255.595191;s:6:"memory";i:1658536;}";s:4:"dump";s:6:"a:0:{}";s:7:"summary";a:13:{s:3:"tag";s:13:"66dcdbef7482e";s:3:"url";s:15:"php yii migrate";s:4:"ajax";i:0;s:6:"method";s:7:"COMMAND";s:2:"ip";s:4:"root";s:4:"time";d:1725750255.3747;s:10:"statusCode";i:0;s:8:"sqlCount";i:0;s:21:"excessiveCallersCount";i:0;s:9:"mailCount";i:0;s:9:"mailFiles";a:0:{}s:10:"peakMemory";i:1658536;s:14:"processingTime";d:0.18629193305969238;}s:10:"exceptions";a:0:{}}

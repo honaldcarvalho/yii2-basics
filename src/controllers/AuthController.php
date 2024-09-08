@@ -2,8 +2,10 @@
 
 namespace weebz\yii2basics\controllers;
 
+use weebz\yii2basics\models\License;
+use weebz\yii2basics\models\Log;
 use Yii;
-use yii\web\Controller;
+
 use weebz\yii2basics\models\Rule;
 use weebz\yii2basics\models\User;
 use weebz\yii2basics\models\UserGroup;
@@ -13,46 +15,10 @@ use yii\web\NotFoundHttpException;
 /**
  * Common controller
  */
-class AuthController extends Controller {
+class AuthController extends ControllerCommon {
 
     public $free = ['login', 'signup','error'];
 
-    public static function getClassPath()
-    {
-        return get_called_class();
-    }
-
-    public static function getPath()
-    {
-        $path_parts = explode("\\", self::getClassPath());
-        if (count($path_parts) == 4)
-            return "{$path_parts[0]}/{$path_parts[2]}";
-
-        return strtoupper($path_parts[0]);
-    }
-
-    static function addSlashUpperLower($string)
-    {
-
-        $split = str_split($string);
-        $count = 0;
-        $cut = 0;
-
-        foreach ($split as $key => $value) {
-            if (ctype_upper($value) && $count > 0) {
-                $cut = $key;
-            }
-            $count++;
-        }
-
-        $first = strtolower(substr($string, 0, $cut));
-        $second = strtolower(substr($string, $cut));
-
-        if (!empty($first))
-            return "{$first}-{$second}";
-
-        return false;
-    }
     
     static function isGuest()
     {
@@ -79,6 +45,39 @@ class AuthController extends Controller {
         }
     }
 
+    static function userGroups()
+    {
+        $groups = [];
+        $user_groups = [];
+
+        if (Yii::$app->user->identity != null) {
+            $user_groups = self::User()::userGroups()->all();
+        }
+        foreach ($user_groups as $user_group) {
+            $groups[] = $user_group->group_id;
+        }
+        return $groups;
+    }
+
+    static function userGroup()
+    {
+        if(self::isGuest()){
+            $user_groups = self::getUserByToken()->getUserGroupsId();
+            return end($user_groups);
+        }else {
+            return Yii::$app->session->get('group')->id;
+        }
+
+    }
+
+    public static function inGroups($grupos)
+    {
+        if (UserGroup::find()->select('user_id')->where(['in', 'group_id', $grupos])->andWhere(['usuario_id' => Yii::$app->user->identity->id])->count() > 0) {
+            return true;
+        }
+        return false;
+    }
+
     public static function isAdmin()
     {
         if (!Yii::$app->user->isGuest && UserGroup::find()->where(['user_id' => Yii::$app->user->identity->id, 'group_id' => [2]])->one()) {
@@ -99,17 +98,18 @@ class AuthController extends Controller {
     
     public function behaviors()
     {
+        $behaviors = parent::behaviors();
         $request = Yii::$app->request;
-        $controller = Yii::$app->controller->id;
-        $action = Yii::$app->controller->action->id;
+  
+        $controller = $this;
+        $action = $this->action->id;
 
         $show = $this->pageAuth();
         if(in_array($action,$this->free)){
             $show = true;
         }
         
-        
-        return [
+        $behaviors = [
             'access' => [
                 'class' => AccessControl::class,
                 'rules' => [
@@ -126,6 +126,60 @@ class AuthController extends Controller {
                 ],
             ],
         ];
+
+        if ($this->params->logging && $controller->id != 'log') {
+            if (Yii::$app->user->identity !== null) {
+                $log = new Log();
+                $log->action = $action;
+                $log->ip = $this->getUserIP();
+                $log->device = $this->getOS();
+                $log->controller = Yii::$app->controller->id;
+                $log->user_id = Yii::$app->user->identity !== null ? Yii::$app->user->identity->id : 0;
+
+                if ($request->get() !== null && isset($request->get()['id'])) {
+                    $log->data = $request->get()['id'];
+                }
+                if ($request->post() !== null && !empty($request->post())) {
+                    $data_json = json_encode($request->post());
+                    if (!str_contains($data_json, 'password'))
+                        $log->data = $data_json;
+                }
+
+                $log->save();
+            }
+        }
+
+        return $behaviors;
+    }
+
+    static function getLicense($model)
+    {
+        $license_valid = null;
+        $licenses = $model->group->getLicenses()->all();
+        foreach ($licenses as $key => $license) {
+            if (strtotime($license->validate) >= strtotime(date('Y-m-d')) && $license->status) {
+                $license_valid = $license;
+            }
+        }
+        return $license_valid;
+    }
+
+    static function verifyLicense()
+    {
+        $user_groups = self::User()::userGroups()->all();
+        $license_valid = null;
+        if (self::isAdmin()) {
+            return true;
+        }
+
+        $licenses = License::find()->andWhere(['in', 'group_id', $user_groups])->all();
+        //se não tiver licensa libera
+        foreach ($licenses as $key => $license) {
+            if (strtotime($license->validate) >= strtotime(date('Y-m-d')) && $license->status) {
+                $license_valid = $license;
+            }
+        }
+        return $license_valid;
     }
     
     public function pageAuth()
@@ -166,6 +220,11 @@ class AuthController extends Controller {
     {
         if(!self::isGuest()){
 
+            if (self::verifyLicense() === null) {
+                Yii::$app->session->setFlash('warning', Yii::t('app', 'License expired!'));
+                return [];
+            }
+            
             $groups = self::User()->getUserGroupsId();
 
             $query_rules = Rule::find()->where(['path' => $app_path, 'controller' => $request_controller, 'status' => 1]);
@@ -216,7 +275,7 @@ class AuthController extends Controller {
          $model_obj = new $path_model;
  
          $model = $path_model::find()->where([$model_obj->tableSchema->primaryKey[0] => $id]);
- 
+
          if ($model_obj->verGroup !== null && $model_obj->verGroup && !self::isAdmin()) {
             $groups = self::User()->getUserGroupsId();
             if(Yii::$app->controller->action->id == 'view') {

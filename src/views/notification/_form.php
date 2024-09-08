@@ -3,11 +3,11 @@
 use app\models\NotificationMessage;
 use app\models\User;
 use yii\helpers\Html;
-use yii\bootstrap5\ActiveForm;
+use yii\bootstrap4\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Notification */
-/* @var $form yii\bootstrap5\ActiveForm */
+/* @var $form yii\bootstrap4\ActiveForm */
 ?>
 
 <div class="notification-form">

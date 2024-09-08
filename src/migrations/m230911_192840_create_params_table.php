@@ -89,7 +89,7 @@ class m230911_192840_create_params_table extends Migration
         ]);
 
         $this->insert('menus', [
-            'id'=> 17,
+            'id'=> 19,
             'menu_id' => 1,
             'label'   => 'Params',
             'icon_style'=> 'fas',

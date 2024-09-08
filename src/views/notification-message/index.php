@@ -43,7 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         'summaryOptions' => ['class' => 'summary mb-2'],
                         'pager' => [
-                            'class' => 'yii\bootstrap5\LinkPager',
+                            'class' => 'yii\bootstrap4\LinkPager',
                         ]
                     ]); ?>
 

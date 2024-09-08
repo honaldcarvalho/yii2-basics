@@ -1,6 +1,6 @@
 <?php
 
-namespace weebz\yii2basics\controllers;
+namespace app\controllers;
 
 use Yii;
 use app\models\Notification;
@@ -11,7 +11,7 @@ use yii\filters\VerbFilter;
 /**
  * NotificationController implements the CRUD actions for Notification model.
  */
-class NotificationController extends AuthController
+class NotificationController extends Controller
 {
     /**
      * Lists all Notification models.

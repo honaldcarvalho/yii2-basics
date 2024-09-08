@@ -134,6 +134,7 @@ $this::registerJs($script, $this::POS_END);
                 <div class="col-md-12">
                     <?= StorageUploadMultiple::widget([
                         'folder_id' => $model->id,
+                        'group_id' => 1,
                         'grid_reload'=>1,
                         'grid_reload_id'=>'#list-files-grid'
                     ]); ?>

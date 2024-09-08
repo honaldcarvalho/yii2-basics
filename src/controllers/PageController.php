@@ -62,7 +62,7 @@ class PageController extends AuthController
         $model = new Page();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && ($model->group_id = $this::getUserGroups()[0]) && $model->save()) {
+            if ($model->load($this->request->post()) && ($model->group_id = $this::userGroup()) && $model->save()) {
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
@@ -127,7 +127,7 @@ class PageController extends AuthController
      */
     public function actionDelete($id)
     {
-        Page::find()->where(['id'=>$id])->andWhere(['or',['in','group_id', AuthController::getUserGroups()]])->one()->delete();
+        Page::find()->where(['id'=>$id])->andWhere(['or',['in','group_id',(new Controller(0,0))::getUserGroups()]])->one()->delete();
 
         return $this->redirect(['index']);
     }
@@ -141,7 +141,7 @@ class PageController extends AuthController
      */
     protected function findModel($id)
     {
-        if (($model = Page::find()->where(['id'=>$id])->andWhere(['or',['in','group_id', AuthController::getUserGroups()],['group_id'=>null], ['group_id'=>1]])->one()) !== null) {
+        if (($model = Page::find()->where(['id'=>$id])->andWhere(['or',['in','group_id',(new Controller(0,0))::getUserGroups()],['group_id'=>null], ['group_id'=>1]])->one()) !== null) {
             return $model;
         }
 

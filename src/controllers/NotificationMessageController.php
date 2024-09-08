@@ -1,6 +1,6 @@
 <?php
 
-namespace weebz\yii2basics\controllers;
+namespace app\controllers;
 
 use Yii;
 use app\models\NotificationMessage;
@@ -10,7 +10,7 @@ use yii\web\NotFoundHttpException;
 /**
  * NotificationMessageController implements the CRUD actions for NotificationMessage model.
  */
-class NotificationMessageController extends AuthController
+class NotificationMessageController extends Controller
 {
 
     /**

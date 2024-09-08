@@ -1,5 +1,5 @@
 <?php
-namespace weebz\yii2basics\models;
+namespace app\models;
 
 use yii\base\Model;
 
@@ -7,7 +7,7 @@ use yii\base\Model;
  * Utility class return system em hardware informations
  *
  */
-class SystemInfo extends ModelCommon
+class SystemInfo extends Model
 {
     /**
      * Return disk information.

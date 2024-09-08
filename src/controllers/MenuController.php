@@ -6,7 +6,6 @@ use Yii;
 use weebz\yii2basics\models\Menu;
 use weebz\yii2basics\models\MenuSearch;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * MenuController implements the CRUD actions for Menu model.

@@ -2,13 +2,13 @@
 
 namespace weebz\yii2basics\controllers;
 
-use weebz\yii2basics\controllers\AuthController;
-use weebz\yii2basics\models\File;
 use Yii;
+use weebz\yii2basics\models\File;
 use weebz\yii2basics\models\User;
+use weebz\yii2basics\models\Group;
 use weebz\yii2basics\models\UserGroup;
 use weebz\yii2basics\models\UserSearch;
-use weebz\yii2basics\models\Group;;
+use weebz\yii2basics\controllers\AuthController;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -18,7 +18,6 @@ class UserController extends AuthController
 {
     public function __construct($id, $module, $config = array()) {
         parent::__construct($id, $module, $config);
-        $this->access = $this->getAccess($id); 
         $this->free = ['change-theme'];
     }
     
@@ -41,7 +40,7 @@ class UserController extends AuthController
     public function actionChangeTheme()
     {           
         $theme = Yii::$app->request->post('theme');
-        $model =  AuthController::User();
+        $model =  self::User();
         if($theme !== null && !empty($theme)){
             $model->theme = $theme;
         }

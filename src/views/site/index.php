@@ -8,7 +8,7 @@ use weebz\yii2basics\models\Params;
 
 $params = Params::get();
 
-$assetsDir =  ControllerCommon::$assetsDir;
+$assetsDir =  ControllerCommon::getAssetsDir();
 
 if (!empty($params->file_id)) {
     $url = Yii::getAlias('@web') . $params->file->urlThumb;

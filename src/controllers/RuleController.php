@@ -1,6 +1,6 @@
 <?php
 
-namespace weebz\yii2basics\controllers;;
+namespace weebz\yii2basics\controllers;
 
 use weebz\yii2basics\models\Menu;
 use weebz\yii2basics\models\Rule;

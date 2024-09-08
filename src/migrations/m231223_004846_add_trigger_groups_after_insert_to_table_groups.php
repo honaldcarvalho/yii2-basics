@@ -18,8 +18,7 @@ class m231223_004846_add_trigger_groups_after_insert_to_table_groups extends Mig
                 INSERT INTO `rules` (`user_id`, `group_id`, `controller`, `actions`, `origin`,`path`, `status`) VALUES (NULL,NEW.id,  'site', 'index;dashboard', '*','weebz/controllers', 1);
                 INSERT INTO `rules` (`user_id`, `group_id`, `controller`, `actions`, `origin`,`path`, `status`) VALUES (NULL,NEW.id,  'site', 'index;dashboard', '*','app', 1);
                 INSERT INTO `rules` (`user_id`, `group_id`, `controller`, `actions`, `origin`,`path`, `status`) VALUES (NULL,NEW.id,  'user', 'profile;edit;', '*','weebz/controllers', 1);
-                INSERT INTO `rules` (`user_id`, `group_id`, `controller`, `actions`, `origin`,`path`, `status`) VALUES (NULL,NEW.id,  'upload', 'send;crop;multi', '*','weebz/controllers', 1);
-                INSERT INTO `rules` (`user_id`, `group_id`, `controller`, `actions`, `origin`,`path`, `status`) VALUES (NULL,NEW.id,  'file', 'index;create;view;update;delete;list;upload;move;remove-file;delete-files;send','weebz/controllers', '*', 1);
+                INSERT INTO `rules` (`user_id`, `group_id`, `controller`, `actions`, `origin`,`path`, `status`) VALUES (NULL,NEW.id,  'file', 'index;create;view;update;delete;list;upload;move;remove-file;delete-files;send','*', 'weebz/controllers', 1);
                 INSERT INTO `rules` (`user_id`, `group_id`, `controller`, `actions`, `origin`,`path`, `status`) VALUES (NULL,NEW.id,  'folder', 'index;create;view;update;delete', '*','weebz/controllers', 1);
             END
 

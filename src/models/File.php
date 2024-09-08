@@ -48,6 +48,14 @@ class File extends ModelCommon
         return 'files';
     }
 
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        //dd($scenarios);
+        //$scenarios[self::SCENARIO_SEARCH] = ['name','description','type', 'path', 'url', 'extension'];
+        return $scenarios;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -55,7 +63,7 @@ class File extends ModelCommon
     {
         return [
             [['folder_id', 'size','duration'], 'integer'],
-            [['name', 'path', 'url', 'extension', 'size'], 'required'],
+            [['name', 'path', 'url', 'extension', 'size'], 'required','on'=>$this::SCENARIO_DEFAULT],
             [['created_at', 'updated_at'], 'safe'],
             [['name', 'path', 'url', 'pathThumb', 'urlThumb'], 'string', 'max' => 300],
             [['description'], 'string', 'max' => 255],
@@ -117,16 +125,6 @@ class File extends ModelCommon
     public function getFolder()
     {
         return $this->hasOne(Folder::class, ['id' => 'folder_id']);
-    }
-
-    /**
-     * Gets query for [[PageFiles]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getPageFiles()
-    {
-        return $this->hasMany(PageFile::class, ['file_id' => 'id']);
     }
 
     /**

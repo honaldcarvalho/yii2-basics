@@ -4,22 +4,15 @@ namespace weebz\yii2basics\controllers;;
 
 use weebz\yii2basics\models\Group;
 use weebz\yii2basics\models\GroupSearch;
-use weebz\yii2basics\models\User;
 use weebz\yii2basics\models\UserGroup;
-use weebz\yii2basics\models\UserSearch;
 use Yii;
-use yii\data\ActiveDataProvider;
+
 use yii\web\NotFoundHttpException;
 /**
  * GroupController implements the CRUD actions for Group model.
  */
 class GroupController extends AuthController
 {
-    public function __construct($id, $module, $config = array()) {
-        parent::__construct($id, $module, $config);
-        $this->access = $this->getAccess($id); 
-         $this->free = ['responder','editar'];
-    }
 
     /**
      * Lists all Group models.

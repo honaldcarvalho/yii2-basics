@@ -21,5 +21,6 @@ function enviroments(){
         $parts = explode('=',$line);
         $env[$parts[0]] = $parts[1];
     }
+
     return $env;
 }

@@ -105,6 +105,7 @@ class StorageController extends ControllerRest {
             'file_name' => null,//custom file name
             'description'=> null,//custom file description
             'folder_id'=> 1,//common
+            'group_id'=> 1,//common
             'save'=> 0,//salve model
             'convert_video'=>1 //convert video if not is mp4 type
         ]
@@ -321,10 +322,9 @@ class StorageController extends ControllerRest {
 
                 if($save){
 
-                    $file_uploaded['group_id'] = 1; //common
-                    if(Yii::$app->params['upload.group'])
+                    $file_uploaded['group_id'] = $group_id; //common
+                    if(!AuthController::isAdmin())
                         $file_uploaded['group_id'] =  AuthController::userGroup();
-
                     
                     $file_uploaded['class'] = File::class;
                     $file_uploaded['file'] = $temp_file;
@@ -359,6 +359,7 @@ class StorageController extends ControllerRest {
                 $options['file_name']= $post['file_name'] ?? false;
                 $options['description'] = $post['description'] ?? $temp_file->name;
                 $options['folder_id'] = $post['folder_id'] ?? 1;
+                $options['group_id'] = $post['group_id'] ?? 1;
                 $options['save'] = $post['save'] ?? 0;
                 $options['convert_video'] = $post['convert_video'] ?? true;
 
@@ -378,7 +379,7 @@ class StorageController extends ControllerRest {
             $file = false;
             $success = false;
             $user_groups =  AuthController::getUserGroups();
-            $model = File::find()->where(['id'=>$id])->andWhere(['or',['in','group_id',$user_groups],['group_id'=>1]])->one();
+            $model = File::find()->where(['id'=>$id])->andWhere(['or',['in','group_id',$user_groups]])->one();
             
             if($model !== null) {
                 $id = $model->name;

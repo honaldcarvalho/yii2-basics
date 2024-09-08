@@ -16,9 +16,7 @@ class ParamsController extends AuthController
      * {@inheritdoc}
      */
     public function __construct($id, $module, $config = array()) {
-        parent::__construct($id, $module, $config);
-        $this->access = $this->getAccess($id); 
-         $this->free = ['responder','editar'];
+        parent::__construct($id, $module, $config);;
     }
     /**
      * Lists all Params models.

@@ -1,0 +1,83 @@
+<?php
+
+namespace app\models;
+
+use Yii;
+
+/**
+ * This is the model class for table "notifications".
+ *
+ * @property int $id
+ * @property int|null $user_id
+ * @property int $notification_message_id
+ * @property string $description
+ * @property string|null $created_at
+ * @property string|null $updated_at
+ * @property int|null $send_email
+ * @property int|null $status
+ *
+ * @property NotificationMessage $notificationMessage
+ * @property User $user
+ */
+class Notification extends \yii\db\ActiveRecord
+{
+    /**
+     * {@inheritdoc}
+     */
+    public static function tableName()
+    {
+        return 'notifications';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function rules()
+    {
+        return [
+            [['user_id', 'notification_message_id', 'send_email', 'status'], 'integer'],
+            [['notification_message_id', 'description'], 'required'],
+            [['created_at', 'updated_at'], 'safe'],
+            [['description'], 'string', 'max' => 255],
+            [['notification_message_id'], 'exist', 'skipOnError' => true, 'targetClass' => NotificationMessage::class, 'targetAttribute' => ['notification_message_id' => 'id']],
+            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => Yii::t('app', 'ID'),
+            'user_id' => Yii::t('app', 'User ID'),
+            'notification_message_id' => Yii::t('app', 'Notification Message ID'),
+            'description' => Yii::t('app', 'Description'),
+            'created_at' => Yii::t('app', 'Created At'),
+            'updated_at' => Yii::t('app', 'Updated At'),
+            'send_email' => Yii::t('app', 'Send Email'),
+            'status' => Yii::t('app', 'Status'),
+        ];
+    }
+
+    /**
+     * Gets query for [[NotificationMessage]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getNotificationMessage()
+    {
+        return $this->hasOne(NotificationMessage::class, ['id' => 'notification_message_id']);
+    }
+
+    /**
+     * Gets query for [[User]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUser()
+    {
+        return $this->hasOne(User::class, ['id' => 'user_id']);
+    }
+}

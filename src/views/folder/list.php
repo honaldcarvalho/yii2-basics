@@ -168,7 +168,7 @@ $script = <<< JS
   
 JS;
 
-$assetsDir =  ControllerCommon::$assetsDir;
+$assetsDir =  ControllerCommon::getAssetsDir();
 
 $this::registerJs($script, $this::POS_END);
 $this::registerCss($style);
