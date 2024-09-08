@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="row">
                 <div class="col-md-12">
                     <p>
-                        <?= \app\widgets\DefaultButtons::widget(['controller' => 'Page','model'=>$model]) ?>
+                        <?= \weebz\yii2basics\widgets\DefaultButtons::widget(['controller' => 'Page','model'=>$model]) ?>
                     </p>
                     <?= DetailView::widget([
                         'model' => $model,
