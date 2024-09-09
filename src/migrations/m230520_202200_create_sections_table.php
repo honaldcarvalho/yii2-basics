@@ -15,6 +15,7 @@ class m230520_202200_create_sections_table extends Migration
         $this->createTable('{{%sections}}', [
             'id' => $this->primaryKey(),
             'group_id' => $this->integer(),
+            'section_id' => $this->integer()->defaultValue(null),
             'name' => $this->string(),
             'status' => $this->integer()->defaultValue(1)
         ]);

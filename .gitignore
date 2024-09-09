@@ -4,3 +4,5 @@
 # composer
 /vendor
 /composer.lock
+
+sync.ffs_db
