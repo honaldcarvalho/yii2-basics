@@ -17,6 +17,8 @@ class WeebzAsset extends AssetBundle
     public $js = [
         'plugins/bootstrap/js/bootstrap.bundle.min.js',
         'js/adminlte.min.js',
+        'js/utils.js',
+        'js/t.js',
     ];
 
     public $depends = [

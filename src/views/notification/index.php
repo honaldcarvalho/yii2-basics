@@ -4,10 +4,10 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\NotificationSearch */
+/* @var $searchModel weebz\yii2basics\models\NotificationSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('backend', 'Notifications');
+$this->title = Yii::t('app', 'Notifications');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="container-fluid">
@@ -17,7 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="card-body">
                     <div class="row mb-2">
                         <div class="col-md-12">
-                            <?= Html::a(Yii::t('backend', 'Send'), ['create'], ['class' => 'btn btn-success']) ?>
+                            <?= Html::a(Yii::t('app', 'Send'), ['create'], ['class' => 'btn btn-success']) ?>
                         </div>
                     </div>
 
@@ -38,7 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'status:boolean:Read',
                             'updated_at:datetime:Read In',
 
-                            ['class' => 'hail812\adminlte3\yii\grid\ActionColumn'],
+                            ['class' => 'weebz\yii2basics\components\gridview\ActionColumn'],
                         ],
                         'summaryOptions' => ['class' => 'summary mb-2'],
                         'pager' => [

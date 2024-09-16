@@ -1,5 +1,5 @@
 <?php
-namespace app\models;
+namespace weebz\yii2basics\models;
 
 use yii\base\Model;
 

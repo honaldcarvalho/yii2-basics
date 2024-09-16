@@ -25,7 +25,7 @@ $script = <<< JS
     });
 
     $(function(){
-        $("#form-translate").on("change blur keyup", function(e) {
+        $("#form-translate").on("keyup", function(e) {
 
             $('#btn-add-translate .icon').removeClass('fa-plus-circle mr-2 ');
             $('#btn-add-translate .icon').addClass('fa-sync fa-spin');

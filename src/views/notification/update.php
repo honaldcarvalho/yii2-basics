@@ -1,14 +1,14 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Notification */
+/* @var $model weebz\yii2basics\models\Notification */
 
-$this->title = Yii::t('backend', 'Update Notification: {name}', [
+$this->title = Yii::t('app', 'Update Notification: {name}', [
     'name' => $model->id,
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('backend', 'Notifications'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Notifications'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = Yii::t('backend', 'Update');
+$this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 ?>
 
 <div class="container-fluid">

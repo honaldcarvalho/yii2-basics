@@ -49,7 +49,7 @@ class m230425_130812_create_notification_messages_table extends Migration
         $this->insert('menus', [
             'id'=> 161,
             'menu_id' => 16,
-            'label'   => 'Mesages',
+            'label'   => 'Messages',
             'icon_style'=> 'fas',
             'icon'    => 'fas fa-comment-dots',
             'visible' => 'notification-message;index',

@@ -40,7 +40,7 @@ class m230911_192839_create_email_services_table extends Migration
             'menu_id' => 1,
             'label'   => 'Email Services',
             'icon_style'=> 'fas',
-            'icon'    => 'fas fa-keyboard',
+            'icon'    => 'fas fa-envelope',
             'visible' => 'email-service;index',
             'url'     => '/email-service/index',
             'path'  => 'weebz/controllers',

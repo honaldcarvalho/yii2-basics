@@ -92,13 +92,13 @@ class EmailServiceController extends AuthController
             </tr>
         ";
         $subject = 'Test Email - '.$model->description;
-        $message = $mailer->compose('layouts/template', ['subject' => $subject, 'content' => $content]);
+        $message = $mailer->compose('@vendor/weebz/yii2-basics/src/mail/layouts/template', ['subject' => $subject, 'content' => $content]);
         $response = $message->setFrom($model->username)->setTo($params->email)
         ->setSubject(Yii::t('app','Test Email - '.$model->description))
         ->send();
 
         if($response) {
-            \Yii::$app->session->setFlash('success', 'Email sended. See you email.');
+            \Yii::$app->session->setFlash('success', "Email sended to {$params->email}.  See you email.");
         }else{
             foreach (Yii::getLogger()->messages as $key => $message) {
                 if($message[2] == 'yii\symfonymailer\Mailer::sendMessage'){

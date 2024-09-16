@@ -8,12 +8,15 @@ use Yii;
  * This is the model class for table "sections".
  *
  * @property int $id
+ * @property int|null $section_id
  * @property int|null $group_id
  * @property string|null $name
  * @property int|null $status
  *
  * @property Pages[] $pages
  * @property Group $group
+ * @property Section $section
+ * @property Section[] $sections
  */
 class Section extends ModelCommon
 {
@@ -34,6 +37,7 @@ class Section extends ModelCommon
             [['status'], 'integer'],
             [['name'], 'string', 'max' => 255],
             [['group_id'], 'exist', 'skipOnError' => true, 'targetClass' => Group::class, 'targetAttribute' => ['group_id' => 'id']],
+            [['section_id'], 'exist', 'skipOnError' => true, 'targetClass' => Section::class, 'targetAttribute' => ['section_id' => 'id']],
         ];
     }
 
@@ -67,5 +71,25 @@ class Section extends ModelCommon
     public function getPages()
     {
         return $this->hasMany(Page::class, ['section_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Section]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSection()
+    {
+        return $this->hasOne(Section::class, ['id' => 'section_id']);
+    }
+
+    /**
+     * Gets query for [[Section]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSections()
+    {
+        return $this->hasMany(Section::class, ['id' => 'section_id']);
     }
 }

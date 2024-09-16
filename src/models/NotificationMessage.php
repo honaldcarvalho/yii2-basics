@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models;
+namespace weebz\yii2basics\models;
 
 use Yii;
 
@@ -17,7 +17,7 @@ use Yii;
  *
  * @property Notifications[] $notifications
  */
-class NotificationMessage extends \yii\db\ActiveRecord
+class NotificationMessage extends ModelCommon
 {
     /**
      * {@inheritdoc}
@@ -27,13 +27,19 @@ class NotificationMessage extends \yii\db\ActiveRecord
         return 'notification_messages';
     }
 
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        return $scenarios;
+    }
+    
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['description'], 'required'],
+            [['description'], 'required','on'=> self::SCENARIO_DEFAULT],
             [['type', 'message'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
             [['status'], 'integer'],

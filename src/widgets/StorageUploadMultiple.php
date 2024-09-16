@@ -19,6 +19,18 @@ use yii\bootstrap5\Widget;
  *      'grid_reload'=>1, //Enable auto reload GridView. disable = 0; enable = 1;
  *      'grid_reload_id'=>'#list-files-grid', //ID of GridView will reload
  *     ]); ?>
+ * 
+ * Attact file to model
+    <?= StorageUploadMultiple::widget([
+    'group_id' => AuthController::userGroup(),
+    'attact_model'=>[
+        'class_name'=> 'weebz\\yii2basics\\models\\PageFile',
+        'id'=> $model->id,
+        'fields'=> ['page_id','file_id']
+    ],
+    'grid_reload'=>1,
+    'grid_reload_id'=>'#list-files-grid'
+    ]); ?>
  */
 class StorageUploadMultiple extends Widget
 {
@@ -29,7 +41,9 @@ class StorageUploadMultiple extends Widget
     public $folder_id = 1;
     /** Folder group id */
     public $group_id = 1;
-    /** Enable auto reload GridView. disable = 0; enable = 1; */
+    /** Model name to attact files */
+    public $attact_model = 0;
+    /** Model id to attact files */
     public $grid_reload = 0;
     /** ID of GridView will reload */
     public $grid_reload_id = '#list-files-grid';
@@ -37,6 +51,7 @@ class StorageUploadMultiple extends Widget
     public function init()
     {
         parent::init();
+        $this->attact_model = json_encode($this->attact_model);
         $this->token =  AuthController::User()->access_token;
         $this->random =  ControllerCommon::generateRandomString(6);
         PluginAsset::register(Yii::$app->view)->add(['axios','jquery-cropper']);
@@ -194,6 +209,7 @@ class StorageUploadMultiple extends Widget
                 formData.append('file', file);
                 formData.append('folder_id', $this->folder_id);
                 formData.append('group_id', $this->group_id);
+                formData.append('attact_model',JSON.stringify($this->attact_model));
                 formData.append('save', 1);
 
                 uploadButton.disabled = true;

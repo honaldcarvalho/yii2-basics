@@ -11,7 +11,7 @@ use Yii;
  * @property int $id
  * @property int|null $group_id
  * @property int|null $section_id
-  * @property string $language_id
+ * @property string $language_id
  * @property string $slug
  * @property string $title
  * @property string $description
@@ -24,10 +24,10 @@ use Yii;
  * @property int|null $status
  *
  * @property PageFiles[] $pageFiles
- * @property Sections $section
+ * @property Section $section
  * @property Group $group
  */
-class Page extends \yii\db\ActiveRecord
+class Page extends ModelCommon
 {
     /**
      * {@inheritdoc}
@@ -44,7 +44,7 @@ class Page extends \yii\db\ActiveRecord
     {
         return [
             [['section_id', 'status'], 'integer'],
-            [['slug', 'title'], 'required'],
+            [['slug', 'title'], 'required','on'=> self::SCENARIO_DEFAULT],
             [['content', 'keywords','custom_js','custom_css','language_id'], 'string'],
             [['created_at','updated_at'], 'safe'],
             [['slug', 'title'], 'string', 'max' => 255],
@@ -92,9 +92,10 @@ class Page extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getPageFiles()
-    {
-        return $this->hasMany(PageFile::class, ['page_id' => 'id']);
+
+    public function getFiles() {
+        return $this->hasMany(File::class, ['id' => 'file_id'])
+          ->viaTable('page_files', ['page_id' => 'id']);
     }
 
     /**

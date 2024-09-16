@@ -326,10 +326,10 @@ class FileInput extends Widget
             $show_info = 'd-none';
         }
 
-        $cut_label = Yii::t('*', 'Cut');
-        $cancel_label = Yii::t('*', 'Cancel');
-        $upload_label = Yii::t('*', 'Upload');
-        $edit_label = Yii::t('*', 'Edit');
+        $cut_label = Yii::t('app', 'Cut');
+        $cancel_label = Yii::t('app', 'Cancel');
+        $upload_label = Yii::t('app', 'Upload');
+        $edit_label = Yii::t('app', 'Edit');
         $remove_label = Yii::t('app', 'Remove');
 
         $modal = <<< HTML

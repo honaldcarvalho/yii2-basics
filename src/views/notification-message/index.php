@@ -4,10 +4,10 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\NotificationMessageSearch */
+/* @var $searchModel weebz\yii2basics\models\NotificationMessageSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('backend', 'Notification Messages');
+$this->title = Yii::t('app', 'Notification Messages');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="container-fluid">
@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     
                     <div class="row mb-2">
                         <div class="col-md-12">
-                            <?= Html::a(Yii::t('backend', 'Create Notification Message'), ['create'], ['class' => 'btn btn-success']) ?>
+                            <?= Html::a(Yii::t('app', 'Create Notification Message'), ['create'], ['class' => 'btn btn-success']) ?>
                         </div>
                     </div>
 
@@ -34,12 +34,12 @@ $this->params['breadcrumbs'][] = $this->title;
                             'id',
                             'description',
                             'type',
-                            'message:ntext',
+                            //'message:ntext',
                             'created_at',
                             //'updated_at',
-                            //'status',
+                            'status:boolean',
 
-                            ['class' => 'hail812\adminlte3\yii\grid\ActionColumn'],
+                            ['class' => 'weebz\yii2basics\components\gridview\ActionColumn'],
                         ],
                         'summaryOptions' => ['class' => 'summary mb-2'],
                         'pager' => [

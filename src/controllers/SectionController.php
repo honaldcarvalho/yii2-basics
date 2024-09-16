@@ -18,6 +18,7 @@ class SectionController extends AuthController
     public function actionIndex()
     {
         $searchModel = new Section();
+        $searchModel->scenario = Section::SCENARIO_SEARCH;
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -49,7 +50,7 @@ class SectionController extends AuthController
         $model = new Section();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+            if ($model->load($this->request->post())  && ($model->group_id = $this::userGroup()) && $model->save()) {
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {

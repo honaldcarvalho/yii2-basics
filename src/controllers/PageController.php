@@ -2,6 +2,7 @@
 
 namespace weebz\yii2basics\controllers;
 
+use weebz\yii2basics\controllers\rest\StorageController;
 use weebz\yii2basics\models\Page;
 use weebz\yii2basics\models\PageSearch;
 use yii\web\NotFoundHttpException;
@@ -18,7 +19,8 @@ class PageController extends AuthController
      */
     public function actionIndex()
     {
-        $searchModel = new PageSearch();
+        $searchModel = new Page();
+        $searchModel->scenario = Page::SCENARIO_SEARCH;
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -35,8 +37,14 @@ class PageController extends AuthController
      */
     public function actionView($id)
     {
+        $model = $this->findModel($id);
+        $dataProvider = new \yii\data\ActiveDataProvider([
+            'query' => $model->getFiles(),
+        ]);
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
+            'dataProvider'=>$dataProvider
         ]);
     }
 
@@ -48,8 +56,9 @@ class PageController extends AuthController
      */
     public function renderPage($id)
     {
+        $model = $this->findModel($id);
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' =>$model,
         ]);
     }
     /**
@@ -127,24 +136,13 @@ class PageController extends AuthController
      */
     public function actionDelete($id)
     {
-        Page::find()->where(['id'=>$id])->andWhere(['or',['in','group_id',(new Controller(0,0))::getUserGroups()]])->one()->delete();
-
+        $model = $this->findModel($id);
+        $files = $model->getFiles()->all();
+        foreach($files as $file){
+            StorageController::removeFile($file->id);
+        }
+        $this->findModel($id)->delete();
         return $this->redirect(['index']);
     }
 
-    /**
-     * Finds the Page model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
-     * @return Page the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        if (($model = Page::find()->where(['id'=>$id])->andWhere(['or',['in','group_id',(new Controller(0,0))::getUserGroups()],['group_id'=>null], ['group_id'=>1]])->one()) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The requested page does not exist.');
-    }
 }

@@ -14,7 +14,7 @@ use weebz\yii2basics\controllers\AuthController;
 
 class ActionColumn extends \yii\grid\ActionColumn
 {
-    public $template = '{view} {update} {delete} {clone}';
+    public $template = '{view} {update} {delete}';
     public $verGroup = true;
     public $controller = null;
     public $path = null;

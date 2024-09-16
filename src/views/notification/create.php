@@ -3,10 +3,10 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Notification */
+/* @var $model weebz\yii2basics\models\Notification */
 
-$this->title = Yii::t('backend', 'Create Notification');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('backend', 'Notifications'), 'url' => ['index']];
+$this->title = Yii::t('app', 'Create Notification');
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Notifications'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 

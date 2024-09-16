@@ -63,7 +63,7 @@ class File extends ModelCommon
     {
         return [
             [['folder_id', 'size','duration'], 'integer'],
-            [['name', 'path', 'url', 'extension', 'size'], 'required','on'=>$this::SCENARIO_DEFAULT],
+            [['name', 'path', 'url', 'extension', 'size'],'required','on'=>self::SCENARIO_DEFAULT],
             [['created_at', 'updated_at'], 'safe'],
             [['name', 'path', 'url', 'pathThumb', 'urlThumb'], 'string', 'max' => 300],
             [['description'], 'string', 'max' => 255],

@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Section */
+/* @var $model weebz\yii2basics\models\Section */
 
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Sections'), 'url' => ['index']];
@@ -18,14 +18,15 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="row">
                 <div class="col-md-12">
                     <p>
-                        <?= \weebz\yii2basics\widgets\DefaultButtons::widget(['controller' => 'Folder','model'=>$model]) ?>
+                        <?= \weebz\yii2basics\widgets\DefaultButtons::widget(['controller' => 'Section','model'=>$model]) ?>
                     </p>
                     <?= DetailView::widget([
                         'model' => $model,
                         'attributes' => [
                             'id',
+                            'section.name',
                             'name',
-                            'status',
+                            'status:boolean',
                         ],
                     ]) ?>
                 </div>

@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <p>
                         <?= DefaultButtons::widget(
                             [
-                                'controller' => Yii::$app->controller->id,'model'=>$model
+                                'controller' => Yii::$app->controller->id,'model'=>$model,'verGroup'=>false
                             ]) ?>
                     </p>
                     <?= DetailView::widget([

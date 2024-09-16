@@ -1,9 +1,10 @@
 <?php
 
+use weebz\yii2basics\models\Language;
 use yii\helpers\Html;
 $action = Yii::$app->controller->action->id;
+$languages = Language::find()->where(['status'=>true])->all();
 $script = <<< JS
-
   var toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
   var currentTheme = localStorage.getItem('theme');
   var mainHeader = document.querySelector('.main-header');
@@ -73,7 +74,23 @@ $this->registerJs($script);
     </ul>
 
     <!-- Right navbar links -->
+
     <ul class="navbar-nav ml-auto">
+        <li class="nav-item dropdown" data-bs-theme="light">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="theme-menu" aria-expanded="false" data-bs-toggle="dropdown" data-bs-display="static" aria-label="Toggle theme">
+                <i class="bi bi-translate"></i>
+                <span class="ms-2" id="lang-selected">(<?= strtoupper(\Yii::$app->language); ?>)</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end lang-menu">
+                <?php foreach($languages as $language): ?>
+                <li>
+                    <button type="button" class="dropdown-item d-flex align-items-center <?= \Yii::$app->language == $language->code ? 'active' : ''; ?>" data-lang="<?= $language->code;?>" aria-pressed="false">
+                      <i class="fas fa-caret-right"></i></i><span class="ms-2"><?= strtoupper($language->code);?></span>
+                    </button>
+                </li>
+                <?php endforeach; ?>
+            </ul>
+        </li>
         <li class="nav-item">
             <div class="theme-switch-wrapper nav-link">
                 <label class="theme-switch" for="checkbox">

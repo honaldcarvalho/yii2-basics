@@ -2,6 +2,7 @@
 
 namespace weebz\yii2basics\controllers\rest;
 
+use Exception;
 use Yii;
 use yii\web\UploadedFile;
 use yii\helpers\FileHelper;
@@ -106,6 +107,9 @@ class StorageController extends ControllerRest {
             'description'=> null,//custom file description
             'folder_id'=> 1,//common
             'group_id'=> 1,//common
+            'attact_model'=> 0,//model name to atacct
+            'attact_fields'=> 0,//model atacct fields
+            'attact_model_id'=> 0,//model id to atacct
             'save'=> 0,//salve model
             'convert_video'=>1 //convert video if not is mp4 type
         ]
@@ -122,10 +126,12 @@ class StorageController extends ControllerRest {
             $upload_root = "{$webroot}{$files_folder}";
             $webFiles = "{$web}{$files_folder}";
             $temp_file = $file;
-            $group_id = null;
+            $group_id = 1;
             $folder_id = null;
             $duration = 0;
             $save  = 0;
+            $attact_model  = 0;
+            $attact_model_id  = 0;
             $name = '';
             $description = '';
             $filePath = '';
@@ -142,6 +148,7 @@ class StorageController extends ControllerRest {
                 $file_name = isset($options['file_name']) ? $options['file_name'] : false;
                 $description = isset($options['description']) ? $options['description'] : $temp_file->name;
                 $folder_id = isset($options['folder_id']) ? $options['folder_id'] :  1;
+                $attact_model = isset($options['attact_model']) ? json_decode($options['attact_model']) :  0;
                 $save = isset($options['save']) ? $options['save'] :  0;
                 $convert_video = isset($options['convert_video']) ? $options['convert_video'] : true;
                 
@@ -224,7 +231,7 @@ class StorageController extends ControllerRest {
                     $filePath = "{$path}/{$name}";
                     $filePathRoot = "{$pathRoot}/{$name}";
 
-                    $fileUrl = "{$web}/videos/{$name}";
+                    $fileUrl = "{$webFiles}/videos/{$name}";
 
                     if (!file_exists($pathRoot)) {
                         FileHelper::createDirectory($pathRoot);
@@ -247,7 +254,7 @@ class StorageController extends ControllerRest {
                     $pathThumbRoot = "{$upload_root}/videos/thumbs";
                     $filePathThumb = "{$pathThumb}/{$video_thumb_name}";
                     $filePathThumbRoot = "{$pathThumbRoot}/{$video_thumb_name}";
-                    $fileThumbUrl = "{$web}/videos/{$name}";
+                    $fileThumbUrl = "{$webFiles}/videos/thumbs/{$video_thumb_name}";
 
                     if (!file_exists($pathThumbRoot)) {
                         FileHelper::createDirectory($pathThumbRoot);
@@ -324,13 +331,20 @@ class StorageController extends ControllerRest {
 
                     $file_uploaded['group_id'] = $group_id; //common
                     if(!AuthController::isAdmin())
-                        $file_uploaded['group_id'] =  AuthController::userGroup();
+                        $file_uploaded['group_id'] = AuthController::userGroup();
                     
                     $file_uploaded['class'] = File::class;
                     $file_uploaded['file'] = $temp_file;
                     $model = Yii::createObject($file_uploaded);
 
                     if($model->save()){
+                        if($attact_model) {
+                            $attact = new $attact_model->class_name([
+                                $attact_model->fields[0] => $attact_model->id,
+                                $attact_model->fields[1] => $model->id
+                            ]);
+                            $attact->save();
+                        }
                         return ['code'=>200,'success'=>true,'data'=>$model];
                     }else{
                         return ['code'=>200,'success'=>false,'data'=>$model->getErrors()];
@@ -340,8 +354,9 @@ class StorageController extends ControllerRest {
                 return ['code'=>200,'success'=>true,'data'=>$file_uploaded];
 
             }
-        } catch (\Throwable $th) {
-            return ['code'=>500,'success'=>false,'data'=>$th];
+        } catch (\Exception $th) {
+            print_r($th);
+            return ['code'=>500,'success'=>false,'data'=>[$th]];
         }
     }
 
@@ -355,12 +370,14 @@ class StorageController extends ControllerRest {
             if ($this->request->isPost && ($temp_file = UploadedFile::getInstanceByName('file')) !== null) {
 
                 $post = $this->request->post();
+
                 $options = [];
                 $options['file_name']= $post['file_name'] ?? false;
                 $options['description'] = $post['description'] ?? $temp_file->name;
                 $options['folder_id'] = $post['folder_id'] ?? 1;
                 $options['group_id'] = $post['group_id'] ?? 1;
                 $options['save'] = $post['save'] ?? 0;
+                $options['attact_model'] = $post['attact_model'] ?? false;
                 $options['convert_video'] = $post['convert_video'] ?? true;
 
                 return self::uploadFile($temp_file, $options);
@@ -379,8 +396,13 @@ class StorageController extends ControllerRest {
             $file = false;
             $success = false;
             $user_groups =  AuthController::getUserGroups();
-            $model = File::find()->where(['id'=>$id])->andWhere(['or',['in','group_id',$user_groups]])->one();
-            
+        
+            if(!AuthController::isAdmin()) {
+                $model = File::find()->where(['id'=>$id])->andWhere(['or',['in','group_id',$user_groups]])->one();
+            }else{
+                $model = File::find()->where(['id'=>$id])->andWhere(['or',['in','group_id',$user_groups],['in','group_id',[null,1]]])->one();
+            }
+  
             if($model !== null) {
                 $id = $model->name;
                 $file_name = $model->name;

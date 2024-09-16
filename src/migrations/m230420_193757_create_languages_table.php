@@ -34,7 +34,7 @@ class m230420_193757_create_languages_table extends Migration
         $this->insert('languages', [
             'code' => 'es',
             'name' => 'Español (ES)',
-            'status'=> 1
+            'status'=> 0
         ]);
 
         $this->insert('menus', [

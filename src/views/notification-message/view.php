@@ -1,14 +1,14 @@
 <?php
 
-use app\widgets\DefaultButtons;
+use weebz\yii2basics\widgets\DefaultButtons;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\NotificationMessage */
+/* @var $model weebz\yii2basics\models\NotificationMessage */
 
 $this->title = $model->description;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('backend', 'Notification Messages'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Notification Messages'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -29,7 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'id',
                             'description',
                             'type',
-                            'message:ntext',
+                            'message:raw',
                             'created_at:datetime',
                             'updated_at:datetime',
                             'status:boolean',

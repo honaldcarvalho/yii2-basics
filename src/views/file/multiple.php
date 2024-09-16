@@ -1,6 +1,6 @@
 <?php
 
-use app\widgets\MultiUpload;
+use weebz\yii2basics\widgets\MultiUpload;
 
 echo MultiUpload::widget([
     'extensions'=>['jpeg','jpg','png'],

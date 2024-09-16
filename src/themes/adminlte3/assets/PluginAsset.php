@@ -15,8 +15,6 @@ class PluginAsset extends AssetBundle
             'js' => 'axios/axios.min.js',
         ],
         'tinymce' => [
-            'css' => 'tinymce/content/default/content.min.css',
-            'js' => 'tinymce/content/default/content.js',
             'js' => 'tinymce/tinymce.min.js',
         ],
         'jquery-ui' => [

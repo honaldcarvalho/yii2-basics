@@ -61,8 +61,8 @@ class PasswordResetRequestForm extends ModelCommon
         $content = " 
             <tr>
                 <td>
-                <p>".Yii::t('frontend','Hello, {name}',['name'=>$user->fullname])."</p>
-                <p>".Yii::t('frontend','Follow the link below to reset your password:')."</b></p>
+                <p>".Yii::t('app','Hello, {name}',['name'=>$user->fullname])."</p>
+                <p>".Yii::t('app','Follow the link below to reset your password:')."</b></p>
                     
                 <table role='presentation' border='0' cellpadding='0' cellspacing='0' class='btn btn-primary'>
                     <tbody>
@@ -73,7 +73,7 @@ class PasswordResetRequestForm extends ModelCommon
                                 <tr>
                                     <td style='box-sizing:border-box'>
                                         <a href='{$resetLink}' target='_blank' rel='noopener noreferrer' data-auth='NotApplicable' class='x_button x_button-primary' style='box-sizing:border-box; border-radius:4px; color:#fff; display:inline-block; overflow:hidden; text-decoration:none; background-color:#2d3748; border-bottom:8px solid #2d3748; border-left:18px solid #2d3748; border-right:18px solid #2d3748; border-top:8px solid #2d3748' data-safelink='true' data-linkindex='1'>
-                                        ".Yii::t('frontend','Reset Password')."
+                                        ".Yii::t('app','Reset Password')."
                                         </a>
                                     </td>
                                 </tr>

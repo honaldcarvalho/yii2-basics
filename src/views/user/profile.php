@@ -1,5 +1,6 @@
 <?php
 
+use weebz\yii2basics\widgets\FileInputModel;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -25,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 </p>
                 <div class="col-md-3">
                     <?=
-                    app\widgets\FileInputModel::widget(
+                    FileInputModel::widget(
                         [
                             'model' => 'User',
                             'model_field' => 'file_id',

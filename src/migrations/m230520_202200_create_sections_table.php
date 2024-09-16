@@ -16,9 +16,19 @@ class m230520_202200_create_sections_table extends Migration
             'id' => $this->primaryKey(),
             'group_id' => $this->integer(),
             'section_id' => $this->integer()->defaultValue(null),
-            'name' => $this->string(),
+            'name' => $this->string()->notNull(),
+            'uri' => $this->string()->defaultValue('#')->notNull(),
             'status' => $this->integer()->defaultValue(1)
         ]);
+
+        $this->addForeignKey(
+            'fk-sections-section_id',
+            'sections',
+            'section_id',
+            'sections',
+            'id',
+            'RESTRICT'
+        );
 
         $this->addForeignKey(
             'fk-sections-group_id',
@@ -34,7 +44,7 @@ class m230520_202200_create_sections_table extends Migration
             'menu_id' => 1,
             'label'   => 'Dinamic Pages',
             'icon_style'=> 'fas',
-            'icon'    => 'fas fa-globe',
+            'icon'    => 'fas fa-copy',
             'visible' => 'page;index',
             'url'     => '#',
             'path'  => 'weebz/controllers',

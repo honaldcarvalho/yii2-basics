@@ -1,6 +1,6 @@
 <?php
 
-use app\widgets\UploadFile;
+use weebz\yii2basics\widgets\UploadFile;
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
 
@@ -17,7 +17,7 @@ use yii\bootstrap5\Html;
                     <div class="row">
 
                         <?=
-                        app\widgets\FileInput::widget(
+                        weebz\yii2basics\widgets\FileInput::widget(
                             [
                                 'field_name' => 'logo',
                                 'file_name' => '',

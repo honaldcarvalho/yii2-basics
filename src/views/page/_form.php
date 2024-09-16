@@ -4,7 +4,9 @@ use weebz\yii2basics\models\Language;
 use weebz\yii2basics\models\Section;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use dosamigos\tinymce\TinyMce;
+use weebz\yii2basics\controllers\AuthController;
+use weebz\yii2basics\controllers\ControllerCommon;
+use weebz\yii2basics\widgets\TinyMCE;
 
 /** @var yii\web\View $this */
 /** @var weebz\yii2basics\models\Page $model */
@@ -16,7 +18,7 @@ use dosamigos\tinymce\TinyMce;
     <?php $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'section_id')->dropDownList(
-        yii\helpers\ArrayHelper::map(Section::find()->all(), 'id', 'name'), 
+        yii\helpers\ArrayHelper::map(Section::find()->where(['in','group_id',AuthController::userGroups()])->all(), 'id', 'name'), 
         ['prompt' => '-- selecione uma secção --']) ?>
 
     <?= $form->field($model, 'language_id')->dropDownList(
@@ -29,7 +31,20 @@ use dosamigos\tinymce\TinyMce;
 
     <?= $form->field($model, 'description')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'content')->textarea(['rows' => 6]);?>
+    <?= $form->field($model, 'content')->widget(TinyMCE::class, [
+        'options' => ['rows' => 20],
+        'language' => \Yii::$app->language,
+        //'language' => 'pt_br',
+        'clientOptions' => [
+            'plugins' => [
+                'advlist', 'autolink', 'link', 'image', 'lists', 'charmap', 'preview', 'anchor', 'pagebreak',
+                'searchreplace', 'wordcount', 'visualblocks', 'code', 'fullscreen', 'insertdatetime', 'media',
+                'table', 'emoticons', 'template', 'help'            ],
+                        'toolbar' => "undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | ' +
+                'bullist numlist outdent indent | link image | print preview media fullscreen | ' +
+                'forecolor backcolor emoticons"
+            ]
+        ]);?>
 
     <?= $form->field($model, 'custom_css')->textarea(['rows' => 6]) ?>
 

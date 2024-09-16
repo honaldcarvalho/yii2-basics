@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Section */
+/* @var $model weebz\yii2basics\models\Section */
 
 $this->title = Yii::t('app', 'Create Section');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Sections'), 'url' => ['index']];

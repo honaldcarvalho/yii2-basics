@@ -89,7 +89,7 @@ class m240807_161427_add_admin_rules extends Migration
             'group_id' => 2,
             'controller' => 'user',
             'path' => 'weebz/controllers',
-            'actions' => 'index;create;view;update;delete;add-group;remove-group;profile;edit',
+            'actions' => 'index;create;view;update;delete;add-group;remove-group;profile;edit;change-lang;change-theme',
             'status'=>true
         ]);
 

@@ -18,7 +18,7 @@ class FileInputModel extends Widget
      *    0: false
      * 
         <?=
-        app\widgets\FileInput::widget(
+        weebz\yii2basics\widgets\FileInput::widget(
             [
                 'save_file_model' => 1, //indica se vai sarvar o modelo arquivo no banco
                 'model' => 'User', // nome do modelo que vai receber o dado do arquivo

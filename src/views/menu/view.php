@@ -7,7 +7,7 @@ use yii\helpers\Url;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Menu */
+/* @var $model weebz\yii2basics\models\Menu */
 
 $this->title = $model->label;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Menus'), 'url' => ['index']];
@@ -125,7 +125,7 @@ $this::registerJs($script, $this::POS_END);
                             //'active',
                             'status:boolean',
 
-                            ['class' => ActionColumn::class,'verGroup'=>false],
+                            ['class'=>weebz\yii2basics\components\gridview\ActionColumn::class,'verGroup'=>false],
                         ],
                         'summaryOptions' => ['class' => 'summary mb-2'],
                         'pager' => [

@@ -1,7 +1,7 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Section */
+/* @var $model weebz\yii2basics\models\Section */
 
 $this->title = Yii::t('app', 'Update Section: {name}', [
     'name' => $model->name,

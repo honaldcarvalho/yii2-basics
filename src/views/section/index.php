@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\SectionSearch */
+/* @var $searchModel weebz\yii2basics\models\SectionSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = Yii::t('app', 'Sections');
@@ -33,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'name',
                             'status:boolean',
 
-                            ['class' => 'app\components\gridview\ActionColumn'],
+                            ['class' => 'weebz\yii2basics\components\gridview\ActionColumn'],
                         ],
                         'summaryOptions' => ['class' => 'summary mb-2'],
                         'pager' => [

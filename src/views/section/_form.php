@@ -1,10 +1,12 @@
 <?php
 
+use weebz\yii2basics\controllers\AuthController;
+use weebz\yii2basics\models\Section;
 use yii\helpers\Html;
 use yii\bootstrap5\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Section */
+/* @var $model weebz\yii2basics\models\Section */
 /* @var $form yii\bootstrap5\ActiveForm */
 ?>
 
@@ -12,7 +14,13 @@ use yii\bootstrap5\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
+    <?= $form->field($model, 'section_id')->dropDownList(
+        yii\helpers\ArrayHelper::map(Section::find()->where(['in','group_id',AuthController::userGroups()])->all(), 'id', 'name'), 
+        ['prompt' => '-- selecione uma secção --']) ?>
+
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'uri')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'status')->checkbox() ?>
 

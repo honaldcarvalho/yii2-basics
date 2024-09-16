@@ -24,7 +24,7 @@ class m230604_220307_create_page_files_table extends Migration
             'file_id',
             'files',
             'id',
-            'RESTRICT'
+            'CASCADE'
         );
 
         $this->addForeignKey(
@@ -33,7 +33,7 @@ class m230604_220307_create_page_files_table extends Migration
             'page_id',
             'pages',
             'id',
-            'RESTRICT'
+            'CASCADE'
         );
     }
     /**

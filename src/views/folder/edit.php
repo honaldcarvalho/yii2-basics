@@ -64,10 +64,10 @@ $this::registerJs($script);
                         <?= $form->field($model, 'status')->checkbox() ?>
 
                         <div class="form-group">
-                            <a id="btn-save-slide" class="btn btn-success"><i class="fas fa-save"></i> <?= Yii::t('*', 'Save'); ?></a>
+                            <a id="btn-save-slide" class="btn btn-success"><i class="fas fa-save"></i> <?= Yii::t('app', 'Save'); ?></a>
                             <a class="btn btn-secondary" data-dismiss="modal" id="btn-save-slide" href="javascript:window.parent.postMessage('close', '*');">
                                 <i class="fas fa-close"></i>
-                                <?= Yii::t('*', 'Close'); ?></a>
+                                <?= Yii::t('app', 'Close'); ?></a>
                         </div>
 
                         <?php ActiveForm::end(); ?>

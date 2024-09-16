@@ -166,7 +166,7 @@ $delete_files_button[] =
                             ],
 
                             [
-                                'class' => ActionColumn::class
+                                'class'=>weebz\yii2basics\components\gridview\ActionColumn::class,
                             ],
                         ],
                     ]); ?>

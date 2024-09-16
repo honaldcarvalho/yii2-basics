@@ -1,17 +1,15 @@
 <?php
 
-namespace app\controllers;
+namespace weebz\yii2basics\controllers;
 
 use Yii;
-use app\models\Notification;
-use app\models\NotificationSearch;
+use weebz\yii2basics\models\Notification;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * NotificationController implements the CRUD actions for Notification model.
  */
-class NotificationController extends Controller
+class NotificationController extends AuthController
 {
     /**
      * Lists all Notification models.
@@ -19,7 +17,8 @@ class NotificationController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new NotificationSearch();
+        $searchModel = new Notification();
+        $searchModel->scenario = Notification::SCENARIO_SEARCH;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -125,6 +124,6 @@ class NotificationController extends Controller
             return $model;
         }
 
-        throw new NotFoundHttpException(Yii::t('backend', 'The requested page does not exist.'));
+        throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
 }

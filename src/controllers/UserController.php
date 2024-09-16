@@ -9,6 +9,7 @@ use weebz\yii2basics\models\Group;
 use weebz\yii2basics\models\UserGroup;
 use weebz\yii2basics\models\UserSearch;
 use weebz\yii2basics\controllers\AuthController;
+use weebz\yii2basics\models\Language;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -41,8 +42,18 @@ class UserController extends AuthController
     {           
         $theme = Yii::$app->request->post('theme');
         $model =  self::User();
-        if($theme !== null && !empty($theme)){
+        if($model !== null && $theme !== null && !empty($theme)){
             $model->theme = $theme;
+        }
+        return $model->save();
+    }
+
+    public function actionChangeLang()
+    {           
+        $lang = Yii::$app->request->post('lang');
+        $model =  self::User();
+        if($model !== null && $lang !== null && !empty($lang)){
+            $model->language_id = Language::findOne(['code'=> $lang])->id;
         }
         return $model->save();
     }

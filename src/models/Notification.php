@@ -1,7 +1,8 @@
 <?php
 
-namespace app\models;
+namespace weebz\yii2basics\models;
 
+use weebz\yii2basics\models\ModelCommon;
 use Yii;
 
 /**
@@ -19,7 +20,7 @@ use Yii;
  * @property NotificationMessage $notificationMessage
  * @property User $user
  */
-class Notification extends \yii\db\ActiveRecord
+class Notification extends ModelCommon
 {
     /**
      * {@inheritdoc}
@@ -29,6 +30,12 @@ class Notification extends \yii\db\ActiveRecord
         return 'notifications';
     }
 
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        return $scenarios;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -36,7 +43,7 @@ class Notification extends \yii\db\ActiveRecord
     {
         return [
             [['user_id', 'notification_message_id', 'send_email', 'status'], 'integer'],
-            [['notification_message_id', 'description'], 'required'],
+            [['notification_message_id', 'description'], 'required','on'=> self::SCENARIO_DEFAULT],
             [['created_at', 'updated_at'], 'safe'],
             [['description'], 'string', 'max' => 255],
             [['notification_message_id'], 'exist', 'skipOnError' => true, 'targetClass' => NotificationMessage::class, 'targetAttribute' => ['notification_message_id' => 'id']],
@@ -51,8 +58,8 @@ class Notification extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'user_id' => Yii::t('app', 'User ID'),
-            'notification_message_id' => Yii::t('app', 'Notification Message ID'),
+            'user_id' => Yii::t('app', 'User'),
+            'notification_message_id' => Yii::t('app', 'Notification Message'),
             'description' => Yii::t('app', 'Description'),
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),

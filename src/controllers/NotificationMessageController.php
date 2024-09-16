@@ -1,16 +1,16 @@
 <?php
 
-namespace app\controllers;
+namespace weebz\yii2basics\controllers;
 
 use Yii;
-use app\models\NotificationMessage;
-use app\models\NotificationMessageSearch;
+use weebz\yii2basics\controllers\AuthController;
+use weebz\yii2basics\models\NotificationMessage;
 use yii\web\NotFoundHttpException;
 
 /**
  * NotificationMessageController implements the CRUD actions for NotificationMessage model.
  */
-class NotificationMessageController extends Controller
+class NotificationMessageController extends AuthController
 {
 
     /**
@@ -19,7 +19,8 @@ class NotificationMessageController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new NotificationMessageSearch();
+        $searchModel = new NotificationMessage();
+        $searchModel->scenario = NotificationMessage::SCENARIO_SEARCH;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -50,7 +51,7 @@ class NotificationMessageController extends Controller
     {
         $model = new NotificationMessage();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post()) && ($model->group_id = $this::userGroup()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -106,6 +107,6 @@ class NotificationMessageController extends Controller
             return $model;
         }
 
-        throw new NotFoundHttpException(Yii::t('backend', 'The requested page does not exist.'));
+        throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
 }
