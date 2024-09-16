@@ -52,12 +52,18 @@ class MenuController extends AuthController
     {
         $model = new Menu();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) 
+        {
+            $maxId = Menu::find()->where('id < 99')->max('id');
+            $id =  $maxId + 1;
+            $model->id = $id;
 
-            if(!empty($model->menu_id) && $model->menu_id !== null){
-                return $this->redirect(['view', 'id' => $model->menu_id]);    
+            if ($model->save()) {
+                if(!empty($model->menu_id) && $model->menu_id !== null){
+                    return $this->redirect(['view', 'id' => $model->menu_id]);    
+                }
+                return $this->redirect(['view', 'id' => $model->id]);
             }
-            return $this->redirect(['view', 'id' => $model->id]);
         }
 
         $model->menu_id = $id;
