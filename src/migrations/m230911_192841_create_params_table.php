@@ -31,6 +31,6 @@ class m230911_192841_create_params_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropTable('{{%menus}}');
+        $this->dropTable('{{%params}}');
     }
 }

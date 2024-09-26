@@ -60,6 +60,6 @@ class m230911_192842_create_meta_tags_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropTable('{{%menus}}');
+        $this->dropTable('{{%meta_tags}}');
     }
 }

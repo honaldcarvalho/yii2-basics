@@ -64,6 +64,6 @@ class m230911_192840_create_configurations_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropTable('{{%params}}');
+        $this->dropTable('{{%configurations}}');
     }
 }
