@@ -50,7 +50,7 @@ class Upload extends \yii\bootstrap5\Widget
                     if (imageTypes.exec(this.files[i].name)) {
                         img.attr('src', URL.createObjectURL(this.files[i]));
                     }else{
-                        img.attr('src','https://fakeimg.pl/350x200/?text=Documento');
+                        img.attr('src','/dummy/code.php?x=350x200/fff/000.jpg&text=Documento');
                     }
                     img.appendTo(item);
                     if($('#auto-up').is(":checked")){

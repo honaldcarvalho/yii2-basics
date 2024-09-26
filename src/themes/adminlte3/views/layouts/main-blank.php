@@ -15,7 +15,7 @@ WeebzAsset::register($this);
 $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700');
 $this->registerCssFile('https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css');
 PluginAsset::register($this)->add(['fontawesome','toastr']);
-$params = Params::get();
+$params = Configuration::get();
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>

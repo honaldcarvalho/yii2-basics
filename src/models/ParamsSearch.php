@@ -40,7 +40,7 @@ class ParamsSearch extends Params
      */
     public function search($params)
     {
-        $query = Params::find();
+        $query = Configuration::find();
 
         // add conditions that should always apply here
 

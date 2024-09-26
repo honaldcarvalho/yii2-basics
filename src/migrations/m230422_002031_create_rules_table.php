@@ -17,7 +17,7 @@ class m230422_002031_create_rules_table extends Migration
             'user_id' => $this->integer(),
             'group_id' => $this->integer(),
             'controller' => $this->string()->notNull(),
-            'actions' => $this->string()->notNull(),
+            'actions' => $this->text()->notNull(),
             'path' => $this->string()->defaultValue('app'),
             'origin' => $this->text()->notNull()->defaultValue('*'),
             'created_at' => $this->dateTime()->defaultValue(new \yii\db\Expression('NOW()')),

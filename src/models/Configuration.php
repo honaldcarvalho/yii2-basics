@@ -5,7 +5,7 @@ namespace weebz\yii2basics\models;
 use Yii;
 
 /**
- * This is the model class for table "params".
+ * This is the model class for table "Configuration".
  *
  * @property int $id
  * @property string $description
@@ -41,7 +41,7 @@ use Yii;
  * @property File $file
  * @property Language $language
  */
-class Params extends \yii\db\ActiveRecord
+class Configuration extends ModelCommon
 {
     public $verGroup = false;
     /**
@@ -49,7 +49,13 @@ class Params extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'params';
+        return 'configurations';
+    }
+
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        return $scenarios;
     }
 
     /**
@@ -58,7 +64,7 @@ class Params extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['description', 'host', 'title','slogan', 'bussiness_name', 'email', 'meta_viewport', 'meta_author', 'meta_robots', 'meta_googlebot', 'canonical'], 'required'],
+            [['description', 'host', 'title','slogan', 'bussiness_name', 'email', 'meta_viewport', 'meta_author', 'meta_robots', 'meta_googlebot', 'canonical'], 'required','on'=>self::SCENARIO_DEFAULT],
             [['language_id', 'file_id', 'group_id', 'email_service_id', 'ldap_login', 'recaptcha_login', 'status', 'logging'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['description', 'host', 'title', 'bussiness_name', 'email', 'fone', 'address', 'postal_code', 'recaptcha_secret_key', 'recaptcha_secret_site', 'meta_viewport', 'meta_author', 'meta_robots', 'meta_googlebot', 'meta_keywords', 'meta_description', 'canonical'], 'string', 'max' => 255],
@@ -78,7 +84,6 @@ class Params extends \yii\db\ActiveRecord
             'description' => Yii::t('app', 'Description'),
             'language_id' => Yii::t('app', 'Site Language'),
             'file_id' => Yii::t('app', 'Logo'),
-            'background_image' => Yii::t('app', 'Background Image'),
             'group_id' => Yii::t('app', 'Client\'s Group'),
             'email_service_id' => Yii::t('app', 'Email Service'),
             'host' => Yii::t('app', 'Host'),
@@ -86,20 +91,6 @@ class Params extends \yii\db\ActiveRecord
             'slogan' => Yii::t('app', 'Slogan'),
             'bussiness_name' => Yii::t('app', 'Bussines Name'),
             'email' => Yii::t('app', 'Email'),
-            'fone' => Yii::t('app', 'Fone'),
-            'address' => Yii::t('app', 'Address'),
-            'postal_code' => Yii::t('app', 'Postal Code'),
-            'ldap_login' => Yii::t('app', 'Ldap Login'),
-            'recaptcha_login' => Yii::t('app', 'Recaptcha Login'),
-            'recaptcha_secret_key' => Yii::t('app', 'Recaptcha Secret Key'),
-            'recaptcha_secret_site' => Yii::t('app', 'Recaptcha Secret Site'),
-            'meta_viewport' => Yii::t('app', 'Meta Viewport'),
-            'meta_author' => Yii::t('app', 'Meta Author'),
-            'meta_robots' => Yii::t('app', 'Meta Robots'),
-            'meta_googlebot' => Yii::t('app', 'Meta Googlebot'),
-            'meta_keywords' => Yii::t('app', 'Meta Keywords'),
-            'meta_description' => Yii::t('app', 'Meta Description'),
-            'canonical' => Yii::t('app', 'Canonical'),
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'status' => Yii::t('app', 'Status'),

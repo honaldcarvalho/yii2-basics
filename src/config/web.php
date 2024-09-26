@@ -87,7 +87,7 @@ $config = [
             'enableStrictParsing' => false,
             'rules' => array_merge(
                 customControllersUrl(['site','group','user','rule','language','source-message','message',
-                'menu','params','email-service','license-type','license','log','folder','file',
+                'menu','params','configuration','meta-tag','email-service','license-type','license','log','folder','file',
                 'rest/storage','rest/auth','section','page','notification','notification-message','rest/mail'],'common'),
             [
                 "page/show/<id:\w+>" => "page/show",

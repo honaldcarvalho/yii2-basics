@@ -38,7 +38,7 @@ class PasswordResetRequestForm extends ModelCommon
      */
     public function sendEmail()
     {
-        $params = Params::findOne(1);
+        $params = Configuration::get();
         $mailer =  AuthController::mailer();
         /* @var $user User */
         $user = User::findOne([

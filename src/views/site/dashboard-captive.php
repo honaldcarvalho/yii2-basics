@@ -4,9 +4,9 @@
 
 use weebz\yii2basics\controllers\AuthController;
 use weebz\yii2basics\models\custom\DashboarSearch;
-use weebz\yii2basics\models\Params;
+use weebz\yii2basics\models\Configuration;
 
-$params = Params::get();
+$params = Configuration::get();
 //dd($registrationPerDay );
 
 if (!empty($params->file_id)) {

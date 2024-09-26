@@ -6,7 +6,7 @@ use Yii;
 use yii\web\ForbiddenHttpException;
 use weebz\yii2basics\models\LoginForm;
 use weebz\yii2basics\models\User;
-use weebz\yii2basics\models\Params;
+use weebz\yii2basics\models\Configuration;
 use weebz\yii2basics\models\UserGroup;
 
 class AuthController extends ControllerRest {
@@ -72,7 +72,7 @@ class AuthController extends ControllerRest {
         if (!$this->validate()) {
             return null;
         }
-        $params = Params::findOne(1);
+        $params = Configuration::get();
         $user = new User();
         $user_group = new UserGroup();
         $user_group->group_id = $params->group_id;
@@ -101,9 +101,11 @@ class AuthController extends ControllerRest {
     static function getUserByToken() {
         $user = null;
         $token = Yii::$app->request->headers["authorization"];
-        [$type,$value] = explode(' ',$token);
-        if($type == 'Bearer'){
-            $user = User::find()->where(['status'=>User::STATUS_ACTIVE])->filterwhere(['or',['access_token'=>$value],['auth_key'=>$value]])->one();
+        if($token !== null){
+            [$type,$value] = explode(' ',$token);
+            if($type == 'Bearer'){
+                $user = User::find()->where(['status'=>User::STATUS_ACTIVE])->filterwhere(['or',['access_token'=>$value],['auth_key'=>$value]])->one();
+            }
         }
         return $user;
     }

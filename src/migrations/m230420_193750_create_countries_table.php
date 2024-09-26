@@ -21,7 +21,7 @@ class m230420_193750_create_countries_table extends Migration
             'name_pt' => $this->string(60)->notNull(),
             'abbreviation' => $this->string(2),
             'bacen' => $this->integer(5),
-            'status' => $this->integer()->defaultValue('0')
+            'status' => $this->boolean()->defaultValue(false)
         ]);
         $this->execute($sql);
     }

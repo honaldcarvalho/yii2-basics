@@ -142,25 +142,31 @@ class ListFiles extends \yii\bootstrap5\Widget
                                 'attribute' => 'description',
                                 'label' => Yii::t('app', 'Description'),
                             ],
-                            //'path',
+                            'type',
                             [
                                 'headerOptions' => ['style' => 'width:10%'],
                                 'header' => 'Preview',
                                 'format' => 'raw',
                                 'value' => function ($data) {
                                     if (!empty($data->urlThumb)) {
-                                        $url = Yii::getAlias('@web') . $data->urlThumb;
                                         return Html::a(
-                                            "<img class='brand-image img-circle elevation-3' width='50' src='{$url}' />",
+                                            "<img class='brand-image img-circle elevation-3' width='50' src='{$data->urlThumb}' />",
                                             Yii::getAlias('@web') . $data->url,
                                             ['class' => 'btn btn-outline-secondary', "data-fancybox " => "", "title" => \Yii::t('app', 'View')]
                                         );
                                     } else {
-                                        return Html::a(
-                                            "<img class='brand-image img-circle elevation-3' width='50' src='/dummy/code.php?x=150x150/fff/000.jpg&text=NO PREVIEW' />",
-                                            Yii::getAlias('@web') . $data->url,
-                                            ['class' => 'btn btn-outline-secondary', "data-fancybox " => "", "title" => \Yii::t('app', 'View')]
-                                        );
+                                        if($data->type == "image")
+                                            return Html::a(
+                                                "<img class='brand-image img-circle elevation-3' width='50' src='/dummy/code.php?x=150x150/fff/000.jpg&text=NO PREVIEW' />",
+                                                Yii::getAlias('@web') . $data->url,
+                                                ['class' => 'btn btn-outline-secondary', "data-fancybox " => "", "title" => \Yii::t('app', 'View')]
+                                            );
+                                        else
+                                            return Html::a(
+                                                "<img class='brand-image img-circle elevation-3' width='50' src='/dummy/code.php?x=150x150/fff/000.jpg&text=NO PREVIEW' />",
+                                                $data->url,
+                                                ['class' => 'btn btn-outline-secondary','data-type'=>'iframe', 'data-preload'=>"false", "data-fancybox " => "", "title" => \Yii::t('app', 'View')]
+                                            );
                                     }
                                 }
                             ],

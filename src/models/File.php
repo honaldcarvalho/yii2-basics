@@ -20,6 +20,7 @@ use Yii;
  * @property string $type
  * @property int $size
  * @property int $duration
+ * @property int $caption
  * @property string|null $created_at
  * @property string|null $updated_at
  *
@@ -51,8 +52,6 @@ class File extends ModelCommon
     public function scenarios()
     {
         $scenarios = parent::scenarios();
-        //dd($scenarios);
-        //$scenarios[self::SCENARIO_SEARCH] = ['name','description','type', 'path', 'url', 'extension'];
         return $scenarios;
     }
 
@@ -62,7 +61,7 @@ class File extends ModelCommon
     public function rules()
     {
         return [
-            [['folder_id', 'size','duration'], 'integer'],
+            [['folder_id', 'size','duration','caption'], 'integer'],
             [['name', 'path', 'url', 'extension', 'size'],'required','on'=>self::SCENARIO_DEFAULT],
             [['created_at', 'updated_at'], 'safe'],
             [['name', 'path', 'url', 'pathThumb', 'urlThumb'], 'string', 'max' => 300],
@@ -134,6 +133,6 @@ class File extends ModelCommon
      */
     public function getParams()
     {
-        return $this->hasMany(Params::class, ['file_id' => 'id']);
+        return $this->hasMany(Configuration::class, ['file_id' => 'id']);
     }
 }

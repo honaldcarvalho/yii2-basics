@@ -15,7 +15,7 @@ class m230420_193757_create_group_table extends Migration
         $this->createTable('{{%groups}}', [
             'id' => $this->primaryKey(),
             'name' => $this->string()->notNull(),
-            'status' => $this->integer()->defaultValue('1')
+            'status' => $this->boolean()->defaultValue(true)
         ]);
 
         $this->insert('groups', [

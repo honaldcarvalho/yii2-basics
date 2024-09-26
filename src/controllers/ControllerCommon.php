@@ -4,7 +4,7 @@ namespace weebz\yii2basics\controllers;
 
 
 use weebz\yii2basics\models\Log;
-use weebz\yii2basics\models\Params;
+use weebz\yii2basics\models\Configuration;
 use Yii;
 use yii\symfonymailer\Mailer;
 use yii\web\NotFoundHttpException;
@@ -50,7 +50,7 @@ class ControllerCommon extends \yii\web\Controller
     {
         $behaviors = parent::behaviors();
         $language = null;
-        $this->params = Params::findOne(1);
+        $this->params = Configuration::get();
 
         foreach ($this->params->attributes as $key => $param) {
             Yii::setAlias("@{$key}", "$param");
@@ -78,7 +78,6 @@ class ControllerCommon extends \yii\web\Controller
         \Yii::$app->language = $language ?? $this->params->language->code;
 
         return $behaviors;
-
     }
 
     public static function error($th)
@@ -214,7 +213,7 @@ class ControllerCommon extends \yii\web\Controller
     static function mailer()
     {
 
-        $params = Params::findOne(1);
+        $params = Configuration::get();
         $mailer = new Mailer();
         $model = $params->emailService;
 

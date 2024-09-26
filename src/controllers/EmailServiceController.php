@@ -5,7 +5,7 @@ namespace weebz\yii2basics\controllers;
 use Yii;
 use weebz\yii2basics\models\EmailService;
 use weebz\yii2basics\models\EmailServiceSearch;
-use weebz\yii2basics\models\Params;
+use weebz\yii2basics\models\Configuration;
 use yii\web\NotFoundHttpException;
 use yii\symfonymailer\Mailer;
 
@@ -46,7 +46,7 @@ class EmailServiceController extends AuthController
     {
 
         $model = $this->findModel($id);
-        $params = Params::get();
+        $params = Configuration::get();
         $mailer = new Mailer;
 
         $mailer->transport = [

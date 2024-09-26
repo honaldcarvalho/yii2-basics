@@ -19,7 +19,7 @@ class m230420_193752_create_cities_table extends Migration
             'state_id' => $this->integer(2),
             'name' => $this->string(250)->notNull(),
             'ibge' => $this->integer(7),
-            'status' => $this->integer()->defaultValue('1')
+            'status' => $this->boolean()->defaultValue(true)
         ]);
 
         $this->addForeignKey(

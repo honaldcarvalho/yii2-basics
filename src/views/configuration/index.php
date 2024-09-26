@@ -8,7 +8,7 @@ use weebz\yii2basics\components\gridview\ActionColumn;
 /* @var $searchModel weebz\yii2basics\models\ParamSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Params');
+$this->title = Yii::t('app', 'Configuration');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="container-fluid">

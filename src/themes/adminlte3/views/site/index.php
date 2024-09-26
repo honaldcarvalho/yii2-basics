@@ -5,7 +5,7 @@
 use weebz\yii2basics\models\Params;
 use weebz\yii2basics\controllers\ControllerCommon;
 
-$params = Params::get();
+$params = Configuration::get();
 $assetsDir =  ControllerCommon::getAssetsDir();
 $logo_image = "<img src='{$assetsDir}/img/wcms_logo.png' width='150px' alt='{$params->title}' class='brand-image img-circle elevation-3' style='opacity: .8'>";
 $this->title = '';

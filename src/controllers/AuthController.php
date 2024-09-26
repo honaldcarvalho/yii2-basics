@@ -28,7 +28,7 @@ class AuthController extends ControllerCommon {
     /**
      * Cast \yii\web\IdentityInterface to \weebz\yii2basics\models\User
      */
-    static function User(): User
+    static function User(): User|null
     {
         return Yii::$app->user->identity;
     }
@@ -61,8 +61,11 @@ class AuthController extends ControllerCommon {
 
     static function userGroup()
     {
-        if(self::isGuest()){
-            $user_groups = self::getUserByToken()->getUserGroupsId();
+        $user_groups = [];
+        if(self::isGuest()) {
+            $user = self::getUserByToken();
+            if($user)
+                $user_groups = $user->getUserGroupsId();
             return end($user_groups);
         }else {
             return Yii::$app->session->get('group')->id;
@@ -89,9 +92,11 @@ class AuthController extends ControllerCommon {
     static function getUserByToken() {
         $user = null;
         $token = Yii::$app->request->headers["authorization"];
-        [$type,$value] = explode(' ',$token);
-        if($type == 'Bearer'){
-            $user = User::find()->where(['status'=>User::STATUS_ACTIVE])->filterwhere(['or',['access_token'=>$value],['auth_key'=>$value]])->one();
+        if($token !== null) {
+            [$type,$value] = explode(' ',$token);
+            if($type == 'Bearer'){
+                $user = User::find()->where(['status'=>User::STATUS_ACTIVE])->filterwhere(['or',['access_token'=>$value],['auth_key'=>$value]])->one();
+            }
         }
         return $user;
     }
@@ -108,7 +113,7 @@ class AuthController extends ControllerCommon {
         if(in_array($action,$this->free)){
             $show = true;
         }
-        
+
         $behaviors = [
             'access' => [
                 'class' => AccessControl::class,

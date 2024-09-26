@@ -16,7 +16,7 @@ class m230420_193757_create_languages_table extends Migration
             'id' => $this->primaryKey(),
             'code' => $this->string(10)->notNull(),
             'name' => $this->string()->notNull(),
-            'status' => $this->integer()->defaultValue(0),
+            'status' => $this->boolean()->defaultValue(false),
         ]);
         
         $this->insert('languages', [

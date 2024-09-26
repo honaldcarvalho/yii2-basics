@@ -14,13 +14,15 @@ use yii\bootstrap5\Widget;
 /** @var yii\widgets\ActiveForm $form */
 
 /**
- * <?= StorageUpload::widget([
- *      'folder_id' => $model->id, //Folder model id
- *      'grid_reload'=>1, //Enable auto reload GridView. disable = 0; enable = 1;
- *      'grid_reload_id'=>'#list-files-grid', //ID of GridView will reload
- *      'crop_aspect_ratio'=>'1/1', //Aspect ratio for crop image
-   *     'crop_force' => 0 //Force crop image
- *     ]); ?>
+ * USAGE: 
+    <?= weebz\yii2basics\widgets\StorageUpload::widget([
+        'folder_id' => $model->id, //Folder model id
+        'grid_reload'=>1, //Enable auto reload GridView. disable = 0; enable = 1;
+        'grid_reload_id'=>'#list-files-grid', //ID of GridView will reload
+        'crop_aspect_ratio'=>'1/1', //Aspect ratio for crop image
+        'crop_force' => 0 //Force crop image
+    ]); ?>
+
  */
 class StorageUpload extends Widget
 {
@@ -383,8 +385,8 @@ class StorageUpload extends Widget
                     <input type="file" class="position-absolute z-0 opacity-0 w-100 h-100"  id="file-input-{$this->random}" aria-label="Upload">
                     <i class="fas fa-folder-open m-2"></i> Select File
                 </button>
-                <button class="btn btn-warning" id="upload-button-{$this->random}" disabled="true"> <i class="fas fa-upload m-2"></i> Upload</button>
-                <button class="btn btn-default" id="crop-button-{$this->random}" disabled="true"> <i class="fas fa-cut m-2"></i> Crop</button>
+                <a class="btn btn-warning" id="upload-button-{$this->random}" disabled="true"> <i class="fas fa-upload m-2"></i> Upload</a>
+                <a class="btn btn-default" id="crop-button-{$this->random}" disabled="true"> <i class="fas fa-cut m-2"></i> Crop</a>
             </div>
 
             <div class="progress d-none" id="progress-{$this->random}">

@@ -46,11 +46,12 @@ class ModelCommon extends \yii\db\ActiveRecord
      *
      * @return ActiveDataProvider
      */
-    public function search($params,$options = ['orderBy'=>['id' => SORT_DESC]],)
+    public function search($params,$options = ['pageSize'=>10, 'orderBy'=>['id' => SORT_DESC]],)
     {
-
+        $this->scenario = self::SCENARIO_SEARCH;
         $className = self::getClass();
         $table = static::tableName();
+        $pageSize = 10;
 
         $query = static::find();
         
@@ -60,6 +61,10 @@ class ModelCommon extends \yii\db\ActiveRecord
 
         if(isset($options['orderBy'])) {
             $query->orderBy($options['orderBy']);
+        }
+
+        if(isset($options['pageSize'])) {
+            $pageSize = $options['pageSize'];
         }
 
         if(isset($options['join'])) {
@@ -79,6 +84,9 @@ class ModelCommon extends \yii\db\ActiveRecord
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pageSize' => $pageSize
+            ],
         ]);
 
         $this->load($params);

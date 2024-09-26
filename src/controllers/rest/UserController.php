@@ -4,7 +4,7 @@ namespace weebz\yii2basics\controllers\rest;
 use Yii;
 use weebz\yii2basics\controllers\rest\Controller;
 use weebz\yii2basics\models\User;
-use weebz\yii2basics\models\Params;
+use weebz\yii2basics\models\Configuration;
 use weebz\yii2basics\models\UserGroup;
 
 class UserController extends AuthController{
@@ -24,7 +24,7 @@ class UserController extends AuthController{
         if (!$this->validate()) {
             return null;
         }
-        $params = Params::findOne(1);
+        $params = Configuration::get();
         $user = new User();
         $user_group = new UserGroup();
         $user_group->group_id = $params->group_id;

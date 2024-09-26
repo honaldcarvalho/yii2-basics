@@ -57,6 +57,11 @@ class PageController extends AuthController
     public function renderPage($id)
     {
         $model = $this->findModel($id);
+        
+        if(isset($_GET['modal']) && $_GET['modal'] == 1){
+            $this->layout = 'main-blank';
+        }
+
         return $this->render('view', [
             'model' =>$model,
         ]);

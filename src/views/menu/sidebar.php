@@ -3,14 +3,14 @@
 use weebz\yii2basics\controllers\ControllerCommon;
 use weebz\yii2basics\controllers\AuthController;
 use weebz\yii2basics\models\Menu;
-use weebz\yii2basics\models\Params;
+use weebz\yii2basics\models\Configuration;
 use weebz\yii2basics\widgets\Menu as WidgetsMenu;
 use yii\web\View;
 
 if(Yii::$app->user->isGuest){
     return false;
 }
-$params  = Params::get();
+$params  = Configuration::get();
 $script = <<< JS
 JS;
 $this->registerJS($script);

@@ -3,14 +3,13 @@
 namespace weebz\yii2basics\controllers;
 
 use Yii;
-use weebz\yii2basics\models\Params;
-use weebz\yii2basics\models\ParamsSearch;
+use weebz\yii2basics\models\Configuration;
 use yii\web\NotFoundHttpException;
 
 /**
- * ParamsController implements the CRUD actions for Params model.
+ * ConfigurationController implements the CRUD actions for Configuration model.
  */
-class ParamsController extends AuthController
+class ConfigurationController extends AuthController
 {
     /**
      * {@inheritdoc}
@@ -19,13 +18,13 @@ class ParamsController extends AuthController
         parent::__construct($id, $module, $config);;
     }
     /**
-     * Lists all Params models.
+     * Lists all Configuration models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new ParamsSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $searchModel = new Configuration();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryConfiguration);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -34,7 +33,7 @@ class ParamsController extends AuthController
     }
 
     /**
-     * Displays a single Params model.
+     * Displays a single Configuration model.
      * @param int $id ID
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -47,13 +46,13 @@ class ParamsController extends AuthController
     }
 
     /**
-     * Creates a new Params model.
+     * Creates a new Configuration model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Params();
+        $model = new Configuration();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -65,7 +64,7 @@ class ParamsController extends AuthController
     }
 
     /**
-     * Updates an existing Params model.
+     * Updates an existing Configuration model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return mixed
@@ -85,7 +84,7 @@ class ParamsController extends AuthController
     }
 
     /**
-     * Deletes an existing Params model.
+     * Deletes an existing Configuration model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return mixed
@@ -96,24 +95,10 @@ class ParamsController extends AuthController
         if($id != 1){
             $this->findModel($id)->delete();
         }else{
-            \Yii::$app->session->setFlash('error', 'Is not possible exclude initial params');
+            \Yii::$app->session->setFlash('error', 'Is not possible exclude initial Configuration');
         }
 
         return $this->redirect(['index']);
     }
-    /**
-     * Finds the Params model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
-     * @return Params the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        if (($model = Params::findOne($id)) !== null) {
-            return $model;
-        }
 
-        throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
-    }
 }

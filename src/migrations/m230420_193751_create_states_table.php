@@ -21,7 +21,7 @@ class m230420_193751_create_states_table extends Migration
             'uf' => $this->string(2),
             'ibge' => $this->integer(7),
             'ddd' => $this->string(),
-            'status' => $this->integer()->defaultValue('1')
+            'status' => $this->boolean()->defaultValue(true)
         ]);
 
         $this->addForeignKey(

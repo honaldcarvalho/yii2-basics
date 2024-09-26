@@ -5,7 +5,7 @@ namespace weebz\yii2basics\controllers\rest;
 use Yii;
 use Exception;
 use yii\symfonymailer\Mailer;
-use weebz\yii2basics\models\Params;
+use weebz\yii2basics\models\Configuration;
 use weebz\yii2basics\controllers\AuthController;
 
 class MailController extends ControllerRest {
@@ -20,7 +20,7 @@ class MailController extends ControllerRest {
 
         if($isValid) {
 
-            $params = Params::get();
+            $params = Configuration::get();
             $mailer = new Mailer;
             $emailService = $params->getEmailService()->one();
 

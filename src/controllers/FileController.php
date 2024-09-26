@@ -314,7 +314,7 @@ class FileController extends AuthController
      * Deletes an existing File model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
-     * @return \yii\web\Response
+     * @return array
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function remove($id)
@@ -343,10 +343,10 @@ class FileController extends AuthController
     
     public function actionDelete($id)
     {
-        [$file, $thumb,$folder_id] = $this->remove($id);
+        $result = $this->remove($id);
 
-        if(isset($folder_id) && $folder_id !== null){
-            return $this->redirect(["folder/view/{$folder_id}"]);   
+        if(isset($result['folder_id']) && $result['folder_id']){
+            return $this->redirect(["/folder/view/{$result['folder_id']}"]);   
         }else{
             return $this->redirect(["index"]);
         }

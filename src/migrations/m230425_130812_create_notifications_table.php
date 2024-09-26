@@ -20,8 +20,8 @@ class m230425_130812_create_notifications_table extends Migration
             'description' => $this->string()->notNull(),
             'created_at' => $this->dateTime()->defaultValue(new \yii\db\Expression('NOW()')),
             'updated_at' => $this->timestamp()->defaultValue(null)->append('ON UPDATE CURRENT_TIMESTAMP'),
-            'send_email' => $this->integer()->defaultValue(0),
-            'status' => $this->integer()->defaultValue(0),
+            'send_email' => $this->boolean()->defaultValue(false),
+            'status' => $this->boolean()->defaultValue(false),
         ]);
 
         $this->addForeignKey(

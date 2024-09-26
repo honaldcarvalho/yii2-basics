@@ -38,6 +38,8 @@ class StorageUploadMultiple extends Widget
     public $random;
 
     /** Folder model id */
+    public $thumb_aspect = 1;
+    /** Folder model id */
     public $folder_id = 1;
     /** Folder group id */
     public $group_id = 1;
@@ -210,6 +212,7 @@ class StorageUploadMultiple extends Widget
                 formData.append('folder_id', $this->folder_id);
                 formData.append('group_id', $this->group_id);
                 formData.append('attact_model',JSON.stringify($this->attact_model));
+                formData.append('thumb_aspect', "{$this->thumb_aspect}");
                 formData.append('save', 1);
 
                 uploadButton.disabled = true;

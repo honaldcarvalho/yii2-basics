@@ -7,6 +7,7 @@ use Yii;
 use yii\web\UploadedFile;
 use yii\helpers\FileHelper;
 use yii\imagine\Image;
+use Imagine\Image\Box;
 use FFMpeg\Coordinate\TimeCode;
 use FFMpeg\FFMpeg;
 use FFMpeg\FFProbe;
@@ -101,6 +102,78 @@ class StorageController extends ControllerRest {
         }
     }
 
+    /**
+     * Compress an image if it exceeds the maximum file size.
+     * 
+     * @param string $filePath Path to the uploaded image file.
+     * @param int $maxFileSize Maximum file size in bytes.
+     * @return string|false Path to the compressed image, or false on failure.
+     */
+    protected function compressImage($filePath, $maxFileSize,$quality = 90)
+    {
+        // Get the current size of the image
+        $fileSize = filesize($filePath);
+
+        // Reduce the image dimensions progressively until the size is below the maximum size
+        do {
+            // Open the image using Imagine
+            $image = Image::getImagine()->open($filePath);
+
+            // Get the current dimensions of the image
+            $size = $image->getSize();
+
+            // Reduce the dimensions by 10%
+            $newSize = new Box($size->getWidth() * 0.9, $size->getHeight() * 0.9);
+
+            // Resize the image
+            $image->resize($newSize)
+                  ->save($filePath, ['quality' => $quality]);
+
+            // Recheck the file size after compression
+            $fileSize = filesize($filePath);
+
+            // Lower the quality slightly with each iteration
+            $quality -= 10;
+        } while ($fileSize > $maxFileSize && $quality > 10);
+
+        // Return the path to the compressed file or false if compression failed
+        return $fileSize <= $maxFileSize ? $filePath : false;
+    }
+
+    static function createThumbnail($srcImagePath, $destImagePath, $thumbWidth = 160, $thumbHeight = 99) {
+        // Abre a imagem original
+        $image = Image::getImagine()->open($srcImagePath);
+
+        // Obtém as dimensões da imagem original
+        $size = $image->getSize();
+        $width = $size->getWidth();
+        $height = $size->getHeight();
+    
+        // Calcula a proporção de aspecto da miniatura e da imagem original
+        $aspectRatio = $thumbWidth / $thumbHeight;
+        $imageRatio = $width / $height;
+    
+        // Define o novo tamanho para manter o aspect ratio
+        if ($imageRatio > $aspectRatio) {
+            // Se a imagem é mais larga que o aspecto da miniatura
+            $newHeight = $height;
+            $newWidth = (int)($height * $aspectRatio);
+        } else {
+            // Se a imagem é mais alta que o aspecto da miniatura
+            $newWidth = $width;
+            $newHeight = (int)($width / $aspectRatio);
+        }
+    
+        // Calcula o ponto de corte para centralizar a imagem
+        $src_x = ($width / 2) - ($newWidth / 2);
+        $src_y = ($height / 2) - ($newHeight / 2);
+    
+        // Corta a imagem a partir do centro e redimensiona
+        return Image::crop($srcImagePath, $newWidth, $newHeight, [$src_x, $src_y])
+             ->resize(new Box($thumbWidth, $thumbHeight))
+             ->save($destImagePath, ['quality' => 100]);
+    }
+    
     public static function uploadFile($file, 
         $options = [
             'file_name' => null,//custom file name
@@ -111,7 +184,9 @@ class StorageController extends ControllerRest {
             'attact_fields'=> 0,//model atacct fields
             'attact_model_id'=> 0,//model id to atacct
             'save'=> 0,//salve model
-            'convert_video'=>1 //convert video if not is mp4 type
+            'convert_video'=>1, //convert video if not is mp4 type
+            'thumb_aspect'=>1, //convert video if not is mp4 type
+            'quality'=> 80 //convert video if not is mp4 type
         ]
     )
     {
@@ -138,6 +213,7 @@ class StorageController extends ControllerRest {
             $filePathThumb = '';
             $fileUrl = '';
             $fileThumbUrl = '';
+            $thumb_aspect = 0;
             $ext = '';
             $type = '';
 
@@ -151,6 +227,8 @@ class StorageController extends ControllerRest {
                 $attact_model = isset($options['attact_model']) ? json_decode($options['attact_model']) :  0;
                 $save = isset($options['save']) ? $options['save'] :  0;
                 $convert_video = isset($options['convert_video']) ? $options['convert_video'] : true;
+                $thumb_aspect = isset($options['thumb_aspect']) ? $options['thumb_aspect'] :  1;
+                $quality = isset($options['quality']) ? $options['quality'] :  1;
                 
                 $ext = $temp_file->extension;
 
@@ -190,26 +268,32 @@ class StorageController extends ControllerRest {
                         FileHelper::createDirectory($pathThumbRoot);
                     }
 
-                    $image_size = getimagesize($temp_file->tempName);
-                    $major = $image_size[0]; //width
-                    $min = $image_size[1]; //height
-                    $mov = ($major - $min) / 2;
-                    $point = [$mov, 0];
+                    $errors[] = $temp_file->saveAs($filePathRoot, ['quality' => $quality]);
 
-                    if ($major < $min) {
-                        $major = $image_size[1];
-                        $min = $image_size[0];
+                    if($thumb_aspect == 1){
+                        $image_size = getimagesize($filePathRoot);
+                        $major = $image_size[0]; //width
+                        $min = $image_size[1]; //height
                         $mov = ($major - $min) / 2;
-                        $point = [0, $mov];
-                    }
+                        $point = [$mov, 0];
+
+                        if ($major < $min) {
+                            $major = $image_size[1];
+                            $min = $image_size[0];
+                            $mov = ($major - $min) / 2;
+                            $point = [0, $mov];
+                        }
                     
-                    $errors[] = $temp_file->saveAs($filePathRoot, ['quality' => 90]);
-                    $errors[] = Image::crop($filePathRoot, $min, $min, $point)
-                    ->save($filePathThumbRoot, ['quality' => 100]);
-                    
-                    if($min > 300){
-                        $errors[] = Image::thumbnail($filePathThumbRoot, 300, 300)
+                        $errors[] = Image::crop($filePathRoot, $min, $min, $point)
                         ->save($filePathThumbRoot, ['quality' => 100]);
+                        
+                        if($min > 300){
+                            $errors[] = Image::thumbnail($filePathThumbRoot, 300, 300)
+                            ->save($filePathThumbRoot, ['quality' => 100]);
+                        }
+                    } else {
+                        [$thumbWidth, $thumbHeigh] = explode('/',$options['thumb_aspect']);
+                        $errors[] = self::createThumbnail($filePathRoot, $filePathThumbRoot, $thumbWidth, $thumbHeigh);
                     }
 
                 } else if ($type == 'video') {
@@ -238,14 +322,14 @@ class StorageController extends ControllerRest {
                     }
 
                     if ($convert_video && $ext != 'mp4') {
-                        $errors[] = $temp_file->saveAs($fileTemp, ['quality' => 90]);
+                        $errors[] = $temp_file->saveAs($fileTemp, ['quality' => $quality]);
                         $ffmpeg = FFMpeg::create();
                         $video = $ffmpeg->open($fileTemp);
                         $video->save(new X264(), $filePathRoot);
                         unlink($fileTemp);
                         $ext = 'mp4';
                     } else {
-                        $errors[] = $temp_file->saveAs($filePathRoot, ['quality' => 90]);
+                        $errors[] = $temp_file->saveAs($filePathRoot, ['quality' => $quality]);
                     }
 
                     $sec = 2;
@@ -265,26 +349,32 @@ class StorageController extends ControllerRest {
                     $frame = $video->frame(TimeCode::fromSeconds($sec));
                     $frame->save($filePathThumbRoot);
 
-                    $image_size = getimagesize($filePathThumbRoot);
-                    $major = $image_size[0]; //width
-                    $min = $image_size[1]; //height
-                    $mov = ($major - $min) / 2;
-                    $point = [$mov, 0];
-
-                    if ($major < $min) {
-                        $major = $image_size[1];
-                        $min = $image_size[0];
+                    if($thumb_aspect == 1){
+                        $image_size = getimagesize($filePathThumbRoot);
+                        $major = $image_size[0]; //width
+                        $min = $image_size[1]; //height
                         $mov = ($major - $min) / 2;
-                        $point = [0, $mov];
-                    }
+                        $point = [$mov, 0];
 
-                    $errors[] = Image::crop($filePathThumbRoot, $min, $min, $point)
-                    ->save($filePathThumbRoot, ['quality' => 100]);
+                        if ($major < $min) {
+                            $major = $image_size[1];
+                            $min = $image_size[0];
+                            $mov = ($major - $min) / 2;
+                            $point = [0, $mov];
+                        }
 
-                    if($min > 300){
-                        $errors[] = Image::thumbnail($filePathThumbRoot, 300, 300)
+                        $errors[] = Image::crop($filePathThumbRoot, $min, $min, $point)
                         ->save($filePathThumbRoot, ['quality' => 100]);
+
+                        if($min > 300){
+                            $errors[] = Image::thumbnail($filePathThumbRoot, 300, 300)
+                            ->save($filePathThumbRoot, ['quality' => 100]);
+                        }
+                    } else {
+                        [$thumbWidth, $thumbHeigh] = explode('/',$options['thumb_aspect']);
+                        $errors[] = self::createThumbnail($filePathThumbRoot, $filePathThumbRoot, $thumbWidth, $thumbHeigh);
                     }
+
 
                     $ffprobe = FFProbe::create();
                     $duration = $ffprobe
@@ -302,13 +392,13 @@ class StorageController extends ControllerRest {
                     $pathRoot = "{$upload_root}/docs";
                     $filePath = "{$path}/{$name}";
                     $filePathRoot = "{$pathRoot}/{$name}";
-                    $fileUrl = "{$webFiles}/images/{$name}";
-
+                    $fileUrl = "{$webFiles}/docs/{$name}";
+                    $fileThumbUrl = '/dummy/code.php?x=150x150/fff/000.jpg&text=NO PREVIEW';
                     if (!file_exists($pathRoot)) {
                         FileHelper::createDirectory($pathRoot);
                     }
                     
-                    $errors[] = $temp_file->saveAs($filePathRoot, ['quality' => 90]);
+                    $errors[] = $temp_file->saveAs($filePathRoot, ['quality' => $quality]);
                 }
 
                 $file_uploaded = [
@@ -355,8 +445,7 @@ class StorageController extends ControllerRest {
 
             }
         } catch (\Exception $th) {
-            print_r($th);
-            return ['code'=>500,'success'=>false,'data'=>[$th]];
+            return ['code'=>500,'success'=>false,'data'=>["Unrecovery error..:" . $th->getMessage()]];
         }
     }
 
@@ -379,6 +468,8 @@ class StorageController extends ControllerRest {
                 $options['save'] = $post['save'] ?? 0;
                 $options['attact_model'] = $post['attact_model'] ?? false;
                 $options['convert_video'] = $post['convert_video'] ?? true;
+                $options['thumb_aspect'] = $post['thumb_aspect'] ?? 1;
+                $options['quality'] = $post['quality'] ?? 80;
 
                 return self::uploadFile($temp_file, $options);
 

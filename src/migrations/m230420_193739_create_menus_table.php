@@ -25,9 +25,9 @@ class m230420_193739_create_menus_table extends Migration
             'url' => $this->string(),
             'active'=> $this->string(60),
             'path'=> $this->string()->defaultValue('app'),
-            'order' => $this->integer()->defaultValue(0),
-            'only_admin' => $this->integer()->defaultValue(0),
-            'status' => $this->integer()->defaultValue(0),
+            'order' => $this->boolean()->defaultValue(false),
+            'only_admin' => $this->boolean()->defaultValue(false),
+            'status' => $this->boolean()->defaultValue(false),
             'PRIMARY KEY(id)',
         ]);
 
@@ -43,7 +43,7 @@ class m230420_193739_create_menus_table extends Migration
         $this->insert('menus', [
             'id'=> 1,
             'menu_id' => null,
-            'label'   => 'Configurations',
+            'label'   => 'System',
             'icon_style'=> 'fas',
             'icon'    => 'fas fa-cogs',
             'visible' => '',
