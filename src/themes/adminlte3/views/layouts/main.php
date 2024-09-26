@@ -2,7 +2,7 @@
 /* @var $this \yii\web\View */
 /* @var $content string */
 
-use weebz\yii2basics\models\Params;
+use weebz\yii2basics\models\Configuration;
 use weebz\yii2basics\themes\adminlte3\assets\FontAwesomeAsset;
 use weebz\yii2basics\themes\adminlte3\assets\PluginAsset;
 use weebz\yii2basics\themes\adminlte3\assets\WeebzAsset;

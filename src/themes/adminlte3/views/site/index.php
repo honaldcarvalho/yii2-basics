@@ -2,7 +2,7 @@
 
 /** @var yii\web\View $this */
 
-use weebz\yii2basics\models\Params;
+use weebz\yii2basics\models\Configuration;
 use weebz\yii2basics\controllers\ControllerCommon;
 
 $params = Configuration::get();
