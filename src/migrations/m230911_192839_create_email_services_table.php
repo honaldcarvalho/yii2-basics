@@ -16,7 +16,7 @@ class m230911_192839_create_email_services_table extends Migration
             'id' => $this->primaryKey(),
             'description' => $this->string()->notNull(),
             'scheme' => $this->string()->defaultValue('smtp')->notNull(),            
-            'enable_encryption' => $this->boolean()->defaultValue(false),
+            'enable_encryption' => $this->integer()->defaultValue(0),
             'encryption' => $this->string()->defaultValue('tls'),
             'host' => $this->string()->notNull(),
             'username' => $this->string()->notNull(),

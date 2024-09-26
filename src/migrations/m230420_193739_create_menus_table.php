@@ -25,8 +25,8 @@ class m230420_193739_create_menus_table extends Migration
             'url' => $this->string(),
             'active'=> $this->string(60),
             'path'=> $this->string()->defaultValue('app'),
-            'order' => $this->boolean()->defaultValue(false),
-            'only_admin' => $this->boolean()->defaultValue(false),
+            'order' => $this->integer()->defaultValue(0),
+            'only_admin' => $this->integer()->defaultValue(0),
             'status' => $this->boolean()->defaultValue(false),
             'PRIMARY KEY(id)',
         ]);

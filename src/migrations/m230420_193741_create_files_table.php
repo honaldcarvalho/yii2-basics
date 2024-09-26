@@ -15,7 +15,7 @@ class m230420_193741_create_files_table extends Migration
         $this->createTable('{{%files}}', [
             'id' => $this->primaryKey(),
             'folder_id' => $this->integer(),
-            'caption' => $this->boolean()->defaultValue(false),
+            'caption' => $this->integer()->defaultValue(0),
             'name' => $this->string(300)->notNull(),
             'type' => $this->string()->notNull(),
             'description' => $this->string(),
