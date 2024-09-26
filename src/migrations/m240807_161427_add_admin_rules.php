@@ -119,7 +119,7 @@ class m240807_161427_add_admin_rules extends Migration
 
         $this->insert('rules', [
             'group_id' => 2,
-            'controller' => 'params',
+            'controller' => 'configuration',
             'path' => 'weebz/controllers',
             'actions' => 'index;create;view;update;delete',
             'status'=>true
