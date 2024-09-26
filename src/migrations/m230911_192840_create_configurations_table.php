@@ -42,7 +42,7 @@ class m230911_192840_create_configurations_table extends Migration
         ]);
 
         $this->insert('menus', [
-            'id'=> 19,
+            'id'=> 14,
             'menu_id' => 1,
             'label'   => 'Configurations',
             'icon_style'=> 'fas',

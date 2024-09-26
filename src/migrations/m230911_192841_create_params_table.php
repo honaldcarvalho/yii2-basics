@@ -24,20 +24,6 @@ class m230911_192841_create_params_table extends Migration
             'status' => $this->boolean()->defaultValue(true)
         ]);
 
-        $this->insert('menus', [
-            'id'=> 17,
-            'menu_id' => 1,
-            'label'   => 'System Parameters',
-            'icon_style'=> 'fas',
-            'icon'    => 'fas fas fa-sliders-h',
-            'visible' => 'params;index',
-            'url'     => '/params/index',
-            'path'  => 'weebz/controllers',
-            'active'  => 'params',
-            'order'   => 2,
-            'status'  => true
-        ]);
-
     }
 
     /**
