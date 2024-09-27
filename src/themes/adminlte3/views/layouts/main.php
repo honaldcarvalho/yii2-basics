@@ -7,7 +7,7 @@ use weebz\yii2basics\themes\adminlte3\assets\FontAwesomeAsset;
 use weebz\yii2basics\themes\adminlte3\assets\PluginAsset;
 use weebz\yii2basics\themes\adminlte3\assets\WeebzAsset;
 use yii\helpers\Html;
-Yii::$app->request->queryParams
+
 FontAwesomeAsset::register($this);
 WeebzAsset::register($this);
 PluginAsset::register($this)->add(['fontawesome', 'icheck-bootstrap','fancybox','jquery-ui','toastr','select2']);
