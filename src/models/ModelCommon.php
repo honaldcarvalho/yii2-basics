@@ -49,6 +49,7 @@ class ModelCommon extends \yii\db\ActiveRecord
     public function search($params,$options = ['pageSize'=>10, 'orderBy'=>['id' => SORT_DESC]],)
     {
         $this->scenario = self::SCENARIO_SEARCH;
+
         $className = self::getClass();
         $table = static::tableName();
         $pageSize = 10;
