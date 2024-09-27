@@ -24,7 +24,7 @@ class ConfigurationController extends AuthController
     public function actionIndex()
     {
         $searchModel = new Configuration();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryConfiguration);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
