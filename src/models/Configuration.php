@@ -124,4 +124,10 @@ class Configuration extends ModelCommon
         return self::findOne(['id' => 1]);
     }
 
+
+    public function getParameters()
+    {
+        return $this->hasMany(Parameter::class, ['configuration_id' => 'id']);
+    }
+
 }

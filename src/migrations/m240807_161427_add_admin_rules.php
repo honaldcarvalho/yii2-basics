@@ -121,7 +121,7 @@ class m240807_161427_add_admin_rules extends Migration
             'group_id' => 2,
             'controller' => 'configuration',
             'path' => 'weebz/controllers',
-            'actions' => 'index;create;view;update;delete',
+            'actions' => 'index;create;view;update;delete;add-parameter',
             'status'=>true
         ]);
 

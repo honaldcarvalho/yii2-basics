@@ -3,22 +3,14 @@
 namespace weebz\yii2basics\widgets;
 
 use Yii;
-
+use yii\web\View;
+use yii\helpers\Url;
+use yii\widgets\Pjax;
+use yii\helpers\Html;
+use yii\grid\GridView;
+use weebz\yii2basics\components\gridview\ActionColumn;
+use weebz\yii2basics\controllers\AuthController;
 /**
- * Alert widget renders a message from session flash. All flash messages are displayed
- * in the sequence they were assigned using setFlash. You can set message as following:
- *
- * ```php
- * Yii::$app->session->setFlash('error', 'This is the message');
- * Yii::$app->session->setFlash('success', 'This is the message');
- * Yii::$app->session->setFlash('info', 'This is the message');
- * ```
- *
- * Multiple messages could be set as follows:
- *
- * ```php
- * Yii::$app->session->setFlash('error', ['Error 1', 'Error 2']);
- * ```
  *
  * @author Honald Carvalho da Silva <honalcarvalho@gmail.com>
  */
@@ -44,10 +36,10 @@ class Attact extends \yii\bootstrap5\Widget
      */
     public function run()
     {
-  
+        $lower = strtolower($this->attact_model);
         $script = <<< JS
 
-            $lower = strtolower($this->attact_model);
+            
             function removeFiles(e) {
         
                 let el = $(e);
@@ -79,9 +71,6 @@ class Attact extends \yii\bootstrap5\Widget
                         type: "POST",
                         url: "/rest/storage/remove-files",
                         data: {keys:keys},
-                        headers: {
-                            'Authorization': `Bearer {$token}`
-                        },
                     }).done(function(response) {     
                         
                         if(response.length > 0){
@@ -107,7 +96,7 @@ class Attact extends \yii\bootstrap5\Widget
                 return false;
             }
             
-            function add{$attact_model}(){
+            function add{$this->attact_model}(){
                 $('#overlay-{$lower}').show();
                 var formData = $("#form-translate").serialize();
 
@@ -128,7 +117,7 @@ class Attact extends \yii\bootstrap5\Widget
             }
 
             $("#btn-{$lower}").click(function(){
-                add{$attact_model}();
+                add{$this->attact_model}();
             });
 
             $(function(){

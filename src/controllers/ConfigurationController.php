@@ -2,6 +2,7 @@
 
 namespace weebz\yii2basics\controllers;
 
+use weebz\yii2basics\controllers\rest\ControllerCustom;
 use weebz\yii2basics\controllers\rest\StorageController;
 use Yii;
 use weebz\yii2basics\models\Configuration;
@@ -45,6 +46,16 @@ class ConfigurationController extends AuthController
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
+    }
+
+    public function actionAddParameter()
+    {   
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $model = new Parameter();
+        if ($model->load(Yii::$app->request->post())){ 
+           return ['success' => $model->save(),'message'=>$model->getErrors()];
+        }
+        return ['success' => false];
     }
 
     /**

@@ -23,7 +23,7 @@ class Parameter extends ModelCommon
      */
     public static function tableName()
     {
-        return 'params';
+        return 'parameters';
     }
 
     public function scenarios()
@@ -42,7 +42,6 @@ class Parameter extends ModelCommon
             [['configuration_id', 'status'], 'integer'],
             [['value'], 'string'],
             [['description', 'name'], 'string', 'max' => 255],
-            [['background_image'], 'exist', 'skipOnError' => true, 'targetClass' => File::class, 'targetAttribute' => ['background_image' => 'id']],
             [['configuration_id'], 'exist', 'skipOnError' => true, 'targetClass' => Configuration::class, 'targetAttribute' => ['configuration_id' => 'id']],
         ];
     }
@@ -53,12 +52,12 @@ class Parameter extends ModelCommon
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'configuration_id' => 'Configuration ID',
-            'description' => 'Description',
-            'name' => 'Name',
-            'value' => 'Value',
-            'status' => 'Status',
+            'id' => Yii::t('*', 'ID'),
+            'configuration_id' => Yii::t('*', 'Configuration'),
+            'description' => Yii::t('*', 'Description'),
+            'name' => Yii::t('*', 'Name'),
+            'value' => Yii::t('*', 'Value'),
+            'status' => Yii::t('*', 'Status'),
         ];
     }
 

@@ -48,8 +48,8 @@ class m350807_161427_add_foreing_keys extends Migration
          */
 
          $this->addForeignKey(
-            'fk-params-configuration_id',
-            'params',
+            'fk-parameters-configuration_id',
+            'parameters',
             'configuration_id',
             'configurations',
             'id',

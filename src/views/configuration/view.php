@@ -1,5 +1,7 @@
 <?php
 
+use app\widgets\AppendModel;
+use weebz\yii2basics\widgets\Attact;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -52,4 +54,38 @@ $this->params['breadcrumbs'][] = $this->title;
         <!--.card-body-->
     </div>
     <!--.card-->
+
+    <?= AppendModel::widget([
+        'attactModel'=>'Parameter',
+        'actionUrl'=>'/configuration/add-parameter',
+        'attactClass'=>'weebz\\yii2basics\\models\\Parameter',
+        'dataProvider' => new \yii\data\ActiveDataProvider([
+            'query' => $model->getParameters(),
+        ]),
+        'showFields'=>['description','name','value','status:boolean'],
+        'fields'=>
+        [
+            [
+                'name'=>'configuration_id',
+                'type'=>'hidden',
+                'value'=>$model->id
+            ],
+            [
+                'name'=>'description',
+                'type'=>'text'
+            ],
+            [
+                'name'=>'name',
+                'type'=>'text'
+            ],
+            [
+                'name'=>'value',
+                'type'=>'text'
+            ],
+            [
+                'name'=>'status',
+                'type'=>'checkbox'
+            ],
+        ]
+    ]); ?>
 </div>
