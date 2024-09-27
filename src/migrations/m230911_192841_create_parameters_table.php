@@ -3,9 +3,9 @@
 use yii\db\Migration;
 
 /**
- * Handles the creation of table `{{%menus}}`.
+ * Handles the creation of table `{{%parameters}}`.
  */
-class m230911_192841_create_params_table extends Migration
+class m230911_192841_create_parameters_table extends Migration
 {
     /**
      * {@inheritdoc}
@@ -15,7 +15,7 @@ class m230911_192841_create_params_table extends Migration
     {
         //$sql = file_get_contents(__DIR__ . '/query_menus_insert.sql');
 
-        $this->createTable('{{%params}}', [
+        $this->createTable('{{%parameters}}', [
             'id' => $this->primaryKey(),
             'configuration_id' => $this->integer()->notNull(),
             'description' => $this->string(),
@@ -31,6 +31,6 @@ class m230911_192841_create_params_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropTable('{{%params}}');
+        $this->dropTable('{{%parameters}}');
     }
 }

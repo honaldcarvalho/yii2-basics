@@ -5,6 +5,7 @@ namespace weebz\yii2basics\controllers;
 use weebz\yii2basics\controllers\rest\StorageController;
 use Yii;
 use weebz\yii2basics\models\Configuration;
+use weebz\yii2basics\models\Parameter;
 use yii\web\NotFoundHttpException;
 
 /**

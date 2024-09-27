@@ -80,6 +80,38 @@ class ControllerCommon extends \yii\web\Controller
         return $behaviors;
     }
 
+    public function attact($attact_model,$child_field,$child_field_value,$root_field,$root_field_value)
+    {   
+        $attact = new $attact_model->class_name([
+            $attact_model->$child_field => $child_field_value,
+            $attact_model->$root_field=> $root_field_value
+        ]);
+        return $attact->save();
+    }
+    
+    public function actionAttact()
+    {
+        $success = false;
+        $post = $this->request->post();
+        $attact_model = $post['attact_model'] ?? null;
+        $child_field = $post['child_field'] ?? null;
+        $child_field_value = $post['child_field'] ?? null;
+        $root_field = $post['root_field'] ?? null;
+        $root_field_value = $post['root_field_value'] ?? null;
+
+        if(
+            $attact_model !== null &&
+            $child_field !== null &&
+            $child_field_value !== null &&
+            $root_field !== null &&
+            $root_field_value !== null
+        ){
+            $success = ControllerCommon::attact($attact_model,$child_field,$child_field_value,$root_field,$root_field_value);
+        }
+        return ['success' => $success];
+
+    }
+
     public static function error($th)
     {   
         if(isset($th->statusCode )){
