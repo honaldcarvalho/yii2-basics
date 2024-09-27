@@ -256,7 +256,7 @@ class UploadFoto extends \yii\bootstrap5\Widget
     $html = <<<HTML
         <div class="row">
             <div class="col-sm-12 text-center pb-2">
-                <img class="rounded" id="photo_x" src="$this->imagem" style="width:400px" alt="banner">
+                <img class="rounded" id="photo_x" src="$this->imagem" style="width:300px" alt="banner">
             </div>
             <div class="col-md-12 text-center pb-2">
                 <label class="label-file w-10 btn-weebz" data-toggle="tooltip" title="Selecione a Imagem">

@@ -1,6 +1,7 @@
 <?php
 
 use weebz\yii2basics\models\EmailService;
+use weebz\yii2basics\models\File;
 use weebz\yii2basics\models\Group;;
 use weebz\yii2basics\models\Language;
 use yii\helpers\Html;
@@ -9,6 +10,11 @@ use yii\bootstrap5\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model weebz\yii2basics\models\Configuration */
 /* @var $form yii\bootstrap5\ActiveForm */
+$image = '';
+$display = 'display:none';
+if(!empty($model->file_id))
+    $image = File::findOne($model->file_id)->url;
+
 ?>
 <?php $form = ActiveForm::begin(['class' => 'row mb-5']); ?>
 <div class="row">
