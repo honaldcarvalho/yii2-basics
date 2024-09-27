@@ -24,6 +24,14 @@ class m230911_192841_create_parameters_table extends Migration
             'status' => $this->boolean()->defaultValue(true)
         ]);
 
+        $this->insert('{{%parameters}}', [
+            'configuration_id' => 1,
+            'description' => 'Max upload size',
+            'name' => 'max_upload_size',
+            'value' => '10',
+            'status' => true
+        ]);
+
     }
 
     /**
