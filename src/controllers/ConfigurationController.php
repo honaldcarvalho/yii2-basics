@@ -2,6 +2,7 @@
 
 namespace weebz\yii2basics\controllers;
 
+use weebz\yii2basics\controllers\rest\StorageController;
 use Yii;
 use weebz\yii2basics\models\Configuration;
 use yii\web\NotFoundHttpException;
@@ -54,13 +55,30 @@ class ConfigurationController extends AuthController
     {
         $model = new Configuration();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
+        if ($model->load(Yii::$app->request->post())){ 
+            
+            $file = \yii\web\UploadedFile::getInstance($model, 'file_id');
 
+            if(!empty($file) && $file !== null){
+
+                $arquivo = StorageController::uploadFile($file,['save'=>true]);
+
+                if ($arquivo['success'] === true) {
+                    $model->file_id = $arquivo['data']['id'];
+                }
+            }
+
+            $count = Configuration::find(['id'])->count();
+            $model->posicao = $count + 1;
+
+            if($model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+        }
         return $this->render('create', [
             'model' => $model,
         ]);
+
     }
 
     /**
@@ -72,12 +90,36 @@ class ConfigurationController extends AuthController
      */
     public function actionUpdate($id)
     {
+
         $model = $this->findModel($id);
+        $old = $model->file_id;
+        $changed = false;
+        $post = Yii::$app->request->post(); 
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->validate() && $model->load($post)) { 
+
+            $file = \yii\web\UploadedFile::getInstance($model, 'file_id');
+            if(!empty($file) && $file !== null){
+                $file = StorageController::uploadFile($file,['save'=>true]);
+                if ($file['success'] === true) {
+                    $model->file_id = $file['data']['id'];
+                    $changed = true;
+                }else{
+                    $model->file_id = $old;
+                }
+            } else if(isset($post['remove']) && $post['remove'] == 1){
+                $model->file_id = null;
+                $changed = true;
+            }
+            
+            if($model->save()) {
+                if($changed){
+                    StorageController::removeFile($old);
+                }
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+
         }
-
         return $this->render('update', [
             'model' => $model,
         ]);
