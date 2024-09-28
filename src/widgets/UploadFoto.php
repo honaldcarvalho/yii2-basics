@@ -23,7 +23,7 @@ class UploadFoto extends \yii\bootstrap5\Widget
   {
     PluginAsset::register(Yii::$app->view)->add(['cropper']);
     $config = Configuration::get();
-    $maxSize = $config->getParameters()->where(['name'=> 'max_file_size'])->one();
+    $maxSize = $config->getParameters()->where(['name'=> 'max_upload_size'])->one();
     if($maxSize !== null)
       $this->maxSize = $maxSize->value;
 
@@ -117,12 +117,12 @@ class UploadFoto extends \yii\bootstrap5\Widget
           };
 
           img.onerror = (error) => {
-            reject('Error loading image: ' + error);
+            reject('Error loading image');
           };
         };
 
         reader.onerror = (error) => {
-          reject('Error reading file: ' + error);
+          reject('Error reading file' );
         };
       });
     }
@@ -175,10 +175,11 @@ class UploadFoto extends \yii\bootstrap5\Widget
           file = files[0];
           const maxSizeInBytes = {$this->maxSize} * 1024 * 1024;
           if (files[0].type == 'image/png' && files[0].size > maxSizeInBytes) {
-            alert('Image exceeds 5MB limit even after compression.');
+            $('#overlay-foto').hide();
+            alert('Image exceeds {$this->maxSize}MB limit.');
             return false;
           } else if(files[0].type == 'image/png') {
-            
+      
             encodeImageFileAsURL(file,image).then((blob) => {
               modal.modal('show');
               $('#overlay-foto').hide();
@@ -186,7 +187,9 @@ class UploadFoto extends \yii\bootstrap5\Widget
               $('#overlay-foto').hide();
               return false;
             });
+            
           }else{
+
             compressImage(files[0]).then((blob) => {
               let file_compressed = new File([blob], "imagem.jpg", { type: "image/jpeg", lastModified: new Date().getTime() });
               let container = new DataTransfer();
@@ -200,9 +203,10 @@ class UploadFoto extends \yii\bootstrap5\Widget
               return true;
             }).catch((error) => {
               $('#overlay-foto').hide();
-              console.log(error);
+              alert(error);
               return false;
             });
+            
           }
         }
 
@@ -218,7 +222,8 @@ class UploadFoto extends \yii\bootstrap5\Widget
 
       modal.on('hidden.bs.modal', function (event) {
         input.value = '';
-        cropper.destroy();
+        if(cropper !== null && cropper !== undefined)
+          cropper.destroy();
       })
 
       document.getElementById('cancelar').addEventListener('click', function () {

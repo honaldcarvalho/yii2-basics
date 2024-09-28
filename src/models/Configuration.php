@@ -51,7 +51,7 @@ class Configuration extends ModelCommon
     {
         return [
             [['description', 'host', 'title','slogan', 'bussiness_name', 'email'], 'required','on'=>self::SCENARIO_DEFAULT],
-            [['language_id', 'file_id', 'group_id', 'email_service_id', 'status', 'logging'], 'integer'],
+            [['language_id', 'group_id', 'email_service_id', 'status', 'logging'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['description', 'host', 'title', 'bussiness_name', 'email'], 'string', 'max' => 255],
             [['email_service_id'], 'exist', 'skipOnError' => true, 'targetClass' => EmailService::class, 'targetAttribute' => ['email_service_id' => 'id']],
