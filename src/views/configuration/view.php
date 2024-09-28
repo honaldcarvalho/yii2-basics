@@ -62,7 +62,12 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => new \yii\data\ActiveDataProvider([
             'query' => $model->getParameters(),
         ]),
-        'showFields'=>['description','name','value','status:boolean'],
+        'showFields'=>['description','name',
+        [
+            'attribute' => 'value',
+            'contentOptions' => ['class' => 'text-trucate'], 
+        ],
+        'status:boolean'],
         'fields'=>
         [
             [
