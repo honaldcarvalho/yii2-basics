@@ -57,7 +57,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= AppendModel::widget([
         'attactModel'=>'Parameter',
-        'actionUrl'=>'/configuration/add-parameter',
+        'controller'=>'configuration',
         'attactClass'=>'weebz\\yii2basics\\models\\Parameter',
         'dataProvider' => new \yii\data\ActiveDataProvider([
             'query' => $model->getParameters(),

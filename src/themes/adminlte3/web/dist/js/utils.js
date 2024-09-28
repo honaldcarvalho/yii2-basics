@@ -52,3 +52,47 @@ function getCookie(name) {
 function removeCookie(name) {
     document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const wordLimit = 50; // Define o limite de palavras
+    const cells = document.querySelectorAll('.text-trucate');
+
+    cells.forEach((cell, index) => {
+        let text = cell.textContent.trim();
+        let words = text.split(/\s+/); // Divide o texto em palavras
+
+        if (text.length > wordLimit) {
+            let visibleText = '';
+            let hiddenText = '';
+            if(words.length == 1) {
+                visibleText = text.slice(0, wordLimit);
+                hiddenText = text.slice(wordLimit);
+            } else{
+                visibleText = words.slice(0, wordLimit).join(' ');
+                hiddenText = words.slice(wordLimit).join(' ');
+            }
+            
+            // Cria os elementos de truncamento e o botão "ler mais"
+            cell.innerHTML = `
+                <span class="visible-${index}">${visibleText}... </span>
+                <span class="d-none truncated-${index}">${hiddenText}</span>
+                <a href="javascript:;" class="read-more-${index}">Read more</a>
+            `;
+
+            // Adiciona evento ao botão "Read more"
+            let readMore = cell.querySelector(`.read-more-${index}`);
+            readMore.addEventListener('click', function() {
+                let truncated = cell.querySelector(`.truncated-${index}`);
+
+                // Alterna a exibição do texto oculto
+                if (truncated.classList.contains('d-none')) {
+                    truncated.classList.remove('d-none');
+                    readMore.textContent = 'Show less';
+                } else {
+                    truncated.classList.add('d-none');
+                    readMore.textContent = 'Read more';
+                }
+            });
+        }
+    });
+});

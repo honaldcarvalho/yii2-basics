@@ -80,36 +80,69 @@ class ControllerCommon extends \yii\web\Controller
         return $behaviors;
     }
 
-    public function attact($attact_model,$child_field,$child_field_value,$root_field,$root_field_value)
-    {   
-        $attact = new $attact_model->class_name([
-            $attact_model->$child_field => $child_field_value,
-            $attact_model->$root_field=> $root_field_value
-        ]);
-        return $attact->save();
-    }
-    
-    public function actionAttact()
-    {
-        $success = false;
-        $post = $this->request->post();
-        $attact_model = $post['attact_model'] ?? null;
-        $child_field = $post['child_field'] ?? null;
-        $child_field_value = $post['child_field'] ?? null;
-        $root_field = $post['root_field'] ?? null;
-        $root_field_value = $post['root_field_value'] ?? null;
-
-        if(
-            $attact_model !== null &&
-            $child_field !== null &&
-            $child_field_value !== null &&
-            $root_field !== null &&
-            $root_field_value !== null
-        ){
-            $success = ControllerCommon::attact($attact_model,$child_field,$child_field_value,$root_field,$root_field_value);
+    static function classExist($modelClass) {
+        $modelClassCommon = '\\weebz\\yii2basics\\models\\' . $modelClass;
+        $modelClassApp = '\\app\\models\\' . $modelClass;
+        
+        if (class_exists($modelClassCommon)) {
+            return $modelClassCommon;
+        } else if (class_exists($modelClassApp)) {
+            return $modelClassApp;
         }
-        return ['success' => $success];
+        return null;
+    }
 
+    // Generalized function to save or update a model
+    public function actionSaveModel($modelClass)
+    {   
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $verClass = self::classExist($modelClass);
+        if ($verClass === null) {
+            return ['success' => false, 'message' => "Model class '$modelClass' does not exist."];
+        } else{
+            $modelClassNamespace = $verClass; 
+        }
+
+        if (Yii::$app->request->isPost) {
+            $post = Yii::$app->request->post();
+
+            if (isset($post[$modelClass]['id']) && !empty($post[$modelClass]['id'])) {
+                $model = $modelClassNamespace::findOne($post[$modelClass]['id']);
+            } else {
+                $model = new $modelClassNamespace();
+            }
+
+            if ($model->load($post)) {
+                return ['success' => $model->save(), 'message' => $model->getErrors()];
+            }
+        }
+        return ['success' => false];
+    }
+
+    // Generalized function to get a model by ID
+    public function actionGetModel($modelClass, $id)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $verClass = self::classExist($modelClass);
+        if ($verClass === null) {
+            return ['success' => false, 'message' => "Model class '$modelClass' does not exist."];
+        } else{
+            $modelClassNamespace = $verClass; 
+        }
+        return $modelClassNamespace::findOne($id);
+    }
+
+    // Generalized function to delete a model by ID
+    public function actionRemoveModel($modelClass, $id)
+    {
+        $verClass = self::classExist($modelClass);
+        if ($verClass === null) {
+            return ['success' => false, 'message' => "Model class '$modelClass' does not exist."];
+        } else{
+            $modelClassNamespace = $verClass; 
+        }
+        return $modelClassNamespace::findOne($id)->delete();
     }
 
     public static function error($th)

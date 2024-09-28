@@ -48,16 +48,6 @@ class ConfigurationController extends AuthController
         ]);
     }
 
-    public function actionAddParameter()
-    {   
-        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        $model = new Parameter();
-        if ($model->load(Yii::$app->request->post())){ 
-           return ['success' => $model->save(),'message'=>$model->getErrors()];
-        }
-        return ['success' => false];
-    }
-
     /**
      * Creates a new Configuration model.
      * If creation is successful, the browser will be redirected to the 'view' page.

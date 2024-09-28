@@ -45,7 +45,7 @@ class m230911_192839_create_email_services_table extends Migration
             'url'     => '/email-service/index',
             'path'  => 'weebz/controllers',
             'active'  => 'email-service',
-            'order'   => 5,
+            'order'   => 8,
             'status'  => true
         ]);
 

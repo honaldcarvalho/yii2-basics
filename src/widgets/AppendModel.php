@@ -16,13 +16,17 @@ class AppendModel extends \yii\bootstrap5\Widget
 
     public $dataProvider;
     public $title = '';
-    public $actionUrl = null;
+    public $controller = null;
     public $attactClass;
     public $attactModel;
     public $childModel;
     public $childField;
     public $fields;
     public $showFields;
+
+    public $removeUrl;
+    public $getUrl;
+    public $saveUrl;
     /**
      * {@inheritdoc}
      */
@@ -30,24 +34,37 @@ class AppendModel extends \yii\bootstrap5\Widget
     {
         $columns = [['class' => 'yii\grid\CheckboxColumn']];
         $lower = strtolower($this->attactModel);
-        if(isset($this->actionUrl) == null)
-            $this->actionUrl = "/{$lower}/add-{$lower}";
 
+        $this->removeUrl = "/{$this->controller}/remove-model?modelClass={$this->attactModel}";
+        $this->getUrl = "/{$this->controller}/get-model?modelClass={$this->attactModel}";
+        $this->saveUrl = "/{$this->controller}/save-model?modelClass={$this->attactModel}";
+            
         $columns = array_merge($columns,$this->showFields);
         array_push($columns,[
             'class'=> ActionColumn::class,
             'headerOptions' => ['style' => 'width:10%'],
-            'template' => '{view}{delete}',
+            'template' => '{view}{edit}{remove}',
             'path' => 'app',
             'controller' => 'file',
             'buttons' => [
-                'delete' => function ($url, $model, $key) {
-                    return
-                        Html::button(
-                            '<i class="fas fa-trash"></i>',
-                            ['onclick' => 'removeFiles(this)', 'class' => 'btn btn-outline-secondary', "data-id" => $model->id, "data-toggle" => "tooltip", "data-placement" => "top", "title" => \Yii::t('app', 'Remove')]
-                        );
-                },
+                'remove' => function ($url, $model, $key) {
+                    return Html::a('<i class="fas fa-trash"></i>','javascript:;',
+                     [
+                        'onclick'=>"remove{$this->attactModel}(this);", 
+                        'data-link'=> "{$this->removeUrl}&id=$model->id",
+                        'class'=>'btn btn-outline-secondary remove',"data-toggle"=>"tooltip","data-placement"=>"top", 
+                        "title"=>\Yii::t('*',"Remove {$this->attactModel}")
+                    ]);
+                }, 
+                'edit' => function ($url, $model, $key) {
+                    return Html::a('<i class="fas fa-pen"></i>','javascript:;',
+                     [
+                        'onclick'=>"get{$this->attactModel}(this);", 
+                        'data-link'=> "{$this->getUrl}&id=$model->id",
+                        'class'=>'btn btn-outline-secondary edit',"data-toggle"=>"tooltip","data-placement"=>"top", 
+                        "title"=>\Yii::t('*',"Edit {$this->attactModel}")
+                    ]);
+                }, 
             ]
         ]);
 
@@ -55,28 +72,36 @@ class AppendModel extends \yii\bootstrap5\Widget
             let modal = null;
 
             $(function(){
-                modal = new bootstrap.Modal(document.getElementById('add-{$lower}'), {
+                modal = new bootstrap.Modal(document.getElementById('save-{$lower}'), {
                     keyboard: true
                 });
             });
 
-            function add{$this->attactModel}(){
+            function clearForms()
+            {
+                document.getElementById("form-{$lower}").reset();
+                $(':input').not(':button, :submit, :reset, :hidden, :checkbox, :radio').val('');
+                $('#btn-add-translate').prop('disabled',false);
+                $('select').val(null).trigger('change');
+                return true;
+            }
+            
+            function save{$this->attactModel}(){
                 $('#overlay-form-{$lower}').show();
                 var formData = $("#form-{$lower}").serialize();
                 console.log(formData);
                 $.ajax({
                     type: "POST",
-                    url: "{$this->actionUrl}",
+                    url: "{$this->saveUrl}",
                     data: formData,
                 }).done(function(response) {       
                     if(response.success) {
-                        toastr.success("Added!");
+                        toastr.success("Save!");
                         modal.hide();
                     } else {
-                        toastr.error("Error on add!");
+                        toastr.error("Error on save!");
                     }
                     $.pjax.reload({container: "#list-{$lower}-grid", async: true});
-                    //clearForms();
                 }).fail(function (response) {
                     toastr.error("Error on add!");
                 }).always(function (response) {
@@ -84,9 +109,78 @@ class AppendModel extends \yii\bootstrap5\Widget
                 });
             }
 
-            $("#btn-add-{$lower}").click(function(){
-                add{$this->attactModel}();
-            });
+            function get{$this->attactModel}(e) {
+
+                let el = $(e);
+
+                object = el.children("i");
+                let old_class = el.children("i").attr('class');
+                object.removeClass(old_class);
+                object.addClass('fas fa-sync fa-spin');
+
+                $.ajax({
+                    type: "POST",
+                    url: el.data('link'),
+                }).done(function(response) {     
+                    if(response == null){
+                        toastr.error("Error on load {$lower}!");
+                        return false;
+                    } else {
+                        Object.entries(response).forEach(([key, value]) => {
+                            var el = $(`#{$lower}-\${key}`);
+                            if(el.attr('type') == 'checkbox') {
+                                if (value === 1) {
+                                    el.prop('checked', true);
+                                } else {
+                                    el.prop('checked', false);
+                                }
+                            } else if(el.attr('type') == 'select') {
+                                el.val(value); // Select the option with a value of '1'
+                                el.trigger('change');
+                            } else {
+                                el.val(value);
+                            }
+                        });
+                        modal.show();
+                    }
+                }).fail(function (response) {
+                    toastr.error("Error on remove {$lower}!");
+                }).always(function (response) {
+                    object.removeClass('fas fa-sync fa-spin');
+                    object.attr('class',old_class);
+                });
+
+            }
+
+            function remove{$this->attactModel}(e) {
+
+                let el = $(e);
+                if (confirm('You really can remove this {$lower}?')) {
+
+                    object = el.children("i");
+                    let old_class = el.children("i").attr('class');
+                    object.removeClass(old_class);
+                    object.addClass('fas fa-sync fa-spin');
+
+                    $.ajax({
+                        type: "POST",
+                        url: el.data('link'),
+                    }).done(function(response) {     
+                        if(response == 0){
+                            toastr.error("Error on remove {$lower}!");
+                            return false;
+                        }
+                        toastr.success("Removed!");
+                        $.pjax.reload({container: "#list-{$lower}-grid", async: true});
+                    }).fail(function (response) {
+                        toastr.error("Error on remove {$lower}!");
+                    }).always(function (response) {
+                        object.removeClass('fas fa-sync fa-spin');
+                        object.attr('class',old_class);
+                    });
+                }
+                return false;
+            }
 
             $(function(){
                 $(document).on('pjax:start', function() {
@@ -97,18 +191,17 @@ class AppendModel extends \yii\bootstrap5\Widget
                 });
                 Fancybox.bind("[data-fancybox]");
             });
-
         JS;
 
         \Yii::$app->view->registerJs($script,View::POS_END);
         $field_str = '';
 
-        $button = Html::a('<i class="fas fa-plus-square"></i> Novo', 'javascript:modal.show();', ['class' => 'btn btn-success','id'=>'btn-show-{$lower}']);
+        $button = Html::a('<i class="fas fa-plus-square"></i> Novo', 'javascript:modal.show();clearForms();', ['class' => 'btn btn-success','id'=>'btn-show-{$lower}']);
         $button_save = Yii::t('app', "Save");
         $button_cancel = Yii::t('app', 'Cancel');
         $begin = <<< HTML
             <!-- Modal -->
-            <div class="modal fade" id="add-{$lower}" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal fade" id="save-{$lower}" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -128,7 +221,7 @@ class AppendModel extends \yii\bootstrap5\Widget
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" onclick="javascript:modal.hide();"> {$button_cancel} </button>
-                            <button id="btn-add-{$lower}" onclick="add{$this->attactModel}" type="button" class="btn btn-success"><i class="fas fa-plus-circle mr-2 icon"></i> {$button_save} </button>
+                            <button id="btn-save-{$lower}" onclick="save{$this->attactModel}()" type="button" class="btn btn-success"><i class="fas fa-plus-circle mr-2 icon"></i> {$button_save} </button>
                         </div>
                     </div>
                 </div>
@@ -138,20 +231,20 @@ class AppendModel extends \yii\bootstrap5\Widget
         echo $begin;
         $form = ActiveForm::begin(['id'=>"form-{$lower}"]); 
         $model = new $this->attactClass();
+        $field_str .=  $form->field($model, 'id')->textInput(['id'=> "{$lower}-id", 'maxlength' => true]);
 
         foreach ($this->fields as $key => $field) {
             $field_str .= '<div class="col-md-12">';
-
             if($field['type'] == 'text')
-                $field_str .=  $form->field($model, $field['name'])->textInput(['maxlength' => true]);
+                $field_str .=  $form->field($model, $field['name'])->textInput(['id'=> "{$lower}-{$field['name']}", 'maxlength' => true]);
             else if($field['type'] == 'hidden')
-                $field_str .=  $form->field($model, $field['name'])->hiddenInput(['maxlength' => true,'value'=> $field['value']])->label(false);
+                $field_str .=  $form->field($model, $field['name'])->hiddenInput(['id'=> "{$lower}-{$field['name']}",'maxlength' => true,'value'=> $field['value']])->label(false);
             else if($field['type'] == 'checkbox')
-                $field_str .=  $form->field($model, $field['name'])->checkbox() ;
+                $field_str .=  $form->field($model, $field['name'])->checkbox(['id'=> "{$lower}-{$field['name']}",]) ;
             else if($field['type'] == 'dropdown')
                 $field_str .=  $form->field($model, $model, $field['name'])->widget(\kartik\select2\Select2::classname(), [
                     'data' =>  $field['value'],
-                    'options' => ['multiple' => false, 'placeholder' => Yii::t('*','Select')],
+                    'options' => ['multiple' => false, 'placeholder' => Yii::t('*','Select'),'id'=> "{$lower}-{$field['name']}",],
                     'pluginOptions' => [
                         'allowClear' => true
                     ],
@@ -189,7 +282,6 @@ class AppendModel extends \yii\bootstrap5\Widget
                                     <div class='spinner-border ms-auto' role='status' aria-hidden='true'></div>
                                 </div>
                             </div>
-    
         HTML;
     
         $footer = <<< HTML

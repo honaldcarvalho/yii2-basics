@@ -47,7 +47,7 @@ class m230420_193757_create_languages_table extends Migration
             'url'     => '#',
             'path'  => 'weebz/controllers',
             'active'  => '',
-            'order'   => 4,
+            'order'   => 6,
             'status'  => true
         ]);
 

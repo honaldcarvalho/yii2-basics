@@ -54,7 +54,7 @@ class m230520_203121_create_pages_table extends Migration
             'url'     => '/page/index',
             'path'  => 'weebz/controllers',
             'active'  => 'page',
-            'order'   => 3,
+            'order'   => 5,
             'status'  => true
         ]);
 

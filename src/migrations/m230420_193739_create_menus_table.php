@@ -64,7 +64,7 @@ class m230420_193739_create_menus_table extends Migration
             'url'     => '/menu/index',
             'path'  => 'weebz/controllers',
             'active'  => 'menu',
-            'order'   => 0,
+            'order'   => 2,
             'status'  => true
         ]);
         
@@ -78,7 +78,7 @@ class m230420_193739_create_menus_table extends Migration
             'url'     => '#',
             'path'  => 'weebz/controllers',
             'active'  => '',
-            'order'   => 1,
+            'order'   => 3,
             'status'  => true
         ]);
 
@@ -92,7 +92,7 @@ class m230420_193739_create_menus_table extends Migration
             'url'     => '#',
             'path'  => 'weebz/controllers',
             'active'  => '',
-            'order'   => 1,
+            'order'   => 4,
             'status'  => true
         ]);
 

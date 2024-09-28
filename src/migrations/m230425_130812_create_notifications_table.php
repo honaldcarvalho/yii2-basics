@@ -61,7 +61,7 @@ class m230425_130812_create_notifications_table extends Migration
             'url'     => '/notification/index',
             'path'  => 'weebz/controllers',
             'active'  => 'notification',
-            'order'   => 1,
+            'order'   => 7,
             'status'  => true
         ]);
     }
