@@ -3,6 +3,7 @@
 namespace weebz\yii2basics\widgets;
 
 use weebz\yii2basics\controllers\rest\ControllerCustom;
+use weebz\yii2basics\models\Configuration;
 use weebz\yii2basics\themes\adminlte3\assets\PluginAsset;
 use Yii;
 use yii\web\View;
@@ -16,11 +17,16 @@ class UploadFoto extends \yii\bootstrap5\Widget
   public $imagem = '';
   public $type = ' image/*';
   public $view;
-
+  public $maxSize = 2;
 
   public function init()
   {
     PluginAsset::register(Yii::$app->view)->add(['cropper']);
+    $config = Configuration::get();
+    $maxSize = $config->getParameters()->where(['name'=> 'max_file_size'])->one();
+    if($maxSize !== null)
+      $this->maxSize = $maxSize->value;
+
   }
 
   /**$
@@ -43,6 +49,15 @@ class UploadFoto extends \yii\bootstrap5\Widget
     }
 
     $script = <<<JS
+      var banner = document.getElementById('photo_x');
+      var remove = document.getElementById('remove');
+      var btn_remove = document.getElementById('btn-remove');
+      var image = document.getElementById('image_x');
+      var input = document.getElementById('image_upload_x');
+      var file_field = document.getElementById('$this->fileField');
+      var modal = $('#modal');
+      var cropper;
+
     /**
      * Compress an image to be smaller than the max file size using Canvas API.
      * @param {File} file - The image file to compress.
@@ -86,12 +101,17 @@ class UploadFoto extends \yii\bootstrap5\Widget
 
             // Get the compressed image data
             canvas.toBlob((blob) => {
-              // Ensure the compressed image size is below the maxSize
-              const compressedFile = new File([blob], file.name, {
-                type: file.type,
-                lastModified: Date.now()
-              });
-              resolve(compressedFile); // Return the compressed file
+
+              if (blob.size > {$this->maxSize} * 1024 * 1024) {
+                reject(new Error('Image exceeds 5MB limit even after compression.'));
+              } else {
+                // Ensure the compressed image size is below the maxSize
+                const compressedFile = new File([blob], file.name, {
+                  type: file.type,
+                  lastModified: Date.now()
+                });
+                resolve(compressedFile); // Return the compressed file
+              }
 
             }, file.type, 0.8); // Adjust the quality (0.8 is 80%)
           };
@@ -138,37 +158,32 @@ class UploadFoto extends \yii\bootstrap5\Widget
 
     window.addEventListener('DOMContentLoaded', function () {
 
-      var banner = document.getElementById('photo_x');
-      var remove = document.getElementById('remove');
-      var btn_remove = document.getElementById('btn-remove');
-      var image = document.getElementById('image_x');
-      var input = document.getElementById('image_upload_x');
-      var arquivo = document.getElementById('$this->fileField');
-      var modal = $('#modal');
-      var cropper;
-
       $('[data-toggle="tooltip"]').tooltip();
 
       btn_remove.addEventListener('click', function (e) {
         banner.src = '{$assetDir}/img/no-image.png';
-        arquivo.files = null;
+        file_field.files = null;
         remove.value = 1;
       });
 
       input.addEventListener('change', function (e) {
+        $('#overlay-foto').show();
+        
         var files = e.target.files;
 
         if (files && files.length > 0) {
           file = files[0];
-          const maxSizeInBytes = 5 * 1024 * 1024;
+          const maxSizeInBytes = {$this->maxSize} * 1024 * 1024;
           if (files[0].type == 'image/png' && files[0].size > maxSizeInBytes) {
             alert('Image exceeds 5MB limit even after compression.');
             return false;
           } else if(files[0].type == 'image/png') {
+            
             encodeImageFileAsURL(file,image).then((blob) => {
               modal.modal('show');
+              $('#overlay-foto').hide();
             }).catch((error) => {
-              console.log(error);
+              $('#overlay-foto').hide();
               return false;
             });
           }else{
@@ -176,13 +191,15 @@ class UploadFoto extends \yii\bootstrap5\Widget
               let file_compressed = new File([blob], "imagem.jpg", { type: "image/jpeg", lastModified: new Date().getTime() });
               let container = new DataTransfer();
               container.items.add(file_compressed);
-              arquivo.files = container.files;
+              file_field.files = container.files;
               image.src = URL.createObjectURL(blob);
               modal.modal('show');
               console.log(image.src);
               console.log(formatFileSize(blob.size));
+              $('#overlay-foto').hide();
               return true;
             }).catch((error) => {
+              $('#overlay-foto').hide();
               console.log(error);
               return false;
             });
@@ -199,9 +216,13 @@ class UploadFoto extends \yii\bootstrap5\Widget
         });
       });
 
-      document.getElementById('cancelar').addEventListener('click', function () {
+      modal.on('hidden.bs.modal', function (event) {
+        input.value = '';
         cropper.destroy();
-        cropper = null;
+      })
+
+      document.getElementById('cancelar').addEventListener('click', function () {
+        modal.modal('hide');
       });
 
       document.getElementById('crop').addEventListener('click', function () {
@@ -216,7 +237,7 @@ class UploadFoto extends \yii\bootstrap5\Widget
             let file = new File([blob], "imagem.jpg", { type: "image/jpeg", lastModified: new Date().getTime() });
             let container = new DataTransfer();
             container.items.add(file);
-            arquivo.files = container.files;
+            file_field.files = container.files;
           });
         }
         cropper.destroy();
@@ -255,6 +276,14 @@ class UploadFoto extends \yii\bootstrap5\Widget
 
     $html = <<<HTML
         <div class="row">
+
+            <div id='overlay-foto' class='overlay' style='display:none;height: 100%;position: absolute;width: 100%;z-index: 3000;top: 0;left: 0;background: #0000004f;'>
+                <div class='d-flex align-items-center'>
+                    <strong> <?= Yii::t('app', 'Processing...') ?></strong>
+                    <div class='spinner-border ms-auto' role='status' aria-hidden='true'></div>
+                </div>
+            </div>
+
             <div class="col-sm-12 text-center pb-2">
                 <img class="rounded" id="photo_x" src="$this->imagem" style="width:300px" alt="banner">
             </div>
@@ -268,6 +297,7 @@ class UploadFoto extends \yii\bootstrap5\Widget
                 <a href="javascript:;" id="btn-remove" class="btn label-file w-10 btn-danger {$showRemove}"><i class="fas fa-trash"></i> Remover</a>
             </div>
         </div>
+
         <div class="modal fade" id="modal" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static" aria-labelledby="modalLabel" aria-hidden="true">
           <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -289,6 +319,7 @@ class UploadFoto extends \yii\bootstrap5\Widget
             </div>
           </div>
         </div>
+
     HTML;
     echo $html;
   }

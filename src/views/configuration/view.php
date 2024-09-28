@@ -1,6 +1,6 @@
 <?php
 
-use app\widgets\AppendModel;
+use weebz\yii2basics\widgets\AppendModel;
 use weebz\yii2basics\widgets\Attact;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
