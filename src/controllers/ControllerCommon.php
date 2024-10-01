@@ -133,6 +133,24 @@ class ControllerCommon extends \yii\web\Controller
         return $modelClassNamespace::findOne($id);
     }
 
+    // Generalized function to get a models
+    public function actionGetModels()
+    {
+        $items = [];
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        if(\Yii::$app->request->isPost){
+            $post = \Yii::$app->request->post();
+            $verClass = self::classExist($post['modelClass']);
+            if ($verClass === null) {
+                return ['success' => false, 'message' => "Model class '{$post['modelClass']}' does not exist."];
+            } else{
+                $modelClassNamespace = $verClass; 
+            }
+            $items = $modelClassNamespace::find()->where([$post['field'] => $post['value']])->all();
+        }
+        return $items;
+    }
+
     // Generalized function to delete a model by ID
     public function actionRemoveModel($modelClass, $id)
     {
