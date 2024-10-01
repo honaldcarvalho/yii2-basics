@@ -23,10 +23,9 @@ class UploadFoto extends \yii\bootstrap5\Widget
   {
     PluginAsset::register(Yii::$app->view)->add(['cropper']);
     $config = Configuration::get();
-    $maxSize = $config->getParameters()->where(['name'=> 'max_upload_size'])->one();
-    if($maxSize !== null)
+    $maxSize = $config->getParameters()->where(['name' => 'max_upload_size'])->one();
+    if ($maxSize !== null)
       $this->maxSize = $maxSize->value;
-
   }
 
   /**$
@@ -34,10 +33,11 @@ class UploadFoto extends \yii\bootstrap5\Widget
    */
   public function run()
   {
+    $emptyImage = '/dummy/code.php?x=250x250/fff/000.jpg&text=NO IMAGE SELECTED';
     $showRemove = '';
     $assetDir = Yii::$app->assetManager->getPublishedUrl('@vendor/weebz/yii2-basics/src/themes/adminlte3/web/dist');
     if (empty($this->imagem)) {
-      $this->imagem = '/dummy/code.php?x=300x300/fff/000.jpg&text=NO IMAGE SELECTED';
+      $this->imagem = $emptyImage;
       $showRemove = 'd-none';
     }
 
@@ -161,7 +161,7 @@ class UploadFoto extends \yii\bootstrap5\Widget
       $('[data-toggle="tooltip"]').tooltip();
 
       btn_remove.addEventListener('click', function (e) {
-        banner.src = '{$assetDir}/img/no-image.png';
+        banner.src = '{$emptyImage}';
         file_field.files = null;
         remove.value = 1;
       });
@@ -280,7 +280,8 @@ class UploadFoto extends \yii\bootstrap5\Widget
     \Yii::$app->view->registerJs($script, View::POS_END);
 
     $html = <<<HTML
-        <div class="row">
+        <div class="card">
+          <div class="card-body">
 
             <div id='overlay-foto' class='overlay' style='display:none;height: 100%;position: absolute;width: 100%;z-index: 3000;top: 0;left: 0;background: #0000004f;'>
                 <div class='d-flex align-items-center'>
@@ -289,18 +290,24 @@ class UploadFoto extends \yii\bootstrap5\Widget
                 </div>
             </div>
 
-            <div class="col-sm-12 text-center pb-2">
+            <div class="col-sm-12 text-center pb-1">
                 <img class="rounded" id="photo_x" src="$this->imagem" style="max-width:600px;" alt="banner">
             </div>
-            <div class="col-md-12 text-center pb-2">
-                <label class="label-file w-10 btn-weebz" data-toggle="tooltip" title="Selecione a Imagem">
+
+            <div class="col-sm-12 text-center pb-1">
+                <label class="label-file w-10 btn-weebz" style="width:250px;" data-toggle="tooltip" title="Selecione a Imagem">
                    <i class="fas fa-file-upload"></i> Selecione a Imagem
                    <input type="file" class="sr-only" id="image_upload_x" name="image_upload_x" accept="image/*">
                    <input type="file" class="sr-only" id="$this->fileField" name="$this->fileName" accept="image/*">
                    <input type="hidden" id="remove" name="remove" value="0">
                 </label>
-                <a href="javascript:;" id="btn-remove" class="btn label-file w-10 btn-danger {$showRemove}"><i class="fas fa-trash"></i> Remover</a>
             </div>
+
+            <div class="col-sm-12 text-center pb-2">
+                <a href="javascript:;" id="btn-remove"  style="width:250px;" class="btn label-file btn-danger {$showRemove}"><i class="fas fa-trash"></i> Remover</a>
+            </div>
+
+          </div>
         </div>
 
         <div class="modal fade" id="modal" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static" aria-labelledby="modalLabel" aria-hidden="true">
@@ -314,7 +321,7 @@ class UploadFoto extends \yii\bootstrap5\Widget
               </div>
               <div class="modal-body" style="height:500px!importante">
                 <div class="img-container">
-                  <img id="image_x" src="/dummy/code.php?x=300x300/fff/000.jpg&text=NO IMAGE SELECTED">
+                  <img id="image_x" src="{$emptyImage}">
                 </div>
               </div>
               <div class="modal-footer">
