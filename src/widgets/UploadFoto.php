@@ -290,7 +290,7 @@ class UploadFoto extends \yii\bootstrap5\Widget
             </div>
 
             <div class="col-sm-12 text-center pb-2">
-                <img class="rounded" id="photo_x" src="$this->imagem" style="/dummy/code.php?x=300x300/fff/000.jpg&text=NO IMAGE SELECTED" alt="banner">
+                <img class="rounded" id="photo_x" src="$this->imagem" style="max-width:600px;" alt="banner">
             </div>
             <div class="col-md-12 text-center pb-2">
                 <label class="label-file w-10 btn-weebz" data-toggle="tooltip" title="Selecione a Imagem">
@@ -312,7 +312,7 @@ class UploadFoto extends \yii\bootstrap5\Widget
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
-              <div class="modal-body" style="max-size:600px!importante">
+              <div class="modal-body" style="height:500px!importante">
                 <div class="img-container">
                   <img id="image_x" src="/dummy/code.php?x=300x300/fff/000.jpg&text=NO IMAGE SELECTED">
                 </div>
