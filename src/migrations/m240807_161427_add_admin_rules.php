@@ -15,8 +15,8 @@ class m240807_161427_add_admin_rules extends Migration
 
         $this->insert('rules', [
             'group_id' => 2,
-            'controller' => 'weebz/controllers',
-            'path' => 'app',
+            'controller' => 'util',
+            'path' => 'weebz/controllers',
             'actions' => 'save-model;get-model;get-models;save-model;remove-model',
             'status'=>true
         ]);
