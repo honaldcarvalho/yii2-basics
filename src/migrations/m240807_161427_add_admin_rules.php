@@ -15,6 +15,14 @@ class m240807_161427_add_admin_rules extends Migration
 
         $this->insert('rules', [
             'group_id' => 2,
+            'controller' => 'custom',
+            'path' => 'app',
+            'actions' => 'save-model;get-model;get-models;save-model;remove-model',
+            'status'=>true
+        ]);
+
+        $this->insert('rules', [
+            'group_id' => 2,
             'controller' => 'site',
             'path' => 'app',
             'actions' => 'index;dashboard',
@@ -121,7 +129,7 @@ class m240807_161427_add_admin_rules extends Migration
             'group_id' => 2,
             'controller' => 'configuration',
             'path' => 'weebz/controllers',
-            'actions' => 'index;create;view;update;delete;add-parameter;get-parameter;save-parameter;remove-parameter',
+            'actions' => 'index;create;view;update;delete',
             'status'=>true
         ]);
 
