@@ -146,7 +146,7 @@ class ControllerCommon extends \yii\web\Controller
             } else{
                 $modelClassNamespace = $verClass; 
             }
-            $items = $modelClassNamespace::find()->where([$post['modelField'] => $post['value']])->all();
+            $items = $modelClassNamespace::find()->select("id,{$post['modelField']}")->where([$post['condition'], $post['modelField'] , $post['value']])->limit(20)->all();
         }
         return $items;
     }

@@ -37,7 +37,7 @@ class UploadFoto extends \yii\bootstrap5\Widget
     $showRemove = '';
     $assetDir = Yii::$app->assetManager->getPublishedUrl('@vendor/weebz/yii2-basics/src/themes/adminlte3/web/dist');
     if (empty($this->imagem)) {
-      $this->imagem = $assetDir . '/img/no-image.png';
+      $this->imagem = '/dummy/code.php?x=300x300/fff/000.jpg&text=NO IMAGE SELECTED';
       $showRemove = 'd-none';
     }
 
@@ -312,9 +312,9 @@ class UploadFoto extends \yii\bootstrap5\Widget
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
-              <div class="modal-body" style="height:500px!importante">
+              <div class="modal-body" style="max-size:600px!importante">
                 <div class="img-container">
-                  <img id="image_x" src="https://avatars0.githubusercontent.com/u/3456749">
+                  <img id="image_x" src="/dummy/code.php?x=300x300/fff/000.jpg&text=NO IMAGE SELECTED">
                 </div>
               </div>
               <div class="modal-footer">
