@@ -86,7 +86,7 @@ $config = [
             'showScriptName' => false,
             'enableStrictParsing' => false,
             'rules' => array_merge(
-                customControllersUrl(['controller','site','group','user','rule','language','source-message','message',
+                customControllersUrl(['util','site','group','user','rule','language','source-message','message',
                 'menu','params','configuration','meta-tag','email-service','license-type','license','log','folder','file',
                 'rest/storage','rest/auth','section','page','notification','notification-message','rest/mail'],'common'),
             [
