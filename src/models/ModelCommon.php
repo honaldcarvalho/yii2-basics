@@ -122,6 +122,9 @@ class ModelCommon extends \yii\db\ActiveRecord
                 [$field,$field_type] = $field_parts;
             }
 
+            if(!isset($params["{$className}"]))
+                continue;
+            
             foreach ($params["{$className}"] as $field => $search) {
 
                 $field_type = gettype($search);
