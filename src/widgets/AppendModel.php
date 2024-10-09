@@ -10,7 +10,49 @@ use yii\bootstrap5\Html;
 use yii\grid\GridView;
 use yii\web\View;
 use yii\widgets\Pjax;
-
+/**
+ Example:
+             <?= AppendModel::widget([
+                'title'=>'Instituições',
+                'attactModel'=>'Instituicao',
+                'controller'=>'instituicao',
+                'template' => '{status} {view} {remove}',
+                'order'=>true,
+                'orderField'=>'ordem',
+                'orderModel'=>'Instituicao',
+                'attactClass'=>'app\\models\\Instituicao',
+                'dataProvider' => new \yii\data\ActiveDataProvider([
+                    'query' => $model->getInstituicoes(),
+                ]),
+                'showFields'=>[
+                    'id',
+                    'titulo',
+                    'nome',
+                    'ordem',
+                    'status:boolean'
+                ],
+                'fields'=>
+                [
+                    [
+                        'name'=>'instituicao_secao_id',
+                        'type'=>'hidden',
+                        'value'=>$model->id
+                    ],
+                    [
+                        'name'=>'titulo',
+                        'type'=>'text'
+                    ],
+                    [
+                        'name'=>'nome',
+                        'type'=>'text'
+                    ],
+                    [
+                        'name'=>'status',
+                        'type'=>'checkbox'
+                    ],
+                ]
+            ]); ?>
+ */
 class AppendModel extends \yii\bootstrap5\Widget
 {
 
@@ -21,20 +63,27 @@ class AppendModel extends \yii\bootstrap5\Widget
     public $attactModel;
     public $childModel;
     public $childField;
+    public $path = 'app';
+    public $template = '{status}{view}{edit}{remove}';
     public $fields;
     public $showFields;
+    public $order = false;
+    public $orderField = 'order';
+    public $orderModel = null;
 
     public $removeUrl;
     public $getUrl;
     public $saveUrl;
+    public $random;
     /**
      * {@inheritdoc}
      */
     public function run()
     {
         $columns = [['class' => 'yii\grid\CheckboxColumn']];
-        $lower = strtolower($this->attactModel);
 
+        $lower = $this->controller;
+        $this->random = rand(10000,99999);
         $this->removeUrl = "/{$this->controller}/remove-model?modelClass={$this->attactModel}";
         $this->getUrl = "/{$this->controller}/get-model?modelClass={$this->attactModel}";
         $this->saveUrl = "/{$this->controller}/save-model?modelClass={$this->attactModel}";
@@ -43,9 +92,12 @@ class AppendModel extends \yii\bootstrap5\Widget
         array_push($columns,[
             'class'=> ActionColumn::class,
             'headerOptions' => ['style' => 'width:10%'],
-            'template' => '{view}{edit}{remove}',
-            'path' => 'app',
-            'controller' => 'file',
+            'template' => $this->template,
+            'path' =>  $this->path,
+            'controller' => $this->controller,
+            'order'=>$this->order,
+            'orderField'=> $this->orderField,
+            'orderModel'=>$this->orderModel,
             'buttons' => [
                 'remove' => function ($url, $model, $key) {
                     return Html::a('<i class="fas fa-trash"></i>','javascript:;',
@@ -69,22 +121,6 @@ class AppendModel extends \yii\bootstrap5\Widget
         ]);
 
         $script = <<< JS
-            let modal = null;
-
-            $(function(){
-                modal = new bootstrap.Modal(document.getElementById('save-{$lower}'), {
-                    keyboard: true
-                });
-            });
-
-            function clearForms()
-            {
-                document.getElementById("form-{$lower}").reset();
-                $(':input').not(':button, :submit, :reset, :hidden, :checkbox, :radio').val('');
-                $('#btn-add-translate').prop('disabled',false);
-                $('select').val(null).trigger('change');
-                return true;
-            }
             
             function save{$this->attactModel}(){
                 $('#overlay-form-{$lower}').show();
@@ -97,11 +133,11 @@ class AppendModel extends \yii\bootstrap5\Widget
                 }).done(function(response) {       
                     if(response.success) {
                         toastr.success("Save!");
-                        modal.hide();
+                        modal_{$this->attactmodel}.hide();
+                        $.pjax.reload({container: "#grid-{$this->controller}", async: false});
                     } else {
                         toastr.error("Error on save!");
                     }
-                    $.pjax.reload({container: "#list-{$lower}-grid", async: true});
                 }).fail(function (response) {
                     toastr.error("Error on add!");
                 }).always(function (response) {
@@ -141,7 +177,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                                 el.val(value);
                             }
                         });
-                        modal.show();
+                        modal_{$this->attactmodel}.show();
                     }
                 }).fail(function (response) {
                     toastr.error("Error on remove {$lower}!");
@@ -149,7 +185,6 @@ class AppendModel extends \yii\bootstrap5\Widget
                     object.removeClass('fas fa-sync fa-spin');
                     object.attr('class',old_class);
                 });
-
             }
 
             function remove{$this->attactModel}(e) {
@@ -171,7 +206,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                             return false;
                         }
                         toastr.success("Removed!");
-                        $.pjax.reload({container: "#list-{$lower}-grid", async: true});
+                        $.pjax.reload({container: "#grid-{$this->controller}", async: false});
                     }).fail(function (response) {
                         toastr.error("Error on remove {$lower}!");
                     }).always(function (response) {
@@ -196,7 +231,7 @@ class AppendModel extends \yii\bootstrap5\Widget
         \Yii::$app->view->registerJs($script,View::POS_END);
         $field_str = '';
 
-        $button = Html::a('<i class="fas fa-plus-square"></i> Novo', 'javascript:modal.show();clearForms();', ['class' => 'btn btn-success','id'=>'btn-show-{$lower}']);
+        $button = Html::a('<i class="fas fa-plus-square"></i> Novo', "javascript:modal_{$this->attactmodel}.show();clearForms();", ['class' => 'btn btn-success','id'=>"btn-show-{$lower}"]);
         $button_save = Yii::t('app', "Save");
         $button_cancel = Yii::t('app', 'Cancel');
         $begin = <<< HTML
@@ -206,7 +241,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="staticBackdropLabel">{$this->title}</h5>
-                            <button type="button" class="btn-close" onclick="javascript:modal.hide();" aria-label="Close"></button>
+                            <button type="button" class="btn-close" onclick="javascript:modal_{$this->attactmodel}.hide();" aria-label="Close"></button>
                         </div>
                         <div id="overlay-form-{$lower}" class="overlay" style="height: 100%;position: absolute;width: 100%;z-index: 3000;display:none;top:0;left:0;">
                             <div class="fa-3x">
@@ -220,7 +255,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                         </div>
 
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" onclick="javascript:modal.hide();"> {$button_cancel} </button>
+                            <button type="button" class="btn btn-secondary" onclick="javascript:modal_{$this->attactmodel}.hide();"> {$button_cancel} </button>
                             <button id="btn-save-{$lower}" onclick="save{$this->attactModel}()" type="button" class="btn btn-success"><i class="fas fa-plus-circle mr-2 icon"></i> {$button_save} </button>
                         </div>
                     </div>
@@ -241,14 +276,17 @@ class AppendModel extends \yii\bootstrap5\Widget
                 $field_str .=  $form->field($model, $field['name'])->hiddenInput(['id'=> "{$lower}-{$field['name']}",'maxlength' => true,'value'=> $field['value']])->label(false);
             else if($field['type'] == 'checkbox')
                 $field_str .=  $form->field($model, $field['name'])->checkbox(['id'=> "{$lower}-{$field['name']}",]) ;
-            else if($field['type'] == 'dropdown')
-                $field_str .=  $form->field($model, $model, $field['name'])->widget(\kartik\select2\Select2::classname(), [
+            else if($field['type'] == 'dropdown'){
+                $field_str .=  $form->field($model, $field['name'])->widget(\kartik\select2\Select2::class, [
                     'data' =>  $field['value'],
                     'options' => ['multiple' => false, 'placeholder' => Yii::t('*','Select'),'id'=> "{$lower}-{$field['name']}",],
                     'pluginOptions' => [
-                        'allowClear' => true
+                        'allowClear' => true,
+                        'width'=>'100%'
                     ],
                 ]);
+            }
+
 
             $field_str .= '</div>';
         }
@@ -257,7 +295,7 @@ class AppendModel extends \yii\bootstrap5\Widget
         echo $end;
 
         $gridView = GridView::widget([
-                        'id' => 'grid-files',
+                        'id' => "grid-{$lower}",
                         'dataProvider' =>  $this->dataProvider,
                         'columns' => $columns
                     ]);
@@ -278,7 +316,7 @@ class AppendModel extends \yii\bootstrap5\Widget
     
                             <div id='overlay-{$lower}' class='overlay' style='display:none;height: 100%;position: absolute;width: 100%;z-index: 3000;top: 0;left: 0;background: #0000004f;'>
                                 <div class='d-flex align-items-center'>
-                                    <strong> <?= Yii::t('app', 'Loading...') ?></strong>
+                                    <strong> Loading... </strong>
                                     <div class='spinner-border ms-auto' role='status' aria-hidden='true'></div>
                                 </div>
                             </div>
@@ -293,7 +331,6 @@ class AppendModel extends \yii\bootstrap5\Widget
     
             </div>
         HTML;
-
 
         echo $head;
         Pjax::begin(['id' => "list-{$lower}-grid"]);

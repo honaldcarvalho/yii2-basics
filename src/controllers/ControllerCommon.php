@@ -2,7 +2,7 @@
 
 namespace weebz\yii2basics\controllers;
 
-
+use weebz\yii2basics\controllers\rest\StorageController;
 use weebz\yii2basics\models\Log;
 use weebz\yii2basics\models\Configuration;
 use Yii;
@@ -92,6 +92,72 @@ class ControllerCommon extends \yii\web\Controller
         return null;
     }
 
+    public function actionStatus($id)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $model = $this->findModel($id);
+        $model->status == 0 ? $model->status = 1 : $model->status = 0;
+        $model->save();
+        return ['success'=> $model->save(), 'result'=> $model->getErrors()];
+    }
+
+    public function actionRemove($id)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $model = $this->findModel($id);
+
+        if($model !== null){
+            if (method_exists($model, 'getFile')) {
+                $file = $model->getFile()->one();
+                if($file !== null){
+                    StorageController::removeFile($file->id);
+                }
+            }            
+            if (method_exists($model, 'getFiles')) {
+                $files = $model->getFiles()->all();
+                if($file !== null){
+                    StorageController::removeFile($file->id);
+                }
+                foreach($files as $file){
+                    StorageController::removeFile($file->id);
+                }
+            }    
+            $result = $model->delete();
+        }
+
+        return ['success'=> $result, 'result'=> $model->getErrors()];
+    }
+
+    public function actionDelete($id)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $model = $this->findModel($id);
+        $this->goBack();
+        if($model !== null){
+            if (method_exists($model, 'getFile')) {
+                $file = $model->getFile()->one();
+                if($file !== null){
+                    StorageController::removeFile($file->id);
+                }
+            }            
+            if (method_exists($model, 'getFiles')) {
+                $files = $model->getFiles()->all();
+                if($file !== null){
+                    StorageController::removeFile($file->id);
+                }
+                foreach($files as $file){
+                    StorageController::removeFile($file->id);
+                }
+            }    
+            $model->delete();
+            return $this->redirect(['index']);
+        }
+        $this->goBack();
+
+    }
+
     // Generalized function to save or update a model
     public function actionSaveModel($modelClass)
     {   
@@ -161,6 +227,35 @@ class ControllerCommon extends \yii\web\Controller
             $modelClassNamespace = $verClass; 
         }
         return $modelClassNamespace::findOne($id)->delete();
+    }
+
+    public function actionOrderModel()   {
+        $items = [];
+        $resuts = [];
+
+        if (Yii::$app->request->isPost) {
+
+            $post = \Yii::$app->request->post();
+            $items = $post['items'];
+            $field = $post['field'];
+
+            $verClass = self::classExist($post['modelClass']);
+
+            if ($verClass === null) {
+                return ['success' => false, 'message' => "Model class '{$post['modelClass']}' does not exist."];
+            } else{
+                $modelClassNamespace = $verClass; 
+            }
+
+            foreach ($items as $key => $value) {  
+                $model = $modelClassNamespace::find()->where(['id'=>$value])->one();
+                $model->{$field} =  $key + 1;
+                $resuts[$value] = ['save'=>$model->save(),'model'=>$model,'key'=>$key + 1];
+            }
+            
+        }
+
+        return \yii\helpers\Json::encode(['atualizado'=>$resuts]);
     }
 
     public static function error($th)

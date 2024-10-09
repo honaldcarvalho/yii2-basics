@@ -18,6 +18,7 @@ class UploadFoto extends \yii\bootstrap5\Widget
   public $type = ' image/*';
   public $view;
   public $maxSize = 2;
+  public $maxWidth = 1000;
 
   public function init()
   {
@@ -49,6 +50,7 @@ class UploadFoto extends \yii\bootstrap5\Widget
     }
 
     $script = <<<JS
+      var tmp_file = null;
       var banner = document.getElementById('photo_x');
       var remove = document.getElementById('remove');
       var btn_remove = document.getElementById('btn-remove');
@@ -66,6 +68,7 @@ class UploadFoto extends \yii\bootstrap5\Widget
      */
     function compressImage(file, maxSize) {
       return new Promise((resolve, reject) => {
+        //resolve(file);
         const reader = new FileReader();
 
         // Load the image file
@@ -83,7 +86,7 @@ class UploadFoto extends \yii\bootstrap5\Widget
             let height = img.height;
 
             // Scale down the image dimensions if needed
-            const maxDimension = 1000; // Max dimension (width or height) after scaling
+            const maxDimension = {$this->maxWidth}; // Max dimension (width or height) after scaling
             if (width > maxDimension || height > maxDimension) {
               if (width > height) {
                 height = Math.floor((height * maxDimension) / width);
@@ -172,15 +175,16 @@ class UploadFoto extends \yii\bootstrap5\Widget
         var files = e.target.files;
 
         if (files && files.length > 0) {
-          file = files[0];
+          tmp_file = files[0];
+
           const maxSizeInBytes = {$this->maxSize} * 1024 * 1024;
-          if (files[0].type == 'image/png' && files[0].size > maxSizeInBytes) {
+          if (tmp_file.type == 'image/png' && tmp_file.size > maxSizeInBytes) {
             $('#overlay-foto').hide();
             alert('Image exceeds {$this->maxSize}MB limit.');
             return false;
-          } else if(files[0].type == 'image/png') {
+          } else if(tmp_file.type == 'image/png') {
       
-            encodeImageFileAsURL(file,image).then((blob) => {
+            encodeImageFileAsURL(tmp_file,image).then((blob) => {
               modal.modal('show');
               $('#overlay-foto').hide();
             }).catch((error) => {
@@ -190,15 +194,15 @@ class UploadFoto extends \yii\bootstrap5\Widget
             
           }else{
 
-            compressImage(files[0]).then((blob) => {
-              let file_compressed = new File([blob], "imagem.jpg", { type: "image/jpeg", lastModified: new Date().getTime() });
+            compressImage(tmp_file).then((blob) => {
+
+              let file_compressed = new File([blob], tmp_file.name , { type: tmp_file.type, lastModified: new Date().getTime() });
               let container = new DataTransfer();
               container.items.add(file_compressed);
+              file_field.value = '';
               file_field.files = container.files;
               image.src = URL.createObjectURL(blob);
               modal.modal('show');
-              console.log(image.src);
-              console.log(formatFileSize(blob.size));
               $('#overlay-foto').hide();
               return true;
             }).catch((error) => {
@@ -206,8 +210,8 @@ class UploadFoto extends \yii\bootstrap5\Widget
               alert(error);
               return false;
             });
-            
           }
+
         }
 
       });
@@ -233,16 +237,30 @@ class UploadFoto extends \yii\bootstrap5\Widget
       document.getElementById('crop').addEventListener('click', function () {
         var initialAvatarURL;
         var canvas;
-
+        $('#overlay-foto').show();
         if (cropper) {
+
           canvas = cropper.getCroppedCanvas();
           initialAvatarURL = banner.src;
           banner.src = canvas.toDataURL();
-          canvas.toBlob(function (blob) {
-            let file = new File([blob], "imagem.jpg", { type: "image/jpeg", lastModified: new Date().getTime() });
-            let container = new DataTransfer();
-            container.items.add(file);
-            file_field.files = container.files;
+
+          canvas.toBlob(function (blob) {            
+            let file = new File([blob], tmp_file.name, { type: blob.type, lastModified: new Date().getTime() });
+            compressImage(file).then((blob) => {
+              let file_compressed = new File([blob], tmp_file.name, { type: blob.type, lastModified: new Date().getTime() });
+              let container = new DataTransfer();
+              container.items.add(file_compressed);
+              file_field.value = '';
+              file_field.files = container.files;
+              image.src = URL.createObjectURL(blob);
+              $('#overlay-foto').hide();
+              return true;
+            }).catch((error) => {
+              $('#overlay-foto').hide();
+              alert(error);
+              return false;
+            });
+
           });
         }
         cropper.destroy();

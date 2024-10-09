@@ -2,12 +2,12 @@
 
 namespace weebz\yii2basics\widgets;
 
+use weebz\yii2basics\models\File;
 use yii\base\Widget;
 use yii\helpers\Html;
 use yii\web\View;
-use yii\bootstrap5\BootstrapAsset;
-use yii\web\JqueryAsset;
 use weebz\yii2basics\models\Folder;
+use weebz\yii2basics\themes\adminlte3\assets\PluginAsset;
 use yii\helpers\ArrayHelper;
 
 class SelectFile extends Widget
@@ -15,7 +15,9 @@ class SelectFile extends Widget
     /**
      * defines the element that will receive the selected file
     * */
-    public $field = '#file_id';
+    public $field_id = '#file_id';
+
+    public $model_field = 'file_id';
     
     public $folder_id = '';
     /**
@@ -61,7 +63,6 @@ class SelectFile extends Widget
     public function run()
     {
         
-        $url = \Yii::getAlias('@web');
 
         $preview = "/preview.jpg";
         $select = \Yii::t('app','Select');
@@ -70,48 +71,55 @@ class SelectFile extends Widget
         $extensions = '"'.implode('","',$this->extensions).'"';
         $this->random = rand(10000,99999);
 
-        \Yii::$app->view->registerJsFile(
-            '/plugins/datatables/jquery.dataTables.min.js',
-            ['depends' => [JqueryAsset::class]]
-        );
+        $thumb =  '';
+        $show_clear  = 'block';
+        $show_select  = 'none';
+        $show_thumb  = 'none';
+        $preview_description = '';
+        
+        if(isset($this->model)){
 
-        \Yii::$app->view->registerCssFile("/plugins/datatables/datatables.min.css", [
-            'depends' => [BootstrapAsset::class],
-        ], 'datatables');
-        $table ='
+            if($this->mode == 'id'){
+                $file = File::findOne($this->model->{$this->model_field});
+                $show_thumb  =  (!empty($thumb) && $this->preview_image) ? 'block' : 'none';
+                if($file === null){
+                    $show_select  = 'block';
+                    $show_clear = 'none';
+                } else {
+                    $preview_description = $file->description ?? $file->name;
+                    $thumb = $file->urlThumb ?? '';
+                }
+            }
+        }
+
+        PluginAsset::register(\Yii::$app->view)->add(['datatables','jquery-cropper']);
+        
+        $dropdown_folder = Html::dropDownList("{$this->random}-select_folder_id",null,ArrayHelper::map(Folder::find()->asArray()->all(), 
+        'id', 'name'), ['prompt' =>\Yii::t('app','-- Folder --'),'class'=>'form-control','id'=>"{$this->random}-select_folder_id"]);
+
+        $table = <<< HTML
         <div class="row mb-5 search-form">
-            <div class="col-md-1">
-                '. UploadFiles::widget(['folder_el'=>'#select_folder_id',
-                'extensions'=>$this->extensions,
-                'show_list'=>1,
-                'auto'=>$this->auto_upload,
-                'file_list_el'=>$this->file_list_el,
-                'onstart'=>'$("#'. $this->random.$this->file_list_el.'").show();$(".search-form").hide();',
-                'callback'=>'$("#'. $this->random.$this->file_list_el.'").hide();$(".search-form").show();getData();',
-                'random'=>   $this->random 
-                ]) .'
-            </div>
             <div class="col-md-8">
-                <input class="form-control" type="search" placeholder="'.\Yii::t('app','Search').'" aria-label="'.\Yii::t('app','Search').'" id="str_search">
+                <input class="form-control" type="search" placeholder="Search" aria-label="Search" id="{$this->random}-str_search">
             </div>
             <div class="col-md-2">
-                '.Html::dropDownList('select_folder_id',null,ArrayHelper::map(Folder::find()->asArray()->all(), 
-            'id', 'name'), ['prompt' =>\Yii::t('app','-- Folder --'),'class'=>'form-control','id'=>'select_folder_id']).'
+                {$dropdown_folder}
             </div>
             <div class="col-md-1">
                 <a class="btn btn-outline-success my-2 my-sm-0" id="search"  href="javascript:;"><i class="fas fa-search"></i></a>
             </div>
         </div>
 
-        <table class="table" id="data_table">
+        <table class="table" id="{$this->random}-data_table">
             <thead>
                 <tr>
-                    <th scope="col">'.\Yii::t('app','Description').'</th>
+                    <th scope="col">Description</th>
                     <th scope="col">Preview</th>
                     <th scope="col"></th>
                 </tr>
             </thead>
-        <tbody class="overflow-y-scroll h-50" ></tbody></table>';
+        <tbody class="overflow-y-scroll h-50" ></tbody></table>
+        HTML;
 
         $script = <<< JS
 
@@ -119,8 +127,9 @@ class SelectFile extends Widget
             var count = 0;
             var total_resutados = 0;
             var files = [];
+            var modal_list_files = $('#{$this->random}-modal-list-files');
 
-            $('#btn-load').click(function() {
+            $('#{$this->random}-btn-load').click(function() {
                 if(count <= total_resutados){
                     $(this).html('Loading...');
                     $(this).prop('disabled', true);
@@ -150,43 +159,43 @@ class SelectFile extends Widget
                 });
   
                 if('$this->mode' == 'id'){
-                    $('$this->field').val(selected.id);
+                    $('$this->field_id').val(selected.id);
                 }else{
-                    $('$this->field').val(selected.url);
+                    $('$this->field_id').val(selected.url);
                 }
                 $this->onSelect
-                $('#file_preview_description').html(selected.description);
+                $('#{$this->random}-file_preview_description').html(selected.description);
 
                 if('$this->preview_image' == 1){
                     $('#$this->preview_image_el').attr('src',selected.urlThumb);
                 }
-                $('#$this->preview_image_el').show();
-                $('#btn-select-file').hide();
-                $('#btn-clear-file').show();
-                $('#modal-files').modal('toggle');
+                if('$show_thumb' == 'block'){
+                    $('#$this->preview_image_el').show();
+                }
+                $('#{$this->random}-btn-select-file').hide();
+                $('#{$this->random}-btn-clear-file').show();
+                modal_list_files.modal('hide');
             }
                 
             function clearFile(){
-
-                $('$this->field').val('');
-                $('#btn-select-file').show();
-                $('#file_preview_description').html('');
+                $('$this->field_id').val('');
+                $('#{$this->random}-btn-select-file').show();
+                $('#{$this->random}-file_preview_description').html('');
                 $('#$this->preview_image_el').hide();
-                $('#btn-clear-file').hide();
-                
+                $('#{$this->random}-btn-clear-file').hide();
             }
 
-            function getData(){
+            function getData(action){
+                if(action == 'search')
+                    count = 0;
                 var descricao;
                 var data = {       
-                    "folder_id": $("#select_folder_id").val(),
-                    "str_search": $("#str_search").val(),
+                    "folder_id": $("#{$this->random}-select_folder_id").val(),
+                    "str_search": $("#{$this->random}-str_search").val(),
                     "extensions": [$extensions],
                     "count":count
                 };
-
-                $('#overlay-search-file').show();
-
+                $('#{$this->random}-overlay-search-file').show();
                 $.ajax({
                     url: "/file/list",
                     type: 'POST',
@@ -194,34 +203,33 @@ class SelectFile extends Widget
                     data:data
                 }).done(function(dados){
                     files = dados;
-                    $('#overlay-search-file').hide();
-                    reloadDataTable(dados);
+                    $('#{$this->random}-overlay-search-file').hide();
+                    reloadDataTable(dados,action);
                     total_resutados = dados.length;
                     if(total_resutados >= 10){
-                        $('#btn-load').show();
+                        $('#{$this->random}-btn-load').show();
                     }
                 });
             }
 
             function reloadDataTable(dados){
-
                 if(table !== null) {
                     table.destroy();
                     table = null;
                 }
 
                 if(count == 0)
-                    $('#data_table tbody').html('');
+                    $('#{$this->random}-data_table tbody').html('');
                 
                 $.each(dados, function(i, file) {
                     var tr = $('<tr>').append(
                         $('<td>').text(file.description),
                         $('<td>').html(file.urlThumb.length > 0 ? '<img width="100" src="'+file.urlThumb+'" />' : '<img width="250" src="https://dummyimage.com/250x100/cfcfcf/000000&text=NO+PREVIEW" />' ),
                         $('<td>').html('<a class="btn btn-warning" href="javascript:selectFile('+file.id+');"> $select </a>'),
-                    ).appendTo('#data_table tbody');                    
+                    ).appendTo('#{$this->random}-data_table tbody');                    
                 });
                 
-                table = $('#data_table').DataTable({
+                table = $('#{$this->random}-data_table').DataTable({
                     'fixedHeader': true,
                     'lengthMenu': [ [10, 50, 100, -1], [10, 25, 100, '$all' ] ],
                     'ordering': false,
@@ -229,73 +237,65 @@ class SelectFile extends Widget
                     'search': false
                 });
 
-                $('#btn-load').html("$load");
-                $('#btn-load').prop('disabled', false);
+                $('#{$this->random}-btn-load').html("$load");
+                $('#{$this->random}-btn-load').prop('disabled', false);
 
             }
 
             $(function(){
-                getData();
-                $("#select_folder_id").val($this->folder_id);
+                getData('list');
+                $("#{$this->random}-select_folder_id").val($this->folder_id);
                 $('#search').click(function(){
-                    getData();
+                    getData('search');
                 });
             });
         JS;
         \Yii::$app->view->registerJs($script, View::POS_END);
         
-        $thumb =  '';
-        $show_thumb  = 'none';
-        $show_select  = 'none';
-        $preview_description = '';
-        
-        if(isset($this->model)){
+        $preview = <<< HTML
+        <div class='row'>
+            <img style='display:{$show_thumb};width:250px'; src='{$thumb}' id='{$this->preview_image_el}'>
+            <p>
+                <label id='{$this->random}-file_preview_description'>{$preview_description}</label>
+            </p>
+        </div>
+        HTML;
 
-            $preview_description = $this->model->file->description ?? '';
-            $thumb = $this->model->file->urlThumb ?? '';
-            
-            if(!empty($thumb)){
-                $thumb = "$thumb";
-            }
-            $show_thumb  = $this->model->file ? 'block' : 'none';
-            $show_select  = !$this->model->file ? 'block' : 'none';
-        }
+        $buttons = <<< HTML
+        <div class='row'>
+            <a style='display:{$show_select}'; id='{$this->random}-btn-select-file'class='btn btn-primary' onclick="javascript:modal_list_files.modal('show');">Select File</a>
+            <a style='display:{$show_clear}';  id='{$this->random}-btn-clear-file' class='btn btn-default' href='javascript:clearFile();'>Clear File</a>
+        </div>
+        HTML;
         
-        $preview = "<div class='row'><img style='display:{$show_thumb};width:250px'; src='{$thumb}' id='{$this->preview_image_el}'>"
-        . "<p><label id='file_preview_description'>{$preview_description}</label></p>"
-        ."</div>";
-
-        $buttons = "<div class='row'>"
-        ."<a style='display:{$show_select}'; id='btn-select-file'class='btn btn-primary'  data-toggle='modal' data-target='#modal-files'> ". \Yii::t('app','Select File'). "</a>"
-        ."<a style='display:{$show_thumb}';  id='btn-clear-file' class='btn btn-default' href='javascript:clearFile();'>". \Yii::t('app','Clear File'). "</a>"
-        ."</div>";
-        
-        $modal = "<div class='modal fade' id='modal-files'>
+        $modal = <<< HTML
+        <div class='modal fade' id='{$this->random}-modal-list-files'>
             <div class='modal-dialog modal-xl'>
                 <div class='modal-content'>
-                    <div id='overlay-search-file' class='overlay' style='height: 100%;position: absolute;width: 100%;z-index: 3000;top: 0;left: 0;background: #0000004f;'>
+                    <div id='{$this->random}-overlay-search-file' class='overlay' style='height: 100%;position: absolute;width: 100%;z-index: 3000;top: 0;left: 0;background: #0000004f;'>
                         <div class='d-flex align-items-center'>
-                        <strong> ". \Yii::t('app','Loading...'). "</strong>
+                        <strong>Loading...</strong>
                         <div class='spinner-border ms-auto' role='status' aria-hidden='true'></div>
                         </div>
                     </div>
                     <div class='modal-header'>
-                        <h5 class='modal-title'>". \Yii::t('app','File List'). "</h5>
-                        <button type='button' class='btn-close' data-dismiss='modal' aria-label=' ". \Yii::t('app','Close'). "'></button>
+                        <h5 class='modal-title'>File List</h5>
+                        <button type='button' class='btn-close' data-dismiss='modal' aria-label='Close'></button>
                     </div>
                     <div class='modal-body position-relative'>
                         <div class='row' id='{$this->random}{$this->file_list_el}'>
                         </div>
                         {$table}
                         <div class='d-flex justify-content-center'>
-                            <button id='btn-load' class='btn btn-success' type='button' style='display:none;'>
-                            ". \Yii::t('app','Load more'). "
+                            <button id='{$this->random}-btn-load' class='btn btn-success' type='button' style='display:none;'>
+                            Load more
                             </button>
                         </div>  
                     </div>
                 </div>
             </div>
-        </div>";
+        </div>
+        HTML;
 
         return $preview.$buttons.$modal;
     }

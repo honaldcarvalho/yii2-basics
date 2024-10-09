@@ -32,6 +32,10 @@ class PluginAsset extends AssetBundle
             'css' => 'cropperjs/css/cropper.css',
             'js' => 'cropperjs/js/cropper.js',
         ],
+        'datatables' => [
+            'css' => 'datatables/datatables.min.css',
+            'js' => 'datatables/jquery.dataTables.min.js',
+        ],
         'cropper' => [
             'css' => 'cropper/cropper.min.css',
             'js' => 'cropper/cropper.min.js',
@@ -61,7 +65,9 @@ class PluginAsset extends AssetBundle
             'js' => 'fancybox5/fancybox.umd.js',
         ],
         'fontawesome' => [
-            'css' => 'fontawesome-free/css/all.min.css'
+            'css' => 'fontawesome-free/css/brands.min.css',
+            'css' => 'fontawesome-free/css/regular.min.css',
+            'css' => 'fontawesome-free/css/solid.min.css',
         ],
         'sweetalert2' => [
             'css' => 'sweetalert2-theme-bootstrap-4/bootstrap-4.min.css',
