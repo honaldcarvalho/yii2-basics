@@ -537,5 +537,52 @@ class ControllerCommon extends \yii\web\Controller
         return $diff;
     }
 
+    static function remove_emoji($string)
+    {
+        // Match Enclosed Alphanumeric Supplement
+        $regex_alphanumeric = '/[\x{1F100}-\x{1F1FF}]/u';
+        $clear_string = preg_replace($regex_alphanumeric, '', $string);
     
+        // Match Miscellaneous Symbols and Pictographs
+        $regex_symbols = '/[\x{1F300}-\x{1F5FF}]/u';
+        $clear_string = preg_replace($regex_symbols, '', $clear_string);
+    
+        // Match Emoticons
+        $regex_emoticons = '/[\x{1F600}-\x{1F64F}]/u';
+        $clear_string = preg_replace($regex_emoticons, '', $clear_string);
+    
+        // Match Transport And Map Symbols
+        $regex_transport = '/[\x{1F680}-\x{1F6FF}]/u';
+        $clear_string = preg_replace($regex_transport, '', $clear_string);
+        
+        // Match Supplemental Symbols and Pictographs
+        $regex_supplemental = '/[\x{1F900}-\x{1F9FF}]/u';
+        $clear_string = preg_replace($regex_supplemental, '', $clear_string);
+    
+        // Match Miscellaneous Symbols
+        $regex_misc = '/[\x{2600}-\x{26FF}]/u';
+        $clear_string = preg_replace($regex_misc, '', $clear_string);
+    
+        // Match Dingbats
+        $regex_dingbats = '/[\x{2700}-\x{27BF}]/u';
+        $clear_string = preg_replace($regex_dingbats, '', $clear_string);
+    
+        return $clear_string;
+    }
+
+    static function stripEmojis($string) {
+        // Convert question marks to a special thing so that we can remove
+        // question marks later without any problems.
+        $string = str_replace("?", "{%}", $string);
+        // Convert the text into UTF-8.
+        $string = mb_convert_encoding($string, "ISO-8859-1", "UTF-8");
+        // Convert the text to ASCII.
+        $string = mb_convert_encoding($string, "UTF-8", "ISO-8859-1");
+        // Replace anything that is a question mark (left over from the conversion.
+        $string = preg_replace('/(\s?\?\s?)/', ' ', $string);
+        // Put back the .
+        $string = str_replace("{%}", "?", $string);
+        // Trim and return.
+        return trim($string);
+    }
 }

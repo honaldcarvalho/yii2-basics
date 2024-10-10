@@ -97,8 +97,6 @@ class ListFiles extends \yii\bootstrap5\Widget
                 $('#overlay-files').hide();
             });
     
-            Fancybox.bind("[data-fancybox]");
-    
         });
     JS;
 
@@ -148,26 +146,19 @@ class ListFiles extends \yii\bootstrap5\Widget
                                 'header' => 'Preview',
                                 'format' => 'raw',
                                 'value' => function ($data) {
-                                    if (!empty($data->urlThumb)) {
-                                        return Html::a(
-                                            "<img class='brand-image img-circle elevation-3' width='50' src='{$data->urlThumb}' />",
-                                            Yii::getAlias('@web') . $data->url,
-                                            ['class' => 'btn btn-outline-secondary', "data-fancybox " => "", "title" => \Yii::t('app', 'View')]
-                                        );
-                                    } else {
-                                        if($data->type == "image")
-                                            return Html::a(
-                                                "<img class='brand-image img-circle elevation-3' width='50' src='/dummy/code.php?x=150x150/fff/000.jpg&text=NO PREVIEW' />",
-                                                Yii::getAlias('@web') . $data->url,
-                                                ['class' => 'btn btn-outline-secondary', "data-fancybox " => "", "title" => \Yii::t('app', 'View')]
-                                            );
-                                        else
-                                            return Html::a(
-                                                "<img class='brand-image img-circle elevation-3' width='50' src='/dummy/code.php?x=150x150/fff/000.jpg&text=NO PREVIEW' />",
-                                                $data->url,
-                                                ['class' => 'btn btn-outline-secondary','data-type'=>'iframe', 'data-preload'=>"false", "data-fancybox " => "", "title" => \Yii::t('app', 'View')]
-                                            );
-                                    }
+                                    
+                                    $type = $data->type == 'doc' ? 'iframe' : '';
+                                    $url = $data->type == 'doc' ? 'https://docs.google.com/viewer?url=' .Yii::getAlias('@host') . $data->url : $data->url;
+                                    return Html::a(
+                                        "<img class='brand-image img-circle elevation-3' width='50' src='{$data->urlThumb}' />",
+                                        $url,
+                                        [
+                                            'class' => 'btn btn-outline-secondary', 
+                                            "data-fancybox" => "", 
+                                            "data-type"=>"{$type}", 
+                                            "title" => \Yii::t('app', 'View')
+                                        ]
+                                    );
                                 }
                             ],
                             [
