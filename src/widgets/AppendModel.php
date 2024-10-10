@@ -121,7 +121,13 @@ class AppendModel extends \yii\bootstrap5\Widget
         ]);
 
         $script = <<< JS
-            
+            let modal_{$this->attactModel} = null;
+
+            $(function(){
+                modal_{$this->attactModel} = new bootstrap.Modal(document.getElementById('save-{$lower}'), {
+                    keyboard: true
+                });
+            });
             function save{$this->attactModel}(){
                 $('#overlay-form-{$lower}').show();
                 var formData = $("#form-{$lower}").serialize();
@@ -133,7 +139,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                 }).done(function(response) {       
                     if(response.success) {
                         toastr.success("Save!");
-                        modal_{$this->attactmodel}.hide();
+                        modal_{$this->attactModel}.hide();
                         $.pjax.reload({container: "#grid-{$this->controller}", async: false});
                     } else {
                         toastr.error("Error on save!");
@@ -177,7 +183,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                                 el.val(value);
                             }
                         });
-                        modal_{$this->attactmodel}.show();
+                        modal_{$this->attactModel}.show();
                     }
                 }).fail(function (response) {
                     toastr.error("Error on remove {$lower}!");
@@ -231,7 +237,7 @@ class AppendModel extends \yii\bootstrap5\Widget
         \Yii::$app->view->registerJs($script,View::POS_END);
         $field_str = '';
 
-        $button = Html::a('<i class="fas fa-plus-square"></i> Novo', "javascript:modal_{$this->attactmodel}.show();clearForms();", ['class' => 'btn btn-success','id'=>"btn-show-{$lower}"]);
+        $button = Html::a('<i class="fas fa-plus-square"></i> Novo', "javascript:modal_{$this->attactModel}.show();clearForms();", ['class' => 'btn btn-success','id'=>"btn-show-{$lower}"]);
         $button_save = Yii::t('app', "Save");
         $button_cancel = Yii::t('app', 'Cancel');
         $begin = <<< HTML
@@ -241,7 +247,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="staticBackdropLabel">{$this->title}</h5>
-                            <button type="button" class="btn-close" onclick="javascript:modal_{$this->attactmodel}.hide();" aria-label="Close"></button>
+                            <button type="button" class="btn-close" onclick="javascript:modal_{$this->attactModel}.hide();" aria-label="Close"></button>
                         </div>
                         <div id="overlay-form-{$lower}" class="overlay" style="height: 100%;position: absolute;width: 100%;z-index: 3000;display:none;top:0;left:0;">
                             <div class="fa-3x">
@@ -255,7 +261,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                         </div>
 
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" onclick="javascript:modal_{$this->attactmodel}.hide();"> {$button_cancel} </button>
+                            <button type="button" class="btn btn-secondary" onclick="javascript:modal_{$this->attactModel}.hide();"> {$button_cancel} </button>
                             <button id="btn-save-{$lower}" onclick="save{$this->attactModel}()" type="button" class="btn btn-success"><i class="fas fa-plus-circle mr-2 icon"></i> {$button_save} </button>
                         </div>
                     </div>
@@ -331,6 +337,7 @@ class AppendModel extends \yii\bootstrap5\Widget
     
             </div>
         HTML;
+
 
         echo $head;
         Pjax::begin(['id' => "list-{$lower}-grid"]);

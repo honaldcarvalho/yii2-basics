@@ -100,6 +100,19 @@ class ControllerCommon extends \yii\web\Controller
         $model->save();
         return ['success'=> $model->save(), 'result'=> $model->getErrors()];
     }
+    
+    public static function listModels(){
+        $modelsPath = __DIR__ . '/../models'; // Caminho para o diretório de modelos
+        $files = scandir($modelsPath);
+        $models = [];
+        foreach ($files as $file) {
+            if (is_file($modelsPath . '/' . $file) && pathinfo($file, PATHINFO_EXTENSION) === 'php') {
+                $className = pathinfo($file, PATHINFO_FILENAME);
+                $models[$className] = $className;
+            }
+        }
+        return $models;
+    }
 
     public function actionRemove($id)
     {

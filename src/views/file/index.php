@@ -117,6 +117,7 @@ $delete_files_button[] =
                         'filterModel' => $searchModel,
                         'columns' => [
                             'id',
+                            'name',
                             [
                                 'header' => '',
                                 'format' => 'raw',

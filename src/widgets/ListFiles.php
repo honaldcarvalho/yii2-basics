@@ -146,9 +146,15 @@ class ListFiles extends \yii\bootstrap5\Widget
                                 'header' => 'Preview',
                                 'format' => 'raw',
                                 'value' => function ($data) {
+                                    $url = $data->url;
+                                    $type = '';
+                                    if($data->type == 'doc'){
+                                        if($data->extension != 'pdf'){
+                                            $url = 'https://docs.google.com/viewer?url=' .Yii::getAlias('@host') . $data->url;
+                                        }
+                                        $type = 'iframe';
+                                    }
                                     
-                                    $type = $data->type == 'doc' ? 'iframe' : '';
-                                    $url = $data->type == 'doc' ? 'https://docs.google.com/viewer?url=' .Yii::getAlias('@host') . $data->url : $data->url;
                                     return Html::a(
                                         "<img class='brand-image img-circle elevation-3' width='50' src='{$data->urlThumb}' />",
                                         $url,

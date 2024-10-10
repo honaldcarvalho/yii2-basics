@@ -34,7 +34,8 @@ $theme = Yii::$app->user->identity->theme;
     JS;
     $this->registerJs($script);
     ?>
-    
+
+
 </head>
 <body class="hold-transition sidebar-mini <?=$theme?>-mode">
 <?php $this->beginBody() ?>
