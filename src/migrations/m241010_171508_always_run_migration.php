@@ -12,7 +12,7 @@ class m241010_171508_always_run_migration extends Migration
      */
     public function safeUp()
     {
-
+        echo "m241010_171508_always_run_migration!!!!\n";
     }
 
     /**
