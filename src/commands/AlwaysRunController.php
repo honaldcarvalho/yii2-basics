@@ -1,6 +1,6 @@
 <?php 
 
-namespace weebz\yii2basics\commands;
+namespace app\commands;
 
 use m241010_171508_always_run_migration;
 use yii\console\Controller;
