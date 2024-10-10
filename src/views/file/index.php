@@ -136,18 +136,31 @@ $delete_files_button[] =
                             ],
                             'description',
                             //'path',
+                            'type',
                             [
+                                'headerOptions' => ['style' => 'width:10%'],
                                 'header' => 'Preview',
                                 'format' => 'raw',
                                 'value' => function ($data) {
-                                    if ($data->urlThumb) {
-                                        $url = Yii::getAlias('@web') . $data->urlThumb;
-                                        return Html::a("<img class='brand-image img-circle elevation-3' width='50' src='{$url}' />",Yii::getAlias('@web').$data->url,
-                                        ['class'=>'btn btn-outline-secondary',"data-fancybox "=>"", "title"=>\Yii::t('app','View')]);
-                                    } else {
-                                        return Html::a("<img class='brand-image img-circle elevation-3' width='50' src='/preview_square.jpg' />",Yii::getAlias('@web').$data->url,
-                                        ['class'=>'btn btn-outline-secondary',"data-fancybox "=>"", "title"=>\Yii::t('app','View')]);
+                                    $url = $data->url;
+                                    $type = '';
+                                    if($data->type == 'doc'){
+                                        if($data->extension != 'pdf'){
+                                            $url = 'https://docs.google.com/viewer?url=' .Yii::getAlias('@host') . $data->url;
+                                        }
+                                        $type = 'iframe';
                                     }
+                                    
+                                    return Html::a(
+                                        "<img class='brand-image img-circle elevation-3' width='50' src='{$data->urlThumb}' />",
+                                        $url,
+                                        [
+                                            'class' => 'btn btn-outline-secondary', 
+                                            "data-fancybox" => "", 
+                                            "data-type"=>"{$type}", 
+                                            "title" => \Yii::t('app', 'View')
+                                        ]
+                                    );
                                 }
                             ],
                             'extension',
