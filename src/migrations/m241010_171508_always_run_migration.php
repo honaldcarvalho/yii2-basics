@@ -1,5 +1,6 @@
 <?php
 
+namespace weebz\yii2basics\migrations;
 use yii\db\Migration;
 
 /**

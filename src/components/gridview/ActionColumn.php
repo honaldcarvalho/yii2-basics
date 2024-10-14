@@ -28,11 +28,16 @@ class ActionColumn extends \yii\grid\ActionColumn
      */
     public function init()
     {
-        $class_path = get_class($this->grid->filterModel);
-        $class_path_parts = explode('\\',$class_path);
-        $class_name = end($class_path_parts);
-        $this->model = $class_name;
-        $this->modelClass = $this->grid->filterModel;
+        if($this->grid->filterModel  !== null){
+            $class_path = get_class($this->grid->filterModel);
+            $class_path_parts = explode('\\',$class_path);
+            $class_name = end($class_path_parts);
+            $this->model = $class_name;
+            $this->modelClass = $this->grid->filterModel;
+        }
+
+        $this->grid->summaryOptions = ['class' => 'summary mb-2'];
+        $this->grid->pager = ['class' => 'yii\bootstrap5\LinkPager'];
         parent::init();
     }
 

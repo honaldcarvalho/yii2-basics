@@ -34,7 +34,11 @@ $config = [
          ]
     ],
     'components' => [
-
+        'session' => [
+            'timeout' => 120, //acá colocas el tiempo en segundos
+            'class' => 'yii\web\DbSession',
+            'sessionTable' => 'yii_session',
+        ],
         'view' => [
             'theme' => [
                 'basePath' => '@vendor/weebz/yii2-basics/src/themes/adminlte3',
@@ -78,7 +82,7 @@ $config = [
         
         'user' => [
             'identityClass' => '\weebz\yii2basics\models\User',
-            'enableAutoLogin' => true,
+            'enableAutoLogin' => false
         ],
 
         'urlManager' => [

@@ -12,6 +12,12 @@ use weebz\yii2basics\models\UserGroup;
 class AuthController extends ControllerRest {
 
     public $modelClass = 'weebz\yii2basics\models\User';
+    
+    public function init()
+    {
+        parent::init();
+        \Yii::$app->user->enableSession = false;
+    }
 
     public function behaviors()
     {

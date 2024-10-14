@@ -69,7 +69,12 @@ class YoutubeMedia extends ModelCommon
         ];
     }
 
-    static function get_channel_videos() {
+    static function get_channel_videos($log = true,$group_id = null) {
+
+        $results = [];
+
+        if($group_id === null)
+            $group_id = AuthController::userGroup();
 
         $videos = [];
         $channelId = Parameter::findOne(['name'=>'youtube_channelId']);

@@ -2,6 +2,9 @@
 
 namespace weebz\yii2basics\models;
 
+use weebz\yii2basics\controllers\AuthController;
+use weebz\yii2basics\controllers\ControllerCommon;
+
 /**
  * This is the model class for table "instagram_media".
  *
@@ -85,13 +88,6 @@ class InstagramMedia extends ModelCommon
     static public function refreshToken(){
         $parameter = Parameter::findOne(['name'=>'instagram_token']);
         
-        if($parameter === null){
-            $parameter = new Parameter();
-            $parameter->configuration_id = 1;
-            $parameter->name = 'instagram_token';
-            $parameter->value = 'IGQWRNbk1kUzRhRnNHRnVtTF9ET3FsZAUdqMWFfT3RZAQUhkNmdzaHFIQ19FUWpOSFY0UVF0VFVUaVY1WU0tQ19HRlZAIZAW9uNnVnQzJMMHdaY19CZAktMU1M4ckRZASXd0X3hhRDFVdEg0NkM4TzVOMnZA0ZAGZAGOVNWZAlkZD';
-        }
-
         $longLivedAccessToken = $parameter->value;
         $refreshUrl = 'https://graph.instagram.com/refresh_access_token?' . http_build_query([
             'grant_type' => 'ig_refresh_token',
@@ -124,16 +120,19 @@ class InstagramMedia extends ModelCommon
                 'fields' => 'id,caption,media_type,media_url,thumbnail_url,permalink,timestamp',
                 'access_token' => $instagram_token->value,
             ]);
-        
+
             $response = file_get_contents($mediaUrl);
         }
         return json_decode($response, true);
 
     }
 
-    static function saveMediaToDatabase($log = true) {
+    static function saveMediaToDatabase($log = true,$group_id = null) {
         $results = [];
-        $group_id = AuthController::userGroup();
+
+        if($group_id === null)
+            $group_id = AuthController::userGroup();
+
         $mediaData = self::fetchInstagramMedia();
         foreach ($mediaData['data'] as $media) {
             // Check if the media already exists in the database
@@ -143,7 +142,7 @@ class InstagramMedia extends ModelCommon
                 $newMedia = new InstagramMedia();
                 $newMedia->id = $media['id'];
                 $newMedia->group_id = $group_id;
-                $newMedia->caption = isset($media['caption']) ?  $this->stripEmojis($media['caption']) : '';
+                $newMedia->caption = isset($media['caption']) ?  ControllerCommon::stripEmojis($media['caption']) : '';
                 $newMedia->media_type = $media['media_type'];
                 $newMedia->media_url = $media['media_url'];
                 $newMedia->thumbnail_url = isset($media['thumbnail_url']) ? $media['thumbnail_url'] : null;
