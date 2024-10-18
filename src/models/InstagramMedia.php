@@ -136,37 +136,39 @@ class InstagramMedia extends ModelCommon
         $mediaData = self::fetchInstagramMedia();
         foreach ($mediaData['data'] as $media) {
             // Check if the media already exists in the database
+            $newMedia = new InstagramMedia();
             $existingMedia = InstagramMedia::findOne($media['id']);
-            if (!$existingMedia) {
-                // Create a new InstagramMedia record
-                $newMedia = new InstagramMedia();
-                $newMedia->id = $media['id'];
-                $newMedia->group_id = $group_id;
-                $newMedia->caption = isset($media['caption']) ?  ControllerCommon::stripEmojis($media['caption']) : '';
-                $newMedia->media_type = $media['media_type'];
-                $newMedia->media_url = $media['media_url'];
-                $newMedia->thumbnail_url = isset($media['thumbnail_url']) ? $media['thumbnail_url'] : null;
-                $newMedia->permalink = $media['permalink'];
-                $newMedia->timestamp = date('Y-m-d H:i:s', strtotime($media['timestamp']));
-    
-                // Save to database
-                if ($newMedia->save()) {
-                    if(!$log)
-                        $results[] = "Media {$media['id']} saved successfully.";
-                    else 
-                        echo "Media {$media['id']} saved successfully.\n";
-                } else {
-                    if(!$log)
-                        $results[] = "Failed to save media {$media['id']}.";
-                    else 
-                        echo "Failed to save media {$media['id']}.\n";
-                }
+            if ($existingMedia) {
+                $newMedia = $existingMedia;
+            }
+
+            $newMedia->id = $media['id'];
+            $newMedia->group_id = $group_id;
+            $newMedia->caption = isset($media['caption']) ?  ControllerCommon::stripEmojis($media['caption']) : '';
+            $newMedia->media_type = $media['media_type'];
+            $newMedia->media_url = $media['media_url'];
+            $newMedia->thumbnail_url = isset($media['thumbnail_url']) ? $media['thumbnail_url'] : null;
+            $newMedia->permalink = $media['permalink'];
+            $newMedia->timestamp = date('Y-m-d H:i:s', strtotime($media['timestamp']));
+
+            // Save to database
+            if ($newMedia->save()) {
+                if(!$log)
+                    $results[] = "Media {$media['id']} saved successfully.";
+                else 
+                    echo "Media {$media['id']} saved successfully.\n";
             } else {
                 if(!$log)
-                    $results[] = "Media {$media['id']} already exists.\n";
+                    $results[] = "Failed to save media {$media['id']}.";
                 else 
-                    echo "Media {$media['id']} already exists.\n";
+                    echo "Failed to save media {$media['id']}.\n";
             }
+
+            if(!$log)
+                $results[] = "Media {$media['id']} already exists.\n";
+            else 
+                echo "Media {$media['id']} already exists.\n";
+            
         }
 
         if(!$log)

@@ -13,7 +13,7 @@ class m241014_203014_create_yii_session_table extends Migration
     public function safeUp()
     {
         $this->createTable('{{%yii_session}}', [
-            'id' => $this->primaryKey(),
+            'id' => $this->char(40)->notNull()->append('PRIMARY KEY'),
             'expire' => $this->integer(11)->notNull(),
             'data' => $this->binary(),
         ]);
