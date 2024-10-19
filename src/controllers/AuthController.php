@@ -62,15 +62,18 @@ class AuthController extends ControllerCommon {
     static function userGroup()
     {
         $user_groups = [];
-        if(self::isGuest()) {
-            $user = self::getUserByToken();
-            if($user)
-                $user_groups = $user->getUserGroupsId();
-            return end($user_groups);
-        }else {
-            return Yii::$app->session->get('group')->id;
+
+        $authHeader = Yii::$app->request->getHeaders()->get('Authorization');
+        if (!$authHeader || !preg_match('/^Bearer\s+(.*?)$/', $authHeader, $matches)) {
+            if(self::isGuest())
+                return Yii::$app->session->get('group')->id;
         }
 
+        $user = self::getUserByToken();
+        if($user)
+            $user_groups = $user->getUserGroupsId();
+
+        return end($user_groups);
     }
 
     public static function inGroups($grupos)
