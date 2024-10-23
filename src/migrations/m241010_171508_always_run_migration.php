@@ -1,6 +1,6 @@
 <?php
 
-namespace weebz\yii2basics\migrations;
+//namespace weebz\yii2basics\migrations;
 use yii\db\Migration;
 
 /**
@@ -41,3 +41,4 @@ class m241010_171508_always_run_migration extends Migration
     }
     */
 }
+
