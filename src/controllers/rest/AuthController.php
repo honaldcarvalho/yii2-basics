@@ -34,12 +34,10 @@ class AuthController extends ControllerRest {
             $user = User::find()->where(['username'=>$post['login']])->orWhere(['email'=>$post['login']])->one();
             if ($user) {
 
-                $model = new LoginForm();
-                $model->username = $post['login'];
-                $model->password = $post['password'];
+                $user->username = $post['login'];
+                $user->password = $post['password'];
 
-                if($model->login()){
-
+                if ($user && \Yii::$app->security->validatePassword($user->password, $user->password_hash)) {
                     $extends = '+30 days';
                     $expires = strtotime($extends, strtotime($user->token_validate));
                     if( $expires < time() ||  $user->access_token == null){
