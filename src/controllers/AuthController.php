@@ -65,7 +65,7 @@ class AuthController extends ControllerCommon {
 
         $authHeader = Yii::$app->request->getHeaders()->get('Authorization');
         if (!$authHeader || !preg_match('/^Bearer\s+(.*?)$/', $authHeader, $matches)) {
-            if(self::isGuest())
+            if(!self::isGuest())
                 return Yii::$app->session->get('group')->id;
         }
 
