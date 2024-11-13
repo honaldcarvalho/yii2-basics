@@ -109,7 +109,7 @@ class StorageController extends ControllerRest {
      * @param int $maxFileSize Maximum file size in bytes.
      * @return string|false Path to the compressed image, or false on failure.
      */
-    protected function compressImage($filePath, $maxFileSize,$quality = 90)
+    static function compressImage($filePath, $maxFileSize,$quality = 90)
     {
         // Get the current size of the image
         $fileSize = filesize($filePath);
@@ -269,6 +269,7 @@ class StorageController extends ControllerRest {
                     }
 
                     $errors[] = $temp_file->saveAs($filePathRoot, ['quality' => $quality]);
+                    self::compressImage($filePathRoot,5);
 
                     if($thumb_aspect == 1){
                         $image_size = getimagesize($filePathRoot);
@@ -470,7 +471,6 @@ class StorageController extends ControllerRest {
                 $options['convert_video'] = $post['convert_video'] ?? true;
                 $options['thumb_aspect'] = $post['thumb_aspect'] ?? 1;
                 $options['quality'] = $post['quality'] ?? 80;
-
                 return self::uploadFile($temp_file, $options);
 
             }

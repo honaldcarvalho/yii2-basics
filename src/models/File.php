@@ -34,7 +34,7 @@ class File extends ModelCommon
     public $file;
     public $preview;
     public $extensions = [];
-    public $max_size = 5;
+    public $max_size = 100;
     public $verGroup = true;
 
     // public function __construct() {
