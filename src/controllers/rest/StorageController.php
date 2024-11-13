@@ -111,33 +111,39 @@ class StorageController extends ControllerRest {
      */
     static function compressImage($filePath, $maxFileSize,$quality = 90)
     {
-        // Get the current size of the image
-        $fileSize = filesize($filePath);
-
-        // Reduce the image dimensions progressively until the size is below the maximum size
-        do {
-            // Open the image using Imagine
-            $image = Image::getImagine()->open($filePath);
-
-            // Get the current dimensions of the image
-            $size = $image->getSize();
-
-            // Reduce the dimensions by 10%
-            $newSize = new Box($size->getWidth() * 0.9, $size->getHeight() * 0.9);
-
-            // Resize the image
-            $image->resize($newSize)
-                  ->save($filePath, ['quality' => $quality]);
-
-            // Recheck the file size after compression
+        try {
+            
+            // Get the current size of the image
             $fileSize = filesize($filePath);
 
-            // Lower the quality slightly with each iteration
-            $quality -= 10;
-        } while ($fileSize > $maxFileSize && $quality > 10);
+            // Reduce the image dimensions progressively until the size is below the maximum size
+            do {
+                // Open the image using Imagine
+                $image = Image::getImagine()->open($filePath);
 
-        // Return the path to the compressed file or false if compression failed
-        return $fileSize <= $maxFileSize ? $filePath : false;
+                // Get the current dimensions of the image
+                $size = $image->getSize();
+
+                // Reduce the dimensions by 10%
+                $newSize = new Box($size->getWidth() * 0.9, $size->getHeight() * 0.9);
+
+                // Resize the image
+                $image->resize($newSize)
+                    ->save($filePath, ['quality' => $quality]);
+
+                // Recheck the file size after compression
+                $fileSize = filesize($filePath);
+
+                // Lower the quality slightly with each iteration
+                $quality -= 10;
+            } while ($fileSize > $maxFileSize && $quality > 10);
+
+            // Return the path to the compressed file or false if compression failed
+            return $fileSize <= $maxFileSize ? $filePath : false;
+        } catch (\Throwable $th) {
+            unlink($filePath);
+            throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
+        }
     }
 
     static function createThumbnail($srcImagePath, $destImagePath, $thumbWidth = 160, $thumbHeight = 99) {
