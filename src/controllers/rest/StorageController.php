@@ -270,7 +270,7 @@ class StorageController extends ControllerRest {
 
                     $errors[] = $temp_file->saveAs($filePathRoot, ['quality' => $quality]);
                     self::compressImage($filePathRoot,5);
-
+  
                     if($thumb_aspect == 1){
                         $image_size = getimagesize($filePathRoot);
                         $major = $image_size[0]; //width
@@ -413,7 +413,7 @@ class StorageController extends ControllerRest {
                     'urlThumb' => $fileThumbUrl,
                     'extension' => $ext,
                     'type' => $type,
-                    'size' => $temp_file->size,
+                    'size' => filesize($filePathRoot),
                     'duration' => intval($duration),
                     'created_at' => date('Y-m-d h:i:s')
                 ];
