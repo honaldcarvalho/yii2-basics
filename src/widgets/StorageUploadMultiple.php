@@ -274,9 +274,10 @@ class StorageUploadMultiple extends Widget
                 })
                 .catch(error => {
                     toastr.error("Error on page! " + error);
+                    progressBar.style.width = 0;
                 })
                 .finally((response) => {
-                    //progressBar.textContent = response.data.message;
+                    progressBar.textContent = 0;
                     button.prop('disabled',false);
                     object.removeClass('fas fa-sync fa-spin m-2');
                     object.attr('class',old_class);
