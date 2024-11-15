@@ -224,7 +224,12 @@ class StorageUploadMultiple extends Widget
                     onUploadProgress: (progressEvent) => {
                         var percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
                         progressBar.style.width = `\${percentCompleted}%`;
-                        progressBar.textContent  = progressBar.style.width;                        
+                        if(percentCompleted == 100){
+                            progressBar.textContent  = 'processing... await...';                        
+                        } else {
+                            progressBar.textContent  = progressBar.style.width;                        
+                        }
+                        
                     }
                 })
                 .then((response) => {

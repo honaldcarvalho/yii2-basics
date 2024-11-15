@@ -109,14 +109,12 @@ class StorageController extends ControllerRest {
      * @param int $maxFileSize Maximum file size in bytes.
      * @return string|false Path to the compressed image, or false on failure.
      */
+
     static function compressImage($filePath, $maxFileSize,$quality = 90)
     {
-        try {
-            
+        try{
             // Get the current size of the image
             $fileSize = filesize($filePath);
-
-            // Reduce the image dimensions progressively until the size is below the maximum size
             do {
                 // Open the image using Imagine
                 $image = Image::getImagine()->open($filePath);
@@ -138,12 +136,12 @@ class StorageController extends ControllerRest {
                 $quality -= 10;
             } while ($fileSize > $maxFileSize && $quality > 10);
 
-            // Return the path to the compressed file or false if compression failed
-            return $fileSize <= $maxFileSize ? $filePath : false;
+            return $image;
         } catch (\Throwable $th) {
             unlink($filePath);
             throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
         }
+    
     }
 
     static function createThumbnail($srcImagePath, $destImagePath, $thumbWidth = 160, $thumbHeight = 99) {
@@ -180,7 +178,7 @@ class StorageController extends ControllerRest {
              ->save($destImagePath, ['quality' => 100]);
     }
     
-    public static function uploadFile($file, 
+    public static function uploadFile($file, $image,
         $options = [
             'file_name' => null,//custom file name
             'description'=> null,//custom file description
@@ -275,8 +273,7 @@ class StorageController extends ControllerRest {
                     }
 
                     $errors[] = $temp_file->saveAs($filePathRoot, ['quality' => $quality]);
-                    self::compressImage($filePathRoot,5);
-  
+                    
                     if($thumb_aspect == 1){
                         $image_size = getimagesize($filePathRoot);
                         $major = $image_size[0]; //width
@@ -302,7 +299,7 @@ class StorageController extends ControllerRest {
                         [$thumbWidth, $thumbHeigh] = explode('/',$options['thumb_aspect']);
                         $errors[] = self::createThumbnail($filePathRoot, $filePathThumbRoot, $thumbWidth, $thumbHeigh);
                     }
-
+                    
                 } else if ($type == 'video') {
 
                     if($folder_id === 1){
@@ -477,7 +474,10 @@ class StorageController extends ControllerRest {
                 $options['convert_video'] = $post['convert_video'] ?? true;
                 $options['thumb_aspect'] = $post['thumb_aspect'] ?? 1;
                 $options['quality'] = $post['quality'] ?? 80;
-                return self::uploadFile($temp_file, $options);
+
+                $image = self::compressImage($temp_file->tempName,5);
+
+                return self::uploadFile($temp_file,$image,$options);
 
             }
             throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
