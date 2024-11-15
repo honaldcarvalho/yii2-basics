@@ -178,7 +178,7 @@ class StorageController extends ControllerRest {
              ->save($destImagePath, ['quality' => 100]);
     }
     
-    public static function uploadFile($file, $image,
+    public static function uploadFile($file,
         $options = [
             'file_name' => null,//custom file name
             'description'=> null,//custom file description
@@ -475,9 +475,11 @@ class StorageController extends ControllerRest {
                 $options['thumb_aspect'] = $post['thumb_aspect'] ?? 1;
                 $options['quality'] = $post['quality'] ?? 80;
 
-                $image = self::compressImage($temp_file->tempName,5);
-
-                return self::uploadFile($temp_file,$image,$options);
+                [$type,$format] = explode('/',$temp_file->type);
+                if ($type == 'image') {
+                    self::compressImage($temp_file->tempName,5);
+                }
+                return self::uploadFile($temp_file,$options);
 
             }
             throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
