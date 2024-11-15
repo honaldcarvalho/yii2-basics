@@ -215,7 +215,13 @@ class StorageUploadMultiple extends Widget
                 formData.append('thumb_aspect', "{$this->thumb_aspect}");
                 formData.append('save', 1);
 
-                uploadButton.disabled = true;
+                let button = $(`#btn-upload-\${index}-{$this->random}`);
+                let old_class = button.children("i").attr('class');
+                button.prop('disabled',true);
+                object = button.children("i");
+                object.removeClass(old_class);
+                object.addClass('fas fa-sync fa-spin m-2');
+
                 axios.post('/rest/storage/send', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
@@ -271,6 +277,9 @@ class StorageUploadMultiple extends Widget
                 })
                 .finally((response) => {
                     //progressBar.textContent = response.data.message;
+                    button.prop('disabled',false);
+                    object.removeClass('fas fa-sync fa-spin m-2');
+                    object.attr('class',old_class);
                 });
             }
 
