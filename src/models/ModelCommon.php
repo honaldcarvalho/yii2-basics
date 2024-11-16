@@ -46,7 +46,7 @@ class ModelCommon extends \yii\db\ActiveRecord
      *
      * @return ActiveDataProvider
      */
-    public function search($params,$options = ['pageSize'=>10, 'orderBy'=>['id' => SORT_DESC],'order'=>false,'orderField'=>false],)
+    public function search($params,$options = ['pageSize'=>10, 'orderBy'=>['id' => SORT_DESC],'order'=>false],)
     {
         $this->scenario = self::SCENARIO_SEARCH;
 
@@ -70,12 +70,9 @@ class ModelCommon extends \yii\db\ActiveRecord
             $pageSize = $options['pageSize'];
         }
 
-        if(isset($options['orderField'])) {
-            $orderField = $options['orderField'];
-        }
-
         if(isset($options['order']) && $options['order'] && count($params) > 0) {
-            if($orderField == false || (isset($options['orderField'] ) && $options['orderField'] != false && isset($params[$className][$options['orderField']]) && !empty($params[$className][$options['orderField']])))
+            $query->orderBy([$options['order']['field'] => SORT_ASC]);
+            if($orderField == false || (isset($options['order']['flag'] ) && $options['order']['flag'] != false && isset($params[$className][$options['order']['flag']]) && !empty($params[$className][$options['order']['flag']])))
                 $pageSize = 10000;
         }
 
