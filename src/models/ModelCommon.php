@@ -46,13 +46,15 @@ class ModelCommon extends \yii\db\ActiveRecord
      *
      * @return ActiveDataProvider
      */
-    public function search($params,$options = ['pageSize'=>10, 'orderBy'=>['id' => SORT_DESC]],)
+    public function search($params,$options = ['pageSize'=>10, 'orderBy'=>['id' => SORT_DESC],'order'=>false,'orderField'=>false],)
     {
         $this->scenario = self::SCENARIO_SEARCH;
 
         $className = self::getClass();
         $table = static::tableName();
         $pageSize = 10;
+        $order = false;
+        $orderField = false;
 
         $query = static::find();
         
@@ -66,6 +68,15 @@ class ModelCommon extends \yii\db\ActiveRecord
 
         if(isset($options['pageSize'])) {
             $pageSize = $options['pageSize'];
+        }
+
+        if(isset($options['orderField'])) {
+            $orderField = $options['orderField'];
+        }
+
+        if(isset($options['order']) && $options['order'] && count($params) > 0) {
+            if($orderField == false || (isset($options['orderField'] ) && $options['orderField'] != false && isset($params[$className][$options['orderField']]) && !empty($params[$className][$options['orderField']])))
+                $pageSize = 10000;
         }
 
         if(isset($options['join'])) {
