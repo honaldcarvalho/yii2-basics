@@ -181,7 +181,7 @@ class ListFiles extends \yii\bootstrap5\Widget
                             [
                                 'headerOptions' => ['style' => 'width:10%'],
                                 'attribute' => 'duration',
-                                'format' => 'time',
+                                'format' => 'aduration',
                                 'label' => Yii::t('app', 'Duration'),
                             ],
                             [
