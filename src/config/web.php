@@ -35,7 +35,7 @@ $config = [
     ],
     'components' => [
         'session' => [
-            'timeout' => 1440, //acá colocas el tiempo en segundos
+            'timeout' => 2628000, //1 month in seconds
             'class' => 'yii\web\DbSession',
             'sessionTable' => 'yii_session',
         ],
