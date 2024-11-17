@@ -159,7 +159,7 @@ class InstagramMedia extends ModelCommon
                     echo "Media {$media['id']} saved successfully.\n";
             } else {
                 if(!$log)
-                    $results[] = $newMedia->getErros();
+                    $results[] = $newMedia->errors;
                 else 
                     echo "Failed to save media {$media['id']}.\n";
             }
