@@ -92,7 +92,7 @@ $config = [
             'rules' => array_merge(
                 customControllersUrl(['util','site','group','user','rule','language','source-message','message',
                 'menu','params','configuration','meta-tag','email-service','license-type','license','log','folder','file',
-                'section','page','notification','notification-message','rest/mail','rest/storage','rest/auth','rest/address','rest/instagram','rest/youtube'],'common'),
+                'section','page','notification','notification-message','rest/mail','rest/storage','rest/auth','rest/address','rest/instagram','rest/youtube','rest/cron'],'common'),
             [
                 "page/show/<id:\w+>" => "page/show",
                 '<controller:\w+>/<id:\d+>' => '<controller>/view',			
