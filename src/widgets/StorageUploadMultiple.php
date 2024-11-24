@@ -50,6 +50,10 @@ class StorageUploadMultiple extends Widget
     /** ID of GridView will reload */
     public $grid_reload_id = '#list-files-grid';
 
+    public $maxSize = 2;
+
+    public $maxWidth = 1000;
+
     public function init()
     {
         parent::init();
@@ -140,11 +144,22 @@ class StorageUploadMultiple extends Widget
         
             var id_{$this->random} = 0;
 
+            function generateRandomString(length) {
+                const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                let result = '';
+                for (let i = 0; i < length; i++) {
+                    const randomIndex = Math.floor(Math.random() * characters.length);
+                    result += characters[randomIndex];
+                }
+                return result;
+            }
+
             function el(id){
                 return document.getElementById(id);
             }
 
             var count = 0;
+            var uploading = 0;
             var total_files;
             let temp_image;
             let file_input = el("file-input-{$this->random}");
@@ -152,6 +167,77 @@ class StorageUploadMultiple extends Widget
             let input_container = el('input-{$this->random}');
             let upload_button = el('upload-button-{$this->random}');
             let removeList = [];
+            let filesArray = new Map();
+
+            /**
+             * Compress an image to be smaller than the max file size using Canvas API.
+             * @param {File} file - The image file to compress.
+             * @param {number} maxSize - The maximum file size in bytes.
+             * @returns {Promise<File>} A promise that resolves with the compressed image file.
+             */
+            function compressImage(file, index) {
+                return new Promise((resolve, reject) => {
+                    //resolve(file);
+                    const reader = new FileReader();
+
+                    // Load the image file
+                    reader.readAsDataURL(file);
+                    reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+
+                        // Set canvas dimensions to the image dimensions
+                        let width = img.width;
+                        let height = img.height;
+
+                        // Scale down the image dimensions if needed
+                        const maxDimension = {$this->maxWidth}; // Max dimension (width or height) after scaling
+                        if (width > maxDimension || height > maxDimension) {
+                        if (width > height) {
+                            height = Math.floor((height * maxDimension) / width);
+                            width = maxDimension;
+                        } else {
+                            width = Math.floor((width * maxDimension) / height);
+                            height = maxDimension;
+                        }
+                        }
+
+                        // Set the canvas size and draw the scaled image
+                        canvas.width = width;
+                        canvas.height = height;
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        // Get the compressed image data
+                        canvas.toBlob((blob) => {
+
+                        if (blob.size > {$this->maxSize} * 1024 * 1024) {
+                            reject(new Error('Image exceeds 5MB limit even after compression.'));
+                        } else {
+                            // Ensure the compressed image size is below the maxSize
+                            const compressedFile = new File([blob], file.name, {
+                                type: file.type,
+                                lastModified: Date.now()
+                            });
+                            resolve(compressedFile); // Return the compressed file
+                        }
+
+                        }, file.type, 0.8); // Adjust the quality (0.8 is 80%)
+                    };
+
+                    img.onerror = (error) => {
+                        reject('Error loading image');
+                    };
+                    };
+
+                    reader.onerror = (error) => {
+                        reject('Error reading file' );
+                    };
+                });
+            }
 
             function formatFileSize(bytes) {
                 if (bytes === 0) return '0 Bytes';
@@ -183,29 +269,19 @@ class StorageUploadMultiple extends Widget
             }
 
             function removeFile(index) {
-
-                var filesArray = Array.from(file_input.files);
-                filesArray.splice(index, 1);
-                var dataTransfer = new DataTransfer();
-                filesArray.forEach(file => dataTransfer.items.add(file));
-                file_input.files = dataTransfer.files;
-                var event = new Event('change');
-                file_input.dispatchEvent(event);
-
-                if(file_input.files.length == 0){
-                    table_files.innerHTML = '';
-                    upload_button.disabled = true;
-                }
-                console.log('Remove:' + index);
+                filesArray.delete(index);
+                if(el("row_" + index) != null)
+                    el("row_" + index).remove();
             }
 
             function upload(index,multiple){
-                var i = index;
-                var file = file_input.files[index];
 
+                var i = index;
+                var file = filesArray.get(index);
                 var progressBar = el(`progress-bar-\${index}-{$this->random}`);
                 progressBar.style.width = '0%';
                 var uploadButton = el(`btn-upload-\${index}-{$this->random}`);
+                var removeButton = el(`btn-remove-\${index}-{$this->random}`);
 
                 var formData = new FormData();
                 formData.append('file', file);
@@ -218,6 +294,7 @@ class StorageUploadMultiple extends Widget
                 let button = $(`#btn-upload-\${index}-{$this->random}`);
                 let old_class = button.children("i").attr('class');
                 button.prop('disabled',true);
+                removeButton.disabled = true;
                 object = button.children("i");
                 object.removeClass(old_class);
                 object.addClass('fas fa-sync fa-spin m-2');
@@ -242,7 +319,7 @@ class StorageUploadMultiple extends Widget
                     if(response.data.success){
                         toastr.success(`File \${response.data.data.description} sended!`);
                         if(!multiple){
-                            removeFile(index);
+                            el("row_" + i).remove();
                         } else {
                             count++;
                             if(count == total_files){
@@ -266,6 +343,7 @@ class StorageUploadMultiple extends Widget
                         progressBar.textContent  = `0%`;   
                         toastr.error(`Error on send file: \${erros}! `); 
                         uploadButton.disabled = false;
+                        removeButton.disabled = false;
                     }
 
                     if({$this->grid_reload} == 1){
@@ -277,8 +355,17 @@ class StorageUploadMultiple extends Widget
                     progressBar.style.width = 0;
                 })
                 .finally((response) => {
+                    
+                    if(uploading > 0){
+                        uploading--;
+                    }
+                    if(uploading == 0){
+                        input_container.style.display = 'block';
+                    }
+                        
                     progressBar.textContent = 0;
                     button.prop('disabled',false);
+                    removeButton.disabled = false;
                     object.removeClass('fas fa-sync fa-spin m-2');
                     object.attr('class',old_class);
                 });
@@ -288,7 +375,8 @@ class StorageUploadMultiple extends Widget
 
                 var files = event.target.files;
                 total_files = files.length;
-
+                filesArray = new Map();
+                
                 if (files.length > 0) {
                     
                     upload_button.disabled = false;
@@ -296,15 +384,18 @@ class StorageUploadMultiple extends Widget
 
                     Array.from(file_input.files).forEach(async (file, index) => {
 
+                        index = generateRandomString(8);
                         let upload_button = document.createElement("button");
                         upload_button.id = `btn-upload-\${index}-{$this->random}`;
                         upload_button.classList.add('btn', 'btn-warning');
                         upload_button.innerHTML = '<i class="fas fa-upload m-2"></i>';
+
                         upload_button.onclick = function() {
                             upload(index,false);
                         };
 
                         var remove_button = document.createElement('button');
+                        remove_button.id = `btn-remove-\${index}-{$this->random}`;
                         remove_button.classList.add('btn', 'btn-danger');
                         remove_button.innerHTML = '<i class="fas fa-trash m-2"></i>';
                         remove_button.onclick = function() {
@@ -348,9 +439,26 @@ class StorageUploadMultiple extends Widget
                         cellType.textContent = file.type || 'N/A'; // Handle cases where type is unavailable
                         cellActions.append(upload_button);
                         cellActions.append(remove_button);
+
+
+                        if(isImage(file)){
+                            await compressImage(file,index).then((blob) => {
+                                var file_compressed = new File([blob], file.name , { type: file.type, lastModified: new Date().getTime() });
+                                let container = new DataTransfer();
+                                container.items.add(file_compressed);
+                                filesArray.set(index, container.files[0]);
+                            }).catch((error) => {
+                                filesArray.set(index, null);
+                                removeFile(index);
+                                toastr.error("Imagem Inválida! " + file.name);
+                            });
+                        }else{
+                            filesArray.set(index,file);
+                        }
                         
                     });
                     table_files.classList.remove('d-none');
+                    file_input.value = '';
                 }
                 
             });
@@ -358,8 +466,26 @@ class StorageUploadMultiple extends Widget
             el('upload-button-{$this->random}').addEventListener('click', (e) => {
                 count = 0;
                 el('upload-button-{$this->random}').disabled = true;
-                Array.from(file_input.files).forEach((file, index) => {
-                    upload(index,true);
+                input_container.style.display = 'none';
+                uploading = filesArray.size;
+                filesArray.forEach((file, index) => {
+                    
+                    if(isImage(file)){
+                        compressImage(file,index).then((blob) => {
+                    
+                            var file_compressed = new File([blob], file.name , { type: file.type, lastModified: new Date().getTime() });
+                            let container = new DataTransfer();
+                            container.items.add(file_compressed);
+                            upload(index,false);
+                            return true;
+
+                        }).catch((error) => {
+                            alert(error);
+                            return false;
+                        });
+                    }else{
+                        upload(index,false);
+                    }
                 });
 
             });
