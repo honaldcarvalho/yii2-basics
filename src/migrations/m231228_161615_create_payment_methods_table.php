@@ -33,7 +33,7 @@ class m231228_161615_create_payment_methods_table extends Migration
 
         $this->insert('menus', [
             'id'=> $id,
-            'menu_id' => 37,
+            'menu_id' => null,
             'label'   => 'Payment Methods',
             'icon'    => 'fas fa-wallet',
             'visible' => 'payment-method;index',
