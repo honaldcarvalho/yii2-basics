@@ -17,6 +17,9 @@ $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:
 
 $assetDir = Yii::$app->assetManager->getPublishedUrl('@vendor/weebz/yii2-basics/src/themes/adminlte3/web/dist');
 
+if(Yii::$app->user->identity === null){
+    return $this->redirect(['site/login']); 
+}
 $theme = Yii::$app->user->identity->theme;
 ?>
 <?php $this->beginPage() ?>
