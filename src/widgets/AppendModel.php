@@ -277,7 +277,9 @@ class AppendModel extends \yii\bootstrap5\Widget
         foreach ($this->fields as $key => $field) {
             $field_str .= '<div class="col-md-12">';
             if($field['type'] == 'text')
-                $field_str .=  $form->field($model, $field['name'])->textInput(['id'=> "{$lower}-{$field['name']}", 'maxlength' => true,'value'=> $field['value']]);
+                $field_str .= $form->field($model, $field['name'])->textInput(['id'=> "{$lower}-{$field['name']}", 'maxlength' => true,'value'=> $field['value']]);
+            else if($field['type'] == 'number')
+                $field_str .=  $form->field($model, $field['name'])->input('number',['id'=> "{$lower}-{$field['name']}", 'maxlength' => true,'value'=> $field['value']]);
             else if($field['type'] == 'hidden')
                 $field_str .=  $form->field($model, $field['name'])->hiddenInput(['id'=> "{$lower}-{$field['name']}",'maxlength' => true,'value'=> $field['value']])->label(false);
             else if($field['type'] == 'checkbox')
@@ -292,7 +294,6 @@ class AppendModel extends \yii\bootstrap5\Widget
                     ],
                 ]);
             }
-
 
             $field_str .= '</div>';
         }
