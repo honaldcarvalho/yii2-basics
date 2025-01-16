@@ -272,7 +272,7 @@ class AppendModel extends \yii\bootstrap5\Widget
         echo $begin;
         $form = ActiveForm::begin(['id'=>"form-{$lower}"]); 
         $model = new $this->attactClass();
-        $field_str .=  $form->field($model, 'id')->textInput(['id'=> "{$lower}-id", 'maxlength' => true]);
+        $field_str .=  $form->field($model, 'id')->hiddenInput(['id'=> "{$lower}-id", 'maxlength' => true])->label(false);
 
         foreach ($this->fields as $key => $field) {
             $field_str .= '<div class="col-md-12">';
