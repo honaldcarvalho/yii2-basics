@@ -283,15 +283,15 @@ class AppendModel extends \yii\bootstrap5\Widget
         foreach ($this->fields as $key => $field) {
             $field_str .= '<div class="col-md-12">';
             if($field['type'] == 'text')
-                $field_str .= $form->field($model, $field['name'])->textInput(['id'=> "{$lower}-{$field['name']}", 'maxlength' => true,'value'=> $field['value']]);
+                $field_str .= $form->field($model, $field['name'])->textInput(['id'=> "{$lower}-{$field['name']}", 'maxlength' => true,'value'=> $field['value'] ?? '']);
             else if($field['type'] == 'number')
-                $field_str .=  $form->field($model, $field['name'])->input('number',['id'=> "{$lower}-{$field['name']}", 'maxlength' => true,'value'=> $field['value']]);
+                $field_str .=  $form->field($model, $field['name'])->input('number',['id'=> "{$lower}-{$field['name']}", 'maxlength' => true,'value'=> $field['value'] ?? '']);
             else if($field['type'] == 'hidden')
-                $field_str .=  $form->field($model, $field['name'])->hiddenInput(['id'=> "{$lower}-{$field['name']}",'maxlength' => true,'value'=> $field['value']])->label(false);
+                $field_str .=  $form->field($model, $field['name'])->hiddenInput(['id'=> "{$lower}-{$field['name']}",'maxlength' => true,'value'=> $field['value'] ?? ''])->label(false);
             else if($field['type'] == 'checkbox')
                 $field_str .=  $form->field($model, $field['name'])->checkbox(['id'=> "{$lower}-{$field['name']}",]) ;
             else if($field['type'] == 'dropdown'){
-                $field_str .=  $form->field($model, $field['name'])->dropDownList($field['value'],['class'=>'form-control dropdown']);
+                $field_str .=  $form->field($model, $field['name'])->dropDownList($field['value'] ?? '',['class'=>'form-control dropdown']);
             }
             $field_str .= '</div>';
         }

@@ -41,7 +41,7 @@ class m240807_161427_add_admin_rules extends Migration
             'group_id' => 2,
             'controller' => 'menu',
             'path' => 'weebz/controllers',
-            'actions' => 'create;delete;index;order-menu;update;view',
+            'actions' => 'create;delete;index;order-menu;update;view;get-model;save-model;remove-model',
             'status'=>true
         ]);
 
@@ -49,7 +49,7 @@ class m240807_161427_add_admin_rules extends Migration
             'group_id' => 2,
             'controller' => 'folder',
             'path' => 'weebz/controllers',
-            'actions' => 'index;create;view;update;delete;edit;add',
+            'actions' => 'index;create;view;update;delete;edit;add;get-model;save-model;remove-model',
             'status'=>true
         ]);
 
@@ -89,7 +89,7 @@ class m240807_161427_add_admin_rules extends Migration
             'group_id' => 2,
             'controller' => 'source-message',
             'path' => 'weebz/controllers',
-            'actions' => 'index;create;view;update;delete;add-translation',
+            'actions' => 'index;create;view;update;delete;add-translation;get-model;save-model;remove-model',
             'status'=>true
         ]);
 
@@ -97,7 +97,7 @@ class m240807_161427_add_admin_rules extends Migration
             'group_id' => 2,
             'controller' => 'user',
             'path' => 'weebz/controllers',
-            'actions' => 'index;create;view;update;delete;add-group;remove-group;profile;edit;change-lang;change-theme',
+            'actions' => 'index;create;view;update;delete;add-group;remove-group;profile;edit;change-lang;change-theme;get-model;save-model;remove-model',
             'status'=>true
         ]);
 
@@ -129,7 +129,7 @@ class m240807_161427_add_admin_rules extends Migration
             'group_id' => 2,
             'controller' => 'configuration',
             'path' => 'weebz/controllers',
-            'actions' => 'index;create;view;update;delete',
+            'actions' => 'index;create;view;update;delete;get-model;save-model;remove-model',
             'status'=>true
         ]);
 
@@ -161,7 +161,7 @@ class m240807_161427_add_admin_rules extends Migration
             'group_id' => 2,
             'controller' => 'section',
             'path' => 'weebz/controllers',
-            'actions' => 'index;create;view;update;delete',
+            'actions' => 'index;create;view;update;delete;get-model;save-model;remove-model',
             'status'=>true
         ]);
 

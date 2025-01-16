@@ -44,7 +44,7 @@ class Folder extends ModelCommon
     public function rules()
     {
         return [
-            [['name'], 'required'],
+            [['name'], 'required', 'on' => self::SCENARIO_DEFAULT],
             [['external', 'status'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['name', 'description'], 'string', 'max' => 255],
