@@ -87,7 +87,7 @@ class AppendModel extends \yii\bootstrap5\Widget
         $this->removeUrl = "/{$this->controller}/remove-model?modelClass={$this->attactModel}";
         $this->getUrl = "/{$this->controller}/get-model?modelClass={$this->attactModel}";
         $this->saveUrl = "/{$this->controller}/save-model?modelClass={$this->attactModel}";
-            
+        $form_name = strtolower($this->attactModel);
         $columns = array_merge($columns,$this->showFields);
         array_push($columns,[
             'class'=> ActionColumn::class,
@@ -127,7 +127,9 @@ class AppendModel extends \yii\bootstrap5\Widget
                 modal_{$this->attactModel} = new bootstrap.Modal(document.getElementById('save-{$lower}'), {
                     keyboard: true
                 });
+                $('.dropdown').select2({width:'100%',allowClear:true,placeholder:'Selecione',dropdownParent: $('#save-{$lower}')});
             });
+
             function save{$this->attactModel}(){
                 $('#overlay-form-{$lower}').show();
                 var formData = $("#form-{$lower}").serialize();
@@ -140,7 +142,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                     if(response.success) {
                         toastr.success("Save!");
                         modal_{$this->attactModel}.hide();
-                        $.pjax.reload({container: "#grid-{$this->controller}", async: false});
+                        $.pjax.reload({container: "#list-{$lower}-grid", async: false});
                     } else {
                         toastr.error("Error on save!");
                     }
@@ -212,7 +214,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                             return false;
                         }
                         toastr.success("Removed!");
-                        $.pjax.reload({container: "#grid-{$this->controller}", async: false});
+                        $.pjax.reload({container: "#grid-{$lower}", async: false});
                     }).fail(function (response) {
                         toastr.error("Error on remove {$lower}!");
                     }).always(function (response) {
@@ -285,16 +287,8 @@ class AppendModel extends \yii\bootstrap5\Widget
             else if($field['type'] == 'checkbox')
                 $field_str .=  $form->field($model, $field['name'])->checkbox(['id'=> "{$lower}-{$field['name']}",]) ;
             else if($field['type'] == 'dropdown'){
-                $field_str .=  $form->field($model, $field['name'])->widget(\kartik\select2\Select2::class, [
-                    'data' =>  $field['value'],
-                    'options' => ['multiple' => false, 'placeholder' => Yii::t('*','Select'),'id'=> "{$lower}-{$field['name']}",],
-                    'pluginOptions' => [
-                        'allowClear' => true,
-                        'width'=>'100%'
-                    ],
-                ]);
+                $field_str .=  $form->field($model, $field['name'])->dropDownList($field['value'],['class'=>'form-control dropdown']);
             }
-
             $field_str .= '</div>';
         }
         echo $field_str;
