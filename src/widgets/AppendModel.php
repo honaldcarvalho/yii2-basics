@@ -18,6 +18,7 @@ use yii\widgets\Pjax;
                 'controller'=>'instituicao',
                 'template' => '{status} {view} {remove}',
                 'order'=>true,
+                'reloadGrid'=>null,
                 'orderField'=>'ordem',
                 'orderModel'=>'Instituicao',
                 'attactClass'=>'app\\models\\Instituicao',
@@ -62,6 +63,7 @@ class AppendModel extends \yii\bootstrap5\Widget
     public $attactClass;
     public $attactModel;
     public $childModel;
+    public $callBack = '';
     public $childField;
     public $path = 'app';
     public $template = '{status}{view}{edit}{remove}';
@@ -89,6 +91,7 @@ class AppendModel extends \yii\bootstrap5\Widget
         $this->saveUrl = "/{$this->controller}/save-model?modelClass={$this->attactModel}";
         $form_name = strtolower($this->attactModel);
         $columns = array_merge($columns,$this->showFields);
+
         array_push($columns,[
             'class'=> ActionColumn::class,
             'headerOptions' => ['style' => 'width:10%'],
@@ -143,6 +146,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                         toastr.success("Save!");
                         modal_{$this->attactModel}.hide();
                         $.pjax.reload({container: "#list-{$lower}-grid", async: false});
+                        {$this->callBack}
                     } else {
                         toastr.error("Error on save!");
                     }
