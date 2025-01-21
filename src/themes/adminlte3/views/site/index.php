@@ -15,7 +15,8 @@ $this->title = '';
 
     <div class="jumbotron text-center bg-transparent">
          <p><?=$logo_image;?></p>
-        <h4 class="display-5"><?= $params->title ?></h4>
+        <h4 class="display-5"><?= $params?->title ?></h4>
+        <p class="lead"><?= $params?->slogan ?></p>
     </div>
 
     <div class="body-content">
