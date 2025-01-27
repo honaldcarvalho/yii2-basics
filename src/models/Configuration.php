@@ -3,7 +3,7 @@
 namespace weebz\yii2basics\models;
 
 use Yii;
-
+use yii\symfonymailer\Mailer;
 /**
  * This is the model class for table "Configuration".
  *
@@ -128,6 +128,26 @@ class Configuration extends ModelCommon
     public function getParameters()
     {
         return $this->hasMany(Parameter::class, ['configuration_id' => 'id']);
+    }
+
+    static function mailer()
+    {
+
+        $params = self::get();
+        $mailer = new Mailer();
+        $model = $params->emailService;
+
+        $mailer->transport = [
+            'scheme' => $model->scheme,
+            'host' => $model->host,
+            'username' => $model->username,
+            'password' => $model->password,
+            'port' => $model->port,
+            'enableMailerLogging' => true
+            //'dsn' => "{$model->scheme}://{$model->username}:{$model->password}@{$model->host}:{$model->port}"
+        ];
+
+        return $mailer;
     }
 
 }
