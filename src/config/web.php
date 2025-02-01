@@ -160,7 +160,7 @@ if (YII_ENV_DEV) {
             'crud' => [ // generator name
                 'class' => 'yii\gii\generators\crud\Generator', // generator class
                 'templates' => [ // setting for our templates
-                    'yii2-basics' => '@vendor/weebz/yii2-baiscs/src/gii/generators/crud/default' // template name => path to template
+                    'yii2-basics' => '@vendor/weebz/yii2-basics/src/gii/generators/crud/default' // template name => path to template
                 ]
             ]
         ]
