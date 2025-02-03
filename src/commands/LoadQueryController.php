@@ -27,7 +27,6 @@ class LoadQueryController extends Controller
         $sql = file_get_contents("{$this->file_name}");
         try {
             $result = \Yii::$app->db->createCommand($sql)->execute();
-            echo "Query completed\n";
         } catch (\yii\db\Exception $e) {
             echo "Query error:" . $e->getMessage() . "\n";
         }
