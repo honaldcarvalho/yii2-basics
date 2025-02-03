@@ -1,36 +1,148 @@
-<?php 
+<?php
 
 namespace app\commands;
 
 use yii\console\Controller;
+use yii\db\Connection;
+use yii\helpers\ArrayHelper;
 
-/**
- * USAGE: php yii load-query/run -f \\weebz\\yii2basics\\migrations\\m241010_171508_always_run_migration
- * 
- */
-class LoadQueryController extends Controller
+class DbExportController extends Controller
 {
-    public $file_name;
-    
-    public function options($actionID)
+    public function actionExport($outputFile = 'export.sql')
     {
-        return ['file_name'];
-    }
-    
-    public function optionAliases()
-    {
-        return ['f' => 'file_name'];
+        /** @var Connection $db */
+        $db = \Yii::$app->db;
+        $schema = $db->schema;
+
+        $tables = $schema->getTableSchemas();
+        $dependencies = [];
+
+        // Build dependency graph
+        foreach ($tables as $table) {
+            $dependencies[$table->name] = [];
+            foreach ($table->foreignKeys as $fk) {
+                if (isset($fk[0])) {
+                    $dependencies[$table->name][] = $fk[0];
+                }
+            }
+        }
+
+        // Topological sort with cycle resolution
+        $sortedTables = $this->topologicalSortWithCycleResolution($dependencies);
+
+        $sql = "";
+        foreach ($sortedTables as $tableName) {
+            $rows = $db->createCommand("SELECT * FROM {$tableName}")->queryAll();
+            if ($rows) {
+                $columns = array_keys($rows[0]);
+                foreach ($rows as $row) {
+                    $values = array_map(function ($value) use ($db) {
+                        return $value === null ? 'NULL' : $db->quoteValue($value);
+                    }, $row);
+                    $sql .= "INSERT INTO `{$tableName}` (`" . implode('`, `', $columns) . "`) VALUES (" . implode(', ', $values) . ");\n";
+                }
+            }
+        }
+
+        file_put_contents($outputFile, $sql);
+        echo "Database exported to {$outputFile}\n";
     }
 
-    public function actionRun()
+    public function actionClear()
     {
-        $result = '';
-        $sql = file_get_contents("{$this->file_name}");
-        try {
-            $result = \Yii::$app->db->createCommand($sql)->execute();
-        } catch (\yii\db\Exception $e) {
-            echo "Query error:" . $e->getMessage() . "\n";
+        /** @var Connection $db */
+        $db = \Yii::$app->db;
+        $schema = $db->schema;
+
+        $tables = $schema->getTableSchemas();
+
+        // Disable foreign key checks
+        $db->createCommand("SET FOREIGN_KEY_CHECKS = 0;")->execute();
+
+        foreach ($tables as $table) {
+            $db->createCommand("TRUNCATE TABLE `{$table->name}`")->execute();
+            echo "Cleared table: {$table->name}\n";
         }
-        echo "Query completed. Result: {$result}\n";
+
+        // Enable foreign key checks
+        $db->createCommand("SET FOREIGN_KEY_CHECKS = 1;")->execute();
+
+        echo "Database cleared successfully.\n";
+    }
+
+    public function actionImport($inputFile)
+    {
+        /** @var Connection $db */
+        $db = \Yii::$app->db;
+
+        if (!file_exists($inputFile)) {
+            echo "File {$inputFile} does not exist.\n";
+            return;
+        }
+
+        $handle = fopen($inputFile, "r");
+        if ($handle === false) {
+            echo "Unable to open file: {$inputFile}\n";
+            return;
+        }
+
+        $sql = '';
+        while (($line = fgets($handle)) !== false) {
+            $line = trim($line);
+            if ($line === '' || strpos($line, '--') === 0 || strpos($line, '/*') === 0) {
+                continue; // Skip empty lines and comments
+            }
+
+            $sql .= " " . $line;
+
+            if (substr(trim($line), -1) === ';') {
+                try {
+                    $db->createCommand($sql)->execute();
+                    echo "Executed: {$sql}\n";
+                } catch (\yii\db\Exception $e) {
+                    echo "Error executing: {$sql}\n";
+                    echo "Error: " . $e->getMessage() . "\n";
+                }
+                $sql = '';
+            }
+        }
+
+        fclose($handle);
+        echo "Import completed successfully.\n";
+    }
+
+    private function topologicalSortWithCycleResolution($dependencies)
+    {
+        $sorted = [];
+        $visited = [];
+
+        $visit = function ($node, &$stack) use (&$visit, &$sorted, &$visited, $dependencies) {
+            if (isset($visited[$node])) {
+                if ($visited[$node] === 'visiting') {
+                    // Cycle detected, break it by ignoring the current dependency
+                    return;
+                }
+                return;
+            }
+            $visited[$node] = 'visiting';
+            $stack[] = $node;
+
+            foreach ($dependencies[$node] as $dep) {
+                if (!in_array($dep, $stack)) {
+                    $visit($dep, $stack);
+                }
+            }
+
+            array_pop($stack);
+            $visited[$node] = 'visited';
+            $sorted[] = $node;
+        };
+
+        foreach (array_keys($dependencies) as $node) {
+            $stack = [];
+            $visit($node, $stack);
+        }
+
+        return array_reverse($sorted);
     }
 }
