@@ -25,7 +25,12 @@ class LoadQueryController extends Controller
     public function actionRun()
     {
         $sql = file_get_contents("{$this->file_name}");
-        \Yii::$app->db->createCommand($sql)->execute();
-        echo "Query completed!\n";
+        try {
+            $result = \Yii::$app->db->createCommand($sql)->execute();
+            echo "Cleared table: {$table->name}\n";
+        } catch (\yii\db\Exception $e) {
+            echo "Error clearing table {$table->name}: " . $e->getMessage() . "\n";
+        }
+        echo "Query completed. Result: {$result}\n";
     }
 }
