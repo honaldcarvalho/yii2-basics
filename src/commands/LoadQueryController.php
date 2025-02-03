@@ -23,7 +23,7 @@ class LoadQueryController extends Controller
 
     public function actionRun()
     {
-        $sql = file_get_contents(__DIR__ . "{$this->file_name}");
+        $sql = file_get_contents("{$this->file_name}");
         $this->execute($sql);
 
         echo "Query completed!\n";
