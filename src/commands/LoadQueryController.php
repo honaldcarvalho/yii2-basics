@@ -25,7 +25,7 @@ class LoadQueryController extends Controller
     public function actionRun()
     {
         $sql = file_get_contents("{$this->file_name}");
-        Yii::$app->db->createCommand($sql)->execute();
+        \Yii::$app->db->createCommand($sql)->execute();
         echo "Query completed!\n";
     }
 }
