@@ -27,8 +27,8 @@ class DbExportController extends Controller
             }
         }
 
-        // Topological sort
-        $sortedTables = $this->topologicalSort($dependencies);
+        // Topological sort with cycle resolution
+        $sortedTables = $this->topologicalSortWithCycleResolution($dependencies);
 
         $sql = "";
         foreach ($sortedTables as $tableName) {
@@ -48,28 +48,66 @@ class DbExportController extends Controller
         echo "Database exported to {$outputFile}\n";
     }
 
-    private function topologicalSort($dependencies)
+    public function actionClear()
+    {
+        /** @var Connection $db */
+        $db = \Yii::$app->db;
+        $schema = $db->schema;
+
+        $tables = $schema->getTableSchemas();
+        $dependencies = [];
+
+        // Build dependency graph
+        foreach ($tables as $table) {
+            $dependencies[$table->name] = [];
+            foreach ($table->foreignKeys as $fk) {
+                if (isset($fk[0])) {
+                    $dependencies[$table->name][] = $fk[0];
+                }
+            }
+        }
+
+        // Reverse topological sort to delete child tables first
+        $sortedTables = array_reverse($this->topologicalSortWithCycleResolution($dependencies));
+
+        foreach ($sortedTables as $tableName) {
+            $db->createCommand("DELETE FROM `{$tableName}`")->execute();
+            echo "Cleared table: {$tableName}\n";
+        }
+
+        echo "Database cleared successfully.\n";
+    }
+
+    private function topologicalSortWithCycleResolution($dependencies)
     {
         $sorted = [];
         $visited = [];
 
-        $visit = function ($node) use (&$visit, &$sorted, &$visited, $dependencies) {
+        $visit = function ($node, &$stack) use (&$visit, &$sorted, &$visited, $dependencies) {
             if (isset($visited[$node])) {
                 if ($visited[$node] === 'visiting') {
-                    throw new \Exception("Cyclic dependency detected at {$node}");
+                    // Cycle detected, break it by ignoring the current dependency
+                    return;
                 }
                 return;
             }
             $visited[$node] = 'visiting';
+            $stack[] = $node;
+
             foreach ($dependencies[$node] as $dep) {
-                $visit($dep);
+                if (!in_array($dep, $stack)) {
+                    $visit($dep, $stack);
+                }
             }
+
+            array_pop($stack);
             $visited[$node] = 'visited';
             $sorted[] = $node;
         };
 
         foreach (array_keys($dependencies) as $node) {
-            $visit($node);
+            $stack = [];
+            $visit($node, $stack);
         }
 
         return array_reverse($sorted);
