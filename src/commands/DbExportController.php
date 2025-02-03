@@ -55,25 +55,17 @@ class DbExportController extends Controller
         $schema = $db->schema;
 
         $tables = $schema->getTableSchemas();
-        $dependencies = [];
 
-        // Build dependency graph
+        // Disable foreign key checks
+        $db->createCommand("SET FOREIGN_KEY_CHECKS = 0;")->execute();
+
         foreach ($tables as $table) {
-            $dependencies[$table->name] = [];
-            foreach ($table->foreignKeys as $fk) {
-                if (isset($fk[0])) {
-                    $dependencies[$table->name][] = $fk[0];
-                }
-            }
+            $db->createCommand("TRUNCATE TABLE `{$table->name}`")->execute();
+            echo "Cleared table: {$table->name}\n";
         }
 
-        // Reverse topological sort to delete child tables first
-        $sortedTables = array_reverse($this->topologicalSortWithCycleResolution($dependencies));
-
-        foreach ($sortedTables as $tableName) {
-            $db->createCommand("DELETE FROM `{$tableName}`")->execute();
-            echo "Cleared table: {$tableName}\n";
-        }
+        // Enable foreign key checks
+        $db->createCommand("SET FOREIGN_KEY_CHECKS = 1;")->execute();
 
         echo "Database cleared successfully.\n";
     }
