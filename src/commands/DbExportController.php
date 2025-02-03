@@ -15,34 +15,21 @@ class DbExportController extends Controller
         $schema = $db->schema;
 
         $tables = $schema->getTableSchemas();
-        $dependencies = [];
 
-        // Build dependency graph
+        $sql = "SET FOREIGN_KEY_CHECKS = 0;\n"; // Disable foreign key checks for import
         foreach ($tables as $table) {
-            $dependencies[$table->name] = [];
-            foreach ($table->foreignKeys as $fk) {
-                if (isset($fk[0])) {
-                    $dependencies[$table->name][] = $fk[0];
-                }
-            }
-        }
-
-        // Topological sort without ignoring cycles
-        $sortedTables = $this->topologicalSortWithCycles($dependencies);
-
-        $sql = "";
-        foreach ($sortedTables as $tableName) {
-            $rows = $db->createCommand("SELECT * FROM {$tableName}")->queryAll();
+            $rows = $db->createCommand("SELECT * FROM {$table->name}")->queryAll();
             if ($rows) {
                 $columns = array_keys($rows[0]);
                 foreach ($rows as $row) {
                     $values = array_map(function ($value) use ($db) {
                         return $value === null ? 'NULL' : $db->quoteValue($value);
                     }, $row);
-                    $sql .= "INSERT INTO `{$tableName}` (`" . implode('`, `', $columns) . "`) VALUES (" . implode(', ', $values) . ");\n";
+                    $sql .= "INSERT INTO `{$table->name}` (`" . implode('`, `', $columns) . "`) VALUES (" . implode(', ', $values) . ");\n";
                 }
             }
         }
+        $sql .= "SET FOREIGN_KEY_CHECKS = 1;\n"; // Re-enable foreign key checks
 
         file_put_contents($outputFile, $sql);
         echo "Database exported to {$outputFile}\n";
@@ -109,40 +96,5 @@ class DbExportController extends Controller
 
         fclose($handle);
         echo "Import completed successfully.\n";
-    }
-
-    private function topologicalSortWithCycles($dependencies)
-    {
-        $sorted = [];
-        $visited = [];
-        $tempMarked = [];
-
-        $visit = function ($node) use (&$visit, &$sorted, &$visited, &$tempMarked, $dependencies) {
-            if (isset($visited[$node])) {
-                return;
-            }
-
-            if (isset($tempMarked[$node])) {
-                // Cycle detected; process node anyway
-                return;
-            }
-
-            $tempMarked[$node] = true;
-
-            foreach ($dependencies[$node] as $dep) {
-                $visit($dep);
-            }
-
-            $visited[$node] = true;
-            $sorted[] = $node;
-
-            unset($tempMarked[$node]);
-        };
-
-        foreach (array_keys($dependencies) as $node) {
-            $visit($node);
-        }
-
-        return array_reverse($sorted);
     }
 }
