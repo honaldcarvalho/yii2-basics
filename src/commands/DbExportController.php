@@ -70,6 +70,47 @@ class DbExportController extends Controller
         echo "Database cleared successfully.\n";
     }
 
+    public function actionImport($inputFile)
+    {
+        /** @var Connection $db */
+        $db = \Yii::$app->db;
+
+        if (!file_exists($inputFile)) {
+            echo "File {$inputFile} does not exist.\n";
+            return;
+        }
+
+        $handle = fopen($inputFile, "r");
+        if ($handle === false) {
+            echo "Unable to open file: {$inputFile}\n";
+            return;
+        }
+
+        $sql = '';
+        while (($line = fgets($handle)) !== false) {
+            $line = trim($line);
+            if ($line === '' || strpos($line, '--') === 0 || strpos($line, '/*') === 0) {
+                continue; // Skip empty lines and comments
+            }
+
+            $sql .= " " . $line;
+
+            if (substr(trim($line), -1) === ';') {
+                try {
+                    $db->createCommand($sql)->execute();
+                    echo "Executed: {$sql}\n";
+                } catch (\yii\db\Exception $e) {
+                    echo "Error executing: {$sql}\n";
+                    echo "Error: " . $e->getMessage() . "\n";
+                }
+                $sql = '';
+            }
+        }
+
+        fclose($handle);
+        echo "Import completed successfully.\n";
+    }
+
     private function topologicalSortWithCycleResolution($dependencies)
     {
         $sorted = [];
