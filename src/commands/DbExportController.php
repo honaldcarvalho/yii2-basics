@@ -27,8 +27,8 @@ class DbExportController extends Controller
             }
         }
 
-        // Topological sort with cycle resolution
-        $sortedTables = $this->topologicalSortWithCycleResolution($dependencies);
+        // Topological sort without ignoring cycles
+        $sortedTables = $this->topologicalSortWithCycles($dependencies);
 
         $sql = "";
         foreach ($sortedTables as $tableName) {
@@ -111,36 +111,36 @@ class DbExportController extends Controller
         echo "Import completed successfully.\n";
     }
 
-    private function topologicalSortWithCycleResolution($dependencies)
+    private function topologicalSortWithCycles($dependencies)
     {
         $sorted = [];
         $visited = [];
+        $tempMarked = [];
 
-        $visit = function ($node, &$stack) use (&$visit, &$sorted, &$visited, $dependencies) {
+        $visit = function ($node) use (&$visit, &$sorted, &$visited, &$tempMarked, $dependencies) {
             if (isset($visited[$node])) {
-                if ($visited[$node] === 'visiting') {
-                    // Cycle detected, break it by ignoring the current dependency
-                    return;
-                }
                 return;
             }
-            $visited[$node] = 'visiting';
-            $stack[] = $node;
 
-            foreach ($dependencies[$node] as $dep) {
-                if (!in_array($dep, $stack)) {
-                    $visit($dep, $stack);
-                }
+            if (isset($tempMarked[$node])) {
+                // Cycle detected; process node anyway
+                return;
             }
 
-            array_pop($stack);
-            $visited[$node] = 'visited';
+            $tempMarked[$node] = true;
+
+            foreach ($dependencies[$node] as $dep) {
+                $visit($dep);
+            }
+
+            $visited[$node] = true;
             $sorted[] = $node;
+
+            unset($tempMarked[$node]);
         };
 
         foreach (array_keys($dependencies) as $node) {
-            $stack = [];
-            $visit($node, $stack);
+            $visit($node);
         }
 
         return array_reverse($sorted);
