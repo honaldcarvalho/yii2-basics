@@ -6,6 +6,7 @@ use yii\console\Controller;
 
 /**
  * USAGE: php yii load-query/run -f \\weebz\\yii2basics\\migrations\\m241010_171508_always_run_migration
+ * 
  */
 class LoadQueryController extends Controller
 {
@@ -24,7 +25,8 @@ class LoadQueryController extends Controller
     public function actionRun()
     {
         $sql = file_get_contents("{$this->file_name}");
-        $this->execute($sql);
+        
+        (new \yii\db\Query())->execute($sql);
 
         echo "Query completed!\n";
     }
