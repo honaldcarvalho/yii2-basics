@@ -50,7 +50,9 @@ class StorageUploadMultiple extends Widget
     /** ID of GridView will reload */
     public $grid_reload_id = '#list-files-grid';
 
-    public $maxSize = 1048576;
+    public $maxSize = 20;
+
+    public $minSize = 1;
 
     public $maxWidth = 1000;
 
@@ -173,11 +175,17 @@ class StorageUploadMultiple extends Widget
              * Compress an image to be smaller than the max file size using Canvas API.
              * @param {File} file - The image file to compress.
              * @param {number} maxSize - The maximum file size in bytes.
+             * @param {number} minSize - The maximum file size in bytes.
              * @returns {Promise<File>} A promise that resolves with the compressed image file.
              */
             function compressImage(file, index) {
                 return new Promise((resolve, reject) => {
-                    //resolve(file);
+
+                    if (file.size <= {$this->minSize} * 1024 * 1024) {
+                        resolve(file); // If the file is smaller than or equal to 1MB, return the original file
+                        return;
+                    }
+
                     const reader = new FileReader();
 
                     // Load the image file
