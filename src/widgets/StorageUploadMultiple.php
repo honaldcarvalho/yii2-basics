@@ -182,10 +182,11 @@ class StorageUploadMultiple extends Widget
                 return new Promise((resolve, reject) => {
 
                     if (file.size <= {$this->minSize} * 1024 * 1024) {
+                        console.log("Not compressed!");
                         resolve(file); // If the file is smaller than or equal to 1MB, return the original file
                         return;
                     }
-
+                    console.log("Compressed!");
                     const reader = new FileReader();
 
                     // Load the image file
