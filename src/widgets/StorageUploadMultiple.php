@@ -50,7 +50,7 @@ class StorageUploadMultiple extends Widget
     /** ID of GridView will reload */
     public $grid_reload_id = '#list-files-grid';
 
-    public $maxSize = 2;
+    public $maxSize = 1048576;
 
     public $maxWidth = 1000;
 
