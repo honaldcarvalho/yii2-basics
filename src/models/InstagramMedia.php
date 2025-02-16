@@ -129,6 +129,7 @@ class InstagramMedia extends ModelCommon
 
     static function saveMediaToDatabase($log = true,$group_id = null) {
         $results = [];
+        $log_result = '';
 
         if($group_id === null)
             $group_id = AuthController::userGroup();
@@ -156,22 +157,25 @@ class InstagramMedia extends ModelCommon
                 if(!$log)
                     $results[] = "Media {$media['id']} saved successfully.";
                 else 
-                    echo "Media {$media['id']} saved successfully.\n";
+                    $log_result .= "Media {$media['id']} saved successfully.\n";
             } else {
                 if(!$log)
                     $results[] = $newMedia->errors;
                 else 
-                    echo "Failed to save media {$media['id']}.\n";
+                    $log_result .=  "Failed to save media {$media['id']}.\n";
             }
 
             if(!$log)
                 $results[] = "Media {$media['id']} already exists.\n";
             else 
-                echo "Media {$media['id']} already exists.\n";
+                $log_result .=  "Media {$media['id']} already exists.\n";
             
         }
 
         if(!$log)
             return $results;
+        else {
+            return $log_result;
+        }
     }
 }
