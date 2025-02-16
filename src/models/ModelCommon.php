@@ -70,7 +70,7 @@ class ModelCommon extends \yii\db\ActiveRecord
             $pageSize = $options['pageSize'];
         }
 
-        if(isset($options['order']) && $options['order'] && count($params) > 0) {
+        if(isset($options['order']) && $options['order'] && !empty(trim($options['order'])) && count($params) > 0) {
             $query->orderBy([$options['order']['field'] => SORT_ASC]);
             if($orderField == false || (isset($options['order']['flag'] ) && $options['order']['flag'] != false && isset($params[$className][$options['order']['flag']]) && !empty($params[$className][$options['order']['flag']])))
                 $pageSize = 10000;
