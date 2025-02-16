@@ -115,6 +115,9 @@ class StorageController extends ControllerRest {
         try{
             // Get the current size of the image
             $fileSize = filesize($filePath);
+            if ($fileSize <= 1 * 1024 * 1024) {
+                return Image::getImagine()->open($filePath); // Return the original file path
+            }
             do {
                 // Open the image using Imagine
                 $image = Image::getImagine()->open($filePath);
