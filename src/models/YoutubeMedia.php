@@ -126,7 +126,7 @@ class YoutubeMedia extends ModelCommon
                             'thumbnail' => $thumbnail,
                             'description' => $description,
                             'created_at' => date('Y-m-d H:i:s', strtotime($publishedAt)),
-                            Yii::$app->db->createCommand()->upsert('youtube', 
+                            $result = Yii::$app->db->createCommand()->upsert('youtube', 
                             [
                                 'id'   => $video_id,
                                 'title'     => $title,
@@ -136,10 +136,16 @@ class YoutubeMedia extends ModelCommon
                             ]
                             )->execute()
                         ];
+                        if($result){
+                            echo "Media {$item->id->videoId} added.\n";
+                        }else{
+                            echo "Erro on add Media {$item->id->videoId}.\n";
+                        }
             
                     }
                 } else {
                     $videos[$item->id->videoId] = "Media {$item->id->videoId} already exists.\n";
+                    echo "Media {$item->id->videoId} already exists.\n";
                 }
             }
 

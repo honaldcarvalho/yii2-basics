@@ -44,11 +44,11 @@ class CronController extends \yii\rest\Controller {
     }
 
     public function actionIload(){
-        return InstagramMedia::saveMediaToDatabase(false,2);
+        return InstagramMedia::saveMediaToDatabase(true,2);
     }
 
     public function actionYload(){
-        return YoutubeMedia::get_channel_videos(false,2);
+        return YoutubeMedia::get_channel_videos(true,2);
     }
 
 }

@@ -164,10 +164,10 @@ class InstagramMedia extends ModelCommon
                     echo "Failed to save media {$media['id']}.\n";
             }
 
-            // if(!$log)
-            //     $results[] = "Media {$media['id']} already exists.\n";
-            // else 
-            //     echo "Media {$media['id']} already exists.\n";
+            if(!$log)
+                $results[] = "Media {$media['id']} already exists.\n";
+            else 
+                echo "Media {$media['id']} already exists.\n";
             
         }
 
