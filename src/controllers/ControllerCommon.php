@@ -509,7 +509,7 @@ class ControllerCommon extends \yii\web\Controller
         }
     }
 
-    function getUserIP()
+    static function getUserIP()
     {
         // Get real visitor IP behind CloudFlare network
         if (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) {
