@@ -18,7 +18,7 @@ class InstagramController extends AuthController {
     }
 
     public function actionLoadMedias(){
-        return InstagramMedia::saveMediaToDatabase(false);
+        return InstagramMedia::saveMediaToDatabase(true);
     }
 
     public function actionListMedias(){
@@ -26,7 +26,7 @@ class InstagramController extends AuthController {
     }
     
     public function actionFetchMedias(){
-        return InstagramMedia::fetchInstagramMedia(false);
+        return InstagramMedia::fetchInstagramMedia(true);
     }
 
 }
