@@ -70,10 +70,29 @@ class ModelCommon extends \yii\db\ActiveRecord
             $pageSize = $options['pageSize'];
         }
 
-        if(isset($options['order']) && $options['order'] && count($params) > 0) {
+        /**
+            AQUI FAZ A VERIFICAÇÃO SE TEM UM ITEM DE ORDENAMENTO QUE MUDA A TAMANHO DA LISTAGEM. CASO SEJA FORNECIDO UM CAMPO FLAG E ELE NÃO SEJA NULO/VAZIO
+            O TAMANHO PASSA PARA 10000
+        */
+        if(isset($options['order']) && $options['order'] && !empty($options['order']) && count($params) > 0) {
             $query->orderBy([$options['order']['field'] => SORT_ASC]);
-            if($orderField == false || (isset($options['order']['flag'] ) && $options['order']['flag'] != false && isset($params[$className][$options['order']['flag']]) && !empty($params[$className][$options['order']['flag']])))
-                $pageSize = 10000;
+
+            if(
+                    (
+                        isset($options['order']['flag'] ) && 
+                        $options['order']['flag'] != false && 
+                        isset($params[$className][$options['order']['flag']]) && 
+                        !empty($params[$className][$options['order']['flag']])
+                    )
+                )
+            {
+                foreach ($params["{$className}"] as $field => $search) {
+                    if(!empty($search)){
+                        $pageSize = 10000;
+                        break;
+                    }
+                }
+            }
         }
 
         if(isset($options['join'])) {
