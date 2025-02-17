@@ -156,17 +156,20 @@ class ModelCommon extends \yii\db\ActiveRecord
             foreach ($params["{$className}"] as $field => $search) {
 
                 $field_type = gettype($search);
+                if (is_numeric($search) && (int)$search == $search) {
+                    $field_type = "number";
+                } 
                 $field_parts = explode(':',$field);
     
                 if(count($field_parts) > 1){
                     [$field,$field_type] = $field_parts;
                 }
+                
                 if($field_type == 'custom'){
                     $query->andFilterWhere(["$table.$field", $search[0], $search[1]]);
                 } else if($field_type == 'between'){
                     $query->andFilterWhere(['between', "$table.$field", $search[0], $search[1]]);
                 } else if($field_type == 'string'){
-
                     if(str_contains($field,'sod') || str_contains($field,'eod')){
                         [$field_date,$pos] = explode('FDT',$field);
                         if($pos == 'sod'){
@@ -183,6 +186,8 @@ class ModelCommon extends \yii\db\ActiveRecord
                 }
             }
         }
+        // $query = $dataProvider->query;
+        // dd($query->createCommand()->getRawSql());
         return $dataProvider;
     }
 
