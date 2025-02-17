@@ -48,7 +48,7 @@ CSS;
 $this->registerCss($css);
 
 if(!Yii::$app->user->isGuest){
-    $name_split = explode(' ',Yii::$app->user->identity->fulname);
+    $name_split = explode(' ',Yii::$app->user->identity->fullname);
     $name_user = $name_split[0].(isset($name_split[1]) ? ' ' .end($name_split) : '');
     $controller_id = Yii::$app->controller->id;
     $group = Yii::$app->session->get('group');
