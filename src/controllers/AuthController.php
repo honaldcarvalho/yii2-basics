@@ -238,7 +238,7 @@ class AuthController extends ControllerCommon {
             $query_rules = Rule::find()->where(['path' => $app_path, 'controller' => $request_controller, 'status' => 1]);
 
             if (!self::isAdmin()) {
-                if($model){
+                if($model && $model->verGroup){
                     //group 1: common
                     if($request_action == 'view' && $model->group_id == 1){
                         return true;
