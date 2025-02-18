@@ -119,7 +119,8 @@ class ControllerCommon extends \yii\web\Controller
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
         $model = $this->findModel($id);
-
+        $file = null;
+        
         if($model !== null){
             if (method_exists($model, 'getFile')) {
                 $file = $model->getFile()->one();
@@ -509,7 +510,7 @@ class ControllerCommon extends \yii\web\Controller
         }
     }
 
-    static function getUserIP()
+    public static function getUserIP()
     {
         // Get real visitor IP behind CloudFlare network
         if (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) {
