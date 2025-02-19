@@ -471,6 +471,14 @@ class ControllerCommon extends \yii\web\Controller
         $str = preg_replace('/_+/', '-', $str);
         return $str;
     }
+    
+    public static function sanatize($str) {
+        $removeItens = ["[","]",",","(",")",";",":","|","!","\"","$","%","&","#","=","?","~",">","<","ª","º","-",".","\/"];
+        foreach ($removeItens as $item){
+            $str = preg_replace('/['.$item.']/', '', $str);            
+        }
+        return $str;
+    }
 
     public function sanatizeReplace($str)
     {
