@@ -27,7 +27,7 @@ class ControllerCommon extends \yii\web\Controller
     public $params = null;
     static $assetsDir;
 
-    public static function  ()
+    public static function getClassPath()
     {
         return get_called_class();
     }
