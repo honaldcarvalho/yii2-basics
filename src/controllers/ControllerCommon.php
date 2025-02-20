@@ -27,7 +27,7 @@ class ControllerCommon extends \yii\web\Controller
     public $params = null;
     static $assetsDir;
 
-    public static function getClassPath()
+    public static function  ()
     {
         return get_called_class();
     }
@@ -91,6 +91,26 @@ class ControllerCommon extends \yii\web\Controller
         }
         return null;
     }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+    
+        // Obtém o nome do modelo e remove namespace
+        $modelName = strtolower((new \ReflectionClass($this))->getShortName());
+    
+        Yii::$app->cache->delete("cache_{$modelName}");
+    }
+    
+    public function afterDelete()
+    {
+        parent::afterDelete();
+    
+        $modelName = strtolower((new \ReflectionClass($this))->getShortName());
+    
+        Yii::$app->cache->delete("cache_{$modelName}");
+    }
+    
 
     public function actionStatus($id)
     {
