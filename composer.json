@@ -24,7 +24,9 @@
         "phpseclib/phpseclib": "~3.0",
         "kartik-v/yii2-widget-datetimepicker": "dev-master",
         "onmotion/yii2-widget-apexcharts": "^1.0",
-        "php-ffmpeg/php-ffmpeg": "^1.1"
+        "php-ffmpeg/php-ffmpeg": "^1.1",
+        "yiisoft/yii2-redis": "^2.0@dev"
+
     },
     "autoload": {
         "psr-4": {

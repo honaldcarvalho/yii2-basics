@@ -4,6 +4,7 @@ require __DIR__ . '/enviroments.php';
 require __DIR__ . '/urls_custom.php';
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
+$redis = require __DIR__ . '/redis.php';
 
 $config = [
     'id' => 'app-basic',
@@ -137,6 +138,7 @@ $config = [
             ],
         ],
         'db' => $db,
+        'redis' => $redis,
        
     ],
     'params' => $params,
