@@ -31,20 +31,9 @@ use weebz\yii2basics\widgets\TinyMCE;
 
     <?= $form->field($model, 'description')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'content')->widget(TinyMCE::class, [
-        'options' => ['rows' => 20],
-        'language' => \Yii::$app->language,
-        //'language' => 'pt_br',
-        'clientOptions' => [
-            'plugins' => [
-                'advlist', 'autolink', 'link', 'image', 'lists', 'charmap', 'preview', 'anchor', 'pagebreak',
-                'searchreplace', 'wordcount', 'visualblocks', 'code', 'fullscreen', 'insertdatetime', 'media',
-                'table', 'emoticons', 'template', 'help'            ],
-                        'toolbar' => "undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | ' +
-                'bullist numlist outdent indent | link image | print preview media fullscreen | ' +
-                'forecolor backcolor emoticons"
-            ]
-        ]);?>
+    <?= $form->field($model, 'content')->widget(\weebz\yii2basics\widgets\TinyMCE::class, [
+        'options' => ['rows' => 20]
+    ]); ?>
 
     <?= $form->field($model, 'custom_css')->textarea(['rows' => 6]) ?>
 

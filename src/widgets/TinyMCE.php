@@ -29,8 +29,8 @@ class TinyMCE extends InputWidget
                 'table', 'emoticons', 'template', 'help'
             ],
             'toolbar' => "undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | " .
-                         "bullist numlist outdent indent | link image | print preview media fullscreen | " .
-                         "forecolor backcolor emoticons | loremIpsum",
+                         "bullist numlist outdent indent | link image loremIpsum| print preview media fullscreen | " .
+                         "forecolor backcolor emoticons ",
             'setup' => new \yii\web\JsExpression('function(editor) {
                 editor.ui.registry.addButton("loremIpsum", {
                     text: "Lorem Ipsum",
