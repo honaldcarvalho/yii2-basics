@@ -21,6 +21,7 @@ use Yii;
  * @property int $size
  * @property int $duration
  * @property int $caption
+ * @property int $status
  * @property string|null $created_at
  * @property string|null $updated_at
  *
@@ -61,7 +62,7 @@ class File extends ModelCommon
     public function rules()
     {
         return [
-            [['folder_id', 'size','duration','caption'], 'integer'],
+            [['folder_id', 'size','duration','caption','status'], 'integer'],
             [['name', 'path', 'url', 'extension', 'size'],'required','on'=>self::SCENARIO_DEFAULT],
             [['created_at', 'updated_at'], 'safe'],
             [['name', 'path', 'url', 'pathThumb', 'urlThumb'], 'string', 'max' => 300],
