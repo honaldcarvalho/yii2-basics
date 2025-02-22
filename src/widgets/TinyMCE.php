@@ -42,7 +42,7 @@ class TinyMCE extends InputWidget
                          "forecolor backcolor emoticons ",
             'setup' => new \yii\web\JsExpression('function(editor) {
                 editor.ui.registry.addButton("loremIpsumSmall", {
-                    text: "Lorem Ipsum Small",
+                    text: "Lorem Small",
                     icon: "edit-block",
                     tooltip: "Inserir texto Lorem Ipsum",
                     onAction: function () {
@@ -51,7 +51,7 @@ class TinyMCE extends InputWidget
                     }
                 });
                 editor.ui.registry.addButton("loremIpsumBig", {
-                    text: "Lorem Ipsum Big",
+                    text: "Lorem Big",
                     icon: "edit-block",
                     tooltip: "Inserir texto Lorem Ipsum",
                     onAction: function () {
