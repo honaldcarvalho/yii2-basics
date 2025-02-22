@@ -55,6 +55,7 @@ class TinyMCE extends InputWidget
     }
     $js[] = "tinymce.remove('#$id');tinymce.init($options);";
     $view->registerJs(implode("\n", $js));
+
     $script = <<< JS
     tinymce.PluginManager.add('loremIpsumButton', function(editor, url) {
         editor.ui.registry.addButton('loremIpsumButton', {
@@ -67,7 +68,6 @@ class TinyMCE extends InputWidget
             }
         });
     });
-    
     JS;
 
     $view->registerJs($script);
