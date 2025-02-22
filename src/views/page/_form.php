@@ -42,7 +42,7 @@ use weebz\yii2basics\widgets\TinyMCE;
                 'table', 'emoticons', 'template', 'help'            ],
                         'toolbar' => "undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | ' +
                 'bullist numlist outdent indent | link image | print preview media fullscreen | ' +
-                'forecolor backcolor emoticons | loremIpsumButton"
+                'forecolor backcolor emoticons"
             ]
         ]);?>
 
