@@ -55,5 +55,20 @@ class TinyMCE extends InputWidget
     }
     $js[] = "tinymce.remove('#$id');tinymce.init($options);";
     $view->registerJs(implode("\n", $js));
+    $script = <<< JS
+    tinymce.PluginManager.add('loremIpsumButton', function(editor, url) {
+        editor.ui.registry.addButton('loremIpsumButton', {
+            text: 'Lorem Ipsum',
+            icon: 'paste', // Ícone do TinyMCE (pode ser alterado)
+            tooltip: 'Inserir texto Lorem Ipsum',
+            onAction: function () {
+                let loremText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+                editor.execCommand('mceInsertContent', false, loremText);
+            }
+        });
+    });
+    
+    JS;
+    $view->registerJs($script);
   }
 }
