@@ -55,7 +55,7 @@ class TinyMCE extends InputWidget
                     icon: "edit-block",
                     tooltip: "Inserir texto Lorem Ipsum",
                     onAction: function () {
-                        let loremText = \''.$textBig.'\'";
+                        let loremText = `'.$textBig.'`";
                         editor.insertContent(loremText);
                     }
                 });
