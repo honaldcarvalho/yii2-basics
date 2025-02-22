@@ -96,3 +96,38 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+
+// LOREM EPSUM GENERATE
+function generateLoremIpsum(wordCount) {
+    let loremIpsumText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
+    let words = loremIpsumText.split(" ");
+    let generatedText = [];
+
+    while (generatedText.length < wordCount) {
+        generatedText = generatedText.concat(words);
+    }
+
+    return generatedText.slice(0, wordCount).join(" ") + ".";
+}
+
+function insertLoremIpsum(targetSelector) {
+    let target = $(targetSelector);
+    let wordCount = parseInt($("#wordCount").val());
+    let loremText = generateLoremIpsum(wordCount);
+
+    if (target.length) {
+        if (target.is("input, textarea")) {
+            target.val(loremText);
+        } else if (target.is("[contenteditable='true']")) {
+            target.html(loremText);
+        }
+    } else {
+        alert("Campo não encontrado!");
+    }
+}
+
+$(".generate-text").click(function () {
+    let targetSelector = $(this).data("target"); 
+    insertLoremIpsum(targetSelector);
+});
