@@ -69,6 +69,7 @@ class TinyMCE extends InputWidget
     });
     
     JS;
+
     $view->registerJs($script);
   }
 }
