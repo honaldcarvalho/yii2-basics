@@ -473,7 +473,7 @@ class ControllerCommon extends \yii\web\Controller
     }
     
     public static function sanatize($str) {
-        $removeItens = ["[","]",",","(",")",";",":","|","!","\"","$","%","&","#","=","?","~",">","<","ª","º","-",".","\/"];
+        $removeItens = ["[","]",",","(",")",";",":","|","!","\"","$","%","&","#","=","?","~",">","<","ª","º","-",".","\/"," "];
         foreach ($removeItens as $item){
             $str = preg_replace('/['.$item.']/', '', $str);            
         }
@@ -481,9 +481,9 @@ class ControllerCommon extends \yii\web\Controller
     }
 
     public static function sanatizeReplaced($str, $replace) {
-        $removeItens = ["[","]",",","(",")",";",":","|","!","\"","$","%","&","#","=","?","~",">","<","ª","º","-",".","\/"];
+        $removeItens = ["[","]",",","(",")",";",":","|","!","\"","$","%","&","#","=","?","~",">","<","ª","º","-",".","\/"," "];
         foreach ($removeItens as $item){
-            $str = preg_replace('/['.$item.']/', "{$replace}", $str);            
+            $str = preg_replace('/['.$item.']/', $replace, $str);            
         }
         return $str;
     }
