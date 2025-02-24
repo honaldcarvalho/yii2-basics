@@ -92,26 +92,6 @@ class ControllerCommon extends \yii\web\Controller
         return null;
     }
 
-    public function afterSave($insert, $changedAttributes)
-    {
-        parent::afterSave($insert, $changedAttributes);
-    
-        // Obtém o nome do modelo e remove namespace
-        $modelName = strtolower((new \ReflectionClass($this))->getShortName());
-    
-        Yii::$app->cache->delete("cache_{$modelName}");
-    }
-    
-    public function afterDelete()
-    {
-        parent::afterDelete();
-    
-        $modelName = strtolower((new \ReflectionClass($this))->getShortName());
-    
-        Yii::$app->cache->delete("cache_{$modelName}");
-    }
-    
-
     public function actionStatus($id)
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
@@ -496,6 +476,14 @@ class ControllerCommon extends \yii\web\Controller
         $removeItens = ["[","]",",","(",")",";",":","|","!","\"","$","%","&","#","=","?","~",">","<","ª","º","-",".","\/"];
         foreach ($removeItens as $item){
             $str = preg_replace('/['.$item.']/', '', $str);            
+        }
+        return $str;
+    }
+
+    public static function sanatizeReplaced($str, $replace) {
+        $removeItens = ["[","]",",","(",")",";",":","|","!","\"","$","%","&","#","=","?","~",">","<","ª","º","-",".","\/"];
+        foreach ($removeItens as $item){
+            $str = preg_replace('/['.$item.']/', "{$$replace}", $str);            
         }
         return $str;
     }
