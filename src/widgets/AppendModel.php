@@ -76,6 +76,7 @@ class AppendModel extends \yii\bootstrap5\Widget
     public $removeUrl;
     public $getUrl;
     public $saveUrl;
+    public $statusUrl;
     public $random;
     /**
      * {@inheritdoc}
@@ -89,6 +90,7 @@ class AppendModel extends \yii\bootstrap5\Widget
         $this->removeUrl = "/{$this->controller}/remove-model?modelClass={$this->attactModel}";
         $this->getUrl = "/{$this->controller}/get-model?modelClass={$this->attactModel}";
         $this->saveUrl = "/{$this->controller}/save-model?modelClass={$this->attactModel}";
+        $this->statusUrl = "/{$this->controller}/status-model?modelClass={$this->attactModel}";
         $form_name = strtolower($this->attactModel);
         $columns = array_merge($columns,$this->showFields);
 
@@ -102,6 +104,15 @@ class AppendModel extends \yii\bootstrap5\Widget
             'orderField'=> $this->orderField,
             'orderModel'=>$this->orderModel,
             'buttons' => [
+                'status' => function ($url, $model, $key) {
+                    return Html::a('<i class="fas fa-toggle-'.(!$model->status ? 'off' : 'on').'"></i>','javascript:;',
+                     [
+                        'onclick'=>"status{$this->attactModel}(this);", 
+                        'data-link'=> "{$this->statusUrl}&id=$model->id",
+                        'class'=>'btn btn-outline-secondary status',"data-toggle"=>"tooltip","data-placement"=>"top", 
+                        "title"=>\Yii::t('*',"Change Status {$this->attactModel}")
+                    ]);
+                }, 
                 'remove' => function ($url, $model, $key) {
                     return Html::a('<i class="fas fa-trash"></i>','javascript:;',
                      [
@@ -190,6 +201,40 @@ class AppendModel extends \yii\bootstrap5\Widget
                             }
                         });
                         modal_{$this->attactModel}.show();
+                    }
+                }).fail(function (response) {
+                    toastr.error("Error on remove {$lower}!");
+                }).always(function (response) {
+                    object.removeClass('fas fa-sync fa-spin');
+                    object.attr('class',old_class);
+                });
+            }
+
+            function status{$this->attactModel}(e) {
+
+                let el = $(e);
+
+                object = el.children("i");
+                let old_class = el.children("i").attr('class');
+                object.removeClass(old_class);
+                object.addClass('fas fa-sync fa-spin');
+
+                $.ajax({
+                    type: "POST",
+                    url: el.data('link'),
+                }).done(function(response) {     
+                    if(response == null){
+                        toastr.error("Error on load {$lower}!");
+                        return false;
+                    } else {
+                        if(response.success) {
+                            toastr.success("Status Changed!");
+                            modal_{$this->attactModel}.hide();
+                            $.pjax.reload({container: "#list-{$lower}-grid", async: false});
+                            {$this->callBack}
+                        } else {
+                            toastr.error("Error on save!");
+                        }
                     }
                 }).fail(function (response) {
                     toastr.error("Error on remove {$lower}!");

@@ -5,6 +5,7 @@ namespace weebz\yii2basics\controllers;
 use weebz\yii2basics\controllers\rest\StorageController;
 use weebz\yii2basics\models\Log;
 use weebz\yii2basics\models\Configuration;
+use weebz\yii2basics\models\ModelCommon;
 use Yii;
 use yii\symfonymailer\Mailer;
 use yii\web\NotFoundHttpException;
@@ -91,6 +92,26 @@ class ControllerCommon extends \yii\web\Controller
         }
         return null;
     }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+    
+        // Obtém o nome do modelo e remove namespace
+        $modelName = strtolower((new \ReflectionClass($this))->getShortName());
+    
+        Yii::$app->cache->delete("cache_{$modelName}");
+    }
+    
+    public function afterDelete()
+    {
+        parent::afterDelete();
+    
+        $modelName = strtolower((new \ReflectionClass($this))->getShortName());
+    
+        Yii::$app->cache->delete("cache_{$modelName}");
+    }
+    
 
     public function actionStatus($id)
     {
@@ -200,6 +221,7 @@ class ControllerCommon extends \yii\web\Controller
         return ['success' => false];
     }
 
+
     // Generalized function to get a model by ID
     public function actionGetModel($modelClass, $id)
     {
@@ -211,6 +233,26 @@ class ControllerCommon extends \yii\web\Controller
             $modelClassNamespace = $verClass; 
         }
         return $modelClassNamespace::findOne($id);
+    }
+
+    // Generalized function to get a model by ID
+    public function actionStatusModel($modelClass, $id)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $verClass = self::classExist($modelClass);
+        if ($verClass === null) {
+            return ['success' => false, 'message' => "Model class '$modelClass' does not exist."];
+        } else{
+            $modelClassNamespace = $verClass; 
+        }
+
+        if(($model = $modelClassNamespace::findOne($id)) !== null) {
+            $model->scenario = ModelCommon::SCENARIO_STATUS;
+            $model->status == 0 ? $model->status = 1 : $model->status = 0;
+            return ['success' => $model->save(), 'message' => $model->getErrors()];
+        }
+
+        return ['success' => false, 'message' => 'Not Found'];
     }
 
     // Generalized function to get a models
@@ -473,17 +515,9 @@ class ControllerCommon extends \yii\web\Controller
     }
     
     public static function sanatize($str) {
-        $removeItens = ["[","]",",","(",")",";",":","|","!","\"","$","%","&","#","=","?","~",">","<","ª","º","-",".","\/"," "];
+        $removeItens = ["[","]",",","(",")",";",":","|","!","\"","$","%","&","#","=","?","~",">","<","ª","º","-",".","\/"];
         foreach ($removeItens as $item){
             $str = preg_replace('/['.$item.']/', '', $str);            
-        }
-        return $str;
-    }
-
-    public static function sanatizeReplaced($str, $replace) {
-        $removeItens = ["[","]",",","(",")",";",":","|","!","\"","$","%","&","#","=","?","~",">","<","ª","º","-",".","\/"," "];
-        foreach ($removeItens as $item){
-            $str = preg_replace('/['.$item.']/', $replace, $str);            
         }
         return $str;
     }

@@ -8,6 +8,7 @@ use weebz\yii2basics\controllers\AuthController;
 class ModelCommon extends \yii\db\ActiveRecord
 {
     public $verGroup = false;
+    const SCENARIO_STATUS = 'status';
     const SCENARIO_SEARCH = 'search';
 
     public function scenarios()
@@ -17,6 +18,8 @@ class ModelCommon extends \yii\db\ActiveRecord
             $scenarios[self::SCENARIO_DEFAULT][] = $key;
             $scenarios[self::SCENARIO_SEARCH][] = $key;
         }
+        $scenarios[self::SCENARIO_STATUS][] = 'status';
+
         return $scenarios;
     }
 
