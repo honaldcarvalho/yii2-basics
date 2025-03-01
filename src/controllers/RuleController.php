@@ -141,6 +141,20 @@ class RuleController extends AuthController
         ]);
     }
 
+    public function actionEdit($id)
+    {
+        $model = $this->findModel($id);
+
+        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->id]);
+        }
+
+        return $this->render('edit', [
+            'model' => $model,
+        ]);
+    }
+
+
     /**
      * Deletes an existing Rule model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
