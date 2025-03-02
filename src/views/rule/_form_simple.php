@@ -21,7 +21,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'user_id')->dropDownList(yii\helpers\ArrayHelper::map(User::find()->select('id,username')->asArray()->all(), 'id', 'username'), ['prompt' => '-- selecione um usuario --']) ?>
 
-    <?= $form->field($model, 'controller')->dropDownList($controller_actions_opts, ['multiple'=>false,'prompt' => '-- CONTROLLER --','value'=>$controller_value]) ?>
+    <?= $form->field($model, 'controller')->textInput() ?>
 
     <?= $form->field($model, 'path')->textInput() ?>
 
