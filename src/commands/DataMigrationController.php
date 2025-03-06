@@ -3,11 +3,10 @@
 namespace app\commands;
 
 use yii\console\Controller;
-use yii\db\Command;
+use yii\db\Connection;
 
 class DataMigrationController extends Controller
 {
-
     public $tables;
 
     public function options($actionID)
@@ -25,7 +24,7 @@ class DataMigrationController extends Controller
      */
     public function actionGenerate()
     {
-        $tables = explode(',',$this->tables);
+        $tables = explode(',', $this->tables);
 
         if (empty($tables)) {
             echo "Por favor, forneça uma lista de tabelas para gerar a migration.\n";
@@ -46,7 +45,7 @@ class DataMigrationController extends Controller
      * @param string $table Nome da tabela
      * @param \yii\db\Connection $db Conexão do banco de dados
      */
-    protected function generateTableMigration($table, $db)
+    protected function generateTableMigration($table, Connection $db)
     {
         // Verificar se a tabela existe no banco de dados
         if ($db->getTableSchema($table) === null) {
@@ -54,16 +53,26 @@ class DataMigrationController extends Controller
             return;
         }
 
+        // Obter os dados da tabela
+        $data = (new \yii\db\Query())
+            ->select('*')
+            ->from($table)
+            ->all($db);
+
+        if (empty($data)) {
+            echo "Nenhum dado encontrado para a tabela {$table}.\n";
+            return;
+        }
+
         // Obter as colunas da tabela
-        $columns = $db->getTableSchema($table)->columns;
-        $columnNames = array_keys($columns);
+        $columns = array_keys($db->getTableSchema($table)->columns);
 
         // Gerar o nome do arquivo da migration
         $migrationName = 'm' . gmdate('ymd_His') . '_insert_data_into_' . $table;
-        $migrationFile = \Yii::getAlias('@console/migrations/') . $migrationName . '.php';
+        $migrationFile = \Yii::getAlias('@app/common/migrations/') . $migrationName . '.php';
 
         // Gerar o código da migration
-        $migrationCode = $this->generateMigrationCode($table, $columnNames);
+        $migrationCode = $this->generateMigrationCode($table, $columns, $data);
 
         // Criar o arquivo da migration
         file_put_contents($migrationFile, $migrationCode);
@@ -76,9 +85,10 @@ class DataMigrationController extends Controller
      * 
      * @param string $table Nome da tabela
      * @param array $columns Nome das colunas da tabela
+     * @param array $data Dados da tabela a serem inseridos
      * @return string Código PHP gerado
      */
-    protected function generateMigrationCode($table, $columns)
+    protected function generateMigrationCode($table, $columns, $data)
     {
         // Cabeçalho do arquivo
         $code = "<?php\n\n";
@@ -88,12 +98,16 @@ class DataMigrationController extends Controller
         $code .= "    public function safeUp()\n";
         $code .= "    {\n";
         $code .= "        \$this->batchInsert('{$table}', [" . implode(", ", array_map(fn($col) => "'$col'", $columns)) . "], [\n";
-        
-        // Gerar valores de exemplo para inserção
-        // Você pode melhorar isso para pegar os dados reais ou fazer algo mais dinâmico
-        $code .= "            // Exemplo de dados\n";
-        $code .= "            // ['valor1', 'valor2', 'valor3'],\n";
-        
+
+        // Gerar os dados para inserção
+        foreach ($data as $row) {
+            $values = array_map(function ($value) {
+                // Verifica se o valor é nulo ou precisa ser escapado
+                return is_null($value) ? 'null' : "'" . addslashes($value) . "'";
+            }, array_values($row));
+            $code .= "            [" . implode(", ", $values) . "],\n";
+        }
+
         $code .= "        ]);\n";
         $code .= "    }\n\n";
         $code .= "    public function safeDown()\n";
