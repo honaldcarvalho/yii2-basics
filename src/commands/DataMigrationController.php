@@ -3,7 +3,6 @@
 namespace app\commands;
 
 use yii\console\Controller;
-use yii\helpers\Console;
 use yii\db\Command;
 
 class DataMigrationController extends Controller
