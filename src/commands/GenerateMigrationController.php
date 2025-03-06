@@ -8,11 +8,26 @@ use yii\db\Command;
 
 class GenerateMigrationController extends Controller
 {
+
+    public $tables;
+
+    public function options($actionID)
+    {
+        return ['tables'];
+    }
+
+    public function optionAliases()
+    {
+        return ['tables' => 'tables'];
+    }
+
     /**
      * Gera uma migration para inserção de dados de tabelas selecionadas.
      */
-    public function actionGenerate($tables = [])
+    public function actionGenerate()
     {
+        $tables = explode(',',$this->tables);
+        
         if (empty($tables)) {
             echo "Por favor, forneça uma lista de tabelas para gerar a migration.\n";
             return;
