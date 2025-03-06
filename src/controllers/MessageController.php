@@ -89,7 +89,7 @@ class MessageController extends AuthController
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id, $language)
+    public function actionDel($id, $language)
     {
         return $this->find($id, $language)->delete();
     }

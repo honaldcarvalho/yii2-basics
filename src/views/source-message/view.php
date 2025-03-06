@@ -224,7 +224,7 @@ $this::registerJs($script, $this::POS_END);
                                     return Html::a('<i class="fas fa-trash"></i>','javascript:;',
                                      [
                                         'onclick'=>'removeTranslate(this);', 
-                                        'data-link'=> "/message/delete/{$model->id}?language={$model->language}",
+                                        'data-link'=> "/message/del/{$model->id}?language={$model->language}",
                                         'class'=>'btn btn-outline-secondary remove',"data-toggle"=>"tooltip","data-placement"=>"top", 
                                         "title"=>\Yii::t('app','Remove from folder')
                                     ]);
