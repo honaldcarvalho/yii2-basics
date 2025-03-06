@@ -6,7 +6,7 @@ use yii\console\Controller;
 use yii\helpers\Console;
 use yii\db\Command;
 
-class GenerateMigration extends Controller
+class GenerateMigrationController extends Controller
 {
     /**
      * Gera uma migration para inserção de dados de tabelas selecionadas.
