@@ -14,7 +14,59 @@ class Custom extends \yii\i18n\Formatter
         return Yii::t($category,$value);
 
     }
+    public function asCpfCnpj($value)
+    {
+        if (strlen($value) === 11) {
+            // Format as CPF
+            return preg_replace('/(\d{3})(\d{3})(\d{3})(\d{2})/', '$1.$2.$3-$4', $value);
+        } elseif (strlen($value) === 14) {
+            // Format as CNPJ
+            return preg_replace('/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/', '$1.$2.$3/$4-$5', $value);
+        }
 
+        // Return the original value if it's not valid
+        return $value;
+    }
+
+    public function asCreditCard($value,$category= '*') { 
+        // Remove qualquer caracter que não seja número
+        $number = preg_replace('/\D/', '', $value);
+    
+        // Verifica se o número tem 16 caracteres
+        if (strlen($number) === 16) {
+            // Formata o número no formato 9999 9999 9999 9999
+            return preg_replace('/(\d{4})(\d{4})(\d{4})(\d{4})/', '$1 $2 $3 $4', $number);
+        }
+    
+        // Se o número não tiver 16 caracteres, retorna sem formatação
+        return $number;
+    }
+    
+    /**
+     * Formats a value as a phone number: (99) 9 9999-9999.
+     *
+     * @param string $value The raw phone number (only digits).
+     * @return string The formatted phone number.
+     */
+    public function asPhone($value)
+    {
+        // Remove any non-digit characters
+        $value = preg_replace('/\D/', '', $value);
+
+        // Check for the correct length (11 digits for mobile)
+        if (strlen($value) === 11) {
+            return preg_replace('/(\d{2})(\d{1})(\d{4})(\d{4})/', '($1) $2 $3-$4', $value);
+        }
+
+        // Check for the correct length (10 digits for landline)
+        if (strlen($value) === 10) {
+            return preg_replace('/(\d{2})(\d{4})(\d{4})/', '($1) $2-$3', $value);
+        }
+
+        // Return the original value if it's not valid
+        return $value;
+    }
+    
     public function asPassword($password,$id = '') { 
         if($password === null){
             return null;
