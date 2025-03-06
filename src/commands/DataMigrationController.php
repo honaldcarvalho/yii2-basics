@@ -6,7 +6,7 @@ use yii\console\Controller;
 use yii\helpers\Console;
 use yii\db\Command;
 
-class GenerateMigrationController extends Controller
+class DataMigrationController extends Controller
 {
 
     public $tables;
@@ -27,7 +27,7 @@ class GenerateMigrationController extends Controller
     public function actionGenerate()
     {
         $tables = explode(',',$this->tables);
-        
+
         if (empty($tables)) {
             echo "Por favor, forneça uma lista de tabelas para gerar a migration.\n";
             return;
