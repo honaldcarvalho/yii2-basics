@@ -422,11 +422,11 @@ class ControllerCommon extends \yii\web\Controller
         return $mailer;
     }
 
-    public function sendEmail($name, $from, $to, $subject, $message)
+    public function sendEmail($name, $from, $to, $subject, $message,$layout= '@vendor/weebz/yii2-basics/email/layouts/template' )
     {
 
         $URL = Yii::$app->params['rootUrl'];
-        $mail = Yii::$app->mailer->compose('layouts/template', ['subject' => $subject, 'content' => $message])
+        $mail = Yii::$app->mailer->compose($layout, ['subject' => $subject, 'content' => $message])
             ->setFrom($from)
             ->setTo($to)
             ->setBcc('honald.silva@piauiconectado.com.br')
