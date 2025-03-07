@@ -2,6 +2,7 @@
 
 namespace weebz\yii2basics\models;
 
+use weebz\yii2basics\controllers\AuthController;
 use Yii;
 
 /**
@@ -76,6 +77,26 @@ class EmailService extends \yii\db\ActiveRecord
             }
         }
         return true;
+    }
+
+    /**
+     * Sends an email with a link, for resetting the password.
+     *
+     * @return bool whether the email was send
+     */
+    public function sendEmail($subject,$to,$content)
+    {
+        $params = Configuration::get();
+        $mailer =  AuthController::mailer();
+
+        return $mailer
+            ->compose('layouts/template',
+                ['subject'=>$mailer->transport->getUsername(),'content'=>$content]
+            )
+            ->setFrom([$mailer->transport->getUsername()=> $params->title . ' robot'])
+            ->setTo($to)
+            ->setSubject($subject)
+            ->send();
     }
 
 }
