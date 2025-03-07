@@ -97,7 +97,7 @@ class EmailService extends \yii\db\ActiveRecord
 
         return $mailer
             ->compose($layout,
-                ['subject'=>$mailer->transport->getUsername(),'content'=>$content]
+                ['content'=>$content]
             )
             ->setFrom([$from_email=> $from_name])
             ->setTo($to)
