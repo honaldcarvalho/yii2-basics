@@ -84,7 +84,13 @@ class EmailService extends \yii\db\ActiveRecord
      *
      * @return bool whether the email was send
      */
-    public static function sendEmail($subject,$from_email,$from_name,$to,$content,$layout= '@vendor/weebz/yii2-basics/src/mail/layouts/template')
+    public static function sendEmail(
+        $subject,
+        $from_email,
+        $from_name,
+        $to,
+        $content,
+        $layout= '@vendor/weebz/yii2-basics/src/mail/layouts/template')
     {
 
         $mailer =  AuthController::mailer();
