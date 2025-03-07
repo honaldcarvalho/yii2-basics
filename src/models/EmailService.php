@@ -86,6 +86,7 @@ class EmailService extends \yii\db\ActiveRecord
      */
     public static function sendEmail($subject,$from_email,$from_name,$to,$content)
     {
+
         $mailer =  AuthController::mailer();
 
         return $mailer
