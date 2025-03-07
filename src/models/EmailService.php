@@ -94,15 +94,23 @@ class EmailService extends \yii\db\ActiveRecord
     {
 
         $mailer =  AuthController::mailer();
+        $message = $mailer->compose('@vendor/weebz/yii2-basics/src/mail/layouts/template', ['subject' => $subject, 'content' => $content]);
+        $response = $message->setFrom($from_email)->setTo($to)
+        ->setSubject($subject)
+        ->send();
 
-        return $mailer
-            ->compose($layout,
-                ['content'=>$content]
-            )
-            ->setFrom([$from_email=> $from_name])
-            ->setTo($to)
-            ->setSubject($subject)
-            ->send();
+        if($response) {
+            \Yii::$app->session->setFlash('success', "Email sended to {$to}.  See you email.");
+        }else{
+            foreach (\Yii::getLogger()->messages as $key => $message) {
+                if($message[2] == 'yii\symfonymailer\Mailer::sendMessage'){
+                    \Yii::$app->session->setFlash('error', 'Occoured some error: '.$message[0]);
+                }
+            }
+
+        }
+
+        return $response;
     }
 
 }
