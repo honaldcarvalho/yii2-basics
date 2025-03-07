@@ -84,16 +84,15 @@ class EmailService extends \yii\db\ActiveRecord
      *
      * @return bool whether the email was send
      */
-    public static function sendEmail($subject,$to,$content)
+    public static function sendEmail($subject,$from_email,$from_name,$to,$content)
     {
-        $params = Configuration::get();
         $mailer =  AuthController::mailer();
 
         return $mailer
             ->compose('layouts/template',
                 ['subject'=>$mailer->transport->getUsername(),'content'=>$content]
             )
-            ->setFrom([$mailer->transport->getUsername()=> $params->title . ' robot'])
+            ->setFrom([$from_email=> $from_name])
             ->setTo($to)
             ->setSubject($subject)
             ->send();
