@@ -90,7 +90,7 @@ class EmailService extends \yii\db\ActiveRecord
         $from_name,
         $to,
         $content,
-        $layout= '@vendor/weebz/yii2-basics/src/mail/layouts/template')
+        $layout= 'layouts/template')
     {
 
         $mailer =  AuthController::mailer();
