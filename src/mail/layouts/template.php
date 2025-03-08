@@ -3,7 +3,6 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title><?php echo $subject; ?></title>
     <style>
       /* -------------------------------------
           GLOBAL RESETS
@@ -344,7 +343,7 @@
                 <tr>
                     <td class="x_header" style="box-sizing:border-box; padding:25px 0; text-align:center">
                         <a href="https://weebz.com.br" target="_blank" rel="noopener noreferrer" data-auth="NotApplicable" style="box-sizing:border-box; color:#3d4852; font-size:19px; font-weight:bold; text-decoration:none; display:inline-block" data-safelink="true" data-linkindex="0">
-                            <img data-imagetype="External" src="https://weebz.com.br/images/logo_weebz_azul.png" class="x_img-responsive" style="box-sizing:border-box; border:none; width:200px;"> 
+                            <img data-imagetype="External" src="https://weebz.com.br/images/logo_weebz_azul.png" class="x_img-responsive" style="box-sizing:border-box; border:none; width:150px;"> 
                         </a>
                     </td>
                 </tr>
