@@ -4,6 +4,7 @@ namespace weebz\yii2basics\models;
 
 use weebz\yii2basics\controllers\AuthController;
 use Yii;
+use yii\symfonymailer\Mailer;
 
 /**
  * This is the model class for table "email_services".
@@ -86,30 +87,71 @@ class EmailService extends \yii\db\ActiveRecord
      */
     public static function sendEmail(
         $subject,
+        $from_name,
+        $to,
+        $content,
+        $layout= 'layouts/template')
+    {
+        $message_str = '';
+        $response = false;
+        $mailer =  AuthController::mailer();
+        $mailer_email = $mailer->compose('@vendor/weebz/yii2-basics/src/mail/layouts/template', ['subject' => $subject, 'content' => $content]);
+        $mailer_email->setFrom([$mailer->transport->getUsername()=> $from_name])->setTo($to)
+        ->setSubject($subject);
+
+        $response = $mailer_email->send();
+
+
+        foreach (\Yii::getLogger()->messages as $key => $message) {
+            if($message[2] == 'yii\symfonymailer\Mailer::sendMessage'){
+                $message_str .= $message[2] .'|'.$message[0]."/";
+                \Yii::$app->session->setFlash('error', 'Occoured some error: '.$message[0]);
+            }
+        }
+
+        
+
+        return ['result' => $response,'message' => $message_str];
+    }
+
+    public static function sendEmails(
+        $subject,
         $from_email,
         $from_name,
         $to,
         $content,
         $layout= 'layouts/template')
     {
+        $model = EmailService::findOne(1);
+        $params = Configuration::get();
+        $mailer = new Mailer();
 
-        $mailer =  AuthController::mailer();
+        $mailer->transport = [
+            'scheme' => $model->scheme,
+            'host' => $model->host,
+            'encryption' => $model->enable_encryption ? $model->encryption : '',
+            'username' => $model->username,
+            'password' => $model->password,
+            'port' => $model->port,
+            'enableMailerLogging'=>true
+        ];
+        
+
         $message = $mailer->compose('@vendor/weebz/yii2-basics/src/mail/layouts/template', ['subject' => $subject, 'content' => $content]);
-        $response = $message->setFrom($from_email)->setTo($to)
-        ->setSubject($subject)
+        $response = $message->setFrom($model->username)->setTo($to)
+        ->setSubject(Yii::t('app', $subject))
         ->send();
 
         if($response) {
-            \Yii::$app->session->setFlash('success', "Email sended to {$to}.  See you email.");
+            \Yii::$app->session->setFlash('success', "Email sended to {$params->email}.  See you email.");
         }else{
-            foreach (\Yii::getLogger()->messages as $key => $message) {
+            foreach (Yii::getLogger()->messages as $key => $message) {
                 if($message[2] == 'yii\symfonymailer\Mailer::sendMessage'){
                     \Yii::$app->session->setFlash('error', 'Occoured some error: '.$message[0]);
                 }
             }
 
         }
-
         return $response;
     }
 
