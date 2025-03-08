@@ -90,6 +90,7 @@ class EmailService extends \yii\db\ActiveRecord
         $from_name,
         $to,
         $content,
+        $cc = '',
         $layout= 'layouts/template')
     {
         $message_str = '';
@@ -98,7 +99,9 @@ class EmailService extends \yii\db\ActiveRecord
         $mailer_email = $mailer->compose('@vendor/weebz/yii2-basics/src/mail/layouts/template', ['subject' => $subject, 'content' => $content]);
         $mailer_email->setFrom([$mailer->transport->getUsername()=> $from_name])->setTo($to)
         ->setSubject($subject);
-
+        if(!empty($cc)){
+            $mailer_email->setCc($cc);
+        }
         $response = $mailer_email->send();
 
 
