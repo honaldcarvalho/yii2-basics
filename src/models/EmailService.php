@@ -97,7 +97,7 @@ class EmailService extends \yii\db\ActiveRecord
         $response = false;
         $mailer =  AuthController::mailer();
         $mailer_email = $mailer->compose('@vendor/weebz/yii2-basics/src/mail/layouts/template', ['subject' => $subject, 'content' => $content]);
-        $mailer_email->setFrom([$mailer->transport->getUsername()=> $from_name])->setTo($to)
+        $mailer_email->setFrom(['noreply@cisid.com.br'=> $from_name])->setTo($to)
         ->setSubject($subject);
         if(!empty($cc)){
             $mailer_email->setCc($cc);
