@@ -36,29 +36,14 @@ use <?= ltrim($generator->searchModelClass, '\\') . (isset($searchModelAlias) ? 
 <?php else: ?>
 use yii\data\ActiveDataProvider;
 <?php endif; ?>
-use <?= ltrim($generator->baseControllerClass, '\\') ?>;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
  * <?= $controllerClass ?> implements the CRUD actions for <?= $modelClass ?> model.
  */
-class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->baseControllerClass) . "\n" ?>
+class <?= $controllerClass ?> extends AuthController
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
 
     /**
      * Lists all <?= $modelClass ?> models.
@@ -67,8 +52,8 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
     public function actionIndex()
     {
 <?php if (!empty($generator->searchModelClass)): ?>
-        $searchModel = new <?= isset($searchModelAlias) ? $searchModelAlias : $searchModelClass ?>();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $searchModel = new <?= $modelClass ?>();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams,['pageSize'=>10, 'orderBy'=>['id' => SORT_DESC],'order'=>false]);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -134,46 +119,5 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
         return $this->render('update', [
             'model' => $model,
         ]);
-    }
-
-    /**
-     * Deletes an existing <?= $modelClass ?> model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * <?= implode("\n     * ", $actionParamComments) . "\n" ?>
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionDelete(<?= $actionParams ?>)
-    {
-        $this->findModel(<?= $actionParams ?>)->delete();
-
-        return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the <?= $modelClass ?> model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * <?= implode("\n     * ", $actionParamComments) . "\n" ?>
-     * @return <?=                   $modelClass ?> the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel(<?= $actionParams ?>)
-    {
-<?php
-if (count($pks) === 1) {
-    $condition = '$id';
-} else {
-    $condition = [];
-    foreach ($pks as $pk) {
-        $condition[] = "'$pk' => \$$pk";
-    }
-    $condition = '[' . implode(', ', $condition) . ']';
-}
-?>
-        if (($model = <?= $modelClass ?>::findOne(<?= $condition ?>)) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException(<?= $generator->generateString('The requested page does not exist.') ?>);
     }
 }
