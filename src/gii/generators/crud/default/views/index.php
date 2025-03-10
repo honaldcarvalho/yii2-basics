@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     <div class="row mb-2">
                         <div class="col-md-12">
-                            <?= "<?= \weebz\yii2basics\widgets\DefaultButtons::widget(['controller' => ".StringHelper::basename($generator->modelClass).", 
+                            <?= "<?= \weebz\yii2basics\widgets\DefaultButtons::widget(['controller' => '".StringHelper::basename($generator->modelClass)."', 
                             'show' => ['create'], 
                             'buttons_name' => ['create' => Yii::t('app','Create ".Inflector::camel2words(StringHelper::basename($generator->modelClass))."')],
                             verGroup => true,
