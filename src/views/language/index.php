@@ -47,8 +47,6 @@ $this->params['breadcrumbs'][] = $this->title;
                             'class' => 'yii\bootstrap5\LinkPager',
                         ]
                     ]); ?>
-
-
                 </div>
                 <!--.card-body-->
             </div>

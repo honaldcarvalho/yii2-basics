@@ -29,14 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="row">
                 <div class="col-md-12">
                     <p>
-                        <?= "<?= " ?>Html::a(<?= $generator->generateString('Update') ?>, ['update', <?= $urlParams ?>], ['class' => 'btn btn-primary']) ?>
-                        <?= "<?= " ?>Html::a(<?= $generator->generateString('Delete') ?>, ['delete', <?= $urlParams ?>], [
-                            'class' => 'btn btn-danger',
-                            'data' => [
-                                'confirm' => <?= $generator->generateString('Are you sure you want to delete this item?') ?>,
-                                'method' => 'post',
-                            ],
-                        ]) ?>
+                        <?= "<?= \weebz\yii2basics\widgets\DefaultButtons::widget(['controller' => " . StringHelper::basename($generator->modelClass) . ", 'model' => \$model, 'verGroup' => false]) ?>"; ?>
                     </p>
                     <?= "<?= " ?>DetailView::widget([
                         'model' => $model,
