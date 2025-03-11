@@ -95,7 +95,7 @@ class ControllerCommon extends \yii\web\Controller
 
     public function actionClearCache($cacheKey)
     {   
-        ModelCommon::clearCacheCustom($cacheKey);
+        return ModelCommon::clearCacheCustom($cacheKey);
     }
 
     public function actionStatus($id)
