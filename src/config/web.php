@@ -95,6 +95,7 @@ $config = [
                 'menu','params','configuration','meta-tag','email-service','license-type','license','log','folder','file',
                 'section','page','notification','notification-message','rest/mail','rest/storage','rest/auth','rest/address','rest/instagram','rest/youtube','rest/cron'],'common'),
             [
+                "<controller:\w+>/clear-cache/<cacheKey:\w+>" => "<controller>/<action>",
                 "page/show/<id:\w+>" => "page/show",
                 '<controller:\w+>/<id:\d+>' => '<controller>/view',			
                 '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',			

@@ -5,6 +5,7 @@ namespace weebz\yii2basics\controllers;
 use weebz\yii2basics\controllers\rest\StorageController;
 use weebz\yii2basics\models\Log;
 use weebz\yii2basics\models\Configuration;
+use weebz\yii2basics\models\ModelCommon;
 use Yii;
 use yii\symfonymailer\Mailer;
 use yii\web\NotFoundHttpException;
@@ -90,6 +91,11 @@ class ControllerCommon extends \yii\web\Controller
             return $modelClassApp;
         }
         return null;
+    }
+
+    public function actionClearCache($cacheKey)
+    {   
+        ModelCommon::clearCacheCustom($cacheKey);
     }
 
     public function actionStatus($id)
