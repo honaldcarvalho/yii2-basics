@@ -194,4 +194,24 @@ class ModelCommon extends \yii\db\ActiveRecord
         return $dataProvider;
     }
 
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+        $this->clearCache();
+    }
+
+    public function afterDelete()
+    {
+        parent::afterDelete();
+        $this->clearCache();
+    }
+
+    protected function clearCache()
+    {
+        // Gera a chave de cache automaticamente com base no nome do modelo
+        $cacheKey = 'cache_' . strtolower((new \ReflectionClass($this))->getShortName());
+
+        \Yii::$app->cache->delete($cacheKey);
+    }
+
 }
