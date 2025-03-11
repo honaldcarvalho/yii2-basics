@@ -211,7 +211,7 @@ class ModelCommon extends \yii\db\ActiveRecord
         // Gera a chave de cache automaticamente com base no nome do modelo
         $cacheKey = 'cache_' . strtolower((new \ReflectionClass($this))->getShortName());
 
-        Yii::$app->cache->delete($cacheKey);
+        \Yii::$app->cache->delete($cacheKey);
     }
 
     /**
@@ -220,7 +220,7 @@ class ModelCommon extends \yii\db\ActiveRecord
      */
     public static function clearCacheCustom($cacheKey)
     {
-        Yii::$app->cache->delete($cacheKey);
+        \Yii::$app->cache->delete($cacheKey);
     }
 
     /**
@@ -230,7 +230,7 @@ class ModelCommon extends \yii\db\ActiveRecord
     public static function clearMultipleCaches(array $cacheKeys)
     {
         foreach ($cacheKeys as $cacheKey) {
-            Yii::$app->cache->delete($cacheKey);
+           \Yii::$app->cache->delete($cacheKey);
         }
     }
 
