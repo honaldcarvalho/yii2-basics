@@ -91,13 +91,18 @@ class EmailService extends \yii\db\ActiveRecord
         $to,
         $content,
         $cc = '',
+        $from = '',
         $layout= 'layouts/template')
     {
+
         $message_str = '';
         $response = false;
         $mailer =  AuthController::mailer();
+        if(empty($from)){
+            $from = $mailer->transport->getUsername();
+        }
         $mailer_email = $mailer->compose('@vendor/weebz/yii2-basics/src/mail/layouts/template', ['subject' => $subject, 'content' => $content]);
-        $mailer_email->setFrom([$mailer->transport->getUsername()=> $from_name])->setTo($to)
+        $mailer_email->setFrom([$from=> $from_name])->setTo($to)
         ->setSubject($subject);
         if(!empty($cc)){
             $mailer_email->setCc($cc);
