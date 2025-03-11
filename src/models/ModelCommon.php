@@ -221,6 +221,7 @@ class ModelCommon extends \yii\db\ActiveRecord
     public static function clearCacheCustom($cacheKey)
     {
         \Yii::$app->cache->delete($cacheKey);
+        return true;
     }
 
     /**
@@ -232,6 +233,7 @@ class ModelCommon extends \yii\db\ActiveRecord
         foreach ($cacheKeys as $cacheKey) {
            \Yii::$app->cache->delete($cacheKey);
         }
+        return true;
     }
 
 }
