@@ -194,10 +194,24 @@ class ModelCommon extends \yii\db\ActiveRecord
         return $dataProvider;
     }
 
+    public static function clearFrontendCache($key)
+    {
+        // Envia uma solicitação para o frontend limpar o cache
+        $url = \Yii::getAliase("@host");
+        $frontendUrl = "{$url}/site/clear-cache?key={$key}";
+
+        $ch = curl_init($frontendUrl);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        $response = curl_exec($ch);
+        curl_close($ch);
+    }
+
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
         $this->clearCache();
+        
     }
 
     public function afterDelete()
