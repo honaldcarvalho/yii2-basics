@@ -60,7 +60,7 @@ class ActionColumn extends \yii\grid\ActionColumn
                 $('#btn-add-translate').prop('disabled',false);
                 $('select').val(null).trigger('change');
                 return true;
-            }
+            }   
 
             function get{$this->model}(e) {
 
@@ -263,6 +263,7 @@ class ActionColumn extends \yii\grid\ActionColumn
                         break;
                     case 'clone':
                         $icon = Html::tag('i', '', ['class' => "fas fa-clone"]);
+                        $link = Html::a($icon,  "javascript:;", ['data-link'=> "/{$this->controller}/clone?id=$model->id", 'class'=>'btn btn-default']);
                         break;
                     case 'edit':
                         $link = Html::a($icon,  "javascript:;", ['data-link'=> "/{$this->controller}/get-model?modelClass={$this->model}&id=$model->id",'onclick'=>"get{$this->model}(this);", 'class'=>'btn btn-default']);
