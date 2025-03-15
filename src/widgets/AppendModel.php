@@ -156,7 +156,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                     if(response.success) {
                         toastr.success("Save!");
                         modal_{$this->attactModel}.hide();
-                        $.pjax.reload({container: "#list-{$lower}-grid", async: false});
+                        $.pjax.reload({container: "#list-{$lower}-grid-{$this->random}", async: false});
                         {$this->callBack}
                     } else {
                         toastr.error("Error on save!");
@@ -230,7 +230,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                         if(response.success) {
                             toastr.success("Status Changed!");
                             modal_{$this->attactModel}.hide();
-                            $.pjax.reload({container: "#list-{$lower}-grid", async: false});
+                            $.pjax.reload({container: "#list-{$lower}-grid-{$this->random}", async: false});
                             {$this->callBack}
                         } else {
                             toastr.error("Error on save!");
@@ -384,7 +384,7 @@ class AppendModel extends \yii\bootstrap5\Widget
 
 
         echo $head;
-        Pjax::begin(['id' => "list-{$lower}-grid"]);
+        Pjax::begin(['id' => "list-{$lower}-grid-{$this->random}"]);
           echo $gridView;
         Pjax::end();
         echo $footer;
