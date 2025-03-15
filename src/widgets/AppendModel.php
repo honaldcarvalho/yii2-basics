@@ -10,6 +10,7 @@ use yii\bootstrap5\Html;
 use yii\grid\GridView;
 use yii\web\View;
 use yii\widgets\Pjax;
+
 /**
  Example:
              <?= AppendModel::widget([
@@ -78,70 +79,94 @@ class AppendModel extends \yii\bootstrap5\Widget
     public $saveUrl;
     public $statusUrl;
     public $random;
+    public $action_columns = [];
+
     /**
      * {@inheritdoc}
      */
 
-     private $uniqueId;
+    private $uniqueId;
 
-     public function init()
-     {
-         parent::init();
-         $this->uniqueId = uniqid($this->controller . '_');
-     }
+    public function init()
+    {
+        parent::init();
+        $this->uniqueId = uniqid($this->controller . '_');
+    }
 
     public function run()
     {
         $columns = [['class' => 'yii\grid\CheckboxColumn']];
 
         $lower = $this->controller;
-        $this->random = rand(10000,99999);
+        $this->random = rand(10000, 99999);
         $this->removeUrl = "/{$this->controller}/remove-model?modelClass={$this->attactModel}";
         $this->getUrl = "/{$this->controller}/get-model?modelClass={$this->attactModel}";
         $this->saveUrl = "/{$this->controller}/save-model?modelClass={$this->attactModel}";
         $this->statusUrl = "/{$this->controller}/status-model?modelClass={$this->attactModel}";
         $form_name = strtolower($this->attactModel);
-        $columns = array_merge($columns,$this->showFields);
+        $columns = array_merge($columns, $this->showFields);
 
-        array_push($columns,[
-            'class'=> ActionColumn::class,
-            'headerOptions' => ['style' => 'width:10%'],
-            'template' => $this->template,
-            'path' =>  $this->path,
-            'controller' => $this->controller,
-            'order'=>$this->order,
-            'orderField'=> $this->orderField,
-            'orderModel'=>$this->orderModel,
-            'buttons' => [
-                'status' => function ($url, $model, $key) {
-                    return Html::a('<i class="fas fa-toggle-'.(!$model->status ? 'off' : 'on').'"></i>','javascript:;',
-                     [
-                        'onclick'=>"status{$this->attactModel}(this);", 
-                        'data-link'=> "{$this->statusUrl}&id=$model->id",
-                        'class'=>'btn btn-outline-secondary status',"data-toggle"=>"tooltip","data-placement"=>"top", 
-                        "title"=>\Yii::t('*',"Change Status {$this->attactModel}")
-                    ]);
-                }, 
-                'remove' => function ($url, $model, $key) {
-                    return Html::a('<i class="fas fa-trash"></i>','javascript:;',
-                     [
-                        'onclick'=>"remove{$this->attactModel}(this);", 
-                        'data-link'=> "{$this->removeUrl}&id=$model->id",
-                        'class'=>'btn btn-outline-secondary remove',"data-toggle"=>"tooltip","data-placement"=>"top", 
-                        "title"=>\Yii::t('*',"Remove {$this->attactModel}")
-                    ]);
-                }, 
-                'edit' => function ($url, $model, $key) {
-                    return Html::a('<i class="fas fa-pen"></i>','javascript:;',
-                     [
-                        'onclick'=>"get{$this->attactModel}(this);", 
-                        'data-link'=> "{$this->getUrl}&id=$model->id",
-                        'class'=>'btn btn-outline-secondary edit',"data-toggle"=>"tooltip","data-placement"=>"top", 
-                        "title"=>\Yii::t('*',"Edit {$this->attactModel}")
-                    ]);
-                }, 
+        array_push(
+            $columns,
+            [
+                'class' => ActionColumn::class,
+                'headerOptions' => ['style' => 'width:10%'],
+                'template' => $this->template,
+                'path' =>  $this->path,
+                'controller' => $this->controller,
+                'order' => $this->order,
+                'orderField' => $this->orderField,
+                'orderModel' => $this->orderModel,
+                'buttons' =>
+                array_merge(
+                    $this->action_columns,
+                    [
+                        'status' => function ($url, $model, $key) {
+                            return Html::a(
+                                '<i class="fas fa-toggle-' . (!$model->status ? 'off' : 'on') . '"></i>',
+                                'javascript:;',
+                                [
+                                    'onclick' => "status{$this->attactModel}(this);",
+                                    'data-link' => "{$this->statusUrl}&id=$model->id",
+                                    'class' => 'btn btn-outline-secondary status',
+                                    "data-toggle" => "tooltip",
+                                    "data-placement" => "top",
+                                    "title" => \Yii::t('*', "Change Status {$this->attactModel}")
+                                ]
+                            );
+                        },
+                        'remove' => function ($url, $model, $key) {
+                            return Html::a(
+                                '<i class="fas fa-trash"></i>',
+                                'javascript:;',
+                                [
+                                    'onclick' => "remove{$this->attactModel}(this);",
+                                    'data-link' => "{$this->removeUrl}&id=$model->id",
+                                    'class' => 'btn btn-outline-secondary remove',
+                                    "data-toggle" => "tooltip",
+                                    "data-placement" => "top",
+                                    "title" => \Yii::t('*', "Remove {$this->attactModel}")
+                                ]
+                            );
+                        },
+                        'edit' => function ($url, $model, $key) {
+                            return Html::a(
+                                '<i class="fas fa-pen"></i>',
+                                'javascript:;',
+                                [
+                                    'onclick' => "get{$this->attactModel}(this);",
+                                    'data-link' => "{$this->getUrl}&id=$model->id",
+                                    'class' => 'btn btn-outline-secondary edit',
+                                    "data-toggle" => "tooltip",
+                                    "data-placement" => "top",
+                                    "title" => \Yii::t('*', "Edit {$this->attactModel}")
+                                ]
+                            );
+                        },
+                    ]
+                )
             ]
-        ]);
+        );
 
         $script = <<< JS
             let modal_{$this->attactModel} = null;
@@ -294,10 +319,10 @@ class AppendModel extends \yii\bootstrap5\Widget
             });
         JS;
 
-        \Yii::$app->view->registerJs($script,View::POS_END);
+        \Yii::$app->view->registerJs($script, View::POS_END);
         $field_str = '';
 
-        $button = Html::a('<i class="fas fa-plus-square"></i> Novo', "javascript:modal_{$this->attactModel}.show();clearForms();", ['class' => 'btn btn-success','id'=>"btn-show-{$this->uniqueId}"]);
+        $button = Html::a('<i class="fas fa-plus-square"></i> Novo', "javascript:modal_{$this->attactModel}.show();clearForms();", ['class' => 'btn btn-success', 'id' => "btn-show-{$this->uniqueId}"]);
         $button_save = Yii::t('app', "Save");
         $button_cancel = Yii::t('app', 'Cancel');
         $begin = <<< HTML
@@ -316,7 +341,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                         </div>
                         <div class="modal-body" style="font-size:1em;">
         HTML;
-        
+
         $end = <<< HTML
                         </div>
 
@@ -330,35 +355,35 @@ class AppendModel extends \yii\bootstrap5\Widget
         HTML;
 
         echo $begin;
-        $form = ActiveForm::begin(['id'=>"form-{$this->uniqueId}"]); 
+        $form = ActiveForm::begin(['id' => "form-{$this->uniqueId}"]);
         $model = new $this->attactClass();
-        $field_str .=  $form->field($model, 'id')->hiddenInput(['id'=> "{$this->uniqueId}-id", 'maxlength' => true])->label(false);
+        $field_str .=  $form->field($model, 'id')->hiddenInput(['id' => "{$this->uniqueId}-id", 'maxlength' => true])->label(false);
 
         foreach ($this->fields as $key => $field) {
             $field_str .= '<div class="col-md-12">';
-            if($field['type'] == 'text')
-                $field_str .= $form->field($model, $field['name'])->textInput(['id'=> "{$this->uniqueId}-{$field['name']}", 'maxlength' => true,'value'=> $field['value'] ?? '']);
-            else if($field['type'] == 'number')
-                $field_str .=  $form->field($model, $field['name'])->input('number',['id'=> "{$this->uniqueId}-{$field['name']}", 'maxlength' => true,'value'=> $field['value'] ?? '']);
-            else if($field['type'] == 'hidden')
-                $field_str .=  $form->field($model, $field['name'])->hiddenInput(['id'=> "{$this->uniqueId}-{$field['name']}",'maxlength' => true,'value'=> $field['value'] ?? ''])->label(false);
-            else if($field['type'] == 'checkbox')
-                $field_str .=  $form->field($model, $field['name'])->checkbox(['id'=> "{$this->uniqueId}-{$field['name']}",]) ;
-            else if($field['type'] == 'dropdown'){
-                $field_str .=  $form->field($model, $field['name'])->dropDownList($field['value'] ?? '',['class'=>'form-control dropdown']);
+            if ($field['type'] == 'text')
+                $field_str .= $form->field($model, $field['name'])->textInput(['id' => "{$this->uniqueId}-{$field['name']}", 'maxlength' => true, 'value' => $field['value'] ?? '']);
+            else if ($field['type'] == 'number')
+                $field_str .=  $form->field($model, $field['name'])->input('number', ['id' => "{$this->uniqueId}-{$field['name']}", 'maxlength' => true, 'value' => $field['value'] ?? '']);
+            else if ($field['type'] == 'hidden')
+                $field_str .=  $form->field($model, $field['name'])->hiddenInput(['id' => "{$this->uniqueId}-{$field['name']}", 'maxlength' => true, 'value' => $field['value'] ?? ''])->label(false);
+            else if ($field['type'] == 'checkbox')
+                $field_str .=  $form->field($model, $field['name'])->checkbox(['id' => "{$this->uniqueId}-{$field['name']}",]);
+            else if ($field['type'] == 'dropdown') {
+                $field_str .=  $form->field($model, $field['name'])->dropDownList($field['value'] ?? '', ['class' => 'form-control dropdown']);
             }
             $field_str .= '</div>';
         }
         echo $field_str;
-        ActiveForm::end(); 
+        ActiveForm::end();
         echo $end;
 
         $gridView = GridView::widget([
-                        'id' => "grid-{$this->uniqueId}",
-                        'dataProvider' =>  $this->dataProvider,
-                        'columns' => $columns
-                    ]);
-    
+            'id' => "grid-{$this->uniqueId}",
+            'dataProvider' =>  $this->dataProvider,
+            'columns' => $columns
+        ]);
+
         $head = <<< HTML
             <div class="card" id="list-{$this->uniqueId}">
     
@@ -380,7 +405,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                                 </div>
                             </div>
         HTML;
-    
+
         $footer = <<< HTML
                         </div>
                         <!--.col-md-12-->
@@ -394,9 +419,8 @@ class AppendModel extends \yii\bootstrap5\Widget
 
         echo $head;
         Pjax::begin(['id' => "list-{$this->uniqueId}-grid"]);
-          echo $gridView;
+        echo $gridView;
         Pjax::end();
         echo $footer;
     }
-
 }
