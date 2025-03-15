@@ -81,6 +81,15 @@ class AppendModel extends \yii\bootstrap5\Widget
     /**
      * {@inheritdoc}
      */
+
+     private $uniqueId;
+
+     public function init()
+     {
+         parent::init();
+         $this->uniqueId = uniqid($this->controller . '_');
+     }
+
     public function run()
     {
         $columns = [['class' => 'yii\grid\CheckboxColumn']];
@@ -138,15 +147,15 @@ class AppendModel extends \yii\bootstrap5\Widget
             let modal_{$this->attactModel} = null;
 
             $(function(){
-                modal_{$this->attactModel} = new bootstrap.Modal(document.getElementById('save-{$lower}'), {
+                modal_{$this->attactModel} = new bootstrap.Modal(document.getElementById('save-{$this->uniqueId}'), {
                     keyboard: true
                 });
-                $('.dropdown').select2({width:'100%',allowClear:true,placeholder:'Selecione',dropdownParent: $('#save-{$lower}')});
+                $('.dropdown').select2({width:'100%',allowClear:true,placeholder:'Selecione',dropdownParent: $('#save-{$this->uniqueId}')});
             });
 
             function save{$this->attactModel}(){
-                $('#overlay-form-{$lower}').show();
-                var formData = $("#form-{$lower}").serialize();
+                $('#overlay-form-{$this->uniqueId}').show();
+                var formData = $("#form-{$this->uniqueId}").serialize();
                 console.log(formData);
                 $.ajax({
                     type: "POST",
@@ -156,7 +165,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                     if(response.success) {
                         toastr.success("Save!");
                         modal_{$this->attactModel}.hide();
-                        $.pjax.reload({container: "#list-{$lower}-grid", async: false});
+                        $.pjax.reload({container: "#list-{$this->uniqueId}-grid", async: false});
                         {$this->callBack}
                     } else {
                         toastr.error("Error on save!");
@@ -164,7 +173,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                 }).fail(function (response) {
                     toastr.error("Error on add!");
                 }).always(function (response) {
-                    $('#overlay-form-{$lower}').hide();
+                    $('#overlay-form-{$this->uniqueId}').hide();
                 });
             }
 
@@ -186,7 +195,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                         return false;
                     } else {
                         Object.entries(response).forEach(([key, value]) => {
-                            var el = $(`#{$lower}-\${key}`);
+                            var el = $(`#{$this->uniqueId}-\${key}`);
                             if(el.attr('type') == 'checkbox') {
                                 if (value === 1) {
                                     el.prop('checked', true);
@@ -230,7 +239,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                         if(response.success) {
                             toastr.success("Status Changed!");
                             modal_{$this->attactModel}.hide();
-                            $.pjax.reload({container: "#list-{$lower}-grid", async: false});
+                            $.pjax.reload({container: "#list-{$this->uniqueId}-grid", async: false});
                             {$this->callBack}
                         } else {
                             toastr.error("Error on save!");
@@ -263,7 +272,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                             return false;
                         }
                         toastr.success("Removed!");
-                        $.pjax.reload({container: "#grid-{$lower}", async: false});
+                        $.pjax.reload({container: "#grid-{$this->uniqueId}", async: false});
                     }).fail(function (response) {
                         toastr.error("Error on remove {$lower}!");
                     }).always(function (response) {
@@ -276,10 +285,10 @@ class AppendModel extends \yii\bootstrap5\Widget
 
             $(function(){
                 $(document).on('pjax:start', function() {
-                    $('#overlay-{$lower}').show();
+                    $('#overlay-{$this->uniqueId}').show();
                 });
                 $(document).on('pjax:complete', function() {
-                    $('#overlay-{$lower}').hide();
+                    $('#overlay-{$this->uniqueId}').hide();
                 });
                 Fancybox.bind("[data-fancybox]");
             });
@@ -288,19 +297,19 @@ class AppendModel extends \yii\bootstrap5\Widget
         \Yii::$app->view->registerJs($script,View::POS_END);
         $field_str = '';
 
-        $button = Html::a('<i class="fas fa-plus-square"></i> Novo', "javascript:modal_{$this->attactModel}.show();clearForms();", ['class' => 'btn btn-success','id'=>"btn-show-{$lower}"]);
+        $button = Html::a('<i class="fas fa-plus-square"></i> Novo', "javascript:modal_{$this->attactModel}.show();clearForms();", ['class' => 'btn btn-success','id'=>"btn-show-{$this->uniqueId}"]);
         $button_save = Yii::t('app', "Save");
         $button_cancel = Yii::t('app', 'Cancel');
         $begin = <<< HTML
             <!-- Modal -->
-            <div class="modal fade" id="save-{$lower}" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal fade" id="save-{$this->uniqueId}" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="staticBackdropLabel">{$this->title}</h5>
                             <button type="button" class="btn-close" onclick="javascript:modal_{$this->attactModel}.hide();" aria-label="Close"></button>
                         </div>
-                        <div id="overlay-form-{$lower}" class="overlay" style="height: 100%;position: absolute;width: 100%;z-index: 3000;display:none;top:0;left:0;">
+                        <div id="overlay-form-{$this->uniqueId}" class="overlay" style="height: 100%;position: absolute;width: 100%;z-index: 3000;display:none;top:0;left:0;">
                             <div class="fa-3x">
                                 <i class="fas fa-sync fa-spin"></i>
                             </div>
@@ -313,7 +322,7 @@ class AppendModel extends \yii\bootstrap5\Widget
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" onclick="javascript:modal_{$this->attactModel}.hide();"> {$button_cancel} </button>
-                            <button id="btn-save-{$lower}" onclick="save{$this->attactModel}()" type="button" class="btn btn-success"><i class="fas fa-plus-circle mr-2 icon"></i> {$button_save} </button>
+                            <button id="btn-save-{$this->uniqueId}" onclick="save{$this->attactModel}()" type="button" class="btn btn-success"><i class="fas fa-plus-circle mr-2 icon"></i> {$button_save} </button>
                         </div>
                     </div>
                 </div>
@@ -321,20 +330,20 @@ class AppendModel extends \yii\bootstrap5\Widget
         HTML;
 
         echo $begin;
-        $form = ActiveForm::begin(['id'=>"form-{$lower}"]); 
+        $form = ActiveForm::begin(['id'=>"form-{$this->uniqueId}"]); 
         $model = new $this->attactClass();
-        $field_str .=  $form->field($model, 'id')->hiddenInput(['id'=> "{$lower}-id", 'maxlength' => true])->label(false);
+        $field_str .=  $form->field($model, 'id')->hiddenInput(['id'=> "{$this->uniqueId}-id", 'maxlength' => true])->label(false);
 
         foreach ($this->fields as $key => $field) {
             $field_str .= '<div class="col-md-12">';
             if($field['type'] == 'text')
-                $field_str .= $form->field($model, $field['name'])->textInput(['id'=> "{$lower}-{$field['name']}", 'maxlength' => true,'value'=> $field['value'] ?? '']);
+                $field_str .= $form->field($model, $field['name'])->textInput(['id'=> "{$this->uniqueId}-{$field['name']}", 'maxlength' => true,'value'=> $field['value'] ?? '']);
             else if($field['type'] == 'number')
-                $field_str .=  $form->field($model, $field['name'])->input('number',['id'=> "{$lower}-{$field['name']}", 'maxlength' => true,'value'=> $field['value'] ?? '']);
+                $field_str .=  $form->field($model, $field['name'])->input('number',['id'=> "{$this->uniqueId}-{$field['name']}", 'maxlength' => true,'value'=> $field['value'] ?? '']);
             else if($field['type'] == 'hidden')
-                $field_str .=  $form->field($model, $field['name'])->hiddenInput(['id'=> "{$lower}-{$field['name']}",'maxlength' => true,'value'=> $field['value'] ?? ''])->label(false);
+                $field_str .=  $form->field($model, $field['name'])->hiddenInput(['id'=> "{$this->uniqueId}-{$field['name']}",'maxlength' => true,'value'=> $field['value'] ?? ''])->label(false);
             else if($field['type'] == 'checkbox')
-                $field_str .=  $form->field($model, $field['name'])->checkbox(['id'=> "{$lower}-{$field['name']}",]) ;
+                $field_str .=  $form->field($model, $field['name'])->checkbox(['id'=> "{$this->uniqueId}-{$field['name']}",]) ;
             else if($field['type'] == 'dropdown'){
                 $field_str .=  $form->field($model, $field['name'])->dropDownList($field['value'] ?? '',['class'=>'form-control dropdown']);
             }
@@ -345,13 +354,13 @@ class AppendModel extends \yii\bootstrap5\Widget
         echo $end;
 
         $gridView = GridView::widget([
-                        'id' => "grid-{$lower}",
+                        'id' => "grid-{$this->uniqueId}",
                         'dataProvider' =>  $this->dataProvider,
                         'columns' => $columns
                     ]);
     
         $head = <<< HTML
-            <div class="card" id="list-{$lower}">
+            <div class="card" id="list-{$this->uniqueId}">
     
                 <div class="card-header">
                     <h3 class="card-title">List {$this->title}</h3>
@@ -364,7 +373,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                     <div class="row">
                         <div class="col-md-12">
     
-                            <div id='overlay-{$lower}' class='overlay' style='display:none;height: 100%;position: absolute;width: 100%;z-index: 3000;top: 0;left: 0;background: #0000004f;'>
+                            <div id='overlay-{$this->uniqueId}' class='overlay' style='display:none;height: 100%;position: absolute;width: 100%;z-index: 3000;top: 0;left: 0;background: #0000004f;'>
                                 <div class='d-flex align-items-center'>
                                     <strong> Loading... </strong>
                                     <div class='spinner-border ms-auto' role='status' aria-hidden='true'></div>
@@ -384,7 +393,7 @@ class AppendModel extends \yii\bootstrap5\Widget
 
 
         echo $head;
-        Pjax::begin(['id' => "list-{$lower}-grid"]);
+        Pjax::begin(['id' => "list-{$this->uniqueId}-grid"]);
           echo $gridView;
         Pjax::end();
         echo $footer;
