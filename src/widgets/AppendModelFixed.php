@@ -17,107 +17,145 @@ class AppendModelFixed extends \yii\bootstrap5\Widget
     public $controller = null;
     public $attactClass;
     public $attactModel;
+    public $childModel;
+    public $callBack = '';
+    public $childField;
+    public $path = 'app';
     public $template = '{status}{view}{edit}{remove}';
     public $fields;
     public $showFields;
     public $order = false;
     public $orderField = 'order';
+    public $orderModel = null;
 
-    private $widgetId;
+    private $uniqueId;
 
     public function init()
     {
         parent::init();
-        $this->widgetId = uniqid('append_model_');
+        $this->uniqueId = uniqid($this->controller . '_');
     }
 
     public function run()
     {
-        $lower = strtolower($this->controller);
-        $form_name = strtolower($this->attactModel);
-        $gridId = "grid-{$this->widgetId}";
-        $modalId = "modal-{$this->widgetId}";
+        $columns = [['class' => 'yii\grid\CheckboxColumn']];
 
+        $lower = $this->controller;
         $removeUrl = "/{$this->controller}/remove-model?modelClass={$this->attactModel}";
         $getUrl = "/{$this->controller}/get-model?modelClass={$this->attactModel}";
         $saveUrl = "/{$this->controller}/save-model?modelClass={$this->attactModel}";
+        $statusUrl = "/{$this->controller}/status-model?modelClass={$this->attactModel}";
 
-        $columns = array_merge(
-            [['class' => 'yii\grid\CheckboxColumn']],
-            $this->showFields,
-            [[
-                'class' => ActionColumn::class,
-                'template' => $this->template,
-                'controller' => $this->controller,
-                'buttons' => [
-                    'status' => fn($url, $model, $key) => Html::a('<i class="fas fa-toggle-'.(!$model->status ? 'off' : 'on').'"></i>', 'javascript:;', [
-                        'class' => 'btn btn-outline-secondary status-btn',
-                        'data-url' => "{$this->statusUrl}&id={$model->id}",
-                    ]),
-                    'remove' => fn($url, $model, $key) => Html::a('<i class="fas fa-trash"></i>', 'javascript:;', [
-                        'class' => 'btn btn-outline-secondary remove-btn',
-                        'data-url' => "{$removeUrl}&id={$model->id}",
-                    ]),
-                    'edit' => fn($url, $model, $key) => Html::a('<i class="fas fa-pen"></i>', 'javascript:;', [
-                        'class' => 'btn btn-outline-secondary edit-btn',
-                        'data-url' => "{$getUrl}&id={$model->id}",
-                        'data-modal' => "#{$modalId}"
-                    ]),
-                ]
-            ]]
-        );
+        $columns = array_merge($columns, $this->showFields);
+
+        array_push($columns, [
+            'class' => ActionColumn::class,
+            'headerOptions' => ['style' => 'width:10%'],
+            'template' => $this->template,
+            'path' => $this->path,
+            'controller' => $this->controller,
+            'order' => $this->order,
+            'orderField' => $this->orderField,
+            'orderModel' => $this->orderModel,
+        ]);
+
+        $modalId = "save-{$lower}-{$this->uniqueId}";
+        $gridId = "grid-{$lower}-{$this->uniqueId}";
+        $formId = "form-{$lower}-{$this->uniqueId}";
 
         $script = <<< JS
-            $(document).on('click', '.edit-btn', function() {
-                let modalId = $(this).data('modal');
-                let url = $(this).data('url');
+            $(document).ready(function() {
+                var modal = new bootstrap.Modal(document.getElementById('$modalId'));
 
-                $.get(url, function(response) {
-                    if (response) {
-                        for (let key in response) {
-                            $("#{$modalId} [name*='[" + key + "]']").val(response[key]);
-                        }
-                        $(modalId).modal('show');
-                    }
-                });
-            });
+                function saveModel() {
+                    $('#overlay-form-$modalId').show();
+                    var formData = $("#$formId").serialize();
 
-            $(document).on('click', '.remove-btn', function() {
-                if (confirm('Você realmente deseja remover?')) {
-                    $.post($(this).data('url'), function(response) {
-                        if (response.success) {
-                            $.pjax.reload({container: "#{$gridId}"});
+                    $.ajax({
+                        type: "POST",
+                        url: "{$saveUrl}",
+                        data: formData,
+                    }).done(function(response) {       
+                        if(response.success) {
+                            toastr.success("Salvo com sucesso!");
+                            modal.hide();
+                            $.pjax.reload({container: "#$gridId", async: false});
+                        } else {
+                            toastr.error("Erro ao salvar!");
                         }
+                    }).fail(function () {
+                        toastr.error("Erro ao salvar!");
+                    }).always(function () {
+                        $('#overlay-form-$modalId').hide();
                     });
                 }
+
+                $("#btn-save-$modalId").click(saveModel);
             });
         JS;
-        Yii::$app->view->registerJs($script, View::POS_END);
 
-        $form = ActiveForm::begin(['id' => "form-{$this->widgetId}"]);
-        echo Html::beginTag('div', ['class' => 'modal fade', 'id' => $modalId]);
-        echo Html::beginTag('div', ['class' => 'modal-dialog']);
-        echo Html::beginTag('div', ['class' => 'modal-content']);
-        echo Html::tag('div', Html::tag('h5', $this->title, ['class' => 'modal-title']), ['class' => 'modal-header']);
-        echo Html::beginTag('div', ['class' => 'modal-body']);
+        \Yii::$app->view->registerJs($script, View::POS_END);
 
+        echo Html::button('<i class="fas fa-plus-square"></i> Novo', [
+            'class' => 'btn btn-success',
+            'data-bs-toggle' => 'modal',
+            'data-bs-target' => "#$modalId",
+        ]);
+
+        echo <<<HTML
+        <div class="modal fade" id="$modalId" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{$this->title}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="overlay-form-$modalId" class="overlay" style="display:none;">
+                            <i class="fas fa-sync fa-spin"></i>
+                        </div>
+        HTML;
+
+        $form = ActiveForm::begin(['id' => $formId]);
         $model = new $this->attactClass();
         echo $form->field($model, 'id')->hiddenInput()->label(false);
+
         foreach ($this->fields as $field) {
-            echo $form->field($model, $field['name'])->textInput();
+            $options = ['id' => "{$lower}-{$field['name']}-{$this->uniqueId}"];
+            if ($field['type'] === 'text') {
+                echo $form->field($model, $field['name'])->textInput($options);
+            } elseif ($field['type'] === 'number') {
+                echo $form->field($model, $field['name'])->input('number', $options);
+            } elseif ($field['type'] === 'hidden') {
+                echo $form->field($model, $field['name'])->hiddenInput($options)->label(false);
+            } elseif ($field['type'] === 'checkbox') {
+                echo $form->field($model, $field['name'])->checkbox($options);
+            } elseif ($field['type'] === 'dropdown') {
+                echo $form->field($model, $field['name'])->dropDownList($field['value'] ?? [], ['class' => 'form-control']);
+            }
         }
 
-        echo Html::endTag('div'); // modal-body
-        echo Html::tag('div', Html::button('Salvar', ['class' => 'btn btn-success', 'onclick' => "$('#form-{$this->widgetId}').submit();"]), ['class' => 'modal-footer']);
-        echo Html::endTag('div'); // modal-content
-        echo Html::endTag('div'); // modal-dialog
-        echo Html::endTag('div'); // modal
         ActiveForm::end();
 
-        echo Html::a('Adicionar', 'javascript:;', ['class' => 'btn btn-success', 'data-bs-toggle' => 'modal', 'data-bs-target' => "#{$modalId}"]);
+        echo <<<HTML
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button id="btn-save-$modalId" type="button" class="btn btn-success">
+                            <i class="fas fa-plus-circle"></i> Salvar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        HTML;
 
         Pjax::begin(['id' => $gridId]);
-        echo GridView::widget(['dataProvider' => $this->dataProvider, 'columns' => $columns]);
+        echo GridView::widget([
+            'id' => $gridId,
+            'dataProvider' => $this->dataProvider,
+            'columns' => $columns,
+        ]);
         Pjax::end();
     }
 }
