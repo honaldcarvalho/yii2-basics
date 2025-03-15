@@ -138,7 +138,7 @@ class AppendModel extends \yii\bootstrap5\Widget
             let modal_{$this->attactModel} = null;
 
             $(function(){
-                modal_{$this->attactModel} = new bootstrap.Modal(document.getElementById('save-{$lower}-{$this->random}'), {
+                modal_{$this->attactModel} = new bootstrap.Modal(document.getElementById('save-{$lower}'), {
                     keyboard: true
                 });
                 $('.dropdown').select2({width:'100%',allowClear:true,placeholder:'Selecione',dropdownParent: $('#save-{$lower}')});
