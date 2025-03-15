@@ -138,10 +138,10 @@ class AppendModel extends \yii\bootstrap5\Widget
             let modal_{$this->attactModel} = null;
 
             $(function(){
-                modal_{$this->attactModel} = new bootstrap.Modal(document.getElementById('save-{$lower}-{$this->random}'), {
+                modal_{$this->attactModel} = new bootstrap.Modal(document.getElementById('save-{$lower}'), {
                     keyboard: true
                 });
-                $('.dropdown').select2({width:'100%',allowClear:true,placeholder:'Selecione',dropdownParent: $('#save-{$lower}-{$this->random}')});
+                $('.dropdown').select2({width:'100%',allowClear:true,placeholder:'Selecione',dropdownParent: $('#')});
             });
 
             function save{$this->attactModel}(){
@@ -293,7 +293,7 @@ class AppendModel extends \yii\bootstrap5\Widget
         $button_cancel = Yii::t('app', 'Cancel');
         $begin = <<< HTML
             <!-- Modal -->
-            <div class="modal fade" id="save-{$lower}-{$this->random}" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal fade" id="" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -313,7 +313,7 @@ class AppendModel extends \yii\bootstrap5\Widget
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" onclick="javascript:modal_{$this->attactModel}.hide();"> {$button_cancel} </button>
-                            <button id="btn-save-{$lower}-{$this->random}" onclick="save{$this->attactModel}()" type="button" class="btn btn-success"><i class="fas fa-plus-circle mr-2 icon"></i> {$button_save} </button>
+                            <button id="btn-save-{$lower}" onclick="save{$this->attactModel}()" type="button" class="btn btn-success"><i class="fas fa-plus-circle mr-2 icon"></i> {$button_save} </button>
                         </div>
                     </div>
                 </div>
