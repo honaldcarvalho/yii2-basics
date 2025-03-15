@@ -141,7 +141,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                 modal_{$this->attactModel} = new bootstrap.Modal(document.getElementById('save-{$lower}-{$this->random}'), {
                     keyboard: true
                 });
-                $('.dropdown').select2({width:'100%',allowClear:true,placeholder:'Selecione',dropdownParent: $('#save-{$lower}-{$this->random}')});
+                $('.dropdown-{$this->random}').select2({width:'100%',allowClear:true,placeholder:'Selecione',dropdownParent: $('#save-{$lower}-{$this->random}')});
             });
 
             function save{$this->attactModel}(){
@@ -336,7 +336,7 @@ class AppendModel extends \yii\bootstrap5\Widget
             else if($field['type'] == 'checkbox')
                 $field_str .=  $form->field($model, $field['name'])->checkbox(['id'=> "{$lower}-{$field['name']}",]) ;
             else if($field['type'] == 'dropdown'){
-                $field_str .=  $form->field($model, $field['name'])->dropDownList($field['value'] ?? '',['class'=>'form-control dropdown']);
+                $field_str .=  $form->field($model, $field['name'])->dropDownList($field['value'] ?? '',['class'=>'form-control ']);
             }
             $field_str .= '</div>';
         }
