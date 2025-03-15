@@ -54,7 +54,7 @@ use yii\widgets\Pjax;
                 ]
             ]); ?>
  */
-class AppendModel extends \yii\bootstrap5\Widget
+class AppendModelNew extends \yii\bootstrap5\Widget
 {
 
     public $dataProvider;
@@ -141,12 +141,12 @@ class AppendModel extends \yii\bootstrap5\Widget
                 modal_{$this->attactModel} = new bootstrap.Modal(document.getElementById('save-{$lower}-{$this->random}'), {
                     keyboard: true
                 });
-                $('.dropdown').select2({width:'100%',allowClear:true,placeholder:'Selecione',dropdownParent: $('#save-{$lower}')});
+                $('.dropdown-{$this->random}').select2({width:'100%',allowClear:true,placeholder:'Selecione',dropdownParent: $('#save-{$lower}-{$this->random}')});
             });
 
             function save{$this->attactModel}(){
-                $('#overlay-form-{$lower}').show();
-                var formData = $("#form-{$lower}").serialize();
+                $('#overlay-form-{$lower}-{$this->random}').show();
+                var formData = $("#form-{$lower}-{$this->random}").serialize();
                 console.log(formData);
                 $.ajax({
                     type: "POST",
@@ -156,7 +156,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                     if(response.success) {
                         toastr.success("Save!");
                         modal_{$this->attactModel}.hide();
-                        $.pjax.reload({container: "#list-{$lower}-grid", async: false});
+                        $.pjax.reload({container: "#list-{$lower}-grid-{$this->random}", async: false});
                         {$this->callBack}
                     } else {
                         toastr.error("Error on save!");
@@ -164,7 +164,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                 }).fail(function (response) {
                     toastr.error("Error on add!");
                 }).always(function (response) {
-                    $('#overlay-form-{$lower}').hide();
+                    $('#overlay-form-{$lower}-{$this->random}').hide();
                 });
             }
 
@@ -230,7 +230,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                         if(response.success) {
                             toastr.success("Status Changed!");
                             modal_{$this->attactModel}.hide();
-                            $.pjax.reload({container: "#list-{$lower}-grid", async: false});
+                            $.pjax.reload({container: "#list-{$lower}-grid-{$this->random}", async: false});
                             {$this->callBack}
                         } else {
                             toastr.error("Error on save!");
@@ -288,19 +288,19 @@ class AppendModel extends \yii\bootstrap5\Widget
         \Yii::$app->view->registerJs($script,View::POS_END);
         $field_str = '';
 
-        $button = Html::a('<i class="fas fa-plus-square"></i> Novo', "javascript:modal_{$this->attactModel}.show();clearForms();", ['class' => 'btn btn-success','id'=>"btn-show-{$lower}"]);
+        $button = Html::a('<i class="fas fa-plus-square"></i> Novo', "javascript:modal_{$this->attactModel}.show();", ['class' => 'btn btn-success','id'=>"btn-show-{$lower}"]);
         $button_save = Yii::t('app', "Save");
         $button_cancel = Yii::t('app', 'Cancel');
         $begin = <<< HTML
             <!-- Modal -->
-            <div class="modal fade" id="save-{$lower}" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal fade" id="save-{$lower}-{$this->random}" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="staticBackdropLabel">{$this->title}</h5>
                             <button type="button" class="btn-close" onclick="javascript:modal_{$this->attactModel}.hide();" aria-label="Close"></button>
                         </div>
-                        <div id="overlay-form-{$lower}" class="overlay" style="height: 100%;position: absolute;width: 100%;z-index: 3000;display:none;top:0;left:0;">
+                        <div id="overlay-form-{$lower}-{$this->random}" class="overlay" style="height: 100%;position: absolute;width: 100%;z-index: 3000;display:none;top:0;left:0;">
                             <div class="fa-3x">
                                 <i class="fas fa-sync fa-spin"></i>
                             </div>
@@ -321,7 +321,7 @@ class AppendModel extends \yii\bootstrap5\Widget
         HTML;
 
         echo $begin;
-        $form = ActiveForm::begin(['id'=>"form-{$lower}"]); 
+        $form = ActiveForm::begin(['id'=>"form-{$lower}-{$this->random}"]); 
         $model = new $this->attactClass();
         $field_str .=  $form->field($model, 'id')->hiddenInput(['id'=> "{$lower}-id", 'maxlength' => true])->label(false);
 
@@ -336,7 +336,7 @@ class AppendModel extends \yii\bootstrap5\Widget
             else if($field['type'] == 'checkbox')
                 $field_str .=  $form->field($model, $field['name'])->checkbox(['id'=> "{$lower}-{$field['name']}",]) ;
             else if($field['type'] == 'dropdown'){
-                $field_str .=  $form->field($model, $field['name'])->dropDownList($field['value'] ?? '',['class'=>'form-control dropdown']);
+                $field_str .=  $form->field($model, $field['name'])->dropDownList($field['value'] ?? '',['class'=>'form-control ']);
             }
             $field_str .= '</div>';
         }
@@ -351,7 +351,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                     ]);
     
         $head = <<< HTML
-            <div class="card" id="list-{$lower}">
+            <div class="card" id="list-{$lower}-{$this->random}">
     
                 <div class="card-header">
                     <h3 class="card-title">List {$this->title}</h3>
@@ -384,7 +384,7 @@ class AppendModel extends \yii\bootstrap5\Widget
 
 
         echo $head;
-        Pjax::begin(['id' => "list-{$lower}-grid"]);
+        Pjax::begin(['id' => "list-{$lower}-grid-{$this->random}"]);
           echo $gridView;
         Pjax::end();
         echo $footer;
