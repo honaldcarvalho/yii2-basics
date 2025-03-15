@@ -288,7 +288,7 @@ class AppendModel extends \yii\bootstrap5\Widget
         \Yii::$app->view->registerJs($script,View::POS_END);
         $field_str = '';
 
-        $button = Html::a('<i class="fas fa-plus-square"></i> Novo', "javascript:modal_{$this->attactModel}.show();clearForms();", ['class' => 'btn btn-success','id'=>"btn-show-{$lower}"]);
+        $button = Html::a('<i class="fas fa-plus-square"></i> Novo', "javascript:modal_{$this->attactModel}.show();", ['class' => 'btn btn-success','id'=>"btn-show-{$lower}"]);
         $button_save = Yii::t('app', "Save");
         $button_cancel = Yii::t('app', 'Cancel');
         $begin = <<< HTML
