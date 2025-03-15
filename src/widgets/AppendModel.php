@@ -145,8 +145,8 @@ class AppendModel extends \yii\bootstrap5\Widget
             });
 
             function save{$this->attactModel}(){
-                $('#overlay-form-{$lower}').show();
-                var formData = $("#form-{$lower}").serialize();
+                $('#overlay-form-{$lower}-{$this->random}').show();
+                var formData = $("#form-{$lower}-{$this->random}").serialize();
                 console.log(formData);
                 $.ajax({
                     type: "POST",
@@ -164,7 +164,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                 }).fail(function (response) {
                     toastr.error("Error on add!");
                 }).always(function (response) {
-                    $('#overlay-form-{$lower}').hide();
+                    $('#overlay-form-{$lower}-{$this->random}').hide();
                 });
             }
 
@@ -300,7 +300,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                             <h5 class="modal-title" id="staticBackdropLabel">{$this->title}</h5>
                             <button type="button" class="btn-close" onclick="javascript:modal_{$this->attactModel}.hide();" aria-label="Close"></button>
                         </div>
-                        <div id="overlay-form-{$lower}" class="overlay" style="height: 100%;position: absolute;width: 100%;z-index: 3000;display:none;top:0;left:0;">
+                        <div id="overlay-form-{$lower}-{$this->random}" class="overlay" style="height: 100%;position: absolute;width: 100%;z-index: 3000;display:none;top:0;left:0;">
                             <div class="fa-3x">
                                 <i class="fas fa-sync fa-spin"></i>
                             </div>
@@ -321,7 +321,7 @@ class AppendModel extends \yii\bootstrap5\Widget
         HTML;
 
         echo $begin;
-        $form = ActiveForm::begin(['id'=>"form-{$lower}"]); 
+        $form = ActiveForm::begin(['id'=>"form-{$lower}-{$this->random}"]); 
         $model = new $this->attactClass();
         $field_str .=  $form->field($model, 'id')->hiddenInput(['id'=> "{$lower}-id", 'maxlength' => true])->label(false);
 
