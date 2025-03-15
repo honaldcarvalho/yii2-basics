@@ -150,7 +150,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                 modal_{$this->attactModel} = new bootstrap.Modal(document.getElementById('save-{$this->uniqueId}'), {
                     keyboard: true
                 });
-                $('.dropdown').select2({width:'100%',allowClear:true,placeholder:'Selecione',dropdownParent: $('#save-{$this->uniqueId}')});
+                $('#save-{$this->uniqueId} .dropdown').select2({width:'100%',allowClear:true,placeholder:'Selecione',dropdownParent: $('#save-{$this->uniqueId}')});
             });
 
             function save{$this->attactModel}(){
