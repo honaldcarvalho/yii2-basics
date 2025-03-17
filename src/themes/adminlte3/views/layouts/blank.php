@@ -16,6 +16,10 @@ $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:
 $this->registerCssFile('https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css');
 PluginAsset::register($this)->add(['fontawesome','toastr']);
 $params = Configuration::get();
+if(\Yii::$app->user->identity === null){
+    return (new ControllerCommon(0,0))->redirect(['site/login']); 
+}
+$theme = \Yii::$app->user->identity->theme;
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
