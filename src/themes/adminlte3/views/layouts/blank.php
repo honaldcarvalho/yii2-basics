@@ -36,7 +36,7 @@ $params = Configuration::get();
     <?php $this->head() ?>
     <link href="<?= Yii::getAlias('@web') ?>/css/site.css" rel="stylesheet">
 </head>
-<body>
+<body class="hold-transition <?=$theme?>-mode">
 <?php  $this->beginBody() ?>
 <?= Alert::widget() ?>
 
