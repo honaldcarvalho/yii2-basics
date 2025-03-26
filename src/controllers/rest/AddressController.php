@@ -6,7 +6,7 @@ use weebz\yii2basics\controllers\rest\ControllerCustom;
 use weebz\yii2basics\models\City;
 use weebz\yii2basics\models\State;
 
-class AddressController extends AuthControllerCustom {
+class AddressController extends AuthController {
     
     public function __construct($id, $module, $config = array())
     {
@@ -14,8 +14,8 @@ class AddressController extends AuthControllerCustom {
         $this->free = ['cities', 'states'];
     }
 
-    public function actionCities(){
-        $body = Yii::$app->request->getBodyParams();
+        public function actionCities(){
+            $body = Yii::$app->request->getBodyParams();
         return City::findAll(['state_id'=>$body['state_id'], 'status'=>1]);
     }
 
