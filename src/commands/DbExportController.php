@@ -12,7 +12,7 @@ class DbExportController extends Controller
     public $exclude = '';
     public $only = '';
 
-    public function options()
+    public function options($actionID)
     {
         return [
             'outputFile',
