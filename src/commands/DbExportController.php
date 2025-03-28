@@ -11,13 +11,15 @@ class DbExportController extends Controller
     public $outputFile = 'export.sql';
     public $exclude = '';
     public $only = '';
+    public $replace = false;
 
     public function options($actionID)
     {
         return [
             'outputFile',
             'exclude',
-            'only'
+            'only',
+            'replace',
         ];
     }
 
@@ -26,7 +28,8 @@ class DbExportController extends Controller
         return [
             'f' => 'outputFile',
             'e' => 'exclude',
-            'o' => 'only'
+            'o' => 'only',
+            'r' => 'only',
         ];
     }
 
@@ -39,6 +42,12 @@ class DbExportController extends Controller
 
         $sql = "SET FOREIGN_KEY_CHECKS = 0;\n"; // Disable foreign key checks for import
 
+        if($this->replace){
+            $function = 'REPLACE';
+        } else {
+            $function = 'INSERT';
+        }
+
         if(!empty($this->only)){
             $tables =  explode(',',$this->only);
             foreach ($tables as $table) {
@@ -50,7 +59,7 @@ class DbExportController extends Controller
                             $values = array_map(function ($value) use ($db) {
                                 return $value === null ? 'NULL' : $db->quoteValue($value);
                             }, $row);
-                            $sql .= "INSERT INTO `{$table}` (`" . implode('`, `', $columns) . "`) VALUES (" . implode(', ', $values) . ");\n";
+                            $sql .= "{$function} INTO `{$table}` (`" . implode('`, `', $columns) . "`) VALUES (" . implode(', ', $values) . ");\n";
                         }
                     }
                 }
@@ -65,7 +74,7 @@ class DbExportController extends Controller
                         $values = array_map(function ($value) use ($db) {
                             return $value === null ? 'NULL' : $db->quoteValue($value);
                         }, $row);
-                        $sql .= "INSERT INTO `{$table->name}` (`" . implode('`, `', $columns) . "`) VALUES (" . implode(', ', $values) . ");\n";
+                        $sql .= "{$function} INTO `{$table->name}` (`" . implode('`, `', $columns) . "`) VALUES (" . implode(', ', $values) . ");\n";
                     }
                 }
             }
