@@ -8,15 +8,28 @@ use yii\helpers\ArrayHelper;
 
 class DbExportController extends Controller
 {
-    public function actionExport($outputFile = 'export.sql',$exclude = '', $only ='')
+    public $outputFile = 'export.sql';
+    public $exclude = '';
+    public $only = '';
+
+    public function optionAliases()
+    {
+        return [
+            'f' => 'outputFile',
+            'e' => 'exclude',
+            'o' => 'only',
+        ];
+    }
+
+    public function actionExport()
     {
         /** @var Connection $db */
         $db = \Yii::$app->db;
         $schema = $db->schema;
-        $exclude_arr = explode(',',$exclude);
+        $exclude_arr = explode(',',$this->exclude);
         $tables = $schema->getTableSchemas();
-        if(!empty($only)){
-            $tables =  explode(',',$only);
+        if(!empty($this->only)){
+            $tables =  explode(',',$this->only);
         }
         $sql = "SET FOREIGN_KEY_CHECKS = 0;\n"; // Disable foreign key checks for import
         foreach ($tables as $table) {
