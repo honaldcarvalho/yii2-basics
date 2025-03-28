@@ -8,24 +8,28 @@ use yii\helpers\ArrayHelper;
 
 class DbExportController extends Controller
 {
-    public function actionExport($outputFile = 'export.sql')
+    public function actionExport($outputFile = 'export.sql',$exclude = '', $only ='')
     {
         /** @var Connection $db */
         $db = \Yii::$app->db;
         $schema = $db->schema;
-
+        $exclude_arr = explode(',',$exclude);
         $tables = $schema->getTableSchemas();
-
+        if(!empty($only)){
+            $tables =  explode(',',$only);
+        }
         $sql = "SET FOREIGN_KEY_CHECKS = 0;\n"; // Disable foreign key checks for import
         foreach ($tables as $table) {
-            $rows = $db->createCommand("SELECT * FROM {$table->name}")->queryAll();
-            if ($rows) {
-                $columns = array_keys($rows[0]);
-                foreach ($rows as $row) {
-                    $values = array_map(function ($value) use ($db) {
-                        return $value === null ? 'NULL' : $db->quoteValue($value);
-                    }, $row);
-                    $sql .= "INSERT INTO `{$table->name}` (`" . implode('`, `', $columns) . "`) VALUES (" . implode(', ', $values) . ");\n";
+            if(!in_array($table,$exclude_arr)){
+                $rows = $db->createCommand("SELECT * FROM {$table->name}")->queryAll();
+                if ($rows) {
+                    $columns = array_keys($rows[0]);
+                    foreach ($rows as $row) {
+                        $values = array_map(function ($value) use ($db) {
+                            return $value === null ? 'NULL' : $db->quoteValue($value);
+                        }, $row);
+                        $sql .= "INSERT INTO `{$table->name}` (`" . implode('`, `', $columns) . "`) VALUES (" . implode(', ', $values) . ");\n";
+                    }
                 }
             }
         }
