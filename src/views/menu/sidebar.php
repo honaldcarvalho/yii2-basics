@@ -54,7 +54,7 @@ if(!Yii::$app->user->isGuest){
     $group = Yii::$app->session->get('group');
 }
 $assetsDir =  ControllerCommon::getAssetsDir();
-if(!empty($params->file_id)){
+if(!empty($params->file_id) && $params->file != null){
     $url = Yii::getAlias('@web').$params->file->urlThumb; 
     $login_image = "<img alt='{$params->title}' class='brand-image img-circle elevation-3' src='{$url}' style='opacity: .8' />";
 }else{
