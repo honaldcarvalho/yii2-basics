@@ -36,13 +36,28 @@ class DbExportController extends Controller
         $db = \Yii::$app->db;
         $schema = $db->schema;
         $exclude_arr = explode(',',$this->exclude);
-        $tables = $schema->getTableSchemas();
+
+        $sql = "SET FOREIGN_KEY_CHECKS = 0;\n"; // Disable foreign key checks for import
+
         if(!empty($this->only)){
             $tables =  explode(',',$this->only);
-        }
-        $sql = "SET FOREIGN_KEY_CHECKS = 0;\n"; // Disable foreign key checks for import
-        foreach ($tables as $table) {
-            if(!in_array($table,$exclude_arr)){
+            foreach ($tables as $table) {
+                if(!in_array($table,$exclude_arr)){
+                    $rows = $db->createCommand("SELECT * FROM {$table}")->queryAll();
+                    if ($rows) {
+                        $columns = array_keys($rows[0]);
+                        foreach ($rows as $row) {
+                            $values = array_map(function ($value) use ($db) {
+                                return $value === null ? 'NULL' : $db->quoteValue($value);
+                            }, $row);
+                            $sql .= "INSERT INTO `{$table}` (`" . implode('`, `', $columns) . "`) VALUES (" . implode(', ', $values) . ");\n";
+                        }
+                    }
+                }
+            }
+        } else {
+            $tables = $schema->getTableSchemas();
+            foreach ($tables as $table) {
                 $rows = $db->createCommand("SELECT * FROM {$table->name}")->queryAll();
                 if ($rows) {
                     $columns = array_keys($rows[0]);
@@ -55,10 +70,11 @@ class DbExportController extends Controller
                 }
             }
         }
+
         $sql .= "SET FOREIGN_KEY_CHECKS = 1;\n"; // Re-enable foreign key checks
 
-        file_put_contents($outputFile, $sql);
-        echo "Database exported to {$outputFile}\n";
+        file_put_contents($this->outputFile, $sql);
+        echo "Database exported to {$this->outputFile}\n";
     }
 
     public function actionClear()
