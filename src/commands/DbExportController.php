@@ -12,12 +12,21 @@ class DbExportController extends Controller
     public $exclude = '';
     public $only = '';
 
+    public function options()
+    {
+        return [
+            'outputFile',
+            'exclude',
+            'only'
+        ];
+    }
+
     public function optionAliases()
     {
         return [
             'f' => 'outputFile',
             'e' => 'exclude',
-            'o' => 'only',
+            'o' => 'only'
         ];
     }
 
