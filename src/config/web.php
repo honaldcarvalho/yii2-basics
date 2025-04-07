@@ -58,7 +58,7 @@ $config = [
             'timeFormat' => 'php:H:i',
             'decimalSeparator' => '.',
             'thousandSeparator' => '',
-            'currencyCode' => 'R$',
+            'currencyCode' => 'BRL',
             'class' => '\weebz\yii2basics\formatters\Custom',
         ],
         
