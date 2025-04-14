@@ -201,7 +201,11 @@ class ControllerCommon extends \yii\web\Controller
         $clone->attributes = $originalModel->attributes;
         $clone->setIsNewRecord(true);
         $clone->id = null;
-    
+
+        if ($clone->load(Yii::$app->request->post()) && $clone->save()) {
+            return $this->redirect(['view', 'id' => $clone->id]);
+        }
+
         // Renderiza a view update (ou clone se quiser separar)
         return $this->render('update', [
             'model' => $clone,
