@@ -14,7 +14,7 @@ class TinyMCE extends InputWidget
     public $language;
     public $clientOptions = [];
 
-    public function init()
+    public function init(): void
     {
         parent::init();
         $view = $this->getView();

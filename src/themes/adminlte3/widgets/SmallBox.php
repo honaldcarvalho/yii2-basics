@@ -24,7 +24,7 @@ class SmallBox extends Widget
 
     public $linkOptions = [];
 
-    public function init()
+    public function init(): void
     {
         parent::init();
 

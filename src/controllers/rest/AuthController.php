@@ -13,7 +13,7 @@ class AuthController extends ControllerRest {
 
     public $modelClass = 'weebz\yii2basics\models\User';
     
-    public function init()
+    public function init(): void
     {
         parent::init();
         \Yii::$app->user->enableSession = false;

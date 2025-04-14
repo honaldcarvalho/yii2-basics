@@ -8,7 +8,7 @@ use yii\validators\Validator;
 class FullNameValidator extends Validator
 {
 
-    public function init()
+    public function init(): void
     {
         parent::init();
         $this->message =  Yii::t('app', 'Inválid Name!');

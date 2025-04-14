@@ -26,7 +26,7 @@ class ActionColumn extends \yii\grid\ActionColumn
     /**
      * Initializes the default button rendering callbacks.
      */
-    public function init()
+    public function init(): void
     {
         if($this->grid->filterModel  !== null){
             $class_path = get_class($this->grid->filterModel);

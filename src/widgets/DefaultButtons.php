@@ -28,7 +28,7 @@ class DefaultButtons extends Widget
     
     public $show = ['index','create', 'update','delete','clone'];
 
-    public function init()
+    public function init(): void
     {
         parent::init();
 

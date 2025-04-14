@@ -40,7 +40,7 @@ class StorageUpload extends Widget
     /** ID of GridView will reload */
     public $grid_reload_id = '#list-files-grid';
 
-    public function init()
+    public function init(): void
     {
         parent::init();
         $this->token =  AuthController::User()->access_token;

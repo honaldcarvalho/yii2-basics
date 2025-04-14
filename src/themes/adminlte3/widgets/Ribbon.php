@@ -43,7 +43,7 @@ class Ribbon extends Widget
 
     public $textOptions = [];
 
-    public function init()
+    public function init(): void
     {
         parent::init();
 

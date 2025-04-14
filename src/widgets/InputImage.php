@@ -46,7 +46,7 @@ class InputImage extends Widget
     public $onError = "";
     public $onSuccess = "";
 
-    public function init()
+    public function init(): void
     {
         parent::init();
     }

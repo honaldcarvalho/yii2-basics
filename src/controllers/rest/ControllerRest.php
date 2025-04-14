@@ -19,7 +19,7 @@ class ControllerRest extends \yii\rest\Controller
         'collectionEnvelope' => 'items',
     ];
      
-    public function init()
+    public function init(): void
     {   
         parent::init();
         Yii::$app->user->enableSession = false;

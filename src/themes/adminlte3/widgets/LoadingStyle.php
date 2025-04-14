@@ -8,7 +8,7 @@ class LoadingStyle extends Widget
 {
     public $iconSize;
 
-    public function init()
+    public function init(): void
     {
         parent::init();
 

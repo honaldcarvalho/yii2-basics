@@ -20,7 +20,7 @@ class CopyToClipboard extends \yii\bootstrap5\Widget
     /**
      * {@inheritdoc}
      */
-    public function init()
+    public function init(): void
     {
         $this->text = Yii::t('app',$this->text);
         $message = Yii::t('app',$this->message);

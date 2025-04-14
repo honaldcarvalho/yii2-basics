@@ -40,7 +40,7 @@ class UploadFiles extends Widget
     
     public $random = 0;
 
-    public function init()
+    public function init(): void
     {
         parent::init();
 

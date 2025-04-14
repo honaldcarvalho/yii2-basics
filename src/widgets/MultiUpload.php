@@ -35,7 +35,7 @@ class MultiUpload extends Widget
     
 
 
-    public function init()
+    public function init(): void
     {
         parent::init();
     }

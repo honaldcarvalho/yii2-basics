@@ -35,7 +35,7 @@ class UploadFile extends Widget
     public $onError = "$('#send-info').html('Ocorreu algum erro: ' + res.data.info.file[0]);";
     public $onSuccess = '$("#send-info").html("Enviado");$("#btn-save").hide();$("$this->field").val(res.data.model.id);';
 
-    public function init()
+    public function init(): void
     {
         parent::init();
     }

@@ -55,7 +55,7 @@ class SelectFile extends Widget
     * */
     public $preview_image_el = 'preview';
     
-    public function init()
+    public function init(): void
     {
         parent::init();
     }

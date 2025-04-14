@@ -49,7 +49,7 @@ class Callout extends Widget
 </div>
 html;
 
-    public function init()
+    public function init(): void
     {
         parent::init();
 

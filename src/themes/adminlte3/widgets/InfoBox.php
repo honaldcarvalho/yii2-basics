@@ -65,7 +65,7 @@ class InfoBox extends Widget
 
     public $progressBarOptions = [];
 
-    public function init()
+    public function init(): void
     {
         parent::init();
 

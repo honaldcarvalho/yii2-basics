@@ -11,7 +11,7 @@ class Upload extends \yii\bootstrap5\Widget
     public $fileField = 'file';
     public $type = ' image/*,.pdf,.doc,.docx,.xls,.xlsx';
 
-    public function init()
+    public function init(): void
     {
         $reload = '';
         if(array_count_values($this->reloadGrid) > 0){

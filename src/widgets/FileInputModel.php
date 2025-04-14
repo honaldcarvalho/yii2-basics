@@ -74,7 +74,7 @@ class FileInputModel extends Widget
     public $onSuccess = "";
     public $success_message = "Enviado com Sucesso";
 
-    public function init()
+    public function init(): void
     {
         parent::init();
     }

@@ -56,7 +56,7 @@ class StorageUploadMultiple extends Widget
 
     public $maxWidth = 1000;
 
-    public function init()
+    public function init(): void
     {
         parent::init();
         $this->attact_model = json_encode($this->attact_model);

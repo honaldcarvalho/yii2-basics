@@ -30,7 +30,7 @@ class AppendModelFixed extends \yii\bootstrap5\Widget
 
     private $uniqueId;
 
-    public function init()
+    public function init(): void
     {
         parent::init();
         $this->uniqueId = uniqid($this->controller . '_');
