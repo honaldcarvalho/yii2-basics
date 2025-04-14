@@ -178,6 +178,36 @@ class ControllerCommon extends \yii\web\Controller
 
     }
 
+    public function actionClone($id)
+    {
+        // Detecta automaticamente a classe do model com base no nome do controller
+        $controllerName = Yii::$app->controller->id;
+        $modelName = str_replace(' ', '', ucwords(str_replace('-', ' ', $controllerName)));
+    
+        // Procura a classe do model
+        $modelClass = self::classExist($modelName);
+        if ($modelClass === null) {
+            throw new NotFoundHttpException("Model class for '$modelName' not found.");
+        }
+    
+        // Busca o registro original
+        $originalModel = $modelClass::findOne($id);
+        if (!$originalModel) {
+            throw new NotFoundHttpException("Model with ID $id not found.");
+        }
+    
+        // Clona o model
+        $clone = new $modelClass();
+        $clone->attributes = $originalModel->attributes;
+        $clone->setIsNewRecord(true);
+        $clone->id = null;
+    
+        // Renderiza a view update (ou clone se quiser separar)
+        return $this->render('update', [
+            'model' => $clone,
+        ]);
+    }
+    
     // Generalized function to save or update a model
     public function actionSaveModel($modelClass)
     {   
@@ -235,6 +265,41 @@ class ControllerCommon extends \yii\web\Controller
             $items = $modelClassNamespace::find()->select("id,{$post['modelField']}")->where([$post['condition'], $post['modelField'] , $post['value']])->limit(20)->all();
         }
         return $items;
+    }
+
+    public function actionCloneModel($modelClass, $id)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+    
+        try {
+            $verClass = self::classExist($modelClass);
+            if ($verClass === null) {
+                return ['success' => false, 'message' => "Model class '$modelClass' does not exist."];
+            }
+    
+            /** @var \yii\db\ActiveRecord $modelClassNamespace */
+            $modelClassNamespace = $verClass;
+            $originalModel = $modelClassNamespace::findOne($id);
+    
+            if ($originalModel === null) {
+                return ['success' => false, 'message' => "Model with ID $id not found."];
+            }
+    
+            // Clona o model e limpa o ID
+            $newModel = new $modelClassNamespace();
+            $newModel->attributes = $originalModel->attributes;
+            $newModel->setIsNewRecord(true);
+            $newModel->id = null;
+    
+            // Se o model tiver timestamps automáticos, eles serão atualizados no save
+            if ($newModel->save()) {
+                return ['success' => true, 'message' => 'Model cloned successfully.', 'id' => $newModel->id];
+            } else {
+                return ['success' => false, 'message' => 'Error saving cloned model.', 'errors' => $newModel->getErrors()];
+            }
+        } catch (\Throwable $th) {
+            return ['success' => false, 'message' => $th->getMessage()];
+        }
     }
 
     // Generalized function to delete a model by ID
