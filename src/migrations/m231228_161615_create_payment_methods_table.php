@@ -24,7 +24,7 @@ class m231228_161615_create_payment_methods_table extends Migration
         $this->insert('rules', [
             'group_id' => 2,
             'controller' => 'payment-method',
-            'actions' => 'index;create;view;update;delete',
+            'actions' => 'index;create;view;update;delete;status',
             'status'=>true
         ]);
 
@@ -49,7 +49,7 @@ class m231228_161615_create_payment_methods_table extends Migration
             'description' => 'Free',
             'icon' => 'fas fa-hand-holding-usd',
             'tag' => 'free',
-            'status'=>true
+            'status'=>false
         ]);
 
         $this->insert('payment_methods', [
@@ -73,7 +73,7 @@ class m231228_161615_create_payment_methods_table extends Migration
             'description' => 'Credit',
             'icon' => 'fas fa-credit-card',
             'tag' => 'credit',
-            'status'=>true
+            'status'=>false
         ]);
 
         $this->insert('payment_methods', [
@@ -81,7 +81,7 @@ class m231228_161615_create_payment_methods_table extends Migration
             'description' => 'Debit',
             'icon' => 'far fa-credit-card',
             'tag' => 'debit',
-            'status'=>true
+            'status'=>false
         ]);
 
         $this->insert('payment_methods', [
