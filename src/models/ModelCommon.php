@@ -39,14 +39,14 @@ class ModelCommon extends \yii\db\ActiveRecord
         }
     
         if ($this->hasAttribute('group_id')) {
-            $group = \Yii::getAlias('@main-group', false);
-            if (!$group) {
+            $this->group_id =  Parameter::findOne(['name' => 'main-group'])?->value;
+            if (!$this->group_id) {
                 $this->group_id = AuthController::userGroup();
             }
         }
-    
         return true;
     }
+
 
     public static function getClass()
     {   
