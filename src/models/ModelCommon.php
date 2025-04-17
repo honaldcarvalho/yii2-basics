@@ -31,6 +31,22 @@ class ModelCommon extends \yii\db\ActiveRecord
         ];
     }
 
+    public function beforeSave($insert)
+    {
+        if (!parent::beforeSave($insert)) {
+            return false;
+        }
+    
+        if ($this->hasAttribute('group_id')) {
+            $group = \Yii::getAlias('@main-group', false);
+            if (!$group) {
+                $this->group_id = AuthController::userGroup();
+            }
+        }
+    
+        return true;
+    }
+
     public static function getClass()
     {   
         $array = explode('\\', get_called_class());
