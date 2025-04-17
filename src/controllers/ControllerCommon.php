@@ -347,6 +347,35 @@ class ControllerCommon extends \yii\web\Controller
         return \yii\helpers\Json::encode(['atualizado'=>$resuts]);
     }
 
+    public function actionStatusModel($modelClass, $id)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+    
+        $verClass = self::classExist($modelClass);
+        if ($verClass === null) {
+            return ['success' => false, 'message' => "Model class '$modelClass' does not exist."];
+        }
+    
+        $modelClassNamespace = $verClass;
+        $model = $modelClassNamespace::findOne($id);
+    
+        if (!$model) {
+            return ['success' => false, 'message' => "Model with ID '$id' not found."];
+        }
+    
+        if (!property_exists($model, 'status')) {
+            return ['success' => false, 'message' => "The model '$modelClass' does not have a 'status' property."];
+        }
+    
+        $model->status = $model->status == 0 ? 1 : 0;
+    
+        if ($model->save()) {
+            return ['success' => true, 'status' => $model->status];
+        }
+    
+        return ['success' => false, 'errors' => $model->getErrors()];
+    }
+    
     public static function error($th)
     {   
         if(isset($th->statusCode )){
