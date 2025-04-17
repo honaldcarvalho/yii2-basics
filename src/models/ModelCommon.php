@@ -7,6 +7,7 @@ use weebz\yii2basics\controllers\AuthController;
 
 class ModelCommon extends \yii\db\ActiveRecord
 {
+
     public $verGroup = false;
     const SCENARIO_STATUS = 'status';
     const SCENARIO_SEARCH = 'search';
