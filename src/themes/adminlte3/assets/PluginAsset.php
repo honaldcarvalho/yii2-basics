@@ -17,6 +17,11 @@ class PluginAsset extends AssetBundle
         'tinymce' => [
             'js' => 'tinymce/tinymce.min.js',
         ],
+        'inputmask' => [
+            'css' => 'inputmask/colormask.css',
+            'js' => 'inputmask/inputmask.min.js',
+            'js' => 'inputmask/jquery.inputmask.min.js',
+        ],
         'jquery-ui' => [
             'css' => 'jquery-ui/jquery-ui.min.css',
             'js' => 'jquery-ui/jquery-ui.min.js',
