@@ -35,6 +35,10 @@ $config = [
          ]
     ],
     'components' => [
+        'httpclient' => [
+            'class' => 'yii\httpclient\Client',
+            'baseUrl' => '/rest', // ajuste conforme necessário
+        ],
         'session' => [
             'timeout' => 2628000, //1 month in seconds
             'class' => 'yii\web\DbSession',
