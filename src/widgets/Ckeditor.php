@@ -19,7 +19,7 @@ class Ckeditor extends InputWidget
         parent::init();
 
         $view = $this->getView();
-        PluginAsset::register($view)->add(['ckeditor5']);
+        PluginAsset::register($view)->add(['ckeditor']);
 
         $textBig = <<<HTML
 <h3>The standard Lorem Ipsum passage, used since the 1500s</h3>
