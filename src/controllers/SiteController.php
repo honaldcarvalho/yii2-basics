@@ -55,6 +55,16 @@ class SiteController extends AuthController
         return $this->render('dashboard');
     }
 
+        /**
+     * Displays homepage.
+     *
+     * @return string
+     */
+    public function actionCkeditor()
+    {
+        return $this->render('ckeditor');
+    }
+
 
     /**
      * Login action.
