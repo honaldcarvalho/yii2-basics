@@ -14,6 +14,10 @@ class PluginAsset extends AssetBundle
         'axios' => [
             'js' => 'axios/axios.min.js',
         ],
+        'ckeditor' => [
+            'js' => 'ckeditor/ckeditor5.umd.js',
+            'css' => 'ckeditor/ckeditor5.css',
+        ],
         'tinymce' => [
             'js' => 'tinymce/tinymce.min.js',
         ],

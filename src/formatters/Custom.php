@@ -14,6 +14,23 @@ class Custom extends \yii\i18n\Formatter
         return Yii::t($category,$value);
 
     }
+
+    public function asPostalCode($value)
+    {
+        if (empty($value)) {
+            return null;
+        }
+
+        // Remover caracteres que não sejam números
+        $clean = preg_replace('/\D/', '', $value);
+
+        if (strlen($clean) !== 8) {
+            return $value; // retorna sem formatação caso o tamanho seja incorreto
+        }
+
+        return substr($clean, 0, 5) . '-' . substr($clean, 5, 3);
+    }
+    
     public function asCpfCnpj($value)
     {
         if (strlen($value) === 11) {
