@@ -22,11 +22,11 @@ class Ckeditor extends InputWidget
         PluginAsset::register($view)->add(['ckeditor']);
 
         $textBig = <<<HTML
-<h3>The standard Lorem Ipsum passage, used since the 1500s</h3>
-<p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua..."</p>
-<h3>Section 1.10.32 of "de Finibus Bonorum et Malorum"</h3>
-<p>"Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium..."</p>
-HTML;
+        <h3>The standard Lorem Ipsum passage, used since the 1500s</h3>
+        <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua..."</p>
+        <h3>Section 1.10.32 of "de Finibus Bonorum et Malorum"</h3>
+        <p>"Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium..."</p>
+        HTML;
 
         $this->clientOptions = array_merge([
             'toolbar' => [
@@ -49,57 +49,33 @@ HTML;
         ], $this->clientOptions);
 
         $view->registerJs(<<<JS
-if (!window.CKEDITOR_LOADED) {
-    window.CKEDITOR_LOADED = true;
 
-    class LoremIpsumSmallPlugin {
-        constructor(editor) {
-            this.editor = editor;
-        }
-        init() {
-            this.editor.ui.componentFactory.add('loremIpsumSmall', locale => {
-                const view = new window.CKEDITOR5.ButtonView(locale);
-                view.set({
-                    label: 'Lorem Small',
-                    withText: true,
-                    tooltip: 'Inserir Lorem pequeno'
-                });
-                view.on('execute', () => {
-                    this.editor.model.change(writer => {
-                        this.editor.model.insertContent(writer.createText('Lorem ipsum dolor sit amet, consectetur adipiscing elit.'));
-                    });
-                });
-                return view;
-            });
-        }
-    }
-
-    class LoremIpsumBigPlugin {
-        constructor(editor) {
-            this.editor = editor;
-        }
-        init() {
-            this.editor.ui.componentFactory.add('loremIpsumBig', locale => {
-                const view = new window.CKEDITOR5.ButtonView(locale);
-                view.set({
-                    label: 'Lorem Big',
-                    withText: true,
-                    tooltip: 'Inserir Lorem grande'
-                });
-                view.on('execute', () => {
-                    this.editor.model.change(writer => {
-                        this.editor.model.insertContent(writer.createText(`${textBig}`));
-                    });
-                });
-                return view;
-            });
-        }
-    }
-
-    window.LoremIpsumSmallPlugin = LoremIpsumSmallPlugin;
-    window.LoremIpsumBigPlugin = LoremIpsumBigPlugin;
-}
-JS, View::POS_HEAD);
+        const {
+            ClassicEditor,
+            Essentials,
+            Paragraph,
+            Bold,
+            Italic,
+            Font
+        } = CKEDITOR;
+        // Create a free account and get <YOUR_LICENSE_KEY>
+        // https://portal.ckeditor.com/checkout?plan=free
+        ClassicEditor
+            .create( document.querySelector( '#editor' ), {
+                licenseKey: 'eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3NDcyNjcxOTksImp0aSI6ImYyN2VlNmY5LWM1YjctNGQ0Ni1hOTM5LTMyYTk2N2VkYmE4OCIsInVzYWdlRW5kcG9pbnQiOiJodHRwczovL3Byb3h5LWV2ZW50LmNrZWRpdG9yLmNvbSIsImRpc3RyaWJ1dGlvbkNoYW5uZWwiOlsiY2xvdWQiLCJkcnVwYWwiLCJzaCJdLCJ3aGl0ZUxhYmVsIjp0cnVlLCJsaWNlbnNlVHlwZSI6InRyaWFsIiwiZmVhdHVyZXMiOlsiKiJdLCJ2YyI6IjY3N2JjNzJlIn0.23WYLTxI7SCw2u5J4euMc3CH5QviWdGMY_tsMdXjr2w1cNRmpf64WT9grvBlZ8utkDu7wdUJHrU6sO3dtnzQjg',
+                plugins: [ Essentials, Paragraph, Bold, Italic, Font ],
+                toolbar: [
+                    'undo', 'redo', '|', 'bold', 'italic', '|',
+                    'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor'
+                ]
+            } )
+            .then( editor => {
+                window.editor = editor;
+            } )
+            .catch( error => {
+                console.error( error );
+            } );
+        JS, View::POS_HEAD);
     }
 
     public function run(): void
@@ -118,11 +94,11 @@ JS, View::POS_HEAD);
         ]));
 
         $view->registerJs(<<<JS
-if (window.ClassicEditor) {
-    ClassicEditor
-        .create(document.querySelector('#{$id}'), {$options})
-        .catch(error => console.error(error));
-}
-JS);
+            if (window.ClassicEditor) {
+                ClassicEditor
+                    .create(document.querySelector('#{$id}'), {$options})
+                    .catch(error => console.error(error));
+            }
+        JS);
     }
 }
