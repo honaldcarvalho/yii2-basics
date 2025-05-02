@@ -32,13 +32,7 @@ $theme = Yii::$app->user->identity->theme;
     <!-- Required meta tags -->
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title><?= $this->title != '' ? $params->title . ' - ' . Html::encode($this->title) : $params->title  ?></title>
-    <?php 
-    $this->head(); 
-    $script = <<< JS
-        Fancybox.bind("[data-fancybox]");
-    JS;
-    $this->registerJs($script);
-    ?>
+    <?php $this->head();  ?>
 
 
 </head>
