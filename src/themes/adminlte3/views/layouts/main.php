@@ -43,7 +43,7 @@ $theme = Yii::$app->user->identity->theme;
     ]);
 
     ?>
-
+    <?php $this->head();  ?>
 
 </head>
 <body class="hold-transition sidebar-mini <?=$theme?>-mode">
