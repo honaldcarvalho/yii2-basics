@@ -12,9 +12,9 @@ use yii\bootstrap5\ActiveForm;
 /* @var $form yii\bootstrap5\ActiveForm */
 $image = '';
 $display = 'display:none';
-if(!empty($model->file_id))
+if(!empty($model->file_id && $model->file != null)){
     $image = File::findOne($model->file_id)->url;
-
+}
 ?>
 <?php $form = ActiveForm::begin(['class' => 'row mb-5']); ?>
 <div class="row">
