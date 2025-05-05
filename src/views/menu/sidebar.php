@@ -15,37 +15,6 @@ $script = <<< JS
 JS;
 $this->registerJS($script);
 
-$css = <<< CSS
-    .sidebar-dark-primary i{
-        color:#64af44!important;
-    }
-    .sidebar-dark-primary i{
-        color:#64af44!important;
-    }
-    .sidebar-dark-primary .user-image{
-        font-size: 2em;
-    }
-    .sidebar-dark-primary a:hover,.sidebar-dark-primary a:hover i{
-        color:#6bc245!important;
-    }
-    .sidebar-dark-primary .nav-item>.nav-link.active, .sidebar-light-primary .nav-item>.nav-link.active i{
-        background: #202428!important;
-        color: #fff!important; 
-    }
-    .sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link.active, .sidebar-light-primary .nav-sidebar>.nav-item>.nav-link.active i{
-        background: #292929!important;
-        color: #fff!important; 
-    }
-    .dark-mode .table th, .dark-mode .table th a, .dark-mode .table td, .dark-mode .table td a{
-        color:  #ececec! important;
-        text-decoration: none;
-        background-color: transparent;
-    }
-    .dark-mode .table th a:hover, .table td a:hover{
-        color: #ffffff!important;
-    }
-CSS;
-$this->registerCss($css);
 
 if(!Yii::$app->user->isGuest){
     $name_split = explode(' ',Yii::$app->user->identity->fullname);

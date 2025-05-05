@@ -15,7 +15,7 @@ PluginAsset::register($this)->add(['fontawesome', 'icheck-bootstrap','fancybox',
 $params = Configuration::get();
 $this->metaTags = '';
 $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback');
-$this->registerCssFile('/css/custom.css');
+
 
 $assetDir = Yii::$app->assetManager->getPublishedUrl('@vendor/weebz/yii2-basics/src/themes/adminlte3/web/dist');
 
@@ -38,6 +38,10 @@ $theme = Yii::$app->user->identity->theme;
         Fancybox.bind("[data-fancybox]");
     JS;
     $this->registerJs($script);
+    $this->registerCssFile('/css/custom.css', [
+        'depends' => [\app\assets\AppAsset::class],
+    ]);
+
     ?>
 
 
