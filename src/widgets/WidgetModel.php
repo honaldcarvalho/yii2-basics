@@ -8,7 +8,7 @@ use yii\web\View;
 class WidgetModel extends \yii\bootstrap5\Widget
 {
 
-  public function init()
+public function init(): void
   {
 
   }

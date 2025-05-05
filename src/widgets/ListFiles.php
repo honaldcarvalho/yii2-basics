@@ -15,7 +15,7 @@ class ListFiles extends \yii\bootstrap5\Widget
 {
   public $dataProvider;
 
-  public function init()
+public function init(): void
   {
   }
 

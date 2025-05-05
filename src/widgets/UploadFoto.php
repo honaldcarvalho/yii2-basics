@@ -20,7 +20,7 @@ class UploadFoto extends \yii\bootstrap5\Widget
   public $maxSize = 2;
   public $maxWidth = 1000;
 
-  public function init()
+public function init(): void
   {
     PluginAsset::register(Yii::$app->view)->add(['cropper']);
     $config = Configuration::get();
