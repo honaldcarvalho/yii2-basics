@@ -33,5 +33,10 @@
         "psr-4": {
             "weebz\\yii2basics\\": "src"
         }
+    },
+    "config": {
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true
+        }
     }
 }
