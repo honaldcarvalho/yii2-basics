@@ -56,34 +56,18 @@ class ConfigurationController extends AuthController
     public function actionCreate()
     {
         $model = new Configuration();
-        $old = $model->file_id;
-        $changed = false;
-        
+
         if ($model->load(Yii::$app->request->post())){ 
             
             $file = \yii\web\UploadedFile::getInstance($model, 'file_id');
-            $file = \yii\web\UploadedFile::getInstance($model, 'file_id');
 
             if(!empty($file) && $file !== null){
-                $file = StorageController::uploadFile($file,['save'=>true,'thumb_aspect'=>'320/198']);
-                if ($file['success'] === true) {
-                    $model->file_id = $file['data']['id'];
-                    $changed = true;
-                }
-            } else if(isset($post['remove']) && $post['remove'] == 1){
-                $model->file_id = null;
-                $changed = true;
-            } 
 
-            if(!$changed){
-                $model->file_id = $old;
-            }
-            
-            if($model->save()) {
-                if($changed){
-                    StorageController::removeFile($old);
+                $arquivo = StorageController::uploadFile($file,['save'=>true]);
+
+                if ($arquivo['success'] === true) {
+                    $model->file_id = $arquivo['data']['id'];
                 }
-                return $this->redirect(['view', 'id' => $model->id]);
             }
 
             $count = Configuration::find(['id'])->count();
@@ -106,6 +90,7 @@ class ConfigurationController extends AuthController
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
+
     public function actionUpdate($id)
     {
 
@@ -118,16 +103,18 @@ class ConfigurationController extends AuthController
 
             $file = \yii\web\UploadedFile::getInstance($model, 'file_id');
             if(!empty($file) && $file !== null){
-                $file = StorageController::uploadFile($file,['save'=>true]);
+                $file = StorageController::uploadFile($file,['save'=>true,'thumb_aspect'=>'320/198']);
                 if ($file['success'] === true) {
                     $model->file_id = $file['data']['id'];
                     $changed = true;
-                }else{
-                    $model->file_id = $old;
                 }
             } else if(isset($post['remove']) && $post['remove'] == 1){
                 $model->file_id = null;
                 $changed = true;
+            } 
+
+            if(!$changed){
+                $model->file_id = $old;
             }
             
             if($model->save()) {
@@ -142,7 +129,6 @@ class ConfigurationController extends AuthController
             'model' => $model,
         ]);
     }
-
     /**
      * Deletes an existing Configuration model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
