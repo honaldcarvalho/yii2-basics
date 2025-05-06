@@ -40,9 +40,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     </div>
 
 
-                    <?= $generator->enablePjax ? "                    <?php Pjax::begin(); ?>\n" : '' ?>
+                    <?= $generator->enablePjax ? "<?php Pjax::begin(); ?>\n" : '' ?>
                     <?php if (!empty($generator->searchModelClass)): ?>
-                        <?= "                    <?php " . ($generator->indexWidgetType === 'grid' ? "// " : "") ?>echo $this->render('/_parts/filter', ['view' =>'<?=$urlParams?>','searchModel' => $searchModel]); ?>
+                        <?= "<?php " . ($generator->indexWidgetType === 'grid' ? "// " : "") ?>
+                        echo $this->render('/_parts/filter', ['view' =>"<?=$urlParams?>",'searchModel' => $searchModel]); ?>
                     <?php endif; ?>
                     <?php if ($generator->indexWidgetType === 'grid'): ?>
                         <?= "                <?= " ?>GridView::widget([

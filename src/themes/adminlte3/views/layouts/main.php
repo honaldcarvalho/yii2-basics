@@ -41,9 +41,7 @@ $theme = Yii::$app->user->identity->theme;
     $this->registerCssFile('/css/custom.css', [
         'depends' => [\app\assets\AppAsset::class],
     ]);
-
     ?>
-    <?php $this->head();  ?>
 
 </head>
 <body class="hold-transition sidebar-mini <?=$theme?>-mode">
