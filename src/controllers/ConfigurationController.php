@@ -103,7 +103,7 @@ class ConfigurationController extends AuthController
 
             $file = \yii\web\UploadedFile::getInstance($model, 'file_id');
             if(!empty($file) && $file !== null){
-                $file = StorageController::uploadFile($file,['save'=>true,'thumb_aspect'=>'320/198']);
+                $file = StorageController::uploadFile($file,['save'=>true]);
                 if ($file['success'] === true) {
                     $model->file_id = $file['data']['id'];
                     $changed = true;
