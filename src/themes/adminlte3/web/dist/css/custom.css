@@ -530,3 +530,11 @@ input:checked+.slider::before {
 .slider.round::before {
     border-radius: 50%
 }
+
+.grid-view .btn {
+    min-width: 40px; /* ou outro valor que funcione bem com os ícones */
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 6px !important;
+}
