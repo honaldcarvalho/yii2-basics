@@ -531,7 +531,7 @@ input:checked+.slider::before {
     border-radius: 50%
 }
 
-.grid-view .btn {
+.gridview-buttons .btn {
     min-width: 40px; /* ou outro valor que funcione bem com os ícones */
     display: inline-flex;
     justify-content: center;
