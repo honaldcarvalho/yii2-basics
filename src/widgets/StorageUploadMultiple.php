@@ -293,6 +293,10 @@ class StorageUploadMultiple extends Widget
                 var removeButton = el(`btn-remove-\${index}-{$this->random}`);
 
                 var formData = new FormData();
+                var descriptionInput = el(`row_\${index}`).querySelector(`input[name="description-\${index}"]`);
+                var description = descriptionInput ? descriptionInput.value : '';
+                
+                formData.append('description', description);
                 formData.append('file', file);
                 formData.append('folder_id', $this->folder_id);
                 formData.append('group_id', $this->group_id);
@@ -429,13 +433,21 @@ class StorageUploadMultiple extends Widget
                             preview.src = '/dummy/code.php?x=150x150/fff/000.jpg&text=NO PREVIEW';
                         }
 
+                        let descInput = document.createElement('input');
+                        descInput.type = 'text';
+                        descInput.classList.add('form-control');
+                        descInput.placeholder = 'Descrição do arquivo';
+                        descInput.name = `description-\${index}`;
+                        cellDescription.appendChild(descInput);
+
                         var row = table_files.insertRow();
                         var cellImage =    row.insertCell(0);
                         var cellName =     row.insertCell(1);
                         var cellProgress = row.insertCell(2);
                         var cellSize =     row.insertCell(3);
                         var cellType =     row.insertCell(4);
-                        var cellActions =  row.insertCell(5);
+                        var cellDescription = row.insertCell(5);
+                        var cellActions = row.insertCell(6);
 
                         row.id = "row_" + index;
 
