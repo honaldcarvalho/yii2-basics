@@ -295,7 +295,7 @@ class StorageUploadMultiple extends Widget
                 var formData = new FormData();
                 var descriptionInput = el(`row_\${index}`).querySelector(`input[name="description-\${index}"]`);
                 var description = descriptionInput ? descriptionInput.value : '';
-                
+
                 formData.append('description', description);
                 formData.append('file', file);
                 formData.append('folder_id', $this->folder_id);
@@ -433,13 +433,6 @@ class StorageUploadMultiple extends Widget
                             preview.src = '/dummy/code.php?x=150x150/fff/000.jpg&text=NO PREVIEW';
                         }
 
-                        let descInput = document.createElement('input');
-                        descInput.type = 'text';
-                        descInput.classList.add('form-control');
-                        descInput.placeholder = 'Descrição do arquivo';
-                        descInput.name = `description-\${index}`;
-                        cellDescription.appendChild(descInput);
-
                         var row = table_files.insertRow();
                         var cellImage =    row.insertCell(0);
                         var cellName =     row.insertCell(1);
@@ -449,6 +442,13 @@ class StorageUploadMultiple extends Widget
                         var cellDescription = row.insertCell(5);
                         var cellActions = row.insertCell(6);
 
+                        let descInput = document.createElement('input');
+                        descInput.type = 'text';
+                        descInput.classList.add('form-control');
+                        descInput.placeholder = 'Descrição do arquivo';
+                        descInput.name = `description-\${index}`;
+                        cellDescription.appendChild(descInput);
+                        
                         row.id = "row_" + index;
 
                         cellProgress.append(progress_container);
