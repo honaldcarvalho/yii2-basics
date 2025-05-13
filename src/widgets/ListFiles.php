@@ -175,7 +175,7 @@ public function init(): void
                             [
                                 'headerOptions' => ['style' => 'width:10%'],
                                 'attribute' => 'size',
-                                'title' => Yii::t('app', 'Size'),
+                                'caption' => Yii::t('app', 'Size'),
                                 'format' => 'bytes',
                                 'label' => Yii::t('app', 'Size'),
                             ],
