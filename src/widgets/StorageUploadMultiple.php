@@ -448,7 +448,7 @@ class StorageUploadMultiple extends Widget
                         descInput.placeholder = 'Descrição do arquivo';
                         descInput.name = `description-\${index}`;
                         cellDescription.appendChild(descInput);
-                        
+
                         row.id = "row_" + index;
 
                         cellProgress.append(progress_container);
@@ -513,13 +513,13 @@ class StorageUploadMultiple extends Widget
         JS;
 
         \Yii::$app->view->registerJs($script, View::POS_END);
-
+        $select_file_text = Yii::t('app', 'Select file(s) to upload');
         $form_upload = <<< HTML
 
             <div class="btn-group mt-2" role="group" id="input-{$this->random}">
                 <button class="btn btn-info position-relative">
                     <input type="file" multiple="true" class="position-absolute z-0 opacity-0 w-100 h-100"  id="file-input-{$this->random}" aria-label="Upload">
-                    <i class="fas fa-folder-open m-2"></i> Select File
+                    <i class="fas fa-folder-open m-2"></i> $select_file_text
                 </button>
                 <button class="btn btn-warning" id="upload-button-{$this->random}" disabled="true"> <i class="fas fa-upload m-2"></i> Upload</button>
             </div>

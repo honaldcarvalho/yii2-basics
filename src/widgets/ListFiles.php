@@ -140,7 +140,7 @@ public function init(): void
                                 'attribute' => 'description',
                                 'label' => Yii::t('app', 'Description'),
                             ],
-                            'type',
+                            'type:text:'.Yii::t('app', 'Type'),
                             [
                                 'headerOptions' => ['style' => 'width:10%'],
                                 'header' => 'Preview',
@@ -175,12 +175,14 @@ public function init(): void
                             [
                                 'headerOptions' => ['style' => 'width:10%'],
                                 'attribute' => 'size',
+                                'title' => Yii::t('app', 'Size'),
                                 'format' => 'bytes',
                                 'label' => Yii::t('app', 'Size'),
                             ],
                             [
                                 'headerOptions' => ['style' => 'width:10%'],
                                 'attribute' => 'duration',
+                                'title' => Yii::t('app', 'Duration'),
                                 'format' => 'duration',
                                 'label' => Yii::t('app', 'Duration'),
                             ],
