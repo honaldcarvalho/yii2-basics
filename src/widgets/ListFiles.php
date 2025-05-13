@@ -181,7 +181,7 @@ public function init(): void
                             [
                                 'headerOptions' => ['style' => 'width:10%'],
                                 'attribute' => 'duration',
-                                'format' => 'aduration',
+                                'format' => 'duration',
                                 'label' => Yii::t('app', 'Duration'),
                             ],
                             [
