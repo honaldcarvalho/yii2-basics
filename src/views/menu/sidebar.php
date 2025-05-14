@@ -29,7 +29,6 @@ if(!empty($params->file_id) && $params->file != null){
 }else{
     $login_image = "<img src='{$assetsDir}/img/croacworks-logo-hq.png' alt='{$params->title}' class='brand-image img-circle elevation-3' style='opacity: .8'>";
 }
-
 ?>
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
