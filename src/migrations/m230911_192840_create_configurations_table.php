@@ -31,7 +31,7 @@ class m230911_192840_create_configurations_table extends Migration
         ]);
         
         $this->insert('configurations', [
-            'slogan' => 'Yii2 System Basic',
+            'slogan' => 'CroacWorks',
             'title' => 'System Basic',
             'description' => 'Basic Configuration',
             'host' => 'http://localhost',
