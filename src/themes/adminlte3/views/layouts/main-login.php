@@ -41,7 +41,7 @@ $params = Configuration::get();
 <?= Alert::widget() ?>
 <div class="login-box">
     <div class="login-logo">
-    <img src="<?=  ControllerCommon::getAssetsDir(); ?>/img/logo_weebz.png" alt="" class="w-50 brand-image img-circle elevation-3"><br>
+    <img src="<?=  ControllerCommon::getAssetsDir(); ?>/img/croacworks-logo-hq.png" alt="" class="w-50 brand-image img-circle elevation-3"><br>
         <b><?=$params->title;?></b> | LOGIN</a>
     </div>
     <!-- /.login-logo -->
