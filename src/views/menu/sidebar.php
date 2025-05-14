@@ -27,7 +27,7 @@ if(!empty($params->file_id) && $params->file != null){
     $url = Yii::getAlias('@web').$params->file->urlThumb; 
     $login_image = "<img alt='{$params->title}' class='brand-image img-circle elevation-3' src='{$url}' style='opacity: .8' />";
 }else{
-    $login_image = "<img src='{$assetsDir}/img/wcms_logo.png' alt='{$params->title}' class='brand-image img-circle elevation-3' style='opacity: .8'>";
+    $login_image = "<img src='{$assetsDir}/img/croacworks-logo-hq.png' alt='{$params->title}' class='brand-image img-circle elevation-3' style='opacity: .8'>";
 }
 
 ?>
