@@ -2,6 +2,7 @@
 
 namespace  weebz\yii2basics\widgets;
 
+use weebz\yii2basics\themes\adminlte3\assets\PluginAsset;
 use Yii;
 use yii\web\View;
 use yii\bootstrap5\BootstrapAsset;
@@ -130,32 +131,8 @@ class FileInputModel extends Widget
             opacity: 0%;
         }
       CSS;
-
-        \Yii::$app->view->registerJsFile(
-            "$url/plugins/axios/axios.min.js"
-        );
-
-        \Yii::$app->view->registerJsFile(
-            "$url/plugins/jquery-cropper/cropper.min.js",
-            ['depends' => [\yii\web\JqueryAsset::class]]
-        );
-
-        \Yii::$app->view->registerJsFile(
-            "$url/plugins/jquery-cropper/jquery-cropper.min.js",
-            ['depends' => [\yii\web\JqueryAsset::class]]
-        );
-
-        \Yii::$app->view->registerCssFile("$url/plugins/jquery-cropper/cropper.min.css", [
-            'depends' => [BootstrapAsset::class],
-        ], 'cropper');
-
-        \Yii::$app->view->registerJsFile("https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js", [
-            ['depends' => [\yii\web\JqueryAsset::class]]
-        ], 'popper');
-
-        \Yii::$app->view->registerJsFile("https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js", [
-            ['depends' => [\yii\web\JqueryAsset::class]]
-        ], 'bootstrap');
+        $view = $this->getView();
+        PluginAsset::register($view)->add(['cropper','axios','jquery-cropper','cropper']);
 
         \Yii::$app->view->registerCss($css);
 
