@@ -4,6 +4,7 @@ namespace weebz\yii2basics\helpers;
 
 use Yii;
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 class MetaHelper
 {
@@ -42,7 +43,7 @@ class MetaHelper
         $title = $title ?? Yii::$app->name;
 
         // === DEFAULT IMAGE ===
-        $imageUrl = $imageUrl ?? UrlHelper::to('@web/img/share-default.jpg', true); // crie essa imagem se não tiver
+        $imageUrl = $imageUrl ?? Url::to('@web/img/logo.jpg', true); // crie essa imagem se não tiver
 
         // === REGISTRA META TAGS ===
 
