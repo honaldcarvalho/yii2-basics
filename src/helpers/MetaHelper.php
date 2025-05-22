@@ -2,6 +2,7 @@
 
 namespace weebz\yii2basics\helpers;
 
+use weebz\yii2basics\controllers\ControllerCommon;
 use Yii;
 use yii\helpers\Html;
 
@@ -25,7 +26,7 @@ class MetaHelper
 
         $keywords = Yii::$app->view->params['meta_keywords']
             ?? implode(', ', array_unique(array_filter(array_merge(
-                explode(' ', strip_tags($title . ' ' . $content)),
+                explode(' ', strip_tags(ControllerCommon::sanatize($title) . ' ' . $content)),
                 $extraKeywords
             ))));
 
