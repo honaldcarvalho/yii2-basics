@@ -8,58 +8,55 @@ use yii\helpers\Url;
 
 class MetaHelper
 {
-    /**
-     * Define meta tags SEO, Open Graph e Twitter dinâmicas.
-     *
-     * @param string|null $title
-     * @param string|null $content
-     * @param string[] $extraKeywords
-     * @param string|null $imageUrl
-     */
-    public static function setMeta(?string $title = null, ?string $content = null, array $extraKeywords = [], ?string $imageUrl = null)
+    public static array $validFields = ['titulo', 'descricao', 'resumo', 'nome', 'titulo_site', 
+    'descricao_resumida','title','description', 'keywords',];
+
+    public static function setMetaFromModel($model, array $extraKeywords = [], ?string $imageUrl = null)
     {
+        if (!$model) {
+            return;
+        }
+
         $view = Yii::$app->view;
 
-        // === DESCRIPTION ===
-        $description = $view->params['meta_description']
-            ?? mb_substr(trim(strip_tags($content)), 0, 160);
+        $data = [];
+        foreach (self::$validFields as $field) {
+            if (isset($model->{$field}) && !empty($model->{$field})) {
+                $data[$field] = strip_tags($model->{$field});
+            }
+        }
 
-        // === KEYWORDS ===
-        $baseText = strip_tags($title . ' ' . $content);
-        $cleanText = preg_replace('/[^\p{L}\p{N}\s]/u', '', $baseText);
+        // Gera título e descrição automáticos
+        $title = $data['titulo'] ?? $data['nome'] ?? Yii::$app->name;
+        $description = $data['descricao'] ?? $data['resumo'] ?? reset($data) ?? Yii::$app->name;
 
-        $stopWords = [
-            'com','sem','uma','para','como','dos','das','nos','nas','que','por','mais','mas','não','sim','aos','aí','de','em','no','na','ao','as','os','e','o','a','é','se','do','da','ou','um','uns','umas','até','isso','esses','essas','esse','essa','lhe','eles','elas','ele','ela'
-        ];
+        // Junta todos os campos para gerar palavras-chave
+        $baseText = implode(' ', $data);
+
+        // Filtros para keywords
+        $stopWords = ['com','sem','uma','para','como','dos','das','nos','nas','que','por','mais','mas','não','sim','aos','aí','de','em','no','na','ao','as','os','e','o','a','é','se','do','da','ou','um','uns','umas','até','isso','esses','essas','esse','essa','lhe','eles','elas','ele','ela'];
 
         $words = array_filter(
-            preg_split('/\s+/', mb_strtolower($cleanText)),
+            preg_split('/\s+/', mb_strtolower($baseText)),
             fn($word) => mb_strlen($word) >= 3 && !in_array($word, $stopWords)
         );
 
         $keywords = implode(', ', array_unique(array_merge($words, $extraKeywords)));
 
-        // === DEFAULT TITLE ===
-        $title = $title ?? Yii::$app->name;
+        $imageUrl ??= Yii::$app->params['defaultMetaImage'] ?? Yii::$app->request->hostInfo . '/img/share-default.jpg';
 
-        // === DEFAULT IMAGE ===
-        $imageUrl = $imageUrl ?? Url::to('@web/img/logo.jpg', true); // crie essa imagem se não tiver
-
-        // === REGISTRA META TAGS ===
-
-        // SEO
-        $view->registerMetaTag(['name' => 'description', 'content' => Html::encode($description)]);
+        // REGISTRO
+        $view->registerMetaTag(['name' => 'description', 'content' => Html::encode(mb_substr($description, 0, 160))]);
         $view->registerMetaTag(['name' => 'keywords', 'content' => Html::encode($keywords)]);
 
-        // Open Graph
+        // OG
         $view->registerMetaTag(['property' => 'og:title', 'content' => Html::encode($title)]);
         $view->registerMetaTag(['property' => 'og:description', 'content' => Html::encode($description)]);
-        $view->registerMetaTag(['property' => 'og:type', 'content' => 'website']);
+        $view->registerMetaTag(['property' => 'og:type', 'content' => 'article']);
         $view->registerMetaTag(['property' => 'og:url', 'content' => Yii::$app->request->absoluteUrl]);
         $view->registerMetaTag(['property' => 'og:image', 'content' => $imageUrl]);
-        $view->registerMetaTag(['property' => 'og:locale', 'content' => 'pt_BR']);
 
-        // Twitter Cards
+        // Twitter
         $view->registerMetaTag(['name' => 'twitter:card', 'content' => 'summary_large_image']);
         $view->registerMetaTag(['name' => 'twitter:title', 'content' => Html::encode($title)]);
         $view->registerMetaTag(['name' => 'twitter:description', 'content' => Html::encode($description)]);
