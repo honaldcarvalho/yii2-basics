@@ -94,4 +94,35 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ]
     ]); ?>
+
+    <?= AppendModel::widget([
+        'attactModel'=>'MetaTag',
+        'controller'=>'configuration',
+        'template' => '{edit}{remove}',
+        'attactClass'=>'weebz\\yii2basics\\models\\MetaTag',
+        'dataProvider' => new \yii\data\ActiveDataProvider([
+            'query' => $model->getMetaTags(),
+        ]),
+        'showFields'=>['description','name'],
+        'fields'=>
+        [
+            [
+                'name'=>'configuration_id',
+                'type'=>'hidden',
+                'value'=>$model->id
+            ],
+            [
+                'name'=>'description',
+                'type'=>'text'
+            ],
+            [
+                'name'=>'name',
+                'type'=>'text'
+            ],
+            [
+                'name'=>'content',
+                'type'=>'text'
+            ],
+        ]
+    ]); ?>
 </div>

@@ -94,6 +94,7 @@ class Configuration extends ModelCommon
         return $this->hasOne(EmailService::class, ['id' => 'email_service_id']);
     }
 
+
     /**
      * Gets query for [[File]].
      *
@@ -128,6 +129,11 @@ class Configuration extends ModelCommon
     public function getParameters()
     {
         return $this->hasMany(Parameter::class, ['configuration_id' => 'id']);
+    }
+
+    public function getMetaTags()
+    {
+        return $this->hasMany(MetaTag::class, ['configuration_id' => 'id']);
     }
 
     static function mailer()
