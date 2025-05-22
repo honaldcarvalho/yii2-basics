@@ -52,8 +52,6 @@ class MetaHelper
 
         $keywords = implode(', ', array_unique(array_merge($words, $extraKeywords)));
 
-        $imageUrl ??= Yii::$app->params['defaultMetaImage'] ?? Yii::$app->request->hostInfo . '/img/share-default.jpg';
-
         // REGISTRO
         $view->registerMetaTag(['name' => 'description', 'content' => Html::encode(mb_substr($description, 0, 160))]);
         $view->registerMetaTag(['name' => 'keywords', 'content' => Html::encode($keywords)]);
@@ -63,13 +61,14 @@ class MetaHelper
         $view->registerMetaTag(['property' => 'og:description', 'content' => Html::encode($description)]);
         $view->registerMetaTag(['property' => 'og:type', 'content' => 'article']);
         $view->registerMetaTag(['property' => 'og:url', 'content' => Yii::$app->request->absoluteUrl]);
-        $view->registerMetaTag(['property' => 'og:image', 'content' => $imageUrl]);
+
+        if($imageUrl) $view->registerMetaTag(['property' => 'og:image', 'content' => $imageUrl]);
 
         // Twitter
         $view->registerMetaTag(['name' => 'twitter:card', 'content' => 'summary_large_image']);
         $view->registerMetaTag(['name' => 'twitter:title', 'content' => Html::encode($title)]);
         $view->registerMetaTag(['name' => 'twitter:description', 'content' => Html::encode($description)]);
-        $view->registerMetaTag(['name' => 'twitter:image', 'content' => $imageUrl]);
+        if($imageUrl) $view->registerMetaTag(['name' => 'twitter:image', 'content' => $imageUrl]);
     }
 
     public static function setMetaForIndex(array $options = []): void
