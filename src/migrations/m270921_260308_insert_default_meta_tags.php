@@ -5,7 +5,7 @@ use yii\db\Migration;
 /**
  * Class m250522_000003_insert_common_meta_tags_with_canonical
  */
-class m250522_000003_insert_common_meta_tags_with_canonical extends Migration
+class m270921_260308_insert_default_meta_tags extends Migration
 {
     public function safeUp()
     {
