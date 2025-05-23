@@ -20,7 +20,7 @@ class MetaHelper
         'keywords',
     ];
 
-    public static function setMetaFromModel($model, array $extraKeywords = [], ?string $imageUrl = null)
+    public static function setMetaFromModel($model, array $extraKeywords = [], ?string $imageUrl = null, ?array $options = [])
     {
         if (!$model) {
             return;
@@ -53,6 +53,16 @@ class MetaHelper
         $keywords = implode(', ', array_unique(array_merge($words, $extraKeywords)));
 
         // REGISTRO
+        if($options['postfix'] ?? false) {
+            $title .= Yii::$app->name . ' - ' . $options['postfix'];
+            $description .=  $description . ' - ' . $options['postfix'];
+        }
+
+        if($options['prefix'] ?? false) {
+            $title = $options['prefix'] . ' - ' . $title;
+            $description = $options['prefix'] . ' - ' . $description;
+        }
+
         $view->registerMetaTag(['name' => 'description', 'content' => Html::encode(mb_substr($description, 0, 160))]);
         $view->registerMetaTag(['name' => 'keywords', 'content' => Html::encode($keywords)]);
 
