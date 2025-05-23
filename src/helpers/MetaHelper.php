@@ -10,13 +10,13 @@ class MetaHelper
 {
     public static array $validFields = [
         'title',
+        'titulo',
         'description',
+        'descricao',
         'resume',
+        'resumo',
         'name',
-        'title_site',
-        'description_resumida',
-        'title',
-        'description',
+        'nome',
         'keywords',
     ];
 
@@ -98,7 +98,11 @@ class MetaHelper
         self::setMetaFromModel(
             $model,
             $options['keywords'] ?? [],
-            $options['imageUrl'] ?? null
+            $options['imageUrl'] ?? null,
+            [
+                'posfix' => $options['posfix'] ?? null,
+                'prefix' => $options['prefix'] ?? null,
+            ]
         );
     }
 }
