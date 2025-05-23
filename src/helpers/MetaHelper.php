@@ -86,7 +86,6 @@ class MetaHelper
     {
         $model = $options['model'] ?? null;
 
-        // Se não tiver um modelo real, cria um modelo genérico com os campos necessários
         if (!$model) {
             $model = (object)[
                 'title' => $options['title'] ?? 'Conteúdo',
@@ -94,7 +93,6 @@ class MetaHelper
             ];
         }
 
-        // Sempre chama setMetaFromModel
         self::setMetaFromModel(
             $model,
             $options['keywords'] ?? [],
