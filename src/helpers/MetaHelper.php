@@ -9,12 +9,12 @@ use yii\helpers\Url;
 class MetaHelper
 {
     public static array $validFields = [
-        'titulo',
-        'descricao',
-        'resumo',
-        'nome',
-        'titulo_site',
-        'descricao_resumida',
+        'title',
+        'description',
+        'resume',
+        'name',
+        'title_site',
+        'description_resumida',
         'title',
         'description',
         'keywords',
@@ -35,9 +35,19 @@ class MetaHelper
             }
         }
 
-        // Gera título e descrição automáticos
-        $title = $data['titulo'] ?? $data['nome'] ?? Yii::$app->name;
-        $description = $data['descricao'] ?? $data['resumo'] ?? reset($data) ?? Yii::$app->name;
+        $title = $data['title'] ?? $data['name'] ?? Yii::$app->name;
+        $description = $data['description'] ?? $data['resume'] ?? reset($data) ?? Yii::$app->name;
+
+        if($options['posfix'] ?? false) {
+            $title = $title . ' - ' . $options['posfix'];
+            $description = $description . ' - ' . $options['posfix'];
+        }
+
+        if($options['prefix'] ?? false) {
+            $title = $options['prefix'] . ' - ' . $title;
+            $description = $options['prefix'] . ' - ' . $description;
+        }
+
 
         // Junta todos os campos para gerar palavras-chave
         $baseText = implode(' ', $data);
@@ -53,15 +63,6 @@ class MetaHelper
         $keywords = implode(', ', array_unique(array_merge($words, $extraKeywords)));
 
         // REGISTRO
-        if($options['postfix'] ?? false) {
-            $title .= Yii::$app->name . ' - ' . $options['postfix'];
-            $description .=  $description . ' - ' . $options['postfix'];
-        }
-
-        if($options['prefix'] ?? false) {
-            $title = $options['prefix'] . ' - ' . $title;
-            $description = $options['prefix'] . ' - ' . $description;
-        }
 
         $view->registerMetaTag(['name' => 'description', 'content' => Html::encode(mb_substr($description, 0, 160))]);
         $view->registerMetaTag(['name' => 'keywords', 'content' => Html::encode($keywords)]);
@@ -88,8 +89,8 @@ class MetaHelper
         // Se não tiver um modelo real, cria um modelo genérico com os campos necessários
         if (!$model) {
             $model = (object)[
-                'titulo' => $options['title'] ?? 'Conteúdo',
-                'descricao' => $options['description'] ?? 'Confira os conteúdos disponíveis em nosso portal.',
+                'title' => $options['title'] ?? 'Conteúdo',
+                'description' => $options['description'] ?? 'Confira os conteúdos disponíveis em nosso portal.',
             ];
         }
 
