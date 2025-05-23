@@ -35,8 +35,8 @@ class MetaHelper
             }
         }
 
-        $title = $data['title'] ?? $data['name'] ?? Yii::$app->name;
-        $description = $data['description'] ?? $data['resume'] ?? reset($data) ?? Yii::$app->name;
+        $title = $options['title'] ?? $data['title'] ?? $data['name'] ?? Yii::$app->name;
+        $description = $options['description'] ?? $data['description'] ?? $data['resume'] ?? reset($data) ?? Yii::$app->name;
 
         if($options['posfix'] ?? false) {
             $title = $title . ' - ' . $options['posfix'];
