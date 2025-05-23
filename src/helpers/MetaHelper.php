@@ -65,11 +65,11 @@ class MetaHelper
         // REGISTRO
 
         $view->registerMetaTag(['name' => 'description', 'content' => Html::encode(mb_substr($description, 0, 160))]);
-        $view->registerMetaTag(['name' => 'keywords', 'content' => Html::encode($keywords)]);
+        if($description !== ' - ' . $options['posfix']) $view->registerMetaTag(['name' => 'keywords', 'content' => Html::encode($keywords)]);
 
         // OG
         $view->registerMetaTag(['property' => 'og:title', 'content' => Html::encode($title)]);
-        $view->registerMetaTag(['property' => 'og:description', 'content' => Html::encode($description)]);
+        if($description !== ' - ' . $options['posfix']) $view->registerMetaTag(['property' => 'og:description', 'content' => Html::encode($description)]);
         $view->registerMetaTag(['property' => 'og:type', 'content' => 'article']);
         $view->registerMetaTag(['property' => 'og:url', 'content' => Yii::$app->request->absoluteUrl]);
 
@@ -78,7 +78,7 @@ class MetaHelper
         // Twitter
         $view->registerMetaTag(['name' => 'twitter:card', 'content' => 'summary_large_image']);
         $view->registerMetaTag(['name' => 'twitter:title', 'content' => Html::encode($title)]);
-        $view->registerMetaTag(['name' => 'twitter:description', 'content' => Html::encode($description)]);
+        if($description !== ' - ' . $options['posfix']) $view->registerMetaTag(['name' => 'twitter:description', 'content' => Html::encode($description)]);
         if($imageUrl) $view->registerMetaTag(['name' => 'twitter:image', 'content' => $imageUrl]);
     }
 
