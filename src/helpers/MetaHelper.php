@@ -85,6 +85,7 @@ class MetaHelper
     public static function setMetaForIndex(array $options = []): void
     {
         $model = $options['model'] ?? null;
+        $model_options = $options['options'] ?? null;
 
         if (!$model) {
             $model = (object)[
@@ -97,10 +98,7 @@ class MetaHelper
             $model,
             $options['keywords'] ?? [],
             $options['imageUrl'] ?? null,
-            [
-                'posfix' => $options['posfix'] ?? null,
-                'prefix' => $options['prefix'] ?? null,
-            ]
+            $model_options
         );
     }
 }
