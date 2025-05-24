@@ -11,7 +11,7 @@ use yii\helpers\Html;
 
 FontAwesomeAsset::register($this);
 WeebzAsset::register($this);
-PluginAsset::register($this)->add(['fontawesome', 'icheck-bootstrap','fancybox','jquery-ui','toastr','select2']);
+PluginAsset::register($this)->add(['fontawesome', 'icheck-bootstrap','fancybox','jquery-ui','toastr','select2','sweetalert2']);
 $params = Configuration::get();
 $this->metaTags = '';
 $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback');
