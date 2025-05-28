@@ -186,8 +186,10 @@ class ModelCommon extends \yii\db\ActiveRecord
                     $relationPath .= ($i > 0 ? '.' : '') . $relation;
                     $query->joinWith([$relationPath]);
                 }
-                $lastRelation = end($groupPath);
-                $query->andWhere(["{$lastRelation}.group_id" => $group_ids]);
+        
+                $tableAlias = Yii::createObject(static::class)->getRelation(end($groupPath))->modelClass::tableName();
+                $query->andWhere(["{$tableAlias}.group_id" => $group_ids]);
+
             } elseif (isset($options['groupModel'])) {
                 $query->andFilterWhere(['in', "{$options['groupModel']['table']}.group_id", $group_ids]);
             } elseif ($this->hasAttribute('group_id')) {
