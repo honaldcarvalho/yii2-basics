@@ -358,11 +358,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      */
     public function getUserGroupsId()
     {
-        $ids = [];
-        foreach($this->hasMany(UserGroup::class, ['user_id' => 'id'])->all() as $userGroup){
-            $ids[] = $userGroup['group_id'];
-        }
-        return $ids;
+        return Group::getAllDescendantIds($this->getGroups()->select('id')->column());
     }
 
     /**
