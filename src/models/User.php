@@ -330,6 +330,12 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         return $this->hasMany(Rule::class, ['user_id' => 'id']);
     }
 
+    public function getGroups()
+    {
+        return $this->hasMany(Group::class, ['id' => 'group_id'])
+            ->viaTable('user_groups', ['user_id' => 'id']);
+    }
+
     /**
      * Gets query for [[UserGroups]].
      *
