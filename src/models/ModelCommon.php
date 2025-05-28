@@ -181,14 +181,13 @@ class ModelCommon extends \yii\db\ActiveRecord
             $groupPath = method_exists($this, 'groupRelationPath') ? static::groupRelationPath() : null;
 
             if ($groupPath) {
-                $relationAlias = $table;
+                $relationPath = '';
                 foreach ($groupPath as $i => $relation) {
-                    $alias = $relationAlias . '_' . $relation;
-                    $query->joinWith([$relationAlias . '.' . $relation . ' AS ' . $alias]);
-                    $relationAlias = $alias;
+                    $relationPath .= ($i > 0 ? '.' : '') . $relation;
+                    $query->joinWith([$relationPath]);
                 }
-
-                $query->andWhere(["{$relationAlias}.group_id" => $group_ids]);
+                $lastRelation = end($groupPath);
+                $query->andWhere(["{$lastRelation}.group_id" => $group_ids]);
             } elseif (isset($options['groupModel'])) {
                 $query->andFilterWhere(['in', "{$options['groupModel']['table']}.group_id", $group_ids]);
             } elseif ($this->hasAttribute('group_id')) {
