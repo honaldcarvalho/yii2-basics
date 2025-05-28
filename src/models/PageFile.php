@@ -68,4 +68,9 @@ class PageFile extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Page::class, ['id' => 'page_id']);
     }
+
+    public static function groupRelationPath()
+    {
+        return ['page'];
+    }
 }

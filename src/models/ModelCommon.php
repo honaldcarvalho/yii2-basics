@@ -4,6 +4,7 @@ namespace weebz\yii2basics\models;
 
 use yii\data\ActiveDataProvider;
 use weebz\yii2basics\controllers\AuthController;
+use Yii;
 
 class ModelCommon extends \yii\db\ActiveRecord
 {
@@ -37,26 +38,49 @@ class ModelCommon extends \yii\db\ActiveRecord
         if (!parent::beforeSave($insert)) {
             return false;
         }
-    
-        if ($this->hasAttribute('group_id')) {
-            $this->group_id =  Parameter::findOne(['name' => 'main-group'])?->value;
-            if (!$this->group_id) {
-                $this->group_id = AuthController::userGroup();
+
+        if ($this->hasAttribute('group_id') && empty($this->group_id)) {
+            // Tenta usar parâmetro fixo (caso exista)
+            $mainGroup = Parameter::findOne(['name' => 'main-group'])?->value;
+
+            if ($mainGroup) {
+                $this->group_id = $mainGroup;
+            } else {
+                $user = AuthController::User();
+                if ($user) {
+                    // Obtém todos os grupos do usuário
+                    $userGroups = $user->getGroups()->all();
+
+                    // Tenta encontrar o grupo raiz (sem parent)
+                    foreach ($userGroups as $group) {
+                        if (!$group->parent_id) {
+                            $this->group_id = $group->id;
+                            break;
+                        }
+                    }
+
+                    // Se não achar nenhum root, pega o primeiro grupo mesmo
+                    if (!$this->group_id && count($userGroups) > 0) {
+                        $this->group_id = $userGroups[0]->id;
+                    }
+                }
             }
         }
+
         return true;
     }
 
 
+
     public static function getClass()
-    {   
+    {
         $array = explode('\\', get_called_class());
         return end($array);
     }
 
     public static function getClassPath()
     {
-         return get_called_class();
+        return get_called_class();
     }
 
     /**
@@ -66,7 +90,7 @@ class ModelCommon extends \yii\db\ActiveRecord
      *
      * @return ActiveDataProvider
      */
-    public function search($params,$options = ['pageSize'=>10, 'orderBy'=>['id' => SORT_DESC],'order'=>false],)
+    public function search($params, $options = ['pageSize' => 10, 'orderBy' => ['id' => SORT_DESC], 'order' => false],)
     {
         $this->scenario = self::SCENARIO_SEARCH;
 
@@ -77,37 +101,36 @@ class ModelCommon extends \yii\db\ActiveRecord
         $orderField = false;
 
         $query = static::find();
-        
-        if(isset($options['select'])) {
+
+        if (isset($options['select'])) {
             $query->select($options['select']);
         }
 
-        if(isset($options['orderBy'])) {
+        if (isset($options['orderBy'])) {
             $query->orderBy($options['orderBy']);
         }
 
-        if(isset($options['pageSize'])) {
+        if (isset($options['pageSize'])) {
             $pageSize = $options['pageSize'];
         }
 
         /**
             AQUI FAZ A VERIFICAÇÃO SE TEM UM ITEM DE ORDENAMENTO QUE MUDA A TAMANHO DA LISTAGEM. CASO SEJA FORNECIDO UM CAMPO FLAG E ELE NÃO SEJA NULO/VAZIO
             O TAMANHO PASSA PARA 10000
-        */
-        if(isset($options['order']) && $options['order'] && !empty($options['order']) && count($params) > 0) {
+         */
+        if (isset($options['order']) && $options['order'] && !empty($options['order']) && count($params) > 0) {
             $query->orderBy([$options['order']['field'] => SORT_ASC]);
 
-            if(
-                    (
-                        isset($options['order']['flag'] ) && 
-                        $options['order']['flag'] != false && 
-                        isset($params[$className][$options['order']['flag']]) && 
-                        !empty($params[$className][$options['order']['flag']])
-                    )
+            if (
+                (
+                    isset($options['order']['flag']) &&
+                    $options['order']['flag'] != false &&
+                    isset($params[$className][$options['order']['flag']]) &&
+                    !empty($params[$className][$options['order']['flag']])
                 )
-            {
+            ) {
                 foreach ($params["{$className}"] as $field => $search) {
-                    if(!empty($search)){
+                    if (!empty($search)) {
                         $pageSize = 10000;
                         break;
                     }
@@ -115,16 +138,16 @@ class ModelCommon extends \yii\db\ActiveRecord
             }
         }
 
-        if(isset($options['join'])) {
-            if(is_array($options['join'])){
-                foreach($options['join'] as $model){
-                    [$method,$table,$criteria] = $model;
-                    $query->join($method,$table,$criteria);
+        if (isset($options['join'])) {
+            if (is_array($options['join'])) {
+                foreach ($options['join'] as $model) {
+                    [$method, $table, $criteria] = $model;
+                    $query->join($method, $table, $criteria);
                 }
             }
         }
 
-        if(isset($options['groupModel'])){
+        if (isset($options['groupModel'])) {
             $field =  AuthController::addSlashUpperLower($className);
             $query->leftJoin($options['groupModel']['table'], "{$table}.{$options['groupModel']['field']} = {$options['groupModel']['table']}.id");
         }
@@ -138,17 +161,38 @@ class ModelCommon extends \yii\db\ActiveRecord
         ]);
 
         $this->load($params);
-        
+
         // grid filtering conditions
         $user = AuthController::User();
-        if($this->verGroup && $user) {
-            $group_ids = $user->getUserGroupsId();
+
+        if ($this->verGroup && $user) {
+            // IDs dos grupos do usuário
+            $directGroupIds = $user->getUserGroupsId();
+
+            // IDs de todos os grupos descendentes (herdados via parent_id)
+            $group_ids = Group::getAllDescendantIds($directGroupIds);
+
+            // Se quiser sempre garantir acesso ao grupo ID 1 (admin), mantenha isso:
             $group_ids[] = 1;
-            if(isset($options['groupModel'])){
+
+            $table = static::tableName();
+
+            // Caminho definido no modelo, se existir
+            $groupPath = method_exists($this, 'groupRelationPath') ? static::groupRelationPath() : null;
+
+            if ($groupPath) {
+                $relationAlias = $table;
+                foreach ($groupPath as $i => $relation) {
+                    $alias = $relationAlias . '_' . $relation;
+                    $query->joinWith([$relationAlias . '.' . $relation . ' AS ' . $alias]);
+                    $relationAlias = $alias;
+                }
+
+                $query->andWhere(["{$relationAlias}.group_id" => $group_ids]);
+            } elseif (isset($options['groupModel'])) {
                 $query->andFilterWhere(['in', "{$options['groupModel']['table']}.group_id", $group_ids]);
-            }else{
-                $table = static::tableName();
-                $query->andFilterWhere(['in', "{$table}.group_id", $group_ids]);
+            } elseif ($this->hasAttribute('group_id')) {
+                $query->andFilterWhere(["{$table}.group_id" => $group_ids]);
             }
         }
 
@@ -157,50 +201,49 @@ class ModelCommon extends \yii\db\ActiveRecord
             // $query->where('0=1');
             return $dataProvider;
         }
-        
+
         //create criteria by search type
         foreach ($params as $field => $search) {
-            
-            if($field == 'page')
+
+            if ($field == 'page')
                 continue;
 
             $field_type = gettype($search);
-            $field_parts = explode(':',$field);
-            if(count($field_parts) > 1){
-                [$field,$field_type] = $field_parts;
+            $field_parts = explode(':', $field);
+            if (count($field_parts) > 1) {
+                [$field, $field_type] = $field_parts;
             }
 
-            if(!isset($params["{$className}"]))
+            if (!isset($params["{$className}"]))
                 continue;
-            
+
             foreach ($params["{$className}"] as $field => $search) {
 
                 $field_type = gettype($search);
                 if (is_numeric($search) && (int)$search == $search) {
                     $field_type = "number";
-                } 
-                $field_parts = explode(':',$field);
-    
-                if(count($field_parts) > 1){
-                    [$field,$field_type] = $field_parts;
                 }
-                
-                if($field_type == 'custom'){
+                $field_parts = explode(':', $field);
+
+                if (count($field_parts) > 1) {
+                    [$field, $field_type] = $field_parts;
+                }
+
+                if ($field_type == 'custom') {
                     $query->andFilterWhere(["$table.$field", $search[0], $search[1]]);
-                } else if($field_type == 'between'){
+                } else if ($field_type == 'between') {
                     $query->andFilterWhere(['between', "$table.$field", $search[0], $search[1]]);
-                } else if($field_type == 'string'){
-                    if(str_contains($field,'sod') || str_contains($field,'eod')){
-                        [$field_date,$pos] = explode('FDT',$field);
-                        if($pos == 'sod'){
+                } else if ($field_type == 'string') {
+                    if (str_contains($field, 'sod') || str_contains($field, 'eod')) {
+                        [$field_date, $pos] = explode('FDT', $field);
+                        if ($pos == 'sod') {
                             $query->andFilterWhere(['>=', "$table.$field_date", $search]);
-                        }else if($pos == 'eod'){
+                        } else if ($pos == 'eod') {
                             $query->andFilterWhere(['<=', "$table.$field_date", $search]);
                         }
                     } else {
                         $query->andFilterWhere(['like', "$table.$field", $search]);
                     }
-
                 } else {
                     $query->andFilterWhere(["$table.$field" => $search]);
                 }
@@ -214,7 +257,7 @@ class ModelCommon extends \yii\db\ActiveRecord
     public static function clearFrontendCache($key)
     {
         // Envia uma solicitação para o frontend limpar o cache
-        $url = \Yii::getAliase("@host");
+        $url = Yii::getAlias("@host");
         $frontendUrl = "{$url}/site/clear-cache?key={$key}";
 
         $ch = curl_init($frontendUrl);
@@ -228,7 +271,6 @@ class ModelCommon extends \yii\db\ActiveRecord
     {
         parent::afterSave($insert, $changedAttributes);
         $this->clearCache();
-        
     }
 
     public function afterDelete()
@@ -262,9 +304,8 @@ class ModelCommon extends \yii\db\ActiveRecord
     public static function clearMultipleCaches(array $cacheKeys)
     {
         foreach ($cacheKeys as $cacheKey) {
-           \Yii::$app->cache->delete($cacheKey);
+            \Yii::$app->cache->delete($cacheKey);
         }
         return true;
     }
-
 }

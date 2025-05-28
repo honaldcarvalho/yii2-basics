@@ -23,4 +23,9 @@ class ConfigurationParameter extends \yii\db\ActiveRecord
     {
         return 'configuration_parameters';
     }
+
+    public static function groupRelationPath()
+    {
+        return ['configuration'];
+    }
 }
