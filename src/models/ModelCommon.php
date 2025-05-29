@@ -221,16 +221,22 @@ class ModelCommon extends \yii\db\ActiveRecord
 
             if ($groupPath) {
                 $relationPath = '';
+                $lastModel = Yii::createObject(static::class);
                 foreach ($groupPath as $i => $relation) {
                     $relationPath .= ($i > 0 ? '.' : '') . $relation;
                     $query->joinWith([$relationPath]);
+
+                    if (method_exists($lastModel, 'get' . ucfirst($relation))) {
+                        $lastModel = $lastModel->getRelation($relation)->modelClass;
+                    } else {
+                        Yii::warning("Relação inválida '$relation' em groupRelationPath() de " . static::class);
+                        $lastModel = null;
+                        break;
+                    }
                 }
 
-                $lastRelation = end($groupPath);
-                $modelInstance = Yii::createObject(static::class);
-
-                if (method_exists($modelInstance, 'get' . ucfirst($lastRelation))) {
-                    $tableAlias = $modelInstance->getRelation($lastRelation)->modelClass::tableName();
+                if ($lastModel && is_subclass_of($lastModel, \yii\db\ActiveRecord::class)) {
+                    $tableAlias = (new $lastModel)->tableName();
                     $query->andWhere(["{$tableAlias}.group_id" => $group_ids]);
                 }
             } elseif (isset($options['groupModel'])) {
