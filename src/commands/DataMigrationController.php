@@ -1,6 +1,6 @@
 <?php
 
-namespace app\commands;
+namespace weebz\yii2basics\commands;
 
 use yii\console\Controller;
 use yii\db\Connection;
