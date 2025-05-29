@@ -226,8 +226,13 @@ class ModelCommon extends \yii\db\ActiveRecord
                     $query->joinWith([$relationPath]);
                 }
 
-                $tableAlias = Yii::createObject(static::class)->getRelation(end($groupPath))->modelClass::tableName();
-                $query->andWhere(["{$tableAlias}.group_id" => $group_ids]);
+                $lastRelation = end($groupPath);
+                $modelInstance = Yii::createObject(static::class);
+
+                if (method_exists($modelInstance, 'get' . ucfirst($lastRelation))) {
+                    $tableAlias = $modelInstance->getRelation($lastRelation)->modelClass::tableName();
+                    $query->andWhere(["{$tableAlias}.group_id" => $group_ids]);
+                }
             } elseif (isset($options['groupModel'])) {
                 $query->andFilterWhere(['in', "{$options['groupModel']['table']}.group_id", $group_ids]);
             } elseif ($this->hasAttribute('group_id')) {
