@@ -13,7 +13,7 @@ class ModuleConsole extends Module
      * Namespace padrão para comandos deste módulo no console
      * (ex: php yii basics/hello)
      */
-    public $controllerNamespace = 'weebz\yii2basics\commands';
+    public $controllerNamespace = 'app\commands';
 
     public function init()
     {
