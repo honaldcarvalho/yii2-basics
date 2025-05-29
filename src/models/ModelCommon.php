@@ -90,7 +90,6 @@ class ModelCommon extends \yii\db\ActiveRecord
         return true;
     }
 
-
     public static function getClass()
     {
         $array = explode('\\', get_called_class());
