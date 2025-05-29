@@ -66,13 +66,13 @@ class ModelCommon extends \yii\db\ActiveRecord
 
             if ($mainGroup) {
                 $this->group_id = $mainGroup;
-            } elseif (Yii::$app instanceof \yii\web\Application) {
-                // Somente tenta pegar o usuário se estiver no contexto web
-                $user = \weebz\yii2basics\controllers\AuthController::User();
-
+            } else {
+                $user = AuthController::User();
                 if ($user) {
+                    // Obtém todos os grupos do usuário
                     $userGroups = $user->getGroups()->all();
 
+                    // Tenta encontrar o grupo raiz (sem parent)
                     foreach ($userGroups as $group) {
                         if (!$group->parent_id) {
                             $this->group_id = $group->id;
@@ -80,6 +80,7 @@ class ModelCommon extends \yii\db\ActiveRecord
                         }
                     }
 
+                    // Se não achar nenhum root, pega o primeiro grupo mesmo
                     if (!$this->group_id && count($userGroups) > 0) {
                         $this->group_id = $userGroups[0]->id;
                     }
@@ -204,9 +205,10 @@ class ModelCommon extends \yii\db\ActiveRecord
                     $relationPath .= ($i > 0 ? '.' : '') . $relation;
                     $query->joinWith([$relationPath]);
                 }
-
+        
                 $tableAlias = Yii::createObject(static::class)->getRelation(end($groupPath))->modelClass::tableName();
                 $query->andWhere(["{$tableAlias}.group_id" => $group_ids]);
+
             } elseif (isset($options['groupModel'])) {
                 $query->andFilterWhere(['in', "{$options['groupModel']['table']}.group_id", $group_ids]);
             } elseif ($this->hasAttribute('group_id')) {
