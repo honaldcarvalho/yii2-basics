@@ -236,7 +236,17 @@ class ModelCommon extends \yii\db\ActiveRecord
                 }
 
                 if ($lastModel && is_subclass_of($lastModel, \yii\db\ActiveRecord::class)) {
-                    $tableAlias = (new $lastModel)->tableName();
+                    $relationName = end($groupPath);
+                    $modelInstance = Yii::createObject(static::class);
+
+                    // ⚠️ Verifica se a relação realmente existe antes de continuar
+                    if (method_exists($modelInstance, 'get' . ucfirst($relationName))) {
+                        $relation = $modelInstance->getRelation($relationName);
+                        $tableAlias = $relation->modelClass::tableName();
+                        $query->andWhere(["{$tableAlias}.group_id" => $group_ids]);
+                    } else {
+                        Yii::warning("Relação inválida '{$relationName}' em " . static::class);
+                    }
                     $query->andWhere(["{$tableAlias}.group_id" => $group_ids]);
                 }
             } elseif (isset($options['groupModel'])) {
