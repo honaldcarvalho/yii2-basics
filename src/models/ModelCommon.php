@@ -25,20 +25,18 @@ class ModelCommon extends \yii\db\ActiveRecord
         return $scenarios;
     }
 
-
-    public static function find($verGroup = true)
+    public static function find()
     {
         $query = parent::find();
 
-        if ($verGroup && property_exists(static::class, 'verGroup')) {
+        // Verifica se precisa filtrar por grupo
+        if (property_exists(static::class, 'verGroup') && (new static())->verGroup) {
             $user = \weebz\yii2basics\controllers\AuthController::User();
-
             if ($user) {
                 $groupIds = Group::getAllDescendantIds($user->getUserGroupsId());
                 $groupIds[] = 1; // Admin acesso sempre
 
                 $table = static::tableName();
-
                 if ((new static())->hasAttribute('group_id')) {
                     $query->andWhere(["{$table}.group_id" => $groupIds]);
                 }
