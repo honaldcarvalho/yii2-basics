@@ -25,18 +25,19 @@ class ModelCommon extends \yii\db\ActiveRecord
         return $scenarios;
     }
 
-    public static function find()
+    public static function find($verGroup = true)
     {
         $query = parent::find();
 
-        // Verifica se precisa filtrar por grupo
-        if (property_exists(static::class, 'verGroup') && (new static())->verGroup) {
+        if ($verGroup && property_exists(static::class, 'verGroup')) {
             $user = \weebz\yii2basics\controllers\AuthController::User();
+
             if ($user) {
                 $groupIds = Group::getAllDescendantIds($user->getUserGroupsId());
                 $groupIds[] = 1; // Admin acesso sempre
 
                 $table = static::tableName();
+
                 if ((new static())->hasAttribute('group_id')) {
                     $query->andWhere(["{$table}.group_id" => $groupIds]);
                 }
@@ -45,6 +46,7 @@ class ModelCommon extends \yii\db\ActiveRecord
 
         return $query;
     }
+
 
     public function rules()
     {
@@ -205,10 +207,9 @@ class ModelCommon extends \yii\db\ActiveRecord
                     $relationPath .= ($i > 0 ? '.' : '') . $relation;
                     $query->joinWith([$relationPath]);
                 }
-        
+
                 $tableAlias = Yii::createObject(static::class)->getRelation(end($groupPath))->modelClass::tableName();
                 $query->andWhere(["{$tableAlias}.group_id" => $group_ids]);
-
             } elseif (isset($options['groupModel'])) {
                 $query->andFilterWhere(['in', "{$options['groupModel']['table']}.group_id", $group_ids]);
             } elseif ($this->hasAttribute('group_id')) {
