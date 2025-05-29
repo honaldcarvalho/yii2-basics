@@ -122,9 +122,8 @@ class Configuration extends ModelCommon
      */
     public static function get()
     {
-        return self::findOne(['id' => 1]);
+        return self::find(false)->where(['id' => 1])->one() ?? new static();
     }
-
 
     public function getParameters()
     {

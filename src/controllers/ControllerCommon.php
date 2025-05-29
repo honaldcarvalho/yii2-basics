@@ -53,10 +53,8 @@ class ControllerCommon extends \yii\web\Controller
         $language = null;
         $this->params = Configuration::get();
 
-        if ($this->params && is_object($this->params) && property_exists($this->params, 'attributes')) {
-            foreach ($this->params->attributes as $key => $param) {
-                Yii::setAlias("@{$key}", "$param");
-            }
+        foreach ($this->params->attributes as $key => $param) {
+            Yii::setAlias("@{$key}", "$param");
         }
 
         $cookies = Yii::$app->request->cookies;
