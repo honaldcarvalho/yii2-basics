@@ -39,7 +39,7 @@ class ModelCommon extends \yii\db\ActiveRecord
             $user = \weebz\yii2basics\controllers\AuthController::User();
 
             if ($user) {
-                $groupIds = \common\models\Group::getAllDescendantIds($user->getUserGroupsId());
+                $groupIds = Group::getAllDescendantIds($user->getUserGroupsId());
                 $groupIds[] = 1;
 
                 $table = static::tableName();
