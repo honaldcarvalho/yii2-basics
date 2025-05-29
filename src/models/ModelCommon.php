@@ -25,12 +25,11 @@ class ModelCommon extends \yii\db\ActiveRecord
         return $scenarios;
     }
 
-
     public static function find($verGroup = null)
     {
         $query = parent::find();
 
-        // Nova abordagem
+        // Verifica se deve aplicar filtro por grupo
         if ($verGroup === null) {
             $instance = new static();
             $verGroup = $instance->verGroup ?? true;
@@ -40,19 +39,32 @@ class ModelCommon extends \yii\db\ActiveRecord
             $user = \weebz\yii2basics\controllers\AuthController::User();
 
             if ($user) {
-                $groupIds = Group::getAllDescendantIds($user->getUserGroupsId());
+                $groupIds = \common\models\Group::getAllDescendantIds($user->getUserGroupsId());
                 $groupIds[] = 1;
 
                 $table = static::tableName();
-                if ((new static())->hasAttribute('group_id')) {
+                $model = new static();
+
+                // Verifica se tem group_id direto ou via caminho
+                if ($model->hasAttribute('group_id')) {
                     $query->andWhere(["{$table}.group_id" => $groupIds]);
+                } elseif (method_exists($model, 'groupRelationPath')) {
+                    $path = $model::groupRelationPath();
+                    $alias = $table;
+
+                    foreach ($path as $relation) {
+                        $nextAlias = "{$alias}_{$relation}";
+                        $query->joinWith(["{$alias}.{$relation} {$nextAlias}"]);
+                        $alias = $nextAlias;
+                    }
+
+                    $query->andWhere(["{$alias}.group_id" => $groupIds]);
                 }
             }
         }
 
         return $query;
     }
-
 
     public function rules()
     {
@@ -213,10 +225,9 @@ class ModelCommon extends \yii\db\ActiveRecord
                     $relationPath .= ($i > 0 ? '.' : '') . $relation;
                     $query->joinWith([$relationPath]);
                 }
-        
+
                 $tableAlias = Yii::createObject(static::class)->getRelation(end($groupPath))->modelClass::tableName();
                 $query->andWhere(["{$tableAlias}.group_id" => $group_ids]);
-
             } elseif (isset($options['groupModel'])) {
                 $query->andFilterWhere(['in', "{$options['groupModel']['table']}.group_id", $group_ids]);
             } elseif ($this->hasAttribute('group_id')) {
