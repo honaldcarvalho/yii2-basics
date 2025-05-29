@@ -25,46 +25,67 @@ class ModelCommon extends \yii\db\ActiveRecord
         return $scenarios;
     }
 
-    public static function find($verGroup = null)
-    {
-        $query = parent::find();
 
-        // Verifica se deve aplicar filtro por grupo
-        if ($verGroup === null) {
-            $instance = new static();
-            $verGroup = $instance->verGroup ?? true;
-        }
+public static function find($verGroup = null)
+{
+    $query = parent::find();
 
-        if ($verGroup && property_exists(static::class, 'verGroup')) {
-            $user = \weebz\yii2basics\controllers\AuthController::User();
+    if ($verGroup === null) {
+        $instance = new static();
+        $verGroup = $instance->verGroup ?? true;
+    }
 
-            if ($user) {
-                $groupIds = Group::getAllDescendantIds($user->getUserGroupsId());
-                $groupIds[] = 1;
+    if ($verGroup && property_exists(static::class, 'verGroup')) {
+        $user = \weebz\yii2basics\controllers\AuthController::User();
 
-                $table = static::tableName();
-                $model = new static();
+        if ($user) {
+            $groupIds = Group::getAllDescendantIds($user->getUserGroupsId());
+            $groupIds[] = 1;
 
-                // Verifica se tem group_id direto ou via caminho
-                if ($model->hasAttribute('group_id')) {
-                    $query->andWhere(["{$table}.group_id" => $groupIds]);
-                } elseif (method_exists($model, 'groupRelationPath')) {
-                    $path = $model::groupRelationPath();
-                    $alias = $table;
+            $table = static::tableName();
+            $model = new static();
 
-                    foreach ($path as $relation) {
-                        $nextAlias = "{$alias}_{$relation}";
-                        $query->joinWith(["{$alias}.{$relation} {$nextAlias}"]);
-                        $alias = $nextAlias;
+            // Caso tenha group_id direto
+            if ($model->hasAttribute('group_id')) {
+                $query->andWhere(["{$table}.group_id" => $groupIds]);
+
+            // Caso precise navegar por relações
+            } elseif (method_exists($model, 'groupRelationPath')) {
+                $path = $model::groupRelationPath();
+                $relationPath = implode('.', $path);
+
+                // ⚠️ Verifica se todas as relações existem
+                $valid = true;
+                $currentModel = $model;
+
+                foreach ($path as $relation) {
+                    $method = 'get' . ucfirst($relation);
+                    if (!method_exists($currentModel, $method)) {
+                        Yii::warning("Relação inválida '{$relation}' em groupRelationPath() de " . static::class);
+                        $valid = false;
+                        break;
                     }
 
-                    $query->andWhere(["{$alias}.group_id" => $groupIds]);
+                    $relationQuery = $currentModel->$method();
+$currentModel = new ($relationQuery->modelClass);
+                }
+
+                if ($valid) {
+                    $query->joinWith([$relationPath]);
+
+                    $finalTable = $currentModel::tableName(); // <- pega o nome real da tabela final
+                    $query->andWhere(["{$finalTable}.group_id" => $groupIds]);
                 }
             }
         }
-
-        return $query;
     }
+
+    return $query;
+}
+
+
+
+
 
     public function rules()
     {
@@ -221,34 +242,14 @@ class ModelCommon extends \yii\db\ActiveRecord
 
             if ($groupPath) {
                 $relationPath = '';
-                $lastModel = Yii::createObject(static::class);
                 foreach ($groupPath as $i => $relation) {
                     $relationPath .= ($i > 0 ? '.' : '') . $relation;
                     $query->joinWith([$relationPath]);
-
-                    if (method_exists($lastModel, 'get' . ucfirst($relation))) {
-                        $lastModel = $lastModel->getRelation($relation)->modelClass;
-                    } else {
-                        Yii::warning("Relação inválida '$relation' em groupRelationPath() de " . static::class);
-                        $lastModel = null;
-                        break;
-                    }
                 }
+        
+                $tableAlias = Yii::createObject(static::class)->getRelation(end($groupPath))->modelClass::tableName();
+                $query->andWhere(["{$tableAlias}.group_id" => $group_ids]);
 
-                if ($lastModel && is_subclass_of($lastModel, \yii\db\ActiveRecord::class)) {
-                    $relationName = end($groupPath);
-                    $modelInstance = Yii::createObject(static::class);
-
-                    // ⚠️ Verifica se a relação realmente existe antes de continuar
-                    if (method_exists($modelInstance, 'get' . ucfirst($relationName))) {
-                        $relation = $modelInstance->getRelation($relationName);
-                        $tableAlias = $relation->modelClass::tableName();
-                        $query->andWhere(["{$tableAlias}.group_id" => $group_ids]);
-                    } else {
-                        Yii::warning("Relação inválida '{$relationName}' em " . static::class);
-                    }
-                    $query->andWhere(["{$tableAlias}.group_id" => $group_ids]);
-                }
             } elseif (isset($options['groupModel'])) {
                 $query->andFilterWhere(['in', "{$options['groupModel']['table']}.group_id", $group_ids]);
             } elseif ($this->hasAttribute('group_id')) {
