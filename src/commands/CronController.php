@@ -1,6 +1,6 @@
 <?php 
 
-namespace app\commands;
+namespace weebz\yii2basics\commands;
 
 use weebz\yii2basics\models\InstagramMedia;
 use weebz\yii2basics\models\YoutubeMedia;
