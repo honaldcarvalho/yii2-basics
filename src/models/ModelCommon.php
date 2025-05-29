@@ -25,6 +25,7 @@ class ModelCommon extends \yii\db\ActiveRecord
         return $scenarios;
     }
 
+
     public static function find($verGroup = true)
     {
         $query = parent::find();
@@ -46,7 +47,6 @@ class ModelCommon extends \yii\db\ActiveRecord
 
         return $query;
     }
-
 
     public function rules()
     {
@@ -207,9 +207,10 @@ class ModelCommon extends \yii\db\ActiveRecord
                     $relationPath .= ($i > 0 ? '.' : '') . $relation;
                     $query->joinWith([$relationPath]);
                 }
-
+        
                 $tableAlias = Yii::createObject(static::class)->getRelation(end($groupPath))->modelClass::tableName();
                 $query->andWhere(["{$tableAlias}.group_id" => $group_ids]);
+
             } elseif (isset($options['groupModel'])) {
                 $query->andFilterWhere(['in', "{$options['groupModel']['table']}.group_id", $group_ids]);
             } elseif ($this->hasAttribute('group_id')) {
