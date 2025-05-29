@@ -1,6 +1,7 @@
 <?php
 
 Yii::setAlias('@uploadFolder', dirname(__DIR__).'/web/files');
+if(isset($_SERVER['REQUEST_SCHEME']) && isset($_SERVER['HTTP_HOST']))
 Yii::setAlias('@rootUrl', "{$_SERVER['REQUEST_SCHEME']}://{$_SERVER['HTTP_HOST']}");
 
 return [
