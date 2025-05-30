@@ -67,7 +67,7 @@ public static function find($verGroup = null)
                     }
 
                     $relationQuery = $currentModel->$method();
-$currentModel = new ($relationQuery->modelClass);
+                    $currentModel = new ($relationQuery->modelClass);
                 }
 
                 if ($valid) {
@@ -101,7 +101,7 @@ $currentModel = new ($relationQuery->modelClass);
             return false;
         }
 
-        if ($this->hasAttribute('group_id') && empty($this->group_id)) {
+        if ($this->hasAttribute('group_id') && $this->group_id === null) {
             // Tenta usar parâmetro fixo (caso exista)
             $mainGroup = Parameter::findOne(['name' => 'main-group'])?->value;
 
