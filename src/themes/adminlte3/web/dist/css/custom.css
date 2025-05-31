@@ -558,3 +558,7 @@ input:checked+.slider::before {
     }
 
 }
+
+td {
+    word-break: break-word;
+}
