@@ -7,7 +7,12 @@ use yii\grid\GridView;
 
 $css = <<< CSS
 @media (max-width: 768px) {
-    table td::before {
+    .table td::before {
+        content: attr(data-title)!important;
+        font-weight: bold!important;
+        display: block!important;
+    }
+    .dark-mode .table td::before {
         content: attr(data-title)!important;
         font-weight: bold!important;
         display: block!important;
