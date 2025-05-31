@@ -58,7 +58,12 @@ class ControllerCommon extends \yii\web\Controller
         foreach ($this->params->attributes as $key => $param) {
             Yii::setAlias("@{$key}", "$param");
         }
+        $params = $this->configuration->getParameters()->all();
 
+        foreach ($params as $key => $param) {
+            Yii::setAlias("@{$param->name}", "{$param->value}");
+            Yii::setAlias("@{$param->name}_description", "{$param->description}");
+        }
         $cookies = Yii::$app->request->cookies;
         $post = Yii::$app->request->post();
         
