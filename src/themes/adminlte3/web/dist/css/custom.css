@@ -538,3 +538,9 @@ input:checked+.slider::before {
     align-items: center;
     padding: 6px !important;
 }
+
+@media (max-width: 768px) {
+    .btn .btn-text {
+        display: none !important;
+    }
+}
