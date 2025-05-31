@@ -26,6 +26,7 @@ class ControllerCommon extends \yii\web\Controller
     private $fixed  = [];
     public $access = [];
     public $params = null;
+    public $configuration = null;
     static $assetsDir;
 
     public static function getClassPath()
@@ -51,6 +52,7 @@ class ControllerCommon extends \yii\web\Controller
     {
         $behaviors = parent::behaviors();
         $language = null;
+        $this->configuration = Configuration::get();
         $this->params = Configuration::get();
 
         foreach ($this->params->attributes as $key => $param) {
