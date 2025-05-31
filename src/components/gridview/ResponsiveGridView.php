@@ -79,14 +79,17 @@ $css = <<<CSS
         flex-shrink: 0;
     }
 
-    /* REMOVE STRIPED EFFECT ON MOBILE */
-    .grid-view.table-striped tbody tr:nth-of-type(odd) {
+    /* REMOVE STRIPED */
+    .grid-view.table-striped tbody tr {
         background-color: transparent !important;
+    }
+
+    /* ADD border-top ONLY FROM SECOND BLOCK ON */
+    .grid-view tbody tr:not(:first-of-type) td {
+        border-top: 1px solid #dee2e6 !important;
     }
 }
 CSS;
-
-
 
         Yii::$app->view->registerCss($css);
     }
