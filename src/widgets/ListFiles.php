@@ -9,6 +9,7 @@ use yii\widgets\Pjax;
 use yii\grid\GridView;
 use yii\helpers\Url;
 use weebz\yii2basics\components\gridview\ActionColumn;
+use weebz\yii2basics\components\gridview\ResponsiveGridView;
 use weebz\yii2basics\controllers\AuthController;
 
 class ListFiles extends \yii\bootstrap5\Widget
@@ -118,7 +119,7 @@ public function init(): void
                 ]
             );
 
-    $gridView = GridView::widget([
+    $gridView = ResponsiveGridView::widget([
                         'id' => 'grid-files',
                         'dataProvider' =>  $this->dataProvider,
                         'columns' => [

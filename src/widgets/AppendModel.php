@@ -3,11 +3,10 @@
 namespace weebz\yii2basics\widgets;
 
 use weebz\yii2basics\components\gridview\ActionColumn;
-
+use weebz\yii2basics\components\gridview\ResponsiveGridView;
 use Yii;
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
-use yii\grid\GridView;
 use yii\web\View;
 use yii\widgets\Pjax;
 
@@ -378,7 +377,7 @@ class AppendModel extends \yii\bootstrap5\Widget
         ActiveForm::end();
         echo $end;
 
-        $gridView = GridView::widget([
+        $gridView = ResponsiveGridView::widget([
             'id' => "grid-{$this->uniqueId}",
             'dataProvider' =>  $this->dataProvider,
             'columns' => $columns
