@@ -33,6 +33,12 @@ $css = <<<CSS
         margin-bottom: 1rem;
         border-radius: 0.5rem;
         padding: 0.5rem;
+        background-color: transparent !important;
+        border: none !important;
+    }
+
+    .grid-view tbody tr + tr {
+        border-top: 1px solid #dee2e6 !important;
     }
 
     .grid-view td {
@@ -42,6 +48,7 @@ $css = <<<CSS
         white-space: normal;
         border: none !important;
         min-height: 2.5em;
+        background-color: transparent !important;
     }
 
     .grid-view td::before {
@@ -78,15 +85,14 @@ $css = <<<CSS
         flex-shrink: 0;
     }
 
-    .grid-view.table-striped tbody tr {
+    /* REMOVE STRIPED COMPLETAMENTE */
+    .grid-view.table-striped tbody tr,
+    .grid-view.table-striped tbody tr td {
         background-color: transparent !important;
-    }
-
-    .grid-view tbody tr:not(:first-of-type) td:first-of-type {
-        border-top: 1px solid #dee2e6 !important;
     }
 }
 CSS;
+
 
 
         Yii::$app->view->registerCss($css);
