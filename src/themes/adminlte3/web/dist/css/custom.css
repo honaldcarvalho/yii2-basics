@@ -543,4 +543,13 @@ input:checked+.slider::before {
     .btn .btn-text {
         display: none !important;
     }
+    
+    .table-bordered tr:not(:first-child) th {
+    border-top: 1px solid #4b4b4b !important;
+    }
+
+    .dark-mode .table-bordered tr:not(:first-child) th {
+        border-top: 1px solid #fff !important;
+    }
+
 }

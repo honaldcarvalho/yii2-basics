@@ -79,8 +79,13 @@ $css = <<<CSS
         flex-shrink: 0;
     }
 
+    /* REMOVE STRIPED EFFECT ON MOBILE */
+    .grid-view.table-striped tbody tr:nth-of-type(odd) {
+        background-color: transparent !important;
+    }
 }
 CSS;
+
 
 
         Yii::$app->view->registerCss($css);
