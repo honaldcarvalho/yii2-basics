@@ -15,32 +15,37 @@ class ResponsiveGridView extends GridView
 
 $css = <<<CSS
 @media (max-width: 768px) {
-    table, thead, tbody, th, td, tr {
+    .grid-view table,
+    .grid-view thead,
+    .grid-view tbody,
+    .grid-view th,
+    .grid-view td,
+    .grid-view tr {
         display: block;
         width: 100%;
     }
 
-    thead {
+    .grid-view thead {
         display: none;
     }
 
-    tr {
+    .grid-view tr {
         margin-bottom: 1rem;
         border: 1px solid #ccc;
         border-radius: 0.5rem;
         padding: 0.5rem;
     }
 
-    td {
+    .grid-view td {
         position: relative;
         padding-left: 50%;
-        text-align: right; /* conteúdo alinhado à direita */
+        text-align: right;
         white-space: normal;
         border: none !important;
         min-height: 2.5em;
     }
 
-    td::before {
+    .grid-view td::before {
         content: attr(data-title);
         position: absolute;
         top: 0;
@@ -52,11 +57,11 @@ $css = <<<CSS
         white-space: nowrap;
         color: #aaa;
     }
-    .hide-mobile {
+
+    .grid-view .hide-mobile {
         display: none !important;
     }
 }
-
 CSS;
 
 
