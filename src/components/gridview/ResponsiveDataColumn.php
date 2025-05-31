@@ -10,8 +10,10 @@ class ResponsiveDataColumn extends DataColumn
     {
         parent::init();
 
+        // Define o label como fallback se não houver definido manualmente
         if (!isset($this->contentOptions['data-title'])) {
-            $this->contentOptions['data-title'] = $this->label ?: $this->attribute;
+            $label = $this->label ?: ucfirst($this->attribute);
+            $this->contentOptions['data-title'] = $label;
         }
     }
 }
