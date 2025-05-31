@@ -28,6 +28,7 @@ class ActionColumn extends \yii\grid\ActionColumn
      */
     public function init(): void
     {
+        $this->contentOptions['class'] = 'action-column';
         if($this->grid->filterModel  !== null){
             $class_path = get_class($this->grid->filterModel);
             $class_path_parts = explode('\\',$class_path);

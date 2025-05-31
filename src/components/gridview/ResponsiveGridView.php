@@ -61,6 +61,24 @@ $css = <<<CSS
     .grid-view .hide-mobile {
         display: none !important;
     }
+
+    .grid-view .action-column {
+        width: 100% !important;
+        display: flex !important;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 1rem 0;
+        border-top: 1px dashed #444;
+    }
+
+    .grid-view .action-column::before {
+        display: none !important;
+    }
+
+    .grid-view .action-column .btn {
+        flex-shrink: 0;
+    }
+
 }
 CSS;
 
