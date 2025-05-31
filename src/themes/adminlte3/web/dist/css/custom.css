@@ -548,6 +548,7 @@ input:checked+.slider::before {
         --bs-table-accent-bg: none !important;
         color: inherit !important;
     }
+
     .table-bordered tr:not(:first-child) th {
         border-top: 1px solid #4b4b4b !important;
     }
