@@ -31,7 +31,6 @@ $css = <<<CSS
 
     .grid-view tr {
         margin-bottom: 1rem;
-        border: 1px solid #ccc;
         border-radius: 0.5rem;
         padding: 0.5rem;
     }
@@ -79,17 +78,16 @@ $css = <<<CSS
         flex-shrink: 0;
     }
 
-    /* REMOVE STRIPED */
     .grid-view.table-striped tbody tr {
         background-color: transparent !important;
     }
 
-    /* ADD border-top ONLY FROM SECOND BLOCK ON */
-    .grid-view tbody tr:not(:first-of-type) td {
+    .grid-view tbody tr:not(:first-of-type) td:first-of-type {
         border-top: 1px solid #dee2e6 !important;
     }
 }
 CSS;
+
 
         Yii::$app->view->registerCss($css);
     }
