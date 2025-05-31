@@ -15,21 +15,17 @@ class ResponsiveGridView extends GridView
 
 $css = <<<CSS
 @media (max-width: 768px) {
-    .grid-view table,
-    .grid-view thead,
-    .grid-view tbody,
-    .grid-view th,
-    .grid-view td,
-    .grid-view tr {
-        display: block;
+    .grid-view table {
         width: 100%;
+        border-collapse: separate;
     }
 
     .grid-view thead {
         display: none;
     }
 
-    .grid-view tr {
+    .grid-view tbody tr {
+        display: block;
         margin-bottom: 1rem;
         border: 1px solid #ccc;
         border-radius: 0.5rem;
@@ -58,16 +54,13 @@ $css = <<<CSS
         color: #aaa;
     }
 
-    .grid-view .hide-mobile {
-        display: none !important;
-    }
-
     .grid-view .action-column {
-        width: 100% !important;
-        display: flex !important;
+        display: inline-flex;
         justify-content: center;
+        flex-wrap: wrap;
+        width: 100%;
         gap: 0.5rem;
-        padding: 1rem 0;
+        padding-top: 0.5rem;
         border-top: 1px dashed #444;
     }
 
@@ -76,9 +69,14 @@ $css = <<<CSS
     }
 
     .grid-view .action-column .btn {
-        flex-shrink: 0;
+        flex: 1 1 auto;
+        min-width: 40%;
+        max-width: 100%;
     }
 
+    .grid-view .hide-mobile {
+        display: none !important;
+    }
 }
 CSS;
 
