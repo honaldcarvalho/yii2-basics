@@ -2,6 +2,7 @@
 
 namespace weebz\yii2basics\models;
 
+use weebz\yii2basics\controllers\AuthController;
 use Yii;
 use yii\symfonymailer\Mailer;
 /**
@@ -122,7 +123,7 @@ class Configuration extends ModelCommon
      */
     public static function get()
     {
-        return self::find(false)->where(['id' => 1])->one() ?? new static();
+        return self::find(false)->where(['id' =>  AuthController::userGroup()])->one() ?? self::find(false)->where(['id' => 1])->one() ?? new static();
     }
 
     public function getParameters()
