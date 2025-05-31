@@ -13,7 +13,7 @@ class ResponsiveGridView extends GridView
     {
         parent::init();
 
-        $css = <<<CSS
+$css = <<<CSS
 @media (max-width: 768px) {
     table, thead, tbody, th, td, tr {
         display: block;
@@ -34,24 +34,27 @@ class ResponsiveGridView extends GridView
     td {
         position: relative;
         padding-left: 50%;
-        text-align: left;
+        text-align: right; /* conteúdo alinhado à direita */
         white-space: normal;
         border: none !important;
+        min-height: 2.5em;
     }
 
     td::before {
         content: attr(data-title);
         position: absolute;
-        top: 0.5rem;
-        left: 0.5rem;
-        width: 45%;
-        padding-right: 10px;
-        white-space: nowrap;
+        top: 0;
+        left: 0;
+        width: 50%;
+        padding-left: 10px;
         font-weight: bold;
-        color: #ccc;
+        text-align: left;
+        white-space: nowrap;
+        color: #aaa;
     }
 }
 CSS;
+
 
         Yii::$app->view->registerCss($css);
     }
