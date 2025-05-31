@@ -52,7 +52,11 @@ $css = <<<CSS
         white-space: nowrap;
         color: #aaa;
     }
+    .hide-mobile {
+        display: none !important;
+    }
 }
+
 CSS;
 
 
