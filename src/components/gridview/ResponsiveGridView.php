@@ -58,10 +58,6 @@ $css = <<<CSS
         color: #aaa;
     }
 
-    .grid-view .hide-mobile {
-        display: none !important;
-    }
-
     .grid-view .action-column {
         width: 100% !important;
         display: flex !important;
