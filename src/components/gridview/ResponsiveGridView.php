@@ -79,12 +79,12 @@ $css = <<<CSS
         flex-shrink: 0;
     }
 
-    .table-bordered tr td:not(:first-child) {
-        border-top: 1px solid #3b3b3b !important;
+    .grid-view tbody tr:not(:first-of-type) td:first-of-type {
+        border-top: 1px solid #dee2e6 !important;
     }
 
-    .dark-mode .table-bordered tr td:not(:first-child) {
-        border-top: 1px solid #fff !important;
+    .grid-view tbody tr:first-of-type td:first-of-type {
+        border-top: none !important;
     }
 
 }
