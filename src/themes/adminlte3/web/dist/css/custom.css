@@ -543,6 +543,13 @@ input:checked+.slider::before {
 }
 
 @media (max-width: 768px) {
+    .table-bordered tr:not(:first-child) th {
+        border-top: 1px solid #3b3b3b !important;
+    }
+
+    .dark-mode .table-bordered tr:not(:first-child) th {
+    border-top: 1px solid #fff !important;
+    }
 
     .table-bordered, .table-bordered td, .table-bordered th {
         border: none !important;
@@ -570,6 +577,7 @@ input:checked+.slider::before {
 td {
     word-break: break-word;
     white-space: normal;
+    border-top: #fff!important;
 }
 
 .action-column {
