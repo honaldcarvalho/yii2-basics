@@ -79,11 +79,11 @@ $css = <<<CSS
         flex-shrink: 0;
     }
 
-    .table-bordered tr:not(:first-child) td {
+    .table-bordered tr td:not(:first-child) {
         border-top: 1px solid #3b3b3b !important;
     }
 
-    .dark-mode .table-bordered tr:not(:first-child) td {
+    .dark-mode .table-bordered tr td:not(:first-child) {
         border-top: 1px solid #fff !important;
     }
 
