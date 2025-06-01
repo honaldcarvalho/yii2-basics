@@ -79,6 +79,13 @@ $css = <<<CSS
         flex-shrink: 0;
     }
 
+     .grid-view .table-bordered tr:not(:first-child) th {
+        border-top: 1px solid #3b3b3b !important;
+    }
+
+    .dark-mode  .grid-view .table-bordered tr:not(:first-child) th {
+        border-top: 1px solid #fff !important;
+    }
 }
 CSS;
 
