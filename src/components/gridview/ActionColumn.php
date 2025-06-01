@@ -189,44 +189,11 @@ class ActionColumn extends \yii\grid\ActionColumn
         
         JS;
 
-        $css = <<< CSS
-            .action-column {
-                width: 175px;
-            }
-
-            /* Botões em grupo vertical no desktop */
-            .action-column .btn-group {
-                display: flex;
-                flex-direction: column;
-                gap: 4px;
-            }
-
-            /* No mobile: botões lado a lado e centralizados */
-            @media (max-width: 768px) {
-                .action-column {
-                    width: auto !important;
-                    text-align: center;
-                }
-
-                .action-column .btn-group {
-                    display: inline-flex;
-                    flex-direction: row;
-                    justify-content: center;
-                    flex-wrap: wrap;
-                    gap: 6px;
-                }
-
-                .action-column .btn-group .btn {
-                    width: auto;
-                }
-            }
-        CSS;
         $view = Yii::$app->view;
 
         if($this->order)
             $view->registerJs($script_order, $view::POS_END);
         $view->registerJs($script, $view::POS_END);
-        $view->registerCss($css);
 
     }
 
@@ -252,7 +219,7 @@ class ActionColumn extends \yii\grid\ActionColumn
     {
         return Html::tag('div', parent::renderDataCellContent($model, $key, $index), ['class' => 'btn-group']);
     }
-    
+
     /**
      * Initializes the default button rendering callback for single button.
      * @param string $name Button name as it's written in template

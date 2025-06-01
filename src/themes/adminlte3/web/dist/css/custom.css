@@ -90,9 +90,10 @@ a:hover {
     color: #fff !important;
 }
 
-.brand-text, .brand-link {
-    color: #ececec! important;
-    font-weight: bolder! important;
+.brand-text,
+.brand-link {
+    color: #ececec ! important;
+    font-weight: bolder ! important;
 }
 
 .dark-mode .table th,
@@ -104,7 +105,8 @@ a:hover {
     background-color: transparent;
 }
 
-.dark-mode .table th a:hover,.dark-mode .table td a:hover {
+.dark-mode .table th a:hover,
+.dark-mode .table td a:hover {
     color: #64af44 !important;
 }
 
@@ -532,7 +534,8 @@ input:checked+.slider::before {
 }
 
 .gridview-buttons .btn {
-    min-width: 40px; /* ou outro valor que funcione bem com os ícones */
+    min-width: 40px;
+    /* ou outro valor que funcione bem com os ícones */
     display: inline-flex;
     justify-content: center;
     align-items: center;
@@ -544,7 +547,7 @@ input:checked+.slider::before {
         display: none !important;
     }
 
-    .table-striped > tbody > tr:nth-of-type(odd) > * {
+    .table-striped>tbody>tr:nth-of-type(odd)>* {
         --bs-table-accent-bg: none !important;
         color: inherit !important;
     }
@@ -562,4 +565,35 @@ input:checked+.slider::before {
 td {
     word-break: break-word;
     white-space: normal;
+}
+
+.action-column {
+    width: 175px;
+}
+
+/* Botões em grupo vertical no desktop */
+.action-column .btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* No mobile: botões lado a lado e centralizados */
+@media (max-width: 768px) {
+    .action-column {
+        width: auto !important;
+        text-align: center;
+    }
+
+    .action-column .btn-group {
+        display: inline-flex;
+        flex-direction: row;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .action-column .btn-group .btn {
+        width: auto;
+    }
 }
