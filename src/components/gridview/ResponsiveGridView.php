@@ -79,11 +79,11 @@ $css = <<<CSS
         flex-shrink: 0;
     }
 
-    .table-bordered tr td:not(:first-child) {
+    .table-bordered tbody tr:not(:first-of-type) td:not(:first-of-type) {{
         border-top: 1px solid #3b3b3b !important;
     }
 
-    .dark-mode .table-bordered tr td:not(:first-child) {
+    .dark-mode .table-bordered tbody tr:not(:first-of-type) td:not(:first-of-type) { {
         border-top: 1px solid #fff !important;
     }
 
