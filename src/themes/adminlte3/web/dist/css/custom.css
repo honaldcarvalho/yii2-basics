@@ -543,6 +543,11 @@ input:checked+.slider::before {
 }
 
 @media (max-width: 768px) {
+
+    .table-bordered, .table-bordered td, .table-bordered th {
+        border: none;
+    }
+
     .btn .btn-text {
         display: none !important;
     }
