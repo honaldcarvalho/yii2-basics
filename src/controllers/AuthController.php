@@ -281,10 +281,11 @@ class AuthController extends ControllerCommon {
             $path = str_replace('controllers', 'models', static::getClassPath());
             $path_model = str_replace('Controller', '', $path);
             $model_obj = new $path_model;
+            $model = $path_model::find()->where([$model_obj->tableSchema->primaryKey[0] => $id]);
          } else {
             $model_obj = new $model_name;
-         }
-         $model = $path_model::find()->where([$model_obj->tableSchema->primaryKey[0] => $id]);
+            $model = $model_name::find()->where([$model_obj->tableSchema->primaryKey[0] => $id]);
+        }
 
          if ($model_obj->verGroup !== null && $model_obj->verGroup && !self::isAdmin()) {
             $groups = self::User()->getUserGroupsId();
