@@ -274,14 +274,16 @@ class AuthController extends ControllerCommon {
      * @throws NotFoundHttpException if the model cannot be found
      */
 
-     protected function findModel($id)
+     protected function findModel($id,$model_name = null)
      {
- 
-         //$path = str_replace('backend','common'); --> ADVANCED
-         $path = str_replace('controllers', 'models', static::getClassPath());
-         $path_model = str_replace('Controller', '', $path);
-         $model_obj = new $path_model;
- 
+        if(!$model_name){
+            //$path = str_replace('backend','common'); --> ADVANCED
+            $path = str_replace('controllers', 'models', static::getClassPath());
+            $path_model = str_replace('Controller', '', $path);
+            $model_obj = new $path_model;
+         } else {
+            $model_obj = new $model_name;
+         }
          $model = $path_model::find()->where([$model_obj->tableSchema->primaryKey[0] => $id]);
 
          if ($model_obj->verGroup !== null && $model_obj->verGroup && !self::isAdmin()) {
