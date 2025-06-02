@@ -43,7 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?= $generator->enablePjax ? "<?php Pjax::begin(); ?>\n" : '' ?>
                     <?php if (!empty($generator->searchModelClass)): ?>
                         <?= "<?php " . ($generator->indexWidgetType === 'grid' ? "// " : "") ?>
-                        echo $this->render('/_parts/filter', ['view' =>"<?=$urlParams?>",'searchModel' => $searchModel]); ?>
+                        echo $this->render('/_parts/filter', ['view' =>"<?=StringHelper::basename($generator->modelClass)?>",'searchModel' => $searchModel]); ?>
                     <?php endif; ?>
                     <?php if ($generator->indexWidgetType === 'grid'): ?>
                         <?= "                <?= " ?>GridView::widget([

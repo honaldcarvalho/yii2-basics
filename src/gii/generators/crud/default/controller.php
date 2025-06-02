@@ -42,7 +42,7 @@ use yii\filters\VerbFilter;
 /**
  * <?= $controllerClass ?> implements the CRUD actions for <?= $modelClass ?> model.
  */
-class <?= $controllerClass ?> extends AuthController
+class <?= $controllerClass ?> extends  \weebz\yii2basics\controllers\AuthController
 {
 
     /**
