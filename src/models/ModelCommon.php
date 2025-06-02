@@ -101,14 +101,20 @@ public static function find($verGroup = null)
             return false;
         }
 
-        if ($this->hasAttribute('group_id') && empty($this->group_id)) {
+        $user = AuthController::User();
+
+        if ($user && $user->isAdmin()) {
+            if (!empty($this->group_id)) {
+                return true;
+            }
+        } else if ($this->hasAttribute('group_id') && empty($this->group_id)) {
             // Tenta usar parâmetro fixo (caso exista)
             $mainGroup = Parameter::findOne(['name' => 'main-group'])?->value;
 
             if ($mainGroup) {
                 $this->group_id = $mainGroup;
             } else {
-                $user = AuthController::User();
+
                 if ($user) {
                     // Obtém todos os grupos do usuário
                     $userGroups = $user->getGroups()->all();
