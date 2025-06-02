@@ -103,7 +103,7 @@ public static function find($verGroup = null)
 
         $user = AuthController::User();
 
-        if ($user && $user->isAdmin()) {
+        if (AuthController::isAdmin()) {
             if (!empty($this->group_id)) {
                 return true;
             }
