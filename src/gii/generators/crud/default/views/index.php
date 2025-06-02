@@ -42,12 +42,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     <?= $generator->enablePjax ? "<?php Pjax::begin(); ?>\n" : '' ?>
                     <?php if (!empty($generator->searchModelClass)): ?>
-                        <?= "<?php " . ($generator->indexWidgetType === 'grid' ? "// " : "") ?>
-                        echo $this->render('/_parts/filter', ['view' =>"<?=StringHelper::basename($generator->modelClass)?>",'searchModel' => $searchModel]); ?>
+                    <?= "<?php " . ($generator->indexWidgetType === 'grid' ? "// " : "") ?> echo $this->render('/_parts/filter', ['view' =>"/<?=Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>",'searchModel' => $searchModel]); ?>
                     <?php endif; ?>
                     <?php if ($generator->indexWidgetType === 'grid'): ?>
-                        <?= "                <?= " ?>GridView::widget([
-                        'dataProvider' => $dataProvider,
+                        <?= " <?= " ?>GridView::widget(['dataProvider' => $dataProvider,
                         <?= !empty($generator->searchModelClass) ? "'filterModel' => \$searchModel,\n                        'columns' => [\n" : "'columns' => [\n"; ?>
                         ['class' => 'yii\grid\SerialColumn'],
 
