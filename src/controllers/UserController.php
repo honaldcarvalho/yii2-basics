@@ -267,7 +267,7 @@ class UserController extends AuthController
     }
 
 
-    protected function findModel($id)
+    protected function findModel($id,$model = null)
     {
         if(isset(Yii::$app->user->identity) && !$this::isAdmin()){
             return Yii::$app->user->identity;
