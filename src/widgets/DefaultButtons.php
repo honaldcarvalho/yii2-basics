@@ -19,11 +19,11 @@ class DefaultButtons extends Widget
     
     
     public $buttons_name = [
-        'index'=>  'List',
-        'create'=>  'Create',
-        'update'=>  'Update',
-        'delete'=>  'Delete',
-        'clone' => 'Clone'
+        'index'=>  Yii::t('app', 'List'),
+        'create'=>  Yii::t('app', 'Create'),
+        'update'=>  Yii::t('app', 'Update'),
+        'delete'=>  Yii::t('app', 'Delete'),
+        'clone' => Yii::t('app', 'Clone')
     ];
     
     public $show = ['index','create', 'update','delete','clone'];
@@ -56,14 +56,14 @@ class DefaultButtons extends Widget
         $this->buttons .= '<div class="btn-group">';
         if(in_array('index',$this->show) &&  AuthController::verAuthorization($this->controller,'index',null,$this->path) && $show){
             $this->buttons .= Html::a(
-                    '<i class="fas fa-list-ol"></i>&nbsp;<span class="btn-text">'.Yii::t('app', $this->buttons_name['index'].'</span>' ?? 'index'),
+                    '<i class="fas fa-list-ol"></i>&nbsp;<span class="btn-text">'.$this->buttons_name['index'].'</span>' ?? 'index',
                     ['index'], 
                     ['class' => 'btn btn-primary']);
         }
         
         if(in_array('create',$this->show) &&  AuthController::verAuthorization($this->controller,'create',null,$this->path) && $show){
             $this->buttons .= Html::a( 
-                    '<i class="fas fa-plus-square"></i>&nbsp;<span class="btn-text">'.Yii::t('app', $this->buttons_name['create'].'</span>' ?? 'create'), 
+                    '<i class="fas fa-plus-square"></i>&nbsp;<span class="btn-text">'.$this->buttons_name['create'].'</span>' ?? 'create', 
                     ['create'], 
                     ['class' => 'btn btn-success']);                       
         }
@@ -75,7 +75,7 @@ class DefaultButtons extends Widget
                 $link = array_merge(['update'],$this->model->primaryKey);
             }
             $this->buttons .= Html::a(
-                    '<i class="fas fa-edit"></i>&nbsp;<span class="btn-text">'.Yii::t('app', $this->buttons_name['update'].'</span>' ?? 'update'), 
+                    '<i class="fas fa-edit"></i>&nbsp;<span class="btn-text">'.$this->buttons_name['update'].'</span>' ?? 'update', 
                     $link, 
                     ['class' => 'btn btn-warning']);
         }
@@ -86,7 +86,7 @@ class DefaultButtons extends Widget
             }else{
                 $link = array_merge(['delete'],$this->model->primaryKey);
             }
-            $this->buttons .= Html::a('<i class="fas fa-trash"></i>&nbsp;<span class="btn-text">'.Yii::t('app', $this->buttons_name['delete'].'</span>' ?? 'delete'), 
+            $this->buttons .= Html::a('<i class="fas fa-trash"></i>&nbsp;<span class="btn-text">'.$this->buttons_name['delete'].'</span>' ?? 'delete', 
                     $link, 
                     [
                         'class' => 'btn btn-danger input-group-text',
@@ -100,7 +100,7 @@ class DefaultButtons extends Widget
 
         if(in_array('clone',$this->show) &&  AuthController::verAuthorization($this->controller,'clone',$this->model,$this->path) && $show){
             $this->buttons .= Html::a( 
-                '<i class="fas fa-clone"></i>&nbsp;<span class="btn-text">'.Yii::t('app', $this->buttons_name['clone'].'</span>' ?? 'clone'), 
+                '<i class="fas fa-clone"></i>&nbsp;<span class="btn-text">'.$this->buttons_name['clone'].'</span>' ?? 'clone', 
                 ['clone', 'id' =>  $this->model->id], 
                 ['class' => 'btn btn-dark']);                       
         }
