@@ -176,7 +176,7 @@ class RuleController extends AuthController
      * @return Rule the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel($id,$model=null)
     {
         if (($model = Rule::findOne(['id' => $id])) !== null) {
             return $model;
