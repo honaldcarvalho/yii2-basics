@@ -10,6 +10,9 @@ class ModelCommon extends \yii\db\ActiveRecord
 {
 
     public $verGroup = false;
+    public $created_atFDTsod;
+    public $created_atFDTeod;
+
     const SCENARIO_STATUS = 'status';
     const SCENARIO_SEARCH = 'search';
 
@@ -92,6 +95,7 @@ public static function find($verGroup = null)
         return [
             [['id', 'status'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
+            [['created_atFDTsod', 'created_atFDTeod'], 'safe'],
         ];
     }
 
