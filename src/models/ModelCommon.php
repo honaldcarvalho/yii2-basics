@@ -106,8 +106,11 @@ public static function find($verGroup = null)
         if (AuthController::isAdmin()) {
             if (!empty($this->group_id)) {
                 return true;
+            } else if(($admin_group = Parameter::findOne(['name' => 'admin-group'])?->value) !== null){
+                $this->group_id = $admin_group;
             }
         }
+
         if ($this->hasAttribute('group_id') && empty($this->group_id)) {
             // Tenta usar parâmetro fixo (caso exista)
             $mainGroup = Parameter::findOne(['name' => 'main-group'])?->value;
