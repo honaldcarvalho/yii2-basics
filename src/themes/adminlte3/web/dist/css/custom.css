@@ -614,3 +614,7 @@ td {
     padding-left: 0 !important;
     margin-top: var(--bs-gutter-y);
 }
+
+.form-group {
+    padding-right: 7.5px!important;
+}
