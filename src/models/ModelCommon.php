@@ -107,7 +107,8 @@ public static function find($verGroup = null)
             if (!empty($this->group_id)) {
                 return true;
             }
-        } else if ($this->hasAttribute('group_id') && empty($this->group_id)) {
+        }
+        if ($this->hasAttribute('group_id') && empty($this->group_id)) {
             // Tenta usar parâmetro fixo (caso exista)
             $mainGroup = Parameter::findOne(['name' => 'main-group'])?->value;
 
