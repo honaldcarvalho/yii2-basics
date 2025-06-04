@@ -100,40 +100,42 @@ public static function find($verGroup = null)
         if (!parent::beforeSave($insert)) {
             return false;
         }
-        dd($insert);
-        $user = AuthController::User();
 
-        if (AuthController::isAdmin()) {
-            if (!empty($this->group_id)) {
-                return true;
-            } else if(($admin_group = Parameter::findOne(['name' => 'admin-group'])?->value) !== null){
-                $this->group_id = $admin_group;
+        if($insert){
+            $user = AuthController::User();
+
+            if (AuthController::isAdmin()) {
+                if (!empty($this->group_id)) {
+                    return true;
+                } else if(($admin_group = Parameter::findOne(['name' => 'admin-group'])?->value) !== null){
+                    $this->group_id = $admin_group;
+                }
             }
-        }
 
-        if ($this->hasAttribute('group_id') && empty($this->group_id)) {
-            // Tenta usar parâmetro fixo (caso exista)
-            $mainGroup = Parameter::findOne(['name' => 'main-group'])?->value;
+            if ($this->hasAttribute('group_id') && empty($this->group_id)) {
+                // Tenta usar parâmetro fixo (caso exista)
+                $mainGroup = Parameter::findOne(['name' => 'main-group'])?->value;
 
-            if ($mainGroup) {
-                $this->group_id = $mainGroup;
-            } else {
+                if ($mainGroup) {
+                    $this->group_id = $mainGroup;
+                } else {
 
-                if ($user) {
-                    // Obtém todos os grupos do usuário
-                    $userGroups = $user->getGroups()->all();
+                    if ($user) {
+                        // Obtém todos os grupos do usuário
+                        $userGroups = $user->getGroups()->all();
 
-                    // Tenta encontrar o grupo raiz (sem parent)
-                    foreach ($userGroups as $group) {
-                        if (!$group->parent_id) {
-                            $this->group_id = $group->id;
-                            break;
+                        // Tenta encontrar o grupo raiz (sem parent)
+                        foreach ($userGroups as $group) {
+                            if (!$group->parent_id) {
+                                $this->group_id = $group->id;
+                                break;
+                            }
                         }
-                    }
 
-                    // Se não achar nenhum root, pega o primeiro grupo mesmo
-                    if (!$this->group_id && count($userGroups) > 0) {
-                        $this->group_id = $userGroups[0]->id;
+                        // Se não achar nenhum root, pega o primeiro grupo mesmo
+                        if (!$this->group_id && count($userGroups) > 0) {
+                            $this->group_id = $userGroups[0]->id;
+                        }
                     }
                 }
             }
