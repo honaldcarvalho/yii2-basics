@@ -70,4 +70,9 @@ class Parameter extends ModelCommon
     {
         return $this->hasOne(Configuration::class, ['id' => 'configuration_id']);
     }
+
+    public static function groupRelationPath()
+    {
+        return ['configuration'];
+    }
 }
