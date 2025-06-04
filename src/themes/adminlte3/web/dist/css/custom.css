@@ -605,3 +605,12 @@ td {
         width: auto;
     }
 }
+
+.row > *:not(input):not(select):not(textarea):not(button) {
+    flex-shrink: 0;
+    width: 100%;
+    max-width: 100%;
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+    margin-top: var(--bs-gutter-y);
+}
