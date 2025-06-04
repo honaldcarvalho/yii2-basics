@@ -100,7 +100,7 @@ public static function find($verGroup = null)
         if (!parent::beforeSave($insert)) {
             return false;
         }
-
+        dd($insert);
         $user = AuthController::User();
 
         if (AuthController::isAdmin()) {
