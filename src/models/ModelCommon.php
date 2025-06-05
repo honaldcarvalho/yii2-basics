@@ -319,9 +319,9 @@ class ModelCommon extends \yii\db\ActiveRecord
                 } else if (str_contains($field, 'sod') || str_contains($field, 'eod')) {
                     [$field_date, $pos] = explode('FDT', $field);
                     if ($pos == 'sod') {
-                        $query->andFilterWhere(['>=', $table.$field_date, $search]);
+                        $query->andFilterWhere(['>=', "$table.".$field_date, $search]);
                     } else if ($pos == 'eod') {
-                        $query->andFilterWhere(['<=', $table.$field_date, $search]);
+                        $query->andFilterWhere(['<=', "$table.".$field_date, $search]);
                     }
                 } else {
                     $query->andFilterWhere(["$table.$field" => $search]);
