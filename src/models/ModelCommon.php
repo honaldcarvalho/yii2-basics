@@ -106,7 +106,7 @@ class ModelCommon extends \yii\db\ActiveRecord
             if (AuthController::isAdmin()) {
                 if (!empty($this->group_id)) {
                     return true;
-                } else if(($admin_group = Parameter::findOne(['name' => 'admin-group'])?->value) !== null){
+                } else if(($admin_group = Parameter::findOne(['name' => 'admin-group'])?->value) !== null && $this->hasAttribute('group_id')){
                     $this->group_id = $admin_group;
                 }
             }
