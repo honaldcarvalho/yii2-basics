@@ -130,7 +130,7 @@ class MenuController extends AuthController
      * @return Menu the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel($id,$model=null)
     {
         if (($model = Menu::findOne($id)) !== null) {
             return $model;
