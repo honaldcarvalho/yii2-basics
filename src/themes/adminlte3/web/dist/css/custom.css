@@ -11,6 +11,10 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
     color: #ffffff !important;
 }
 
+.dark-mode form label {
+    color: #ffffff !important;
+}
+
 .dark-mode a.btn-outline-secondary:hover {
     background: none ! important;
     border: 1px solid #7beb00 ! important;
