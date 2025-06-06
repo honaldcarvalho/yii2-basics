@@ -36,11 +36,10 @@ class ExportSimpleWidget extends Widget
         $trigger = $request->get($this->exportTrigger);
 
         if (in_array($trigger, $this->formats, true)) {
-            Yii::$app->controller->layout = false;
+            Yii::$app->controller->layout = '_blank';
             Yii::$app->response->format = Response::FORMAT_RAW;
             $filename = $request->get('filename', $this->filename);
 
-            // Coleta dados
             $data = [];
             $columnKeys = [];
             $columnLabels = [];
@@ -65,9 +64,11 @@ class ExportSimpleWidget extends Widget
                     if ($attribute) {
                         $columnKeys[] = $attribute;
                         $columnLabels[$attribute] = $label;
-                        $row[$attribute] = is_callable($value)
-                            ? call_user_func($value, $model)
-                            : ArrayHelper::getValue($model, $attribute);
+                        if (is_callable($value)) {
+                            $row[$attribute] = call_user_func($value, $model);
+                        } else {
+                            $row[$attribute] = ArrayHelper::getValue($model, $attribute);
+                        }
                     }
                 }
                 $data[] = $row;
@@ -75,66 +76,6 @@ class ExportSimpleWidget extends Widget
 
             $columnKeys = array_values(array_unique($columnKeys));
 
-            // Exporta CSV
-            if ($trigger === 'csv') {
-                $temp = tmpfile();
-                $meta = stream_get_meta_data($temp);
-                $path = $meta['uri'];
-
-                $fp = fopen($path, 'w');
-                fputcsv($fp, array_map(fn($key) => $columnLabels[$key] ?? $key, $columnKeys));
-                foreach ($data as $row) {
-                    $line = [];
-                    foreach ($columnKeys as $key) {
-                        $line[] = $row[$key] ?? '';
-                    }
-                    fputcsv($fp, $line);
-                }
-                fclose($fp);
-                $content = file_get_contents($path);
-                fclose($temp);
-
-                return Yii::$app->response->sendContentAsFile(
-                    $content,
-                    $filename . '.csv',
-                    ['mimeType' => 'text/csv', 'inline' => false]
-                );
-            }
-
-            // Exporta Excel
-            if ($trigger === 'excel') {
-                $spreadsheet = new Spreadsheet();
-                $sheet = $spreadsheet->getActiveSheet();
-                $sheet->fromArray([array_map(fn($key) => $columnLabels[$key] ?? $key, $columnKeys)], null, 'A1');
-
-                foreach ($data as $i => $row) {
-                    $line = [];
-                    foreach ($columnKeys as $key) {
-                        $line[] = $row[$key] ?? '';
-                    }
-                    $sheet->fromArray([$line], null, 'A' . ($i + 2));
-                }
-
-                $temp = tmpfile();
-                $meta = stream_get_meta_data($temp);
-                $path = $meta['uri'];
-
-                $writer = new Xlsx($spreadsheet);
-                $writer->save($path);
-                $content = file_get_contents($path);
-                fclose($temp);
-
-                return Yii::$app->response->sendContentAsFile(
-                    $content,
-                    $filename . '.xlsx',
-                    [
-                        'mimeType' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                        'inline' => false
-                    ]
-                );
-            }
-
-            // Exporta PDF
             if ($trigger === 'pdf') {
                 $html = '<h2>' . Html::encode($filename) . '</h2><table border="1" cellpadding="5"><thead><tr>';
                 foreach ($columnKeys as $header) {
@@ -150,18 +91,43 @@ class ExportSimpleWidget extends Widget
                 }
                 $html .= '</tbody></table>';
 
-                $mpdf = new Mpdf();
-                $mpdf->WriteHTML($html);
-                $pdfContent = $mpdf->Output('', \Mpdf\Output\Destination::STRING_RETURN);
-
-                return Yii::$app->response->sendContentAsFile(
-                    $pdfContent,
-                    $filename . '.pdf',
-                    ['mimeType' => 'application/pdf', 'inline' => false]
-                );
+                return $html;
             }
 
-            Yii::$app->end();
+            if ($trigger === 'csv') {
+                header("Content-Type: text/csv");
+                header("Content-Disposition: attachment; filename={$filename}.csv");
+                $output = fopen('php://output', 'w');
+                fputcsv($output, array_map(fn($key) => $columnLabels[$key] ?? $key, $columnKeys));
+                foreach ($data as $row) {
+                    $line = [];
+                    foreach ($columnKeys as $key) {
+                        $line[] = $row[$key] ?? '';
+                    }
+                    fputcsv($output, $line);
+                }
+                fclose($output);
+                return;
+            }
+
+            if ($trigger === 'excel') {
+                $spreadsheet = new Spreadsheet();
+                $sheet = $spreadsheet->getActiveSheet();
+                $sheet->fromArray([array_map(fn($key) => $columnLabels[$key] ?? $key, $columnKeys)], NULL, 'A1');
+                foreach ($data as $i => $row) {
+                    $line = [];
+                    foreach ($columnKeys as $key) {
+                        $line[] = $row[$key] ?? '';
+                    }
+                    $sheet->fromArray([$line], NULL, 'A' . ($i + 2));
+                }
+                $writer = new Xlsx($spreadsheet);
+                header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                header("Content-Disposition: attachment; filename=\"{$filename}.xlsx\"");
+                header('Cache-Control: max-age=0');
+                $writer->save('php://output');
+                return;
+            }
         }
 
         // Render botões
@@ -174,11 +140,7 @@ class ExportSimpleWidget extends Widget
             $buttons[] = Html::a(
                 $this->labelMap[$format] ?? strtoupper($format),
                 $url,
-                [
-                    'class' => 'btn btn-outline-secondary me-2',
-                    'target' => '_blank',
-                    'data-pjax' => '0',
-                ]
+                ['class' => 'btn btn-outline-secondary me-2']
             );
         }
 
