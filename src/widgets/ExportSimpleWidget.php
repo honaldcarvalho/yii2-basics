@@ -143,8 +143,8 @@ class ExportSimpleWidget extends Widget
                 $url,
                 [
                     'class' => 'btn btn-outline-secondary me-2',
-                    'data-fancybox' => 'export',
-                    'data-type' => 'iframe'
+                    // 'data-fancybox' => 'export',
+                    // 'data-type' => 'iframe'
                 ]
             );
         }
