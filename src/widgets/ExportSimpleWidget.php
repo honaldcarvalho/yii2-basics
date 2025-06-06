@@ -7,8 +7,11 @@ use yii\base\Widget;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\helpers\ArrayHelper;
-use yii\grid\GridView;
 use yii\base\InvalidConfigException;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Mpdf\Mpdf;
+use yii\web\Response;
 
 class ExportSimpleWidget extends Widget
 {
@@ -17,7 +20,7 @@ class ExportSimpleWidget extends Widget
     public $filename = 'exported_data';
     public $formats = ['csv', 'excel', 'pdf'];
     public $labelMap = ['csv' => 'CSV', 'excel' => 'Excel', 'pdf' => 'PDF'];
-    public $exportRoute = ['/site/export'];
+    public $exportTrigger = 'export';
 
     public function init()
     {
@@ -29,53 +32,112 @@ class ExportSimpleWidget extends Widget
 
     public function run()
     {
-        $exportData = [];
-        $columnKeys = [];
+        $request = Yii::$app->request;
+        $trigger = $request->get($this->exportTrigger);
 
-        foreach ($this->dataProvider->getModels() as $model) {
-            $row = [];
-            foreach ($this->columns as $column) {
-                $attribute = null;
-                $value = null;
+        if (in_array($trigger, $this->formats, true)) {
+            Yii::$app->response->format = Response::FORMAT_RAW;
+            $filename = $request->get('filename', $this->filename);
 
-                if (is_array($column)) {
-                    $attribute = $column['attribute'] ?? null;
-                    $value = $column['value'] ?? null;
-                } elseif (is_string($column)) {
-                    // Parse "attribute:format:label"
-                    $parts = explode(':', $column);
-                    $attribute = $parts[0] ?? null;
-                }
+            $data = [];
+            $columnKeys = [];
 
-                if ($attribute) {
-                    $columnKeys[] = $attribute;
-                    if (is_callable($value)) {
-                        $row[$attribute] = call_user_func($value, $model);
-                    } else {
-                        $row[$attribute] = ArrayHelper::getValue($model, $attribute);
+            foreach ($this->dataProvider->getModels() as $model) {
+                $row = [];
+                foreach ($this->columns as $column) {
+                    $attribute = null;
+                    $value = null;
+
+                    if (is_array($column)) {
+                        $attribute = $column['attribute'] ?? null;
+                        $value = $column['value'] ?? null;
+                    } elseif (is_string($column)) {
+                        $parts = explode(':', $column);
+                        $attribute = $parts[0] ?? null;
+                    }
+
+                    if ($attribute) {
+                        $columnKeys[] = $attribute;
+                        if (is_callable($value)) {
+                            $row[$attribute] = call_user_func($value, $model);
+                        } else {
+                            $row[$attribute] = ArrayHelper::getValue($model, $attribute);
+                        }
                     }
                 }
+                $data[] = $row;
             }
-            $exportData[] = $row;
+
+            $columnKeys = array_values(array_unique($columnKeys));
+
+            if ($trigger === 'csv') {
+                header("Content-Type: text/csv");
+                header("Content-Disposition: attachment; filename={$filename}.csv");
+                $output = fopen('php://output', 'w');
+                fputcsv($output, $columnKeys);
+                foreach ($data as $row) {
+                    $line = [];
+                    foreach ($columnKeys as $key) {
+                        $line[] = $row[$key] ?? '';
+                    }
+                    fputcsv($output, $line);
+                }
+                fclose($output);
+                return;
+            }
+
+            if ($trigger === 'excel') {
+                $spreadsheet = new Spreadsheet();
+                $sheet = $spreadsheet->getActiveSheet();
+                $sheet->fromArray([$columnKeys], NULL, 'A1');
+                foreach ($data as $i => $row) {
+                    $line = [];
+                    foreach ($columnKeys as $key) {
+                        $line[] = $row[$key] ?? '';
+                    }
+                    $sheet->fromArray([$line], NULL, 'A' . ($i + 2));
+                }
+                $writer = new Xlsx($spreadsheet);
+                header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                header("Content-Disposition: attachment;filename=\"{$filename}.xlsx\"");
+                header('Cache-Control: max-age=0');
+                $writer->save('php://output');
+                return;
+            }
+
+            if ($trigger === 'pdf') {
+                $html = '<h2>' . Html::encode($filename) . '</h2><table border="1" cellpadding="5"><thead><tr>';
+                foreach ($columnKeys as $header) {
+                    $html .= '<th>' . Html::encode($header) . '</th>';
+                }
+                $html .= '</tr></thead><tbody>';
+                foreach ($data as $row) {
+                    $html .= '<tr>';
+                    foreach ($columnKeys as $key) {
+                        $html .= '<td>' . Html::encode($row[$key] ?? '') . '</td>';
+                    }
+                    $html .= '</tr>';
+                }
+                $html .= '</tbody></table>';
+
+                $mpdf = new Mpdf();
+                $mpdf->WriteHTML($html);
+                return $mpdf->Output("{$filename}.pdf", \Mpdf\Output\Destination::DOWNLOAD);
+            }
         }
 
-        $columnKeys = array_values(array_unique($columnKeys));
-        $json = Html::encode(json_encode($exportData));
-
+        // Render botões
         $buttons = [];
         foreach ($this->formats as $format) {
-            $url = Url::to(array_merge($this->exportRoute, ['format' => $format, 'filename' => $this->filename]));
-            $buttons[] = Html::beginForm($url, 'post', [
-                    'target' => '_blank',
-                    'style' => 'display:inline-block']
-            ) .
-                Html::hiddenInput('export_data', $json) .
-                Html::hiddenInput('export_columns', json_encode($columnKeys)) .
-                Html::submitButton(
-                    $this->labelMap[$format] ?? strtoupper($format),
-                    ['class' => 'btn btn-outline-secondary me-2']
-                ) .
-                Html::endForm();
+            $url = Url::current([
+                $this->exportTrigger => $format,
+                'filename' => $this->filename,
+            ]);
+            $buttons[] = Html::a(
+                $this->labelMap[$format] ?? strtoupper($format),
+                $url,
+                ['class' => 'btn btn-outline-secondary me-2']
+            );
         }
 
         return Html::tag('div', implode("\n", $buttons), ['class' => 'export-button-group']);
