@@ -11,6 +11,10 @@ use weebz\yii2basics\models\PasswordResetRequestForm;
 use weebz\yii2basics\models\ResendVerificationEmailForm;
 use weebz\yii2basics\models\ResetPasswordForm;
 use weebz\yii2basics\models\VerifyEmailForm;
+use yii\helpers\Html;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Mpdf\Mpdf;
 
 /**
  * Site controller
@@ -45,6 +49,66 @@ class SiteController extends AuthController
         return $this->render('index');
     }
 
+    public function actionExport($format = 'csv', $filename = 'export')
+    {
+        Yii::$app->response->format = Response::FORMAT_RAW;
+
+        // Exemplo com dados fixos. Substitua por seu modelo + dataProvider
+        $data = [
+            ['ID' => 1, 'Nome' => 'João', 'Email' => 'joao@example.com'],
+            ['ID' => 2, 'Nome' => 'Maria', 'Email' => 'maria@example.com'],
+        ];
+
+        $headers = array_keys($data[0]);
+
+        if ($format === 'csv') {
+            header("Content-Type: text/csv");
+            header("Content-Disposition: attachment; filename={$filename}.csv");
+            $output = fopen('php://output', 'w');
+            fputcsv($output, $headers);
+            foreach ($data as $row) {
+                fputcsv($output, $row);
+            }
+            fclose($output);
+            return;
+        }
+
+        if ($format === 'excel') {
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            $sheet->fromArray([$headers], NULL, 'A1');
+            $sheet->fromArray($data, NULL, 'A2');
+            $writer = new Xlsx($spreadsheet);
+
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header("Content-Disposition: attachment;filename=\"{$filename}.xlsx\"");
+            header('Cache-Control: max-age=0');
+            $writer->save('php://output');
+            return;
+        }
+
+        if ($format === 'pdf') {
+            $html = '<h2>' . Html::encode($filename) . '</h2><table border="1" cellpadding="5"><thead><tr>';
+            foreach ($headers as $header) {
+                $html .= '<th>' . Html::encode($header) . '</th>';
+            }
+            $html .= '</tr></thead><tbody>';
+            foreach ($data as $row) {
+                $html .= '<tr>';
+                foreach ($row as $value) {
+                    $html .= '<td>' . Html::encode($value) . '</td>';
+                }
+                $html .= '</tr>';
+            }
+            $html .= '</tbody></table>';
+
+            $mpdf = new Mpdf();
+            $mpdf->WriteHTML($html);
+            return $mpdf->Output("{$filename}.pdf", \Mpdf\Output\Destination::DOWNLOAD);
+        }
+
+        throw new \yii\web\BadRequestHttpException("Formato de exportação inválido.");
+    }
     /**
      * Displays homepage.
      *
