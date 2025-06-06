@@ -36,28 +36,34 @@ class ExportSimpleWidget extends Widget
         $trigger = $request->get($this->exportTrigger);
 
         if (in_array($trigger, $this->formats, true)) {
+            Yii::$app->controller->layout = '_blank';
             Yii::$app->response->format = Response::FORMAT_RAW;
             $filename = $request->get('filename', $this->filename);
 
             $data = [];
             $columnKeys = [];
+            $columnLabels = [];
 
             foreach ($this->dataProvider->getModels() as $model) {
                 $row = [];
                 foreach ($this->columns as $column) {
                     $attribute = null;
                     $value = null;
+                    $label = null;
 
                     if (is_array($column)) {
                         $attribute = $column['attribute'] ?? null;
                         $value = $column['value'] ?? null;
+                        $label = $column['label'] ?? $attribute;
                     } elseif (is_string($column)) {
                         $parts = explode(':', $column);
                         $attribute = $parts[0] ?? null;
+                        $label = $parts[2] ?? $attribute;
                     }
 
                     if ($attribute) {
                         $columnKeys[] = $attribute;
+                        $columnLabels[$attribute] = $label;
                         if (is_callable($value)) {
                             $row[$attribute] = call_user_func($value, $model);
                         } else {
@@ -70,11 +76,29 @@ class ExportSimpleWidget extends Widget
 
             $columnKeys = array_values(array_unique($columnKeys));
 
+            if ($trigger === 'pdf') {
+                $html = '<h2>' . Html::encode($filename) . '</h2><table border="1" cellpadding="5"><thead><tr>';
+                foreach ($columnKeys as $header) {
+                    $html .= '<th>' . Html::encode($columnLabels[$header] ?? $header) . '</th>';
+                }
+                $html .= '</tr></thead><tbody>';
+                foreach ($data as $row) {
+                    $html .= '<tr>';
+                    foreach ($columnKeys as $key) {
+                        $html .= '<td>' . Html::encode($row[$key] ?? '') . '</td>';
+                    }
+                    $html .= '</tr>';
+                }
+                $html .= '</tbody></table>';
+
+                return $html;
+            }
+
             if ($trigger === 'csv') {
                 header("Content-Type: text/csv");
                 header("Content-Disposition: attachment; filename={$filename}.csv");
                 $output = fopen('php://output', 'w');
-                fputcsv($output, $columnKeys);
+                fputcsv($output, array_map(fn($key) => $columnLabels[$key] ?? $key, $columnKeys));
                 foreach ($data as $row) {
                     $line = [];
                     foreach ($columnKeys as $key) {
@@ -89,7 +113,7 @@ class ExportSimpleWidget extends Widget
             if ($trigger === 'excel') {
                 $spreadsheet = new Spreadsheet();
                 $sheet = $spreadsheet->getActiveSheet();
-                $sheet->fromArray([$columnKeys], NULL, 'A1');
+                $sheet->fromArray([array_map(fn($key) => $columnLabels[$key] ?? $key, $columnKeys)], NULL, 'A1');
                 foreach ($data as $i => $row) {
                     $line = [];
                     foreach ($columnKeys as $key) {
@@ -104,26 +128,6 @@ class ExportSimpleWidget extends Widget
                 $writer->save('php://output');
                 return;
             }
-
-            if ($trigger === 'pdf') {
-                $html = '<h2>' . Html::encode($filename) . '</h2><table border="1" cellpadding="5"><thead><tr>';
-                foreach ($columnKeys as $header) {
-                    $html .= '<th>' . Html::encode($header) . '</th>';
-                }
-                $html .= '</tr></thead><tbody>';
-                foreach ($data as $row) {
-                    $html .= '<tr>';
-                    foreach ($columnKeys as $key) {
-                        $html .= '<td>' . Html::encode($row[$key] ?? '') . '</td>';
-                    }
-                    $html .= '</tr>';
-                }
-                $html .= '</tbody></table>';
-
-                $mpdf = new Mpdf();
-                $mpdf->WriteHTML($html);
-                return $mpdf->Output("{$filename}.pdf", \Mpdf\Output\Destination::DOWNLOAD);
-            }
         }
 
         // Render botões
@@ -132,11 +136,16 @@ class ExportSimpleWidget extends Widget
             $url = Url::current([
                 $this->exportTrigger => $format,
                 'filename' => $this->filename,
+                'fancybox' => 1
             ]);
             $buttons[] = Html::a(
                 $this->labelMap[$format] ?? strtoupper($format),
                 $url,
-                ['class' => 'btn btn-outline-secondary me-2']
+                [
+                    'class' => 'btn btn-outline-secondary me-2',
+                    'data-fancybox' => 'export',
+                    'data-type' => 'iframe'
+                ]
             );
         }
 
