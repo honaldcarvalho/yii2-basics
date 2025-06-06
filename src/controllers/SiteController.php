@@ -53,13 +53,20 @@ class SiteController extends AuthController
     {
         Yii::$app->response->format = Response::FORMAT_RAW;
 
-        // Exemplo com dados fixos. Substitua por seu modelo + dataProvider
-        $data = [
-            ['ID' => 1, 'Nome' => 'João', 'Email' => 'joao@example.com'],
-            ['ID' => 2, 'Nome' => 'Maria', 'Email' => 'maria@example.com'],
-        ];
+        // Obtem os dados do POST (data serializada)
+        $raw = Yii::$app->request->post('export_data');
+        $columns = Yii::$app->request->post('export_columns', []);
 
-        $headers = array_keys($data[0]);
+        if (!$raw || !$columns) {
+            throw new \yii\web\BadRequestHttpException("Dados para exportação não enviados.");
+        }
+
+        $data = json_decode($raw, true);
+        if (!is_array($data)) {
+            throw new \yii\web\BadRequestHttpException("Formato de dados inválido.");
+        }
+
+        $headers = $columns;
 
         if ($format === 'csv') {
             header("Content-Type: text/csv");
@@ -67,7 +74,11 @@ class SiteController extends AuthController
             $output = fopen('php://output', 'w');
             fputcsv($output, $headers);
             foreach ($data as $row) {
-                fputcsv($output, $row);
+                $line = [];
+                foreach ($headers as $key) {
+                    $line[] = $row[$key] ?? '';
+                }
+                fputcsv($output, $line);
             }
             fclose($output);
             return;
@@ -77,7 +88,13 @@ class SiteController extends AuthController
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
             $sheet->fromArray([$headers], NULL, 'A1');
-            $sheet->fromArray($data, NULL, 'A2');
+            foreach ($data as $i => $row) {
+                $line = [];
+                foreach ($headers as $key) {
+                    $line[] = $row[$key] ?? '';
+                }
+                $sheet->fromArray([$line], NULL, 'A' . ($i + 2));
+            }
             $writer = new Xlsx($spreadsheet);
 
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -95,8 +112,8 @@ class SiteController extends AuthController
             $html .= '</tr></thead><tbody>';
             foreach ($data as $row) {
                 $html .= '<tr>';
-                foreach ($row as $value) {
-                    $html .= '<td>' . Html::encode($value) . '</td>';
+                foreach ($headers as $key) {
+                    $html .= '<td>' . Html::encode($row[$key] ?? '') . '</td>';
                 }
                 $html .= '</tr>';
             }

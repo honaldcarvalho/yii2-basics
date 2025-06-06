@@ -1,10 +1,10 @@
 <?php
-namespace app\widgets;
+
+namespace weebz\yii2basics\widgets;
 
 use Yii;
 use yii\base\Widget;
 use yii\helpers\Html;
-use yii\grid\GridView;
 
 class ExportButtonGroup extends Widget
 {
