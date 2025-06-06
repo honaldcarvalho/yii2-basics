@@ -2,10 +2,13 @@
 
 namespace weebz\yii2basics\widgets;
 
+
 use Yii;
 use yii\base\Widget;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\helpers\ArrayHelper;
+use yii\grid\GridView;
 use yii\base\InvalidConfigException;
 
 class ExportSimpleWidget extends Widget
@@ -37,10 +40,10 @@ class ExportSimpleWidget extends Widget
                     if ($key && is_callable($value)) {
                         $row[$key] = call_user_func($value, $model);
                     } elseif ($key) {
-                        $row[$key] = Html::getAttributeValue($model, $key);
+                        $row[$key] = ArrayHelper::getValue($model, $key);
                     }
                 } else {
-                    $row[$column] = Html::getAttributeValue($model, $column);
+                    $row[$column] = ArrayHelper::getValue($model, $column);
                 }
             }
             $exportData[] = $row;
