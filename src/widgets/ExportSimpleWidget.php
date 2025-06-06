@@ -36,11 +36,11 @@ class ExportSimpleWidget extends Widget
         $trigger = $request->get($this->exportTrigger);
 
         if (in_array($trigger, $this->formats, true)) {
-
             Yii::$app->controller->layout = false;
             Yii::$app->response->format = Response::FORMAT_RAW;
-
             $filename = $request->get('filename', $this->filename);
+
+            // Coleta dados
             $data = [];
             $columnKeys = [];
             $columnLabels = [];
@@ -75,6 +75,66 @@ class ExportSimpleWidget extends Widget
 
             $columnKeys = array_values(array_unique($columnKeys));
 
+            // Exporta CSV
+            if ($trigger === 'csv') {
+                $temp = tmpfile();
+                $meta = stream_get_meta_data($temp);
+                $path = $meta['uri'];
+
+                $fp = fopen($path, 'w');
+                fputcsv($fp, array_map(fn($key) => $columnLabels[$key] ?? $key, $columnKeys));
+                foreach ($data as $row) {
+                    $line = [];
+                    foreach ($columnKeys as $key) {
+                        $line[] = $row[$key] ?? '';
+                    }
+                    fputcsv($fp, $line);
+                }
+                fclose($fp);
+                $content = file_get_contents($path);
+                fclose($temp);
+
+                return Yii::$app->response->sendContentAsFile(
+                    $content,
+                    $filename . '.csv',
+                    ['mimeType' => 'text/csv', 'inline' => false]
+                );
+            }
+
+            // Exporta Excel
+            if ($trigger === 'excel') {
+                $spreadsheet = new Spreadsheet();
+                $sheet = $spreadsheet->getActiveSheet();
+                $sheet->fromArray([array_map(fn($key) => $columnLabels[$key] ?? $key, $columnKeys)], null, 'A1');
+
+                foreach ($data as $i => $row) {
+                    $line = [];
+                    foreach ($columnKeys as $key) {
+                        $line[] = $row[$key] ?? '';
+                    }
+                    $sheet->fromArray([$line], null, 'A' . ($i + 2));
+                }
+
+                $temp = tmpfile();
+                $meta = stream_get_meta_data($temp);
+                $path = $meta['uri'];
+
+                $writer = new Xlsx($spreadsheet);
+                $writer->save($path);
+                $content = file_get_contents($path);
+                fclose($temp);
+
+                return Yii::$app->response->sendContentAsFile(
+                    $content,
+                    $filename . '.xlsx',
+                    [
+                        'mimeType' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                        'inline' => false
+                    ]
+                );
+            }
+
+            // Exporta PDF
             if ($trigger === 'pdf') {
                 $html = '<h2>' . Html::encode($filename) . '</h2><table border="1" cellpadding="5"><thead><tr>';
                 foreach ($columnKeys as $header) {
@@ -92,63 +152,12 @@ class ExportSimpleWidget extends Widget
 
                 $mpdf = new Mpdf();
                 $mpdf->WriteHTML($html);
+                $pdfContent = $mpdf->Output('', \Mpdf\Output\Destination::STRING_RETURN);
+
                 return Yii::$app->response->sendContentAsFile(
-                    $mpdf->Output('', \Mpdf\Output\Destination::STRING_RETURN),
+                    $pdfContent,
                     $filename . '.pdf',
-                    [
-                        'mimeType' => 'application/pdf',
-                        'inline' => false,
-                    ]
-                );
-            }
-
-            if ($trigger === 'csv') {
-                $output = fopen('php://temp', 'r+');
-                fputcsv($output, array_map(fn($key) => $columnLabels[$key] ?? $key, $columnKeys));
-                foreach ($data as $row) {
-                    $line = [];
-                    foreach ($columnKeys as $key) {
-                        $line[] = $row[$key] ?? '';
-                    }
-                    fputcsv($output, $line);
-                }
-                rewind($output);
-                $csvContent = stream_get_contents($output);
-                fclose($output);
-
-                return Yii::$app->response->sendContentAsFile(
-                    $csvContent,
-                    $filename . '.csv',
-                    [
-                        'mimeType' => 'text/csv',
-                        'inline' => false,
-                    ]
-                );
-            }
-
-            if ($trigger === 'excel') {
-                $spreadsheet = new Spreadsheet();
-                $sheet = $spreadsheet->getActiveSheet();
-                $sheet->fromArray([array_map(fn($key) => $columnLabels[$key] ?? $key, $columnKeys)], null, 'A1');
-                foreach ($data as $i => $row) {
-                    $line = [];
-                    foreach ($columnKeys as $key) {
-                        $line[] = $row[$key] ?? '';
-                    }
-                    $sheet->fromArray([$line], null, 'A' . ($i + 2));
-                }
-                $writer = new Xlsx($spreadsheet);
-                ob_start();
-                $writer->save('php://output');
-                $excelContent = ob_get_clean();
-
-                return Yii::$app->response->sendContentAsFile(
-                    $excelContent,
-                    $filename . '.xlsx',
-                    [
-                        'mimeType' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                        'inline' => false,
-                    ]
+                    ['mimeType' => 'application/pdf', 'inline' => false]
                 );
             }
 
