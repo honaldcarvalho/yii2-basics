@@ -123,7 +123,7 @@ class ExportSimpleWidget extends Widget
                 }
                 $writer = new Xlsx($spreadsheet);
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                header("Content-Disposition: attachment;filename=\"{$filename}.xlsx\"");
+                header("Content-Disposition: attachment; filename=\"{$filename}.xlsx\"");
                 header('Cache-Control: max-age=0');
                 $writer->save('php://output');
                 return;
@@ -136,16 +136,11 @@ class ExportSimpleWidget extends Widget
             $url = Url::current([
                 $this->exportTrigger => $format,
                 'filename' => $this->filename,
-                'fancybox' => 1
             ]);
             $buttons[] = Html::a(
                 $this->labelMap[$format] ?? strtoupper($format),
                 $url,
-                [
-                    'class' => 'btn btn-outline-secondary me-2',
-                    // 'data-fancybox' => 'export',
-                    // 'data-type' => 'iframe'
-                ]
+                ['class' => 'btn btn-outline-secondary me-2']
             );
         }
 
