@@ -10,7 +10,7 @@ class m270921_260309_create_report_templates_table extends Migration
 {
     public function safeUp()
     {
-        $this->header_html = <<<HTML
+        $header_html = <<<HTML
         <table width="100%" cellspacing="0" cellpadding="0">
             <tbody>
                 <tr>
@@ -35,11 +35,20 @@ class m270921_260309_create_report_templates_table extends Migration
         </table>
         HTML;
 
+        $footer_html = <<< HTML
+            <p align="center" style="color: #64af44;">
+                <span>Rua Rio Grande do Norte, 1786, Vila Operária, Teresina - PI</span><br>
+                <span>Fone:(86) 9 9900 - 7567</span><br>
+                <span>croacworks.com.br</span>
+            </p>
+
+        HTML;
+
         $this->createTable('{{%report_templates}}', [
             'id' => $this->primaryKey(),
             'group_id' => $this->integer()->notNull(),
-            'header' => $this->text(),
-            'footer' => $this->text(),
+            'header' => $this->text()->defaultValue($header_html),
+            'footer' => $this->text()->defaultValue($footer_html),
             'styles' => $this->text(),
             'created_at' => $this->timestamp()->defaultExpression('CURRENT_TIMESTAMP'),
             'updated_at' => $this->timestamp()->defaultExpression('CURRENT_TIMESTAMP')->append('ON UPDATE CURRENT_TIMESTAMP'),
