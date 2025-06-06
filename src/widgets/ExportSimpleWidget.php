@@ -36,10 +36,11 @@ class ExportSimpleWidget extends Widget
         $trigger = $request->get($this->exportTrigger);
 
         if (in_array($trigger, $this->formats, true)) {
-            Yii::$app->controller->layout = '_blank';
+            ob_clean();
+            Yii::$app->controller->layout = false;
             Yii::$app->response->format = Response::FORMAT_RAW;
-            $filename = $request->get('filename', $this->filename);
 
+            $filename = $request->get('filename', $this->filename);
             $data = [];
             $columnKeys = [];
             $columnLabels = [];
@@ -64,11 +65,9 @@ class ExportSimpleWidget extends Widget
                     if ($attribute) {
                         $columnKeys[] = $attribute;
                         $columnLabels[$attribute] = $label;
-                        if (is_callable($value)) {
-                            $row[$attribute] = call_user_func($value, $model);
-                        } else {
-                            $row[$attribute] = ArrayHelper::getValue($model, $attribute);
-                        }
+                        $row[$attribute] = is_callable($value)
+                            ? call_user_func($value, $model)
+                            : ArrayHelper::getValue($model, $attribute);
                     }
                 }
                 $data[] = $row;
@@ -91,13 +90,20 @@ class ExportSimpleWidget extends Widget
                 }
                 $html .= '</tbody></table>';
 
-                return $html;
+                $mpdf = new Mpdf();
+                $mpdf->WriteHTML($html);
+                return Yii::$app->response->sendContentAsFile(
+                    $mpdf->Output('', \Mpdf\Output\Destination::STRING_RETURN),
+                    $filename . '.pdf',
+                    [
+                        'mimeType' => 'application/pdf',
+                        'inline' => false,
+                    ]
+                );
             }
 
             if ($trigger === 'csv') {
-                header("Content-Type: text/csv");
-                header("Content-Disposition: attachment; filename={$filename}.csv");
-                $output = fopen('php://output', 'w');
+                $output = fopen('php://temp', 'r+');
                 fputcsv($output, array_map(fn($key) => $columnLabels[$key] ?? $key, $columnKeys));
                 foreach ($data as $row) {
                     $line = [];
@@ -106,28 +112,47 @@ class ExportSimpleWidget extends Widget
                     }
                     fputcsv($output, $line);
                 }
+                rewind($output);
+                $csvContent = stream_get_contents($output);
                 fclose($output);
-                return;
+
+                return Yii::$app->response->sendContentAsFile(
+                    $csvContent,
+                    $filename . '.csv',
+                    [
+                        'mimeType' => 'text/csv',
+                        'inline' => false,
+                    ]
+                );
             }
 
             if ($trigger === 'excel') {
                 $spreadsheet = new Spreadsheet();
                 $sheet = $spreadsheet->getActiveSheet();
-                $sheet->fromArray([array_map(fn($key) => $columnLabels[$key] ?? $key, $columnKeys)], NULL, 'A1');
+                $sheet->fromArray([array_map(fn($key) => $columnLabels[$key] ?? $key, $columnKeys)], null, 'A1');
                 foreach ($data as $i => $row) {
                     $line = [];
                     foreach ($columnKeys as $key) {
                         $line[] = $row[$key] ?? '';
                     }
-                    $sheet->fromArray([$line], NULL, 'A' . ($i + 2));
+                    $sheet->fromArray([$line], null, 'A' . ($i + 2));
                 }
                 $writer = new Xlsx($spreadsheet);
-                header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                header("Content-Disposition: attachment; filename=\"{$filename}.xlsx\"");
-                header('Cache-Control: max-age=0');
+                ob_start();
                 $writer->save('php://output');
-                return;
+                $excelContent = ob_get_clean();
+
+                return Yii::$app->response->sendContentAsFile(
+                    $excelContent,
+                    $filename . '.xlsx',
+                    [
+                        'mimeType' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                        'inline' => false,
+                    ]
+                );
             }
+
+            Yii::$app->end();
         }
 
         // Render botões
@@ -140,7 +165,11 @@ class ExportSimpleWidget extends Widget
             $buttons[] = Html::a(
                 $this->labelMap[$format] ?? strtoupper($format),
                 $url,
-                ['class' => 'btn btn-outline-secondary me-2']
+                [
+                    'class' => 'btn btn-outline-secondary me-2',
+                    'target' => '_blank',
+                    'data-pjax' => '0',
+                ]
             );
         }
 
