@@ -36,7 +36,7 @@ class ExportSimpleWidget extends Widget
         $trigger = $request->get($this->exportTrigger);
 
         if (in_array($trigger, $this->formats, true)) {
-            ob_clean();
+
             Yii::$app->controller->layout = false;
             Yii::$app->response->format = Response::FORMAT_RAW;
 
