@@ -9,6 +9,8 @@ class m270921_260309_fix_menu_ids_sequentially extends Migration
 {
     public function safeUp()
     {
+        $this->execute('SET foreign_key_checks = 0;');
+
         $menus = (new \yii\db\Query())
             ->from('menus')
             ->orderBy(['menu_id' => SORT_ASC, 'order' => SORT_ASC])
@@ -46,6 +48,7 @@ class m270921_260309_fix_menu_ids_sequentially extends Migration
                 'status'     => $menu['status'],
             ])->execute();
         }
+        $this->execute('SET foreign_key_checks = 1;');
     }
 
     public function safeDown()
