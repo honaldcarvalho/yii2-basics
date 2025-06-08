@@ -66,6 +66,19 @@ class PageController extends AuthController
             'model' =>$model,
         ]);
     }
+
+    public function renderShow($page,$language = 2)
+    {
+        $model = $this->findModel(['slug'=>$page,'language_id'=>$language]);
+        
+        if(isset($_GET['modal']) && $_GET['modal'] == 1){
+            $this->layout = 'main-blank';
+        }
+
+        return $this->render('view', [
+            'model' =>$model,
+        ]);
+    }
     /**
      * Creates a new Page model.
      * If creation is successful, the browser will be redirected to the 'view' page.
