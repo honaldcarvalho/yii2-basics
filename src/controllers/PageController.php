@@ -67,11 +67,11 @@ class PageController extends AuthController
         ]);
     }
 
-    public function renderShow($page,$language = 2)
+    public function renderShow($page,$language = 2,$modal = null)
     {
         $model = $this->findModel(['slug'=>$page,'language_id'=>$language]);
         
-        if(isset($_GET['modal']) && $_GET['modal'] == 1){
+        if($modal && $modal == 1){
             $this->layout = 'main-blank';
         }
 
