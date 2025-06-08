@@ -67,7 +67,7 @@ class PageController extends AuthController
         ]);
     }
 
-    public function renderShow($page,$language = 2,$modal = null)
+    public function actionShow($page,$language = 2,$modal = null)
     {
         $model = $this->findModel(['slug'=>$page,'language_id'=>$language]);
         
