@@ -40,11 +40,33 @@ $theme = \Yii::$app->user->identity->theme;
     <?php $this->head() ?>
     <?php 
     $script = <<< JS
-        // Mostra o carregando
-        if ($('#custom-loading').length === 0) {
-            $('body').append('<div id="custom-loading" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;background:rgba(255,255,255,0.8);display:flex;align-items:center;justify-content:center;font-size:20px;">Carregando...</div>');
-        }
-        JS;
+        Fancybox.bind("[data-fancybox]");
+        $(document).on('click', '[data-fancybox]', function () {
+            // Mostra o carregando
+            $.fancybox.showLoading = function () {
+                if ($('#custom-loading').length === 0) {
+                    $('body').append('<div id="custom-loading" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;background:rgba(255,255,255,0.8);display:flex;align-items:center;justify-content:center;font-size:20px;">Carregando...</div>');
+                }
+            };
+
+            // Esconde o carregando
+            $.fancybox.hideLoading = function () {
+                $('#custom-loading').remove();
+            };
+
+            $.fancybox.showLoading();
+        });
+
+        // Esconde após abrir o fancybox
+        $(document).on('afterShow.fb', function () {
+            $.fancybox.hideLoading();
+        });
+
+        // Também remove ao fechar (garantia extra)
+        $(document).on('afterClose.fb', function () {
+            $.fancybox.hideLoading();
+        });
+    JS;
     $this->registerJs($script);
     ?>
     <link href="<?= Yii::getAlias('@web') ?>/css/site.css" rel="stylesheet">
