@@ -40,28 +40,10 @@ $theme = \Yii::$app->user->identity->theme;
     <?php $this->head() ?>
     <?php 
     $script = <<< JS
-    // Reforça definição de Fancybox
-    const FancyboxGlobal = window.Fancybox || undefined;
-
-    if (typeof FancyboxGlobal !== 'undefined') {
-        FancyboxGlobal.bind("[data-fancybox]");
+    // Mostra o carregando
+    if ($('#custom-loading').length === 0) {
+        $('body').append('<div id="custom-loading" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;background:rgba(255,255,255,0.8);display:flex;align-items:center;justify-content:center;font-size:20px;">Carregando...</div>');
     }
-
-    $(document).on('click', '[data-fancybox]', function () {
-        if ($('#custom-loading').length === 0) {
-            $('body').append('<div id="custom-loading" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;background:rgba(255,255,255,0.8);display:flex;align-items:center;justify-content:center;font-size:20px;">Carregando...</div>');
-        }
-    });
-
-    // Esconde após abrir o fancybox
-    $(document).on('afterShow.fb', function () {
-        $('#custom-loading').remove();
-    });
-
-    // Também remove ao fechar (garantia extra)
-    $(document).on('afterClose.fb', function () {
-        $('#custom-loading').remove();
-    });
     JS;
     $this->registerJs($script);
     ?>
