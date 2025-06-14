@@ -208,11 +208,7 @@ a.btn-warning:hover {
     width: 100% !important;
 }
 
-.dark-mode .table-warning{
-    background-color: #fbff00 !important;
-   
-    color: #000000 !important;
-}
+
 .ui-sortable-helper {
     background-color: #669900 !important;
     color: #fff !important;
@@ -626,4 +622,9 @@ td {
 
 .form-group {
     padding-right: 7.5px!important;
+}
+
+.dark-mode .table-warning{
+    background-color: #fbff00 !important;
+    color: #000000 !important;
 }
