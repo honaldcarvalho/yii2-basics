@@ -626,5 +626,8 @@ td {
 
 .dark-mode .table-warning{
     background-color: #fbff00 !important;
+}
+
+.dark-mode .table-warning *{
     color: #000000 !important;
 }
