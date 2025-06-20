@@ -174,7 +174,7 @@ class EmailServiceController extends AuthController
      * @return EmailService the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel($id, $status = null)
     {
         if (($model = EmailService::findOne($id)) !== null) {
             return $model;
