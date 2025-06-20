@@ -4,7 +4,6 @@ namespace weebz\yii2basics\controllers;
 
 use Yii;
 use weebz\yii2basics\models\EmailService;
-use weebz\yii2basics\models\EmailServiceSearch;
 use weebz\yii2basics\models\Configuration;
 use yii\web\NotFoundHttpException;
 use yii\symfonymailer\Mailer;

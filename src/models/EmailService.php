@@ -19,7 +19,7 @@ use yii\symfonymailer\Mailer;
  * @property string $password
  * @property int $port
  */
-class EmailService extends \yii\db\ActiveRecord
+class EmailService extends ModelCommon
 {
     public $verGroup = false;
     /**
