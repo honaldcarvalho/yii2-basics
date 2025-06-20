@@ -20,7 +20,7 @@ class EmailServiceController extends AuthController
      */
     public function actionIndex()
     {
-        $searchModel = new EmailServiceSearch();
+        $searchModel = new EmailService();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
