@@ -70,9 +70,6 @@ class ConfigurationController extends AuthController
                 }
             }
 
-            $count = Configuration::find(['id'])->count();
-            $model->posicao = $count + 1;
-
             if($model->save()) {
                 return $this->redirect(['view', 'id' => $model->id]);
             }
