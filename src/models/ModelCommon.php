@@ -33,11 +33,16 @@ class ModelCommon extends \yii\db\ActiveRecord
     {
         $query = parent::find();
 
-        // Não aplicar o filtro se for subquery de relacionamento
-        if (!$query->isPrimary) {
-            return $query;
+        $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 5);
+        foreach ($backtrace as $trace) {
+            if (isset($trace['function']) && str_starts_with($trace['function'], 'get') && isset($trace['class'])) {
+                if (is_subclass_of($trace['class'], \yii\db\BaseActiveRecord::class)) {
+                    // Está sendo chamado dentro de um relacionamento
+                    return $query;
+                }
+            }
         }
-        
+
         if ($verGroup === null) {
             $instance = new static();
             $verGroup = $instance->verGroup ?? true;
@@ -57,7 +62,7 @@ class ModelCommon extends \yii\db\ActiveRecord
                 if ($model->hasAttribute('group_id')) {
                     $query->andWhere(["{$table}.group_id" => $groupIds]);
 
-                // Caso precise navegar por relações
+                    // Caso precise navegar por relações
                 } elseif (method_exists($model, 'groupRelationPath')) {
                     $path = $model::groupRelationPath();
                     $relationPath = implode('.', $path);
@@ -105,13 +110,13 @@ class ModelCommon extends \yii\db\ActiveRecord
             return false;
         }
 
-        if($insert){
+        if ($insert) {
             $user = AuthController::User();
 
             if (AuthController::isAdmin()) {
                 if (!empty($this->group_id)) {
                     return true;
-                } else if(($admin_group = Parameter::findOne(['name' => 'admin-group'])?->value) !== null && $this->hasAttribute('group_id')){
+                } else if (($admin_group = Parameter::findOne(['name' => 'admin-group'])?->value) !== null && $this->hasAttribute('group_id')) {
                     $this->group_id = $admin_group;
                 }
             }
@@ -262,10 +267,9 @@ class ModelCommon extends \yii\db\ActiveRecord
                     $relationPath .= ($i > 0 ? '.' : '') . $relation;
                     $query->joinWith([$relationPath]);
                 }
-        
+
                 $tableAlias = Yii::createObject(static::class)->getRelation(end($groupPath))->modelClass::tableName();
                 $query->andWhere(["{$tableAlias}.group_id" => $group_ids]);
-
             } elseif (isset($options['groupModel'])) {
                 $query->andFilterWhere(['in', "{$options['groupModel']['table']}.group_id", $group_ids]);
             } elseif ($this->hasAttribute('group_id')) {
@@ -324,9 +328,9 @@ class ModelCommon extends \yii\db\ActiveRecord
                 } else if (str_contains($field, 'sod') || str_contains($field, 'eod')) {
                     [$field_date, $pos] = explode('FDT', $field);
                     if ($pos == 'sod') {
-                        $query->andFilterWhere(['>=', "$table.".$field_date, $search]);
+                        $query->andFilterWhere(['>=', "$table." . $field_date, $search]);
                     } else if ($pos == 'eod') {
-                        $query->andFilterWhere(['<=', "$table.".$field_date, $search]);
+                        $query->andFilterWhere(['<=', "$table." . $field_date, $search]);
                     }
                 } else {
                     $query->andFilterWhere(["$table.$field" => $search]);
