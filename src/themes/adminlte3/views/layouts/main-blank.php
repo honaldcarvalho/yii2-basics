@@ -40,12 +40,6 @@ $params = Configuration::get();
 <?php  $this->beginBody() ?>
 <?= Alert::widget() ?>
 <div class="login-box">
-    <div class="login-logo">
-    <img src="<?=  ControllerCommon::getAssetsDir(); ?>/img/croacworks-logo-hq.png" alt="" class="w-50 brand-image elevation-3"><br>
-        <b><?=$params->title;?></b></a>
-    </div>
-    <!-- /.login-logo -->
-
     <?= $content ?>
 </div>
 <!-- /.login-box -->
