@@ -5,6 +5,7 @@ namespace weebz\yii2basics\models;
 use weebz\yii2basics\controllers\AuthController;
 use Yii;
 use yii\symfonymailer\Mailer;
+
 /**
  * This is the model class for table "Configuration".
  *
@@ -51,7 +52,7 @@ class Configuration extends ModelCommon
     public function rules()
     {
         return [
-            [['description', 'host', 'title','slogan', 'bussiness_name', 'email'], 'required','on'=>self::SCENARIO_DEFAULT],
+            [['description', 'host', 'title', 'slogan', 'bussiness_name', 'email'], 'required', 'on' => self::SCENARIO_DEFAULT],
             [['language_id', 'group_id', 'email_service_id', 'status', 'logging'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['description', 'host', 'title', 'bussiness_name', 'email'], 'string', 'max' => 255],
@@ -123,7 +124,23 @@ class Configuration extends ModelCommon
      */
     public static function get()
     {
-        return self::find(false)->where(['id' =>  AuthController::userGroup()])->one() ?? self::find(false)->where(['id' => 1])->one() ?? new static();
+        $hostName = Yii::$app->request->hostName;
+
+        // Tenta buscar pela coluna "host"
+        $model = self::find(false)->where(['host' => $hostName])->one();
+
+        // Se não encontrar, busca pelo grupo do usuário
+        if (!$model) {
+            $model = self::find(false)->where(['id' => AuthController::userGroup()])->one();
+        }
+
+        // Se ainda não encontrar, tenta buscar o id 1
+        if (!$model) {
+            $model = self::find(false)->where(['id' => 1])->one();
+        }
+
+        // Retorna o encontrado ou uma nova instância
+        return $model ?? new static();
     }
 
     public function getParameters()
@@ -155,5 +172,4 @@ class Configuration extends ModelCommon
 
         return $mailer;
     }
-
 }
