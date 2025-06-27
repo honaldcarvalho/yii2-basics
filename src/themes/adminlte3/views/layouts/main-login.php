@@ -15,7 +15,11 @@ WeebzAsset::register($this);
 $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700');
 $this->registerCssFile('https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css');
 PluginAsset::register($this)->add(['fontawesome','toastr']);
-$params = Configuration::get();
+$configuration = Configuration::get();
+$image = ControllerCommon::getAssetsDir() . '/img/croacworks-logo-hq.png';
+if($configuration->file !== null){
+    $image = $configuration->file->url;
+}
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -23,7 +27,7 @@ $params = Configuration::get();
 <head>
     <meta charset="<?= Yii::$app->charset ?>">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title><?= $params->title; ?> | Log in</title>
+    <title><?= $configuration->title; ?> | Log in</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex">
@@ -41,8 +45,8 @@ $params = Configuration::get();
 <?= Alert::widget() ?>
 <div class="login-box">
     <div class="login-logo">
-    <img src="<?=  ControllerCommon::getAssetsDir(); ?>/img/croacworks-logo-hq.png" alt="" class="w-50 brand-image elevation-3"><br>
-        <b><?=$params->title;?></b> | LOGIN</a>
+    <img src="<?= $image; ?>" alt="" class="w-50 brand-image elevation-3"><br>
+        <b><?=$configuration->title;?></b> | LOGIN</a>
     </div>
     <!-- /.login-logo -->
 
