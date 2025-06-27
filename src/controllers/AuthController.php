@@ -18,8 +18,8 @@ use yii\web\NotFoundHttpException;
 class AuthController extends ControllerCommon
 {
 
+    const ADMIN_GROUP_ID = 2;
     public $free = ['login', 'signup', 'error'];
-
 
     static function isGuest()
     {
@@ -85,12 +85,14 @@ class AuthController extends ControllerCommon
         return false;
     }
 
-    public static function isAdmin()
+    public static function isAdmin(): bool
     {
-        if (!Yii::$app->user->isGuest && UserGroup::find()->where(['user_id' => Yii::$app->user->identity->id, 'group_id' => [2]])->one()) {
-            return true;
-        }
-        return false;
+        return !self::isGuest() && UserGroup::find()
+            ->where([
+                'user_id' => Yii::$app->user->id,
+                'group_id' => self::ADMIN_GROUP_ID,
+            ])
+            ->exists();
     }
 
     static function getUserByToken()
@@ -227,42 +229,71 @@ class AuthController extends ControllerCommon
 
     public static function verAuthorization($request_controller, $request_action, $model = null, $app_path = 'app')
     {
+        // Verifica se o usuário está autenticado
         if (!self::isGuest()) {
 
+            // Verifica se a licença está válida
             if (self::verifyLicense() === null) {
+                // Define uma mensagem de aviso e retorna array vazio
                 Yii::$app->session->setFlash('warning', Yii::t('app', 'License expired!'));
                 return [];
             }
 
+            // Obtém todos os IDs dos grupos aos quais o usuário pertence
             $groups = self::User()->getUserGroupsId();
 
-            $query_rules = Rule::find()->where(['path' => $app_path, 'controller' => $request_controller, 'status' => 1]);
+            // Cria a consulta base das regras de acesso para o controller solicitado
+            $query_rules = Rule::find()->where([
+                'path' => $app_path,
+                'controller' => $request_controller,
+                'status' => 1
+            ]);
 
+            // Se o usuário NÃO for administrador
             if (!self::isAdmin()) {
+
+                // Se foi passado um modelo e ele possui controle por grupo
                 if ($model && $model->verGroup) {
-                    //group 1: common
+
+                    // Permite visualização de modelos com group_id = 1 (grupo comum)
                     if ($request_action == 'view' && $model->group_id == 1) {
                         return true;
                     }
+
+                    // Se o grupo do modelo não está entre os grupos do usuário, nega acesso
                     if (!in_array($model->group_id, $groups)) {
                         return false;
                     }
                 }
-                $rules = $query_rules->andWhere(['or', ['in', 'group_id', $groups], ['group_id' => self::User()->group_id]])->all();
+
+                // Filtra regras que pertencem a um dos grupos do usuário
+                $rules = $query_rules
+                    ->andWhere([
+                        'or',
+                        ['in', 'group_id', $groups],
+                        ['group_id' => self::User()->group_id]
+                    ])
+                    ->all();
             } else {
+                // Se for administrador, busca todas as regras sem filtro de grupo
                 $rules = $query_rules->all();
             }
 
+            // Percorre todas as regras encontradas
             foreach ($rules as $key => $rule) {
+                // Divide as ações permitidas da regra (separadas por ";")
                 $actions = explode(';', $rule->actions);
-                foreach ($actions as $action) {
 
+                // Verifica se a ação solicitada está entre as ações permitidas
+                foreach ($actions as $action) {
                     if ($action == $request_action) {
-                        return true;
+                        return true; // Acesso permitido
                     }
                 }
             }
         }
+
+        // Caso nenhuma verificação permita acesso, retorna false
         return false;
     }
 
@@ -277,7 +308,6 @@ class AuthController extends ControllerCommon
     protected function findModel($id, $model_name = null)
     {
         if (!$model_name) {
-            //$path = str_replace('backend','common'); --> ADVANCED
             $path = str_replace('controllers', 'models', static::getClassPath());
             $path_model = str_replace('Controller', '', $path);
             $model_obj = new $path_model;
@@ -287,11 +317,19 @@ class AuthController extends ControllerCommon
             $model = $model_name::find()->where([$model_obj->tableSchema->primaryKey[0] => $id]);
         }
 
-        if ($model_obj->verGroup !== null && $model_obj->verGroup && !self::isAdmin()) {
+        // Verifica se o modelo tem a propriedade verGroup E se o usuário NÃO é admin
+        if (
+            property_exists($model_obj, 'verGroup') &&
+            $model_obj->verGroup &&
+            !self::isAdmin()
+        ) {
             $groups = self::User()->getUserGroupsId();
+
+            // Permite visualizar registros do grupo comum (id=1) na action "view"
             if (Yii::$app->controller->action->id == 'view') {
                 $groups[] = 1;
             }
+
             $model->andFilterWhere(['in', 'group_id', $groups]);
         }
 
