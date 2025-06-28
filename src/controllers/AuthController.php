@@ -232,9 +232,13 @@ class AuthController extends ControllerCommon
         // Verifica se o usuário está autenticado
         if (!self::isGuest()) {
 
+            // Se for administrador, sempre permite o acesso
+            if (self::isAdmin()) {
+                return true;
+            }
+
             // Verifica se a licença está válida
             if (self::verifyLicense() === null) {
-                // Define uma mensagem de aviso e retorna array vazio
                 Yii::$app->session->setFlash('warning', Yii::t('app', 'License expired!'));
                 return [];
             }
@@ -249,46 +253,34 @@ class AuthController extends ControllerCommon
                 'status' => 1
             ]);
 
-            // Se o usuário NÃO for administrador
-            if (!self::isAdmin()) {
+            // Se foi passado um modelo e ele possui controle por grupo
+            if ($model && $model->verGroup) {
 
-                // Se foi passado um modelo e ele possui controle por grupo
-                if ($model && $model->verGroup) {
-
-                    // Permite visualização de modelos com group_id = 1 (grupo comum)
-                    if ($request_action == 'view' && $model->group_id == 1) {
-                        return true;
-                    }
-
-                    // Se o grupo do modelo não está entre os grupos do usuário, nega acesso
-                    if (!in_array($model->group_id, $groups)) {
-                        return false;
-                    }
+                // Permite visualização de modelos com group_id = 1 (grupo comum)
+                if ($request_action == 'view' && $model->group_id == 1) {
+                    return true;
                 }
 
-                // Filtra regras que pertencem a um dos grupos do usuário
-                $rules = $query_rules
-                    ->andWhere([
-                        'or',
-                        ['in', 'group_id', $groups],
-                        ['group_id' => self::User()->group_id]
-                    ])
-                    ->all();
-            } else {
-                // Se for administrador, busca todas as regras sem filtro de grupo
-                $rules = $query_rules->all();
+                // Se o grupo do modelo não está entre os grupos do usuário, nega acesso
+                if (!in_array($model->group_id, $groups)) {
+                    return false;
+                }
             }
 
-            // Percorre todas as regras encontradas
-            foreach ($rules as $key => $rule) {
-                // Divide as ações permitidas da regra (separadas por ";")
-                $actions = explode(';', $rule->actions);
+            // Filtra regras que pertencem a um dos grupos do usuário
+            $rules = $query_rules
+                ->andWhere([
+                    'or',
+                    ['in', 'group_id', $groups],
+                    ['group_id' => self::User()->group_id]
+                ])
+                ->all();
 
-                // Verifica se a ação solicitada está entre as ações permitidas
-                foreach ($actions as $action) {
-                    if ($action == $request_action) {
-                        return true; // Acesso permitido
-                    }
+            // Percorre todas as regras encontradas
+            foreach ($rules as $rule) {
+                $actions = explode(';', $rule->actions);
+                if (in_array($request_action, $actions)) {
+                    return true;
                 }
             }
         }
