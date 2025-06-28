@@ -117,7 +117,7 @@ class AuthController extends ControllerCommon
         $action = $this->action->id;
 
         $show = $this->pageAuth();
-        if (in_array($action, $this->free)) {
+        if (in_array($action, $this->free) || self::isAdmin()) {
             $show = true;
         }
 
