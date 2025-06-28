@@ -9,6 +9,7 @@ use Yii;
 use weebz\yii2basics\models\Rule;
 use weebz\yii2basics\models\User;
 use weebz\yii2basics\models\UserGroup;
+use yii\behaviors\TimestampBehavior;
 use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
 
@@ -122,6 +123,12 @@ class AuthController extends ControllerCommon
         }
 
         $behaviors = [
+            'timestamp' => [
+                'class' => TimestampBehavior::class,
+                'value' => function () {
+                    return date('Y-m-d H:i:s'); // Respeita o timeZone do Yii2
+                },
+            ],
             'access' => [
                 'class' => AccessControl::class,
                 'rules' => [
