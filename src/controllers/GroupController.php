@@ -104,12 +104,16 @@ class GroupController extends AuthController
         $message = "Erro ao clonar grupo.";
         $group = $this->findModel($id);
         try {
-            $newGroup = Group::cloneGroupWithRules($id, 'Clone of ' . $group->name);
-            if ($newGroup) {
-                $message = "Grupo clonado com sucesso: " . $newGroup->id;
+            $result = Group::cloneGroupWithRules($id, 'Clone of ' . $group->name);
+            if ($result['success']) {
+                $message = "Grupo clonado com sucesso: " . $result['group']->id;
+                \Yii::$app->session->setFlash('success', $message);
+                return $this->redirect(['index']);
+            } else {
+                $message = "Erro ao clonar grupo: " . $result['message'];
+                \Yii::$app->session->setFlash('success', $message);
+                return $this->redirect(['index']);
             }
-            \Yii::$app->session->setFlash('success', $message);
-            return $this->redirect(['index']);
         } catch (\Throwable $th) {
             \Yii::$app->session->setFlash('danger', $message);
             return $this->redirect(['view', 'id' => $id]);
