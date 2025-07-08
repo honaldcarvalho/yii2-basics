@@ -8,6 +8,7 @@ use weebz\yii2basics\models\UserGroup;
 use Yii;
 
 use yii\web\NotFoundHttpException;
+
 /**
  * GroupController implements the CRUD actions for Group model.
  */
@@ -39,10 +40,10 @@ class GroupController extends AuthController
     public function actionView($id)
     {
         $users = new \yii\data\ActiveDataProvider([
-            'query' => UserGroup::find()->where(['group_id'=>$id]),
+            'query' => UserGroup::find()->where(['group_id' => $id]),
             'pagination' => false,
-         ]);
- 
+        ]);
+
         return $this->render('view', [
             'model' => $this->findModel($id),
             'users' => $users
@@ -98,21 +99,65 @@ class GroupController extends AuthController
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id)
+    public function actionClone($id)
     {
+        $message = "Erro ao clonar grupo.";
+        $group = $this->findModel($id);
         try {
-            $this->findModel($id)->delete();
-            \Yii::$app->session->setFlash('success', 'Group deleted');
+            $newGroup = Group::cloneGroupWithRules($id, 'Clone of ' . $group->name);
+            if ($newGroup) {
+                $message = "Grupo clonado com sucesso: " . $newGroup->id;
+            }
+            \Yii::$app->session->setFlash('success', $message);
             return $this->redirect(['index']);
         } catch (\Throwable $th) {
-            $message = '';
-            if($th->errorInfo[0] == "23000"){
-                $message = Yii::t('app','In use!');
-            }
-            \Yii::$app->session->setFlash('danger', "Can't deleted group. {$message}");
+            \Yii::$app->session->setFlash('danger', $message);
             return $this->redirect(['view', 'id' => $id]);
         }
     }
+
+    /**
+     * Deletes an existing Group model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param int $id ID
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionDelete($id)
+    {
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            $group = $this->findModel($id);
+
+            // Exclui as regras associadas
+            foreach ($group->rules as $rule) {
+                $rule->delete();
+            }
+
+            // Exclui os vínculos com usuários
+            foreach ($group->userGroups as $userGroup) {
+                $userGroup->delete();
+            }
+
+            // Exclui o grupo
+            $group->delete();
+
+            $transaction->commit();
+            Yii::$app->session->setFlash('success', 'Group deleted');
+            return $this->redirect(['index']);
+        } catch (\Throwable $th) {
+            $transaction->rollBack();
+
+            $message = '';
+            if (isset($th->errorInfo[0]) && $th->errorInfo[0] == "23000") {
+                $message = Yii::t('app', 'In use!');
+            }
+
+            Yii::$app->session->setFlash('danger', "Can't delete group. {$message}");
+            return $this->redirect(['view', 'id' => $id]);
+        }
+    }
+
 
     /**
      * Finds the Group model based on its primary key value.
@@ -121,7 +166,7 @@ class GroupController extends AuthController
      * @return Group the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id,$model = null)
+    protected function findModel($id, $model = null)
     {
         if (($model = Group::findOne(['id' => $id])) !== null) {
             return $model;

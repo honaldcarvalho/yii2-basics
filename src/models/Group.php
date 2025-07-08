@@ -101,4 +101,48 @@ class Group extends \yii\db\ActiveRecord
 
         return $all;
     }
+
+    public static function cloneGroupWithRules($groupId, $newGroupName = null)
+    {
+        $transaction = Yii::$app->db->beginTransaction();
+
+        try {
+            $originalGroup = self::findOne($groupId);
+
+            if (!$originalGroup) {
+                throw new \Exception("Grupo original não encontrado.");
+            }
+
+            // Clonar o grupo
+            $newGroup = new self();
+            $newGroup->name = $newGroupName ?? $originalGroup->name . ' (Clone)';
+            $newGroup->status = $originalGroup->status;
+            $newGroup->parent_id = $originalGroup->parent_id;
+
+            if (!$newGroup->save()) {
+                throw new \Exception("Erro ao salvar o grupo clonado: " . json_encode($newGroup->errors));
+            }
+
+            // Clonar as regras
+            foreach ($originalGroup->rules as $rule) {
+                $newRule = new \weebz\yii2basics\models\Rule();
+                $newRule->attributes = $rule->attributes;
+                $newRule->group_id = $newGroup->id;
+
+                // Evita copiar ID ou timestamps se existirem
+                unset($newRule->id, $newRule->created_at, $newRule->updated_at);
+
+                if (!$newRule->save()) {
+                    throw new \Exception("Erro ao salvar regra clonada: " . json_encode($newRule->errors));
+                }
+            }
+
+            $transaction->commit();
+            return $newGroup;
+        } catch (\Throwable $e) {
+            $transaction->rollBack();
+            Yii::error("Erro ao clonar grupo: " . $e->getMessage(), __METHOD__);
+            return null;
+        }
+    }
 }
