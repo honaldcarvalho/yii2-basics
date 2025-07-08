@@ -9,12 +9,10 @@ class m231223_004846_alter_trigger_groups_after_insert_to_table_groups extends M
 {
     public function safeUp()
     {
-        $db_user = env('DB_USER');
-
         $this->execute('DROP TRIGGER IF EXISTS `groups_after_insert`;');
 
         $sql = <<<SQL
-        CREATE DEFINER=`$db_user`@`%` TRIGGER `groups_after_insert` AFTER INSERT ON `groups`
+        CREATE TRIGGER `groups_after_insert` AFTER INSERT ON `groups`
         FOR EACH ROW
         BEGIN
             DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
