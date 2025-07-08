@@ -99,7 +99,7 @@ class LicenseController extends AuthController
      * @return License the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel($id, $model = null)
     {
         if (($model = License::findOne($id)) !== null) {
             return $model;

@@ -98,7 +98,7 @@ class LogController extends AuthController
      * @return Log the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel($id, $model = null)
     {
         if (($model = Log::findOne($id)) !== null) {
             return $model;
