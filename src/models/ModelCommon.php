@@ -187,8 +187,12 @@ class ModelCommon extends \yii\db\ActiveRecord
             $query->select($options['select']);
         }
 
+        $sort = [
+            'defaultOrder' => ['id' => SORT_DESC], // padrão
+        ];
+
         if (isset($options['orderBy'])) {
-            $query->orderBy($options['orderBy']);
+            $sort['defaultOrder'] = $options['orderBy'];
         }
 
         if (isset($options['pageSize'])) {
@@ -239,6 +243,7 @@ class ModelCommon extends \yii\db\ActiveRecord
             'pagination' => [
                 'pageSize' => $pageSize
             ],
+            'sort' => $sort,
         ]);
 
         $this->load($params);
