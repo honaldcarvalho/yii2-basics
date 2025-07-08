@@ -108,7 +108,6 @@ class Group extends \yii\db\ActiveRecord
 
         try {
             $originalGroup = self::findOne($groupId);
-
             if (!$originalGroup) {
                 throw new \Exception("Grupo original não encontrado.");
             }
@@ -123,26 +122,25 @@ class Group extends \yii\db\ActiveRecord
                 throw new \Exception("Erro ao salvar o grupo clonado: " . json_encode($newGroup->errors));
             }
 
-            // Clonar as regras
+            // Trigger já inseriu regras padrão — agora inserimos as personalizadas do grupo original
             foreach ($originalGroup->rules as $rule) {
-                $newRule = new \weebz\yii2basics\models\Rule();
-                $newRule->attributes = $rule->attributes;
-                $newRule->group_id = $newGroup->id;
-
-                // Evita copiar ID ou timestamps se existirem
-                unset($newRule->id, $newRule->created_at, $newRule->updated_at);
-
-                if (!$newRule->save()) {
-                    throw new \Exception("Erro ao salvar regra clonada: " . json_encode($newRule->errors));
-                }
+                Yii::$app->db->createCommand()->upsert('rules', [
+                    'user_id' => $rule->user_id,
+                    'group_id' => $newGroup->id,
+                    'controller' => $rule->controller,
+                    'actions' => $rule->actions,
+                    'origin' => $rule->origin,
+                    'path' => $rule->path,
+                    'status' => $rule->status,
+                ])->execute();
             }
 
             $transaction->commit();
-            return ['success'=>true,'group'=>$newGroup];
+            return $newGroup;
         } catch (\Throwable $e) {
             $transaction->rollBack();
             Yii::error("Erro ao clonar grupo: " . $e->getMessage(), __METHOD__);
-            return ['success'=>false,'message'=>$e->getMessage()];
+            return null;
         }
     }
 }
