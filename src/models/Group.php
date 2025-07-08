@@ -34,7 +34,7 @@ class Group extends \yii\db\ActiveRecord
     {
         return [
             [['name'], 'required'],
-            [['status'], 'integer'],
+            [['status','parent_id'], 'integer'],
             [['name'], 'string', 'max' => 255],
             ['name', 'unique', 'targetClass' => 'weebz\yii2basics\models\Group'],
         ];
@@ -47,6 +47,7 @@ class Group extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
+            'parent_id' => Yii::t('app', 'Parent'),
             'name' => Yii::t('app', 'Name'),
             'status' => Yii::t('app', 'Active'),
         ];
