@@ -122,25 +122,30 @@ class Group extends \yii\db\ActiveRecord
                 throw new \Exception("Erro ao salvar o grupo clonado: " . json_encode($newGroup->errors));
             }
 
-            // Trigger já inseriu regras padrão — agora inserimos as personalizadas do grupo original
+            // Remove as regras padrão criadas pelo trigger
+            Yii::$app->db->createCommand()
+                ->delete('rules', ['group_id' => $newGroup->id])
+                ->execute();
+
+            // Clona as regras do grupo original
             foreach ($originalGroup->rules as $rule) {
-                Yii::$app->db->createCommand()->upsert('rules', [
-                    'user_id' => $rule->user_id,
-                    'group_id' => $newGroup->id,
-                    'controller' => $rule->controller,
-                    'actions' => $rule->actions,
-                    'origin' => $rule->origin,
-                    'path' => $rule->path,
-                    'status' => $rule->status,
-                ])->execute();
+                $newRule = new \weebz\yii2basics\models\Rule();
+                $newRule->attributes = $rule->attributes;
+                $newRule->group_id = $newGroup->id;
+
+                unset($newRule->id, $newRule->created_at, $newRule->updated_at); // se existirem
+
+                if (!$newRule->save()) {
+                    throw new \Exception("Erro ao salvar regra clonada: " . json_encode($newRule->errors));
+                }
             }
 
             $transaction->commit();
-            return ['success'=>true,'group'=>$newGroup];
+            return ['success' => true, 'group' => $newGroup];
         } catch (\Throwable $e) {
             $transaction->rollBack();
             Yii::error("Erro ao clonar grupo: " . $e->getMessage(), __METHOD__);
-            return ['success'=>false,'message'=>$e->getMessage()];
+            return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 }
