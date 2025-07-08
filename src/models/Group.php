@@ -138,11 +138,11 @@ class Group extends \yii\db\ActiveRecord
             }
 
             $transaction->commit();
-            return $newGroup;
+            return ['success'=>true,'group'=>$newGroup];
         } catch (\Throwable $e) {
             $transaction->rollBack();
             Yii::error("Erro ao clonar grupo: " . $e->getMessage(), __METHOD__);
-            return null;
+            return ['success'=>false,'message'=>$e->getMessage()];
         }
     }
 }
