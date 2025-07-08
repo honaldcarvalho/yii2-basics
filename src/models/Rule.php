@@ -39,7 +39,7 @@ class Rule extends \yii\db\ActiveRecord
         return [
             [['user_id', 'group_id', 'status'], 'integer'],
             [['controller', 'actions'], 'required'],
-            [['controller', 'actions'], 'string', 'max' => 255],
+            [['controller'], 'string', 'max' => 255],
             [['origin'], 'string'],
             [['group_id'], 'exist', 'skipOnError' => true, 'targetClass' => Group::class, 'targetAttribute' => ['group_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
