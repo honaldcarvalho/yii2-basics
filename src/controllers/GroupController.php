@@ -111,8 +111,8 @@ class GroupController extends AuthController
                 return $this->redirect(['index']);
             } else {
                 $message = "Erro ao clonar grupo: " . $result['message'];
-                \Yii::$app->session->setFlash('success', $message);
-                return $this->redirect(['index']);
+                \Yii::$app->session->setFlash('danger', $message);
+                return $this->redirect(['view', 'id' => $id]);
             }
         } catch (\Throwable $th) {
             \Yii::$app->session->setFlash('danger', $message);
