@@ -30,6 +30,15 @@ public function init(): void
 
     $script = <<< JS
     
+        $(document).on('click', '.copy-url-btn', function () {
+            const url = $(this).data('url');
+            navigator.clipboard.writeText(url).then(function() {
+                toastr.success("URL copied to clipboard!");
+            }, function(err) {
+                toastr.error("Failed to copy URL.");
+            });
+        });
+
         function removeFiles(e) {
     
             let el = $(e);
@@ -195,7 +204,7 @@ public function init(): void
                             [
                                 'class'=> ActionColumn::class,
                                 'headerOptions' => ['style' => 'width:10%'],
-                                'template' => '{view}{remove}{delete}',
+                                'template' => '{copy}{view}{remove}{delete}',
                                 'path' => 'app',
                                 'controller' => 'file',
                                 'buttons' => [
@@ -213,6 +222,18 @@ public function init(): void
                                                 '<i class="fas fa-trash"></i>',
                                                 ['onclick' => 'removeFiles(this)', 'class' => 'btn btn-outline-secondary', "data-id" => $model->id, "data-toggle" => "tooltip", "data-placement" => "top", "title" => \Yii::t('app', 'Remove')]
                                             );
+                                    },
+                                    'copy' => function ($url, $model, $key) {
+                                        return Html::button(
+                                            '<i class="fas fa-copy"></i>',
+                                            [
+                                                'class' => 'btn btn-outline-secondary copy-url-btn',
+                                                'data-url' => Yii::getAlias('@host') . $model->url,
+                                                'data-toggle' => 'tooltip',
+                                                'data-placement' => 'top',
+                                                'title' => Yii::t('app', 'Copy URL')
+                                            ]
+                                        );
                                     },
                                 ]
                             ],
