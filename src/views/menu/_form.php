@@ -17,10 +17,10 @@ async function populateDropdown() {
     const response = await fetch('{$assetsDir}/plugins/fontawesome-free/list.json');
     const iconList = await response.json();
 
-    const dropdown = document.getElementById('servico-icon');
+    const dropdown = document.getElementById('menu-icon');
 
     iconList.forEach(icon => {
-        $('#servico-icon').append(`<option data-icon="\${icon}" value="\${icon}">\${icon}</option>`);
+        $('#menu-icon').append(`<option data-icon="\${icon}" value="\${icon}">\${icon}</option>`);
     });
 }
 
@@ -31,7 +31,7 @@ function iformat(icon) {
 
 populateDropdown().then(iconsArray => {
 
-    $('#servico-icon').select2({
+    $('#menu-icon').select2({
         width: "100%",
         templateSelection: iformat,
         templateResult: iformat,
@@ -40,7 +40,7 @@ populateDropdown().then(iconsArray => {
         }
     });
 
-    $('#servico-icon').val("{$model->icon}").trigger("change");
+    $('#menu-icon').val("{$model->icon}").trigger("change");
 });
 JS;
 
