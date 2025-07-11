@@ -54,6 +54,9 @@ class MenuController extends AuthController
 
         if ($model->load(Yii::$app->request->post())) 
         {
+            $maxId = Menu::find()->max('id');
+            $id =  $maxId + 1;
+            $model->id = $id;
 
             if ($model->save()) {
                 if(!empty($model->menu_id) && $model->menu_id !== null){
