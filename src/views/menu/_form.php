@@ -16,9 +16,10 @@ use yii\bootstrap5\ActiveForm;
     <?= $form->field($model, 'menu_id')->widget(\kartik\select2\Select2::classname(), [
                                 'data' => yii\helpers\ArrayHelper::map(Menu::find()
                                 ->asArray()->all(),'id','label'),
-                                'options' => ['width'=>'100%','multiple' => false, 'placeholder' => Yii::t('app','Select Menu')],
+                                'options' => ['multiple' => false, 'placeholder' => Yii::t('app','Select Menu')],
                                 'pluginOptions' => [
-                                    'allowClear' => true
+                                    'allowClear' => true,
+                                    'width'=>'100%',
                                 ],
                             ])->label('Menu');
                         ?>
