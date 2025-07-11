@@ -342,7 +342,7 @@ class ControllerCommon extends \yii\web\Controller
             $verClass = self::classExist($post['modelClass']);
 
             if ($verClass === null) {
-                return ['success' => false, 'message' => "Model class '{$post['modelClass']}' does not exist."];
+                return \yii\helpers\Json::encode(['success' => false, 'message' => "Model class '{$post['modelClass']}' does not exist."]);
             } else{
                 $modelClassNamespace = $verClass; 
             }
