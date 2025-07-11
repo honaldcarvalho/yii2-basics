@@ -34,23 +34,6 @@ class m240723_012946_create_table_youtube extends Migration
             'status' => $this->smallInteger(6)->defaultValue(1),
         ], $collation);
 
-        $maxId = Menu::find()->where('id < 99')->max('id');
-        $id =  $maxId + 1;
-
-        $this->insert('menus', [
-            'id'=> $id,
-            'menu_id' => null,
-            'label'   => 'Videos',
-            'icon_style'=> 'fas',
-            'icon'    => 'fas fa-youtube',
-            'visible' => 'videos;index',
-            'url'     => '/video/index',
-            'path'  => 'app',
-            'active'  => 'video',
-            'order'   => 0,
-            'status'  => true
-        ]);
-
     }
 
     /**

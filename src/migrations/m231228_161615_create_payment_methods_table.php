@@ -28,22 +28,6 @@ class m231228_161615_create_payment_methods_table extends Migration
             'status'=>true
         ]);
 
-        $maxId = Menu::find()->where('id < 99')->max('id');
-        $id =  $maxId + 1;
-
-        $this->insert('menus', [
-            'id'=> $id,
-            'menu_id' => null,
-            'label'   => 'Payment Methods',
-            'icon'    => 'fas fa-wallet',
-            'visible' => 'payment-method;index',
-            'url'     => '/payment-method/index',
-            'path'  => 'app/custom',
-            'active'  => 'payment-method',
-            'order'   => '0',
-            'status'  => '1',
-        ]);
-
         $this->insert('payment_methods', [
             'id'=>1,
             'description' => 'Free',
