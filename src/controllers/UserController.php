@@ -117,7 +117,6 @@ class UserController extends AuthController
         $model = new User();
         $group = null;
 
-
         if ($this->request->isPost) {
             $post = $this->request->post();
             if ($model->load($post)) {
@@ -146,6 +145,7 @@ class UserController extends AuthController
                 $model->generateAuthKey();
 
                 if($model->validate() && $model->save()){
+                    $this->updateUpload($model,$post);
                     Yii::$app->session->setFlash('success', 'User created as success! ');
 
                     if($group){
@@ -183,8 +183,9 @@ class UserController extends AuthController
         $model->scenario = User::SCENARIO_UPDATE;
         $model->username_old = $model->username;
         $model->email_old = $model->email;
-
+        $post = Yii::$app->request->post();
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+            $this->updateUpload($model,$post);
             $model->resetPassword();
             return $this->redirect(['view', 'id' => $model->id]);
         }
