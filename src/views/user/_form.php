@@ -46,7 +46,7 @@ $this->registerJs($script);
         <div class="col-sm-12">
             <?= $form->field($model, 'file_id')->fileInput() ?>
             <?= \weebz\yii2basics\widgets\UploadFoto::widget([
-                'imagem'=> $model->file ? $model->file->url : '',
+                'imagem'=> $model?->file?->url,
                 'fileField'=>'user-file_id',
                 'aspectRatio'=>'1/1',
                 'maxWidth'=>'1920'
