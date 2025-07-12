@@ -43,7 +43,7 @@ if(!empty($params->file_id) && $params->file != null){
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image user-image">
                 <?php if(Yii::$app->user->identity->file):?>
-                    <img class='brand-image img-circle elevation-2' src="<?= Yii::$app->user->identity->file->urlThumb; ?>" style='width:32px; opacity: .8' />
+                    <img class='brand-image img-circle elevation-2' src="<?= Yii::$app->user->identity->file->url; ?>" style='width:32px; opacity: .8' />
                 <?php else:?>
                         <i class="fas fa-user-circle img-circle elevation-2" alt="User Image"></i>
                 <?php endif;?>
