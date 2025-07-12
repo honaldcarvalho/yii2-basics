@@ -32,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             [
                                 'attribute'=>'file_id',
                                 'value'=> function($model){
-                                    if($model->file->url === null) {
+                                    if($model->file === null) {
                                         return Yii::t('app', 'No image');
                                     }
                                     return Html::img($model->file->url, ['class'=>'img-fluid', 'style'=>'max-width: 200px;']);
