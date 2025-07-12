@@ -215,7 +215,7 @@ class ControllerCommon extends \yii\web\Controller
         }
 
         if($model->save()) {
-            Yii::$app->getSession()->setFlash('success', serialize($file['data']));
+            Yii::$app->getSession()->setFlash('success', Yii::t('app', 'File updated successfully!'));
             if($changed){
                 StorageController::removeFile($old);
             }
