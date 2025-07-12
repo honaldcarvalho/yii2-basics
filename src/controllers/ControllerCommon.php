@@ -189,6 +189,48 @@ class ControllerCommon extends \yii\web\Controller
 
     }
 
+    public function updateAsUpload($id)
+    {
+
+        $model = $this->findModel($id);
+        $old = $model->file_id;
+        $changed = false;
+        $post = Yii::$app->request->post(); 
+
+        if ($model->validate() && $model->load($post)) { 
+            $uploadFile = \yii\web\UploadedFile::class;
+            $file = $uploadFile::getInstance($model, 'file_id');
+            if(!empty($file) && $file !== null){
+                $file = StorageController::uploadFile($file,['save'=>true,'thumb_aspect'=>'1441/622','quality'=>80]);
+                if ($file['success'] === true) {
+                    $model->file_id = $file['data']['id'];
+                    $changed = true;
+                }else{
+                    Yii::$app->getSession()->setFlash('error', serialize($file['data']));
+                    $model->file_id = $old;
+                }
+            } else if(isset($post['remove']) && $post['remove'] == 1){
+                $model->file_id = null;
+                $changed = true;
+            }
+
+            if(!$changed){
+                $model->file_id = $old;
+            }
+
+            if($model->save()) {
+                if($changed){
+                    StorageController::removeFile($old);
+                }
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+
+        }
+        return $this->render('update', [
+            'model' => $model,
+        ]);
+    }
+
     public function actionClone($id)
     {
         // Detecta automaticamente a classe do model com base no nome do controller
