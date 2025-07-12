@@ -31,6 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'attributes' => [
                             [
                                 'attribute'=>'file_id',
+                                'format'=> 'raw',
                                 'value'=> function($model){
                                     if($model->file === null) {
                                         return Yii::t('app', 'No image');

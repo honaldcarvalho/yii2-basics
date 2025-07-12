@@ -32,6 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'attributes' => [
                             'id',
                             [
+                                'format'=> 'raw',
                                 'attribute'=>'file_id',
                                 'value'=> function($model){
                                     return Html::img($model->file->url, ['class'=>'img-fluid', 'style'=>'max-width: 200px;']);
