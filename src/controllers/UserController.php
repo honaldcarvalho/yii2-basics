@@ -185,6 +185,7 @@ class UserController extends AuthController
         $model->email_old = $model->email;
         $post = Yii::$app->request->post();
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+            $post = Yii::$app->request->post();
             $this->updateUpload($model,$post);
             $model->resetPassword();
             return $this->redirect(['view', 'id' => $model->id]);
@@ -203,6 +204,8 @@ class UserController extends AuthController
         $model->email_old = $model->email;
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+            $post = Yii::$app->request->post();
+            $this->updateUpload($model,$post);
             $model->resetPassword();
             return $this->redirect(['profile', 'id' => $model->id]);
         }
