@@ -5,8 +5,10 @@ namespace weebz\yii2basics\controllers;
 use weebz\yii2basics\models\Menu;
 use weebz\yii2basics\models\Rule;
 use weebz\yii2basics\models\RuleSearch;
+use Yii;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\Inflector;
 
 /**
  * RuleController implements the CRUD actions for Rule model.
@@ -33,28 +35,65 @@ class RuleController extends AuthController
         ]);
     }
 
-    public function actionFix()
+    public function actionGetActions()
     {
-        $rules = Menu::find()->all();
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-        $save = 0;
-        $error = 0;
-        $errors = [];
+        $controllerClass = Yii::$app->request->post('controller');
 
-        foreach ($rules as $key => $rule) {
-            if(!empty(trim($rule->visible))){
-                //$rule->visible = "backend:{$rule->visible}";
-                $rule->visible = str_replace('backend:','',$rule->visible);
-                if($rule->save()){
-                    //$save++;
-                }else{
-                    $errors[] = $rule->controller;
-                    $error++;
+        if (!class_exists($controllerClass)) {
+            return ['success' => false, 'message' => 'Controller não encontrado.'];
+        }
+
+        $methods = get_class_methods($controllerClass);
+        $actions = array_filter($methods, fn($method) => str_starts_with($method, 'action'));
+        $actions = array_map(fn($a) => Inflector::camel2id(substr($a, 6)), $actions);
+
+        return ['success' => true, 'actions' => $actions];
+    }
+
+    // public function actionCreate()
+    // {
+    //     $model = new Rule();
+    //     $controllers = $this->getAllControllers();
+
+    //     if ($model->load(Yii::$app->request->post())) {
+    //         $model->actions = implode(';', Yii::$app->request->post('Rule')['actions']);
+    //         if ($model->save()) {
+    //             return $this->redirect(['index']);
+    //         }
+    //     }
+
+    //     return $this->render('create', compact('model', 'controllers'));
+    // }
+
+    protected function getAllControllers(): array
+    {
+        $paths = [
+            Yii::getAlias('@app/controllers'),
+            Yii::getAlias('@vendor/weebz/yii2-basics/src/controllers'),
+        ];
+
+        $controllers = [];
+
+        foreach ($paths as $path) {
+            if (!is_dir($path)) continue;
+
+            $files = scandir($path);
+            foreach ($files as $file) {
+                if (preg_match('/^(.*)Controller\.php$/', $file, $matches)) {
+                    $className = $matches[1] . 'Controller';
+                    $namespace = str_replace('/', '\\', str_replace(Yii::getAlias('@app'), 'app', $path));
+                    $namespace = str_replace(Yii::getAlias('@vendor/weebz/yii2-basics/src'), 'weebz\\yii2basics', $namespace);
+                    $fqcn = $namespace . '\\' . $className;
+                    if (class_exists($fqcn)) {
+                        $controllers[$fqcn] = $fqcn;
+                    }
                 }
             }
         }
 
-        dd(['save'=>$save,'error' => $error,'errors'=>$errors]);
+        return $controllers;
     }
 
     /**
@@ -78,7 +117,7 @@ class RuleController extends AuthController
     public function actionCreate()
     {
         $model = new Rule();
-
+        $controllers = $this->getAllControllers();
         if ($this->request->isPost) {
             $post = $this->request->post();
 
@@ -104,6 +143,7 @@ class RuleController extends AuthController
 
         return $this->render('create', [
             'model' => $model,
+            'controllers' => $controllers,
         ]);
     }
 
