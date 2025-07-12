@@ -82,5 +82,72 @@ class Rule extends \yii\db\ActiveRecord
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
     
+    public function getControllers()
+    {
+        $controllers = $controllers_array = $controllers_actions = [];
+            
+        $controllers_weebz = is_dir(Yii::getAlias('@vendor/weebz/yii2-basics/src/controllers'))
+            ? \yii\helpers\FileHelper::findFiles(Yii::getAlias('@vendor/weebz/yii2-basics/src/controllers'))
+            : [];
+
+        $controllers_app = is_dir(Yii::getAlias('@app/controllers'))
+            ? \yii\helpers\FileHelper::findFiles(Yii::getAlias('@app/controllers'))
+            : [];
+
+        $controllers_app_rest = is_dir(Yii::getAlias('@app/controllers/rest'))
+            ? \yii\helpers\FileHelper::findFiles(Yii::getAlias('@app/controllers/rest'))
+            : [];
+
+        $controllers_app_custom = is_dir(Yii::getAlias('@app/controllers/custom'))
+            ? \yii\helpers\FileHelper::findFiles(Yii::getAlias('@app/controllers/custom'))
+            : [];
+
+        $file_lists = [
+            'app' => $controllers_app,
+            'app/rest' => $controllers_app_rest,
+            'app/custom' => $controllers_app_custom,
+            'weebz/controllers' => $controllers_weebz,
+        ];
+    
+        foreach ($file_lists as $key => $list) {
+            foreach ($list as $controller) {
+                $controller_name = Inflector::camel2id(substr(basename($controller), 0, -14));
+    
+                if (!empty($controller_name)) {
+                    $contents = file_get_contents($controller);
+    
+                    // Garante que cada categoria tenha sua própria chave única
+                    $controller_key = "{$key}:{$controller_name}";
+    
+                    // Adiciona o controller ao array de controllers
+                    $controllers[$controller_key] = "{$key}/{$controller_name}";
+                    $controllers_array[] = ['id' => $controller_key, 'name' => "{$key}/{$controller_name}"];
+    
+                    // Inicializa a entrada para garantir que ela não seja sobrescrita
+                    if (!isset($controllers_actions[$controller_key])) {
+                        $controllers_actions[$controller_key] = [];
+                    }
+    
+                    // Captura as ações do controller
+                    preg_match_all('/public function action(\w+?)\(/', $contents, $result);
+    
+                    foreach ($result[1] as $action) {
+                        $add = Inflector::camel2id($action);
+                        if ($add !== 's') {
+                            $controllers_actions[$controller_key][$add] = $add;
+                        }
+                    }
+                }
+            }
+        }
+
+        return [
+            'controllers' => $controllers,
+            'controllers_actions' => $controllers_actions,
+            'controllers_array' => $controllers_array
+        ];
+    }
+    
+    
     
 }
