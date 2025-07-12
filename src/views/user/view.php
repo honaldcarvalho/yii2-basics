@@ -25,34 +25,18 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
 
             <div class="row">
-                <div class="col-md-2">
-                    <?=
-                    weebz\yii2basics\widgets\FileInputModel::widget(
-                        [
-                            'model' => 'User',
-                            'model_field' => 'file_id',
-                            'model_id' => $model->id ?? null,
-                            'value' => $model->file_id ?? null,
-                            'preview' => $model->file->url  ?? null,
-                            'field_id' => 'user-file_id',
-                            'field_name' => 'User[file_id]',
-                            'style_class'=>'img-circle elevation-2',
-                            'label' => Yii::t('app','Picture'),
-                            'folder_id' => 3,
-                            //'action' => 'file/send',
-                            'as_type' => 0,
-                            'save_file_model' => 1,
-                            'aspectRatio' => '1',
-                            'extensions' => ['jpeg', 'jpg', 'png'],
-                        ]
-                    );
-                    ?>
-                </div>
-                <div class="col-md-10">
+
+                <div class="col-md-12">
                     <?= DetailView::widget([
                         'model' => $model,
                         'attributes' => [
                             'id',
+                            [
+                                'attribute'=>'file_id',
+                                'value'=> function($model){
+                                    return Html::img($model->file->url, ['class'=>'img-fluid', 'style'=>'max-width: 200px;']);
+                                }
+                            ],
                             'fullname',
                             'username',
                             'email:email',

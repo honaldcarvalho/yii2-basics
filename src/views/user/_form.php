@@ -43,6 +43,19 @@ $this->registerJs($script);
     <?php $form = ActiveForm::begin(); ?>
 
     <div class="row">
+        <div class="col-sm-12">
+            <?= $form->field($model, 'file_id')->fileInput() ?>
+            <?= \weebz\yii2basics\widgets\UploadFoto::widget([
+                'imagem'=> $image,
+                'fileField'=>'user-file_id',
+                'aspectRatio'=>'1/1',
+                'maxWidth'=>'1920'
+            ])?>
+
+        </div>
+    </div>
+
+    <div class="row">
 
         <div class="col-md-12">
             
