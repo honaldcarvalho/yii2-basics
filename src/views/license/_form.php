@@ -8,6 +8,33 @@ use yii\bootstrap5\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model weebz\yii2basics\models\License */
 /* @var $form yii\bootstrap5\ActiveForm */
+$script = <<<JS
+function atualizarDataValidade(anos) {
+    var hoje = new Date();
+    hoje.setFullYear(hoje.getFullYear() + anos);
+    var dataFormatada = hoje.toISOString().split('T')[0];
+    $('#license-validate').val(dataFormatada);
+}
+
+// Valor inicial
+var anos = 1;
+atualizarDataValidade(anos);
+
+$('#btn-maior').on('click', function() {
+    anos++;
+    $('#anos-validade').val(anos);
+    atualizarDataValidade(anos);
+});
+
+$('#btn-menor').on('click', function() {
+    if (anos > 1) {
+        anos--;
+        $('#anos-validade').val(anos);
+        atualizarDataValidade(anos);
+    }
+});
+JS;
+$this->registerJs($script);
 ?>
 
 <div class="license-form">
@@ -21,6 +48,15 @@ use yii\bootstrap5\ActiveForm;
     <?= $form->field($model, 'group_id')->dropDownList(yii\helpers\ArrayHelper::map(Group::find()
             ->select('id,name')->asArray()->all(), 
             'id', 'name'),['prompt'=>' -- Group --']) ?>
+
+    <div class="mb-3">
+        <label class="form-label">Validade (em anos)</label>
+        <div class="input-group">
+            <button class="btn btn-outline-secondary" type="button" id="btn-menor">−</button>
+            <input type="text" class="form-control text-center" id="anos-validade" value="1" readonly>
+            <button class="btn btn-outline-secondary" type="button" id="btn-maior">+</button>
+        </div>
+    </div>
 
     <?= $form->field($model, 'validate')->input('date') ?>
 

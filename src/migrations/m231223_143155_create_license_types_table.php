@@ -30,28 +30,28 @@ class m231223_143155_create_license_types_table extends Migration
         ]);
 
         $this->insert('license_types', [
-            'name' => 'Monthly',
-            'description' =>'Monthly',
-            'value' => 250,
-            'contract' => 'Monthly',
+            'name' => 'Basic',
+            'description' =>'Basic',
+            'value' => 100,
+            'contract' => 'Basic',
             'max_devices' => 1,
             'status' => 1,
         ]);
 
         $this->insert('license_types', [
-            'name' => '3 Months',
-            'description' =>'3 Months',
-            'value' => 250,
-            'contract' => '3 Months',
+            'name' => 'Pro',
+            'description' =>'Pro',
+            'value' => 300,
+            'contract' => 'Pro',
             'max_devices' => 1,
             'status' => 1,
         ]);
         
         $this->insert('license_types', [
-            'name' => '1 Year',
-            'description' =>'1 Year',
-            'value' => 250,
-            'contract' => '1 Year',
+            'name' => 'Master',
+            'description' =>'Master',
+            'value' => 600,
+            'contract' => 'Master',
             'max_devices' => 1,
             'status' => 1,
         ]);
