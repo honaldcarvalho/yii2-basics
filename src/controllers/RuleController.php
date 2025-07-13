@@ -33,30 +33,6 @@ class RuleController extends AuthController
         ]);
     }
 
-    public function actionFix()
-    {
-        $rules = Menu::find()->all();
-
-        $save = 0;
-        $error = 0;
-        $errors = [];
-
-        foreach ($rules as $key => $rule) {
-            if(!empty(trim($rule->visible))){
-                //$rule->visible = "backend:{$rule->visible}";
-                $rule->visible = str_replace('backend:','',$rule->visible);
-                if($rule->save()){
-                    //$save++;
-                }else{
-                    $errors[] = $rule->controller;
-                    $error++;
-                }
-            }
-        }
-
-        dd(['save'=>$save,'error' => $error,'errors'=>$errors]);
-    }
-
     /**
      * Displays a single Rule model.
      * @param int $id ID
