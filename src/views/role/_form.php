@@ -30,7 +30,9 @@ if(!$model->isNewRecord){
 $savedActions = $model->actions ? explode(';', $model->actions) : [];
 
 // Garante que o controller foi carregado e é válido
-$controllerFQCN = $model->getControllerFQCN(); // crie esse método se necessário, baseado no `path:controller`
+$controllerFQCN = $model->controller;
+
+; // crie esse método se necessário, baseado no `path:controller`
 $availableActions = [];
 
 if (class_exists($controllerFQCN)) {
@@ -94,10 +96,11 @@ $this->registerJs($js);
 
     <?= $form->field($model, 'user_id')->dropDownList(yii\helpers\ArrayHelper::map(User::find()->select('id,username')->asArray()->all(), 'id', 'username'), ['prompt' => '-- selecione um usuario --']) ?>
 
-    <?= $form->field($model, 'controller')->dropDownList($controllers, ['multiple' => false, 'prompt' => '-- CONTROLLER --', 'value' => []]) ?>
-
-    <?= $form->field($model, 'path')->textInput() ?>
-
+    <?= $form->field($model, 'controller')->dropDownList($controllers, [
+        'multiple' => false,
+        'prompt' => '-- CONTROLLER --',
+    ]) ?>
+    
     <div id="actions" class="form-group">
         <?= Html::label(Yii::t('app', 'Enter origin and digit enter:'), 'add_origin') ?>
         <?= Html::textInput('add_origin', '', ['id' => 'add_origin', 'class' => 'form-control']) ?>

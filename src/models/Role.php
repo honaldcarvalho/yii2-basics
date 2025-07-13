@@ -21,7 +21,7 @@ use yii\db\ActiveRecord;
  * @property User $user
  * @property Group $group
  */
-class Role extends ActiveRecord
+class Role extends ModelCommon
 {
     public static function tableName()
     {
@@ -31,7 +31,7 @@ class Role extends ActiveRecord
     public function rules()
     {
         return [
-            [['controller'], 'required'],
+            [['controller'], 'required','on'=> 'CREATE'],
             [['controller', 'actions', 'origin'], 'string'],
             [['user_id', 'group_id', 'status'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
