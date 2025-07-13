@@ -2,7 +2,7 @@
 
 use yii\db\Migration;
 
-class m270921_260309_add_parent_id_to_groups extends Migration
+class m250621_260309_add_parent_id_to_groups extends Migration
 {
     public function safeUp()
     {

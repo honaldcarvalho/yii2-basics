@@ -5,7 +5,7 @@ use yii\db\Migration;
 /**
  * Class m270921_260309_fix_menu_ids_sequentially
  */
-class m270921_260309_fix_menu_ids_sequentially extends Migration
+class m250622_260310_fix_menu_ids_sequentially extends Migration
 {
     public function safeUp()
     {

@@ -5,7 +5,7 @@ use yii\db\Migration;
 /**
  * Class m240807_161427_add_admin_rules
  */
-class m350807_161427_add_foreing_keys extends Migration
+class m250622_260312_add_foreign_keys extends Migration
 {
     /**
      * {@inheritdoc}

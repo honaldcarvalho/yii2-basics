@@ -6,7 +6,7 @@ use yii\db\Migration;
 /**
  * Handles the creation of table `{{%report_templates}}`.
  */
-class m270921_260309_create_report_templates_table extends Migration
+class m250621_260309_create_report_templates_table extends Migration
 {
     public function safeUp()
     {
