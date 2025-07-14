@@ -242,20 +242,14 @@ class AuthController extends ControllerCommon
                 }
             }
 
-            $query = Role::find()
+            return Role::find()
                 ->where([
                     'controller' => $request_controller,
+                    'action' => $request_action,
                     'status' => 1,
                 ])
-                ->andWhere(['or', ['in', 'group_id', $groups], ['group_id' => self::User()->group_id]])
-                ->all();
-
-            foreach ($query as $role) {
-                $actions = explode(';', $role->actions ?? '');
-                if (in_array($request_action, array_map('trim', $actions))) {
-                    return true;
-                }
-            }
+                ->andWhere(['in', 'group_id', $groups])
+                ->exists();
         }
 
         return false;
