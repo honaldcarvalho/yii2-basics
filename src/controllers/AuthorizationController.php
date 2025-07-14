@@ -57,7 +57,6 @@ class AuthorizationController extends ControllerCommon
     {
         $request = Yii::$app->request;
         $action = $this->action->id;
-        $controller = $this;
 
         $allow = in_array($action, $this->free) || self::isAdmin() || $this->pageAuth();
 
@@ -75,7 +74,7 @@ class AuthorizationController extends ControllerCommon
             ],
         ];
 
-        if ($this->params->logging && Yii::$app->user->identity && $controller->id != 'log') {
+        if ($this->params->logging && Yii::$app->user->identity && $this->id !== 'log') {
             $log = new Log([
                 'action' => $action,
                 'ip' => $this->getUserIP(),
@@ -104,13 +103,13 @@ class AuthorizationController extends ControllerCommon
         if (self::isGuest()) return false;
         if (self::isAdmin()) return true;
 
-        $controllerId = Yii::$app->controller->id;
+        $controllerFQCN = static::getClassPath();
         $actionId = Yii::$app->controller->action->id;
-        $path = self::getPath();
+        $groups = self::User()->getUserGroupsId();
 
         $roles = Role::find()
-            ->where(['path' => $path, 'controller' => $controllerId, 'status' => 1])
-            ->andWhere(['in', 'group_id', self::User()->getUserGroupsId()])
+            ->where(['controller' => $controllerFQCN, 'status' => 1])
+            ->andWhere(['in', 'group_id', $groups])
             ->all();
 
         foreach ($roles as $role) {
@@ -123,7 +122,7 @@ class AuthorizationController extends ControllerCommon
         return false;
     }
 
-    public static function verAuthorization($request_controller, $request_action, $model = null, $app_path = 'app')
+    public static function verAuthorization($controllerFQCN, $request_action, $model = null)
     {
         if (self::isGuest()) return false;
         if (self::isAdmin()) return true;
@@ -145,11 +144,7 @@ class AuthorizationController extends ControllerCommon
         }
 
         $roles = Role::find()
-            ->where([
-                'path' => $app_path,
-                'controller' => $request_controller,
-                'status' => 1,
-            ])
+            ->where(['controller' => $controllerFQCN, 'status' => 1])
             ->andWhere(['in', 'group_id', $groups])
             ->all();
 
@@ -168,7 +163,7 @@ class AuthorizationController extends ControllerCommon
         $groups = self::User()?->getUserGroupsId();
         if (self::isAdmin()) return true;
 
-        $licenses = License::find()->where(['in', 'group_id', $groups])->all();
+        $licenses = License::find()->where(['in', 'group_id' => $groups])->all();
 
         foreach ($licenses as $license) {
             if (strtotime($license->validate) >= strtotime(date('Y-m-d')) && $license->status) {
@@ -181,21 +176,17 @@ class AuthorizationController extends ControllerCommon
 
     protected function findModel($id, $model_name = null)
     {
-        if (!$model_name) {
-            $modelClass = str_replace(['controllers', 'Controller'], ['models', ''], static::getClassPath());
-        } else {
-            $modelClass = $model_name;
-        }
-
+        $modelClass = $model_name ?? str_replace(['controllers', 'Controller'], ['models', ''], static::getClassPath());
         $model = $modelClass::find()->where(['id' => $id]);
-
         $modelObj = new $modelClass;
+
         if (
             property_exists($modelObj, 'verGroup') &&
             $modelObj->verGroup &&
             !self::isAdmin()
         ) {
             $groups = self::User()->getUserGroupsId();
+
             if (Yii::$app->controller->action->id === 'view') {
                 $groups[] = 1;
             }
