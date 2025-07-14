@@ -46,8 +46,8 @@ class m250713_110000_update_menu_controller_action extends Migration
         }
 
         // Remover os campos antigos
-        $this->dropColumn('menus', 'visible');
-        $this->dropColumn('menus', 'path');
+        //$this->dropColumn('menus', 'visible');
+        //$this->dropColumn('menus', 'path');
     }
 
     public function safeDown()
