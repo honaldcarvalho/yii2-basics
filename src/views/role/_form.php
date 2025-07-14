@@ -13,7 +13,12 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\View;
 use yii\widgets\ActiveForm;
+
 $origins = [];
+$savedActions = [];
+$availableActions = [];
+$fromActions  = [];
+$toActions  = [];
 
 PluginAsset::register($this)->add(['multiselect']);
 $controllers = RoleController::getAllControllers();
@@ -23,27 +28,27 @@ if(!$model->isNewRecord){
     foreach( explode(';',$model->origin) as $origin){
         $origins[$origin] = $origin;
     } 
+    // Parse actions salvas
+    $savedActions = $model->actions ? explode(';', $model->actions) : [];
+
+    // Garante que o controller foi carregado e é válido
+    $controllerFQCN = $model->controller;
+
+    ; // crie esse método se necessário, baseado no `path:controller`
+    $availableActions = [];
+
+    if (class_exists($controllerFQCN)) {
+        $methods = get_class_methods($controllerFQCN);
+        $availableActions = array_filter($methods, fn($m) => str_starts_with($m, 'action'));
+        $availableActions = array_map(fn($a) => \yii\helpers\Inflector::camel2id(substr($a, 6)), $availableActions);
+    }
+
+    // Separar actions em usadas e não usadas
+    $fromActions = array_diff($availableActions, $savedActions);
+    $toActions = $savedActions;
 
 }
 
-// Parse actions salvas
-$savedActions = $model->actions ? explode(';', $model->actions) : [];
-
-// Garante que o controller foi carregado e é válido
-$controllerFQCN = $model->controller;
-
-; // crie esse método se necessário, baseado no `path:controller`
-$availableActions = [];
-
-if (class_exists($controllerFQCN)) {
-    $methods = get_class_methods($controllerFQCN);
-    $availableActions = array_filter($methods, fn($m) => str_starts_with($m, 'action'));
-    $availableActions = array_map(fn($a) => \yii\helpers\Inflector::camel2id(substr($a, 6)), $availableActions);
-}
-
-// Separar actions em usadas e não usadas
-$fromActions = array_diff($availableActions, $savedActions);
-$toActions = $savedActions;
 
 $js = <<<JS
 $(function () {

@@ -4,21 +4,16 @@ namespace weebz\yii2basics\controllers;
 
 use weebz\yii2basics\models\License;
 use weebz\yii2basics\models\Log;
-use Yii;
-
-use weebz\yii2basics\models\Rule;
+use weebz\yii2basics\models\Role;
 use weebz\yii2basics\models\User;
 use weebz\yii2basics\models\UserGroup;
+use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
 
-/**
- * Common controller
- */
 class AuthController extends ControllerCommon
 {
-
     const ADMIN_GROUP_ID = 2;
     public $free = ['login', 'signup', 'error'];
 
@@ -27,17 +22,11 @@ class AuthController extends ControllerCommon
         return Yii::$app->user->isGuest;
     }
 
-    /**
-     * Cast \yii\web\IdentityInterface to \weebz\yii2basics\models\User
-     */
     static function User(): User|null
     {
         return Yii::$app->user->identity;
     }
 
-    /** 
-        return id of user group's
-     */
     public static function getUserGroups()
     {
         if (self::isGuest()) {
@@ -80,10 +69,11 @@ class AuthController extends ControllerCommon
 
     public static function inGroups($grupos)
     {
-        if (UserGroup::find()->select('user_id')->where(['in', 'group_id', $grupos])->andWhere(['usuario_id' => Yii::$app->user->identity->id])->count() > 0) {
-            return true;
-        }
-        return false;
+        return UserGroup::find()
+            ->select('user_id')
+            ->where(['in', 'group_id', $grupos])
+            ->andWhere(['usuario_id' => Yii::$app->user->identity->id])
+            ->exists();
     }
 
     public static function isAdmin(): bool
@@ -103,7 +93,9 @@ class AuthController extends ControllerCommon
         if ($token !== null) {
             [$type, $value] = explode(' ', $token);
             if ($type == 'Bearer') {
-                $user = User::find()->where(['status' => User::STATUS_ACTIVE])->filterwhere(['or', ['access_token' => $value], ['auth_key' => $value]])->one();
+                $user = User::find()->where(['status' => User::STATUS_ACTIVE])
+                    ->filterwhere(['or', ['access_token' => $value], ['auth_key' => $value]])
+                    ->one();
             }
         }
         return $user;
@@ -125,9 +117,7 @@ class AuthController extends ControllerCommon
         $behaviors = [
             'timestamp' => [
                 'class' => TimestampBehavior::class,
-                'value' => function () {
-                    return date('Y-m-d H:i:s'); // Respeita o timeZone do Yii2
-                },
+                'value' => fn() => date('Y-m-d H:i:s'),
             ],
             'access' => [
                 'class' => AccessControl::class,
@@ -139,7 +129,7 @@ class AuthController extends ControllerCommon
                     ],
                     [
                         'allow' => $show,
-                        'actions' => ["{$action}"],
+                        'actions' => [$action],
                         'roles' => ['@'],
                     ],
                 ],
@@ -153,15 +143,15 @@ class AuthController extends ControllerCommon
                 $log->ip = $this->getUserIP();
                 $log->device = $this->getOS();
                 $log->controller = Yii::$app->controller->id;
-                $log->user_id = Yii::$app->user->identity !== null ? Yii::$app->user->identity->id : 0;
+                $log->user_id = Yii::$app->user->identity->id;
 
-                if ($request->get() !== null && isset($request->get()['id'])) {
-                    $log->data = $request->get()['id'];
-                }
-                if ($request->post() !== null && !empty($request->post())) {
+                if ($request->get('id')) {
+                    $log->data = $request->get('id');
+                } elseif ($request->post()) {
                     $data_json = json_encode($request->post());
-                    if (!str_contains($data_json, 'password'))
+                    if (!str_contains($data_json, 'password')) {
                         $log->data = $data_json;
+                    }
                 }
 
                 $log->save();
@@ -173,59 +163,54 @@ class AuthController extends ControllerCommon
 
     static function getLicense($model)
     {
-        $license_valid = null;
         $licenses = $model->group->getLicenses()->all();
-        foreach ($licenses as $key => $license) {
+        foreach ($licenses as $license) {
             if (strtotime($license->validate) >= strtotime(date('Y-m-d')) && $license->status) {
-                $license_valid = $license;
+                return $license;
             }
         }
-        return $license_valid;
+        return null;
     }
 
     static function verifyLicense()
     {
         $user_groups = self::User()::userGroups()->all();
-        $license_valid = null;
         if (self::isAdmin()) {
             return true;
         }
 
         $licenses = License::find()->andWhere(['in', 'group_id', $user_groups])->all();
-        //se não tiver licensa libera
-        foreach ($licenses as $key => $license) {
+        foreach ($licenses as $license) {
             if (strtotime($license->validate) >= strtotime(date('Y-m-d')) && $license->status) {
-                $license_valid = $license;
+                return $license;
             }
         }
-        return $license_valid;
+        return null;
     }
 
     public function pageAuth()
     {
         $show = false;
-        if (!self::isGuest()) {
 
-            $app_path = self::getPath();
-            $request_controller = Yii::$app->controller->id;
+        if (!self::isGuest()) {
+            $request_controller = Yii::$app->controller::class;
             $request_action = Yii::$app->controller->action->id;
             $groups = self::User()->getUserGroupsId();
-            $query_rules = Rule::find()->where(['path' => $app_path, 'controller' => $request_controller, 'status' => 1]);
 
-            if (!self::isAdmin()) {
-                $rules = $query_rules->andWhere(['or', ['in', 'group_id', $groups], ['group_id' => self::User()->group_id]])->all();
-            } else {
-                $rules = $query_rules->all();
-            }
+            $query = Role::find()
+                ->where([
+                    'controller' => $request_controller,
+                    'status' => 1,
+                ])
+                ->andWhere(['or', ['in', 'group_id', $groups], ['group_id' => self::User()->group_id]])
+                ->all();
 
-            foreach ($rules as $key => $rule) {
-
-                $actions = explode(';', $rule->actions);
-
+            foreach ($query as $role) {
+                $actions = explode(';', $role->actions ?? '');
                 foreach ($actions as $action) {
-                    if (trim($action) == trim($request_action)) {
+                    if (trim($action) === trim($request_action)) {
                         $show = true;
-                        break;
+                        break 2;
                     }
                 }
             }
@@ -234,75 +219,47 @@ class AuthController extends ControllerCommon
         return $show;
     }
 
-    public static function verAuthorization($request_controller, $request_action, $model = null, $app_path = 'app')
+    public static function verAuthorization($request_controller, $request_action, $model = null, $origin = '*')
     {
-        // Verifica se o usuário está autenticado
         if (!self::isGuest()) {
-
-            // Se for administrador, sempre permite o acesso
             if (self::isAdmin()) {
                 return true;
             }
 
-            // Verifica se a licença está válida
             if (self::verifyLicense() === null) {
                 Yii::$app->session->setFlash('warning', Yii::t('app', 'License expired!'));
                 return [];
             }
 
-            // Obtém todos os IDs dos grupos aos quais o usuário pertence
             $groups = self::User()->getUserGroupsId();
 
-            // Cria a consulta base das regras de acesso para o controller solicitado
-            $query_rules = Rule::find()->where([
-                'path' => $app_path,
-                'controller' => $request_controller,
-                'status' => 1
-            ]);
-
-            // Se foi passado um modelo e ele possui controle por grupo
             if ($model && $model->verGroup) {
-
-                // Permite visualização de modelos com group_id = 1 (grupo comum)
                 if ($request_action == 'view' && $model->group_id == 1) {
                     return true;
                 }
-
-                // Se o grupo do modelo não está entre os grupos do usuário, nega acesso
                 if (!in_array($model->group_id, $groups)) {
                     return false;
                 }
             }
 
-            // Filtra regras que pertencem a um dos grupos do usuário
-            $rules = $query_rules
-                ->andWhere([
-                    'or',
-                    ['in', 'group_id', $groups],
-                    ['group_id' => self::User()->group_id]
+            $query = Role::find()
+                ->where([
+                    'controller' => $request_controller,
+                    'status' => 1,
                 ])
+                ->andWhere(['or', ['in', 'group_id', $groups], ['group_id' => self::User()->group_id]])
                 ->all();
 
-            // Percorre todas as regras encontradas
-            foreach ($rules as $rule) {
-                $actions = explode(';', $rule->actions);
-                if (in_array($request_action, $actions)) {
+            foreach ($query as $role) {
+                $actions = explode(';', $role->actions ?? '');
+                if (in_array($request_action, array_map('trim', $actions))) {
                     return true;
                 }
             }
         }
 
-        // Caso nenhuma verificação permita acesso, retorna false
         return false;
     }
-
-    /**
-     * Finds the Captive model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
-     * @return Model the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
 
     protected function findModel($id, $model_name = null)
     {
@@ -316,19 +273,11 @@ class AuthController extends ControllerCommon
             $model = $model_name::find()->where([$model_obj->tableSchema->primaryKey[0] => $id]);
         }
 
-        // Verifica se o modelo tem a propriedade verGroup E se o usuário NÃO é admin
-        if (
-            property_exists($model_obj, 'verGroup') &&
-            $model_obj->verGroup &&
-            !self::isAdmin()
-        ) {
+        if (property_exists($model_obj, 'verGroup') && $model_obj->verGroup && !self::isAdmin()) {
             $groups = self::User()->getUserGroupsId();
-
-            // Permite visualizar registros do grupo comum (id=1) na action "view"
             if (Yii::$app->controller->action->id == 'view') {
                 $groups[] = 1;
             }
-
             $model->andFilterWhere(['in', 'group_id', $groups]);
         }
 
