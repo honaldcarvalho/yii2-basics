@@ -168,7 +168,7 @@ class AuthorizationController extends ControllerCommon
         $groups = self::User()?->getUserGroupsId();
         if (self::isAdmin()) return true;
 
-        $licenses = License::find()->where(['in', 'group_id' => $groups])->all();
+        $licenses = License::find()->where(['in', 'group_id', $groups])->all();
 
         foreach ($licenses as $license) {
             if (strtotime($license->validate) >= strtotime(date('Y-m-d')) && $license->status) {
