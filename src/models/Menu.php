@@ -40,10 +40,10 @@ class Menu extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['menu_id', 'order','only_admin', 'status'], 'integer'],
+            [['menu_id', 'order', 'only_admin', 'status'], 'integer'],
             [['label'], 'required'],
-            [['label', 'icon', 'visible','icon_style'], 'string', 'max' => 60],
-            [['url','path'], 'string', 'max' => 255],
+            [['label', 'icon', 'visible', 'icon_style'], 'string', 'max' => 60],
+            [['url', 'path'], 'string', 'max' => 255],
             [['active'], 'string', 'max' => 60],
             [['menu_id'], 'exist', 'skipOnError' => true, 'targetClass' => Menu::class, 'targetAttribute' => ['menu_id' => 'id']],
         ];
@@ -87,5 +87,25 @@ class Menu extends \yii\db\ActiveRecord
     public function getMenus()
     {
         return $this->hasMany(Menu::class, ['menu_id' => 'id']);
+    }
+
+    public static function getSidebarMenu($userIsAdmin = false)
+    {
+        $query = self::find()->where(['status' => 1]);
+        if (!$userIsAdmin) {
+            $query->andWhere(['only_admin' => 0]);
+        }
+        $menus = $query->orderBy(['order' => SORT_ASC])->asArray()->all();
+
+        // Organiza em árvore
+        $items = [];
+        foreach ($menus as $menu) {
+            if (empty($menu['menu_id'])) {
+                $items[$menu['id']] = $menu + ['children' => []];
+            } else {
+                $items[$menu['menu_id']]['children'][] = $menu;
+            }
+        }
+        return $items;
     }
 }

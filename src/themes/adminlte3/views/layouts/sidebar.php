@@ -5,11 +5,15 @@ use weebz\yii2basics\controllers\AuthorizationController;
 use weebz\yii2basics\models\Menu;
 use weebz\yii2basics\models\Configuration;
 use weebz\yii2basics\widgets\Menu as WidgetsMenu;
+use yii\helpers\Url;
 use yii\web\View;
 
 if (Yii::$app->user->isGuest) {
     return false;
 }
+
+$userIsAdmin = Yii::$app->user->identity->isAdmin ?? false;
+$menus = Menu::getSidebarMenu($userIsAdmin);
 
 $params = Configuration::get();
 $this->registerJS("");
@@ -28,17 +32,17 @@ if (!empty($params->file_id) && $params->file != null) {
 } else {
     $login_image = "<img src='{$assetsDir}/img/croacworks-logo-hq.png' alt='{$params->title}' class='brand-image elevation-3' style='opacity: .8'>";
 }
+
+
 ?>
+
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
-    <!-- Brand Logo -->
-    <a href="<?= Yii::getAlias('/'); ?>" class="brand-link">
+    <a href="<?=Yii::getAlias('/');?>" class="brand-link">
         <?= $login_image ?>
         <span class="brand-text font-weight-light"><?= $params->title ?></span>
     </a>
-
-    <!-- Sidebar -->
     <div class="sidebar">
-        <!-- User Panel -->
+
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image user-image">
                 <?php if (Yii::$app->user->identity->file): ?>
@@ -53,88 +57,48 @@ if (!empty($params->file_id) && $params->file != null) {
         </div>
 
         <!-- SidebarSearch Form -->
+        <!-- href be escaped -->
         <div class="form-inline">
             <div class="input-group" data-widget="sidebar-search">
                 <input class="form-control form-control-sidebar" type="search" placeholder="<?= Yii::t('app', 'Search') ?>" aria-label="<?= Yii::t('app', 'Search') ?>">
                 <div class="input-group-append">
-                    <button class="btn btn-sidebar"><i class="fas fa-search fa-fw"></i></button>
+                    <button class="btn btn-sidebar">
+                        <i class="fas fa-search fa-fw"></i>
+                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- Sidebar Menu -->
         <nav class="mt-2">
-            <?php
-
-            function getNodes($controller_id, $id = null)
-            {
-                $items = Menu::find()->where(['menu_id' => $id, 'status' => true])->orderBy(['order' => SORT_ASC])->all();
-                $nodes = [];
-
-                foreach ($items as $item) {
-                    $visible_parts = explode(';', $item['visible']);
-                    $isVisible = false;
-
-                    // Verificação de visibilidade com base no novo padrão "ControllerFQCN;action1,action2"
-                    if (count($visible_parts) === 2) {
-                        $controller = trim($visible_parts[0]);
-                        $actions = array_map('trim', explode(',', $visible_parts[1]));
-
-                        foreach ($actions as $action) {
-                            if (AuthorizationController::verAuthorization($controller, $action)) {
-                                $isVisible = true;
-                                break;
-                            }
-                        }
-                    } elseif (empty($visible_parts[0])) {
-                        $isVisible = false;
-                    }
-
-                    // Submenus
-                    $item_nodes = getNodes($controller_id, $item['id']);
-                    if ($item['url'] === '#' && empty($item_nodes)) {
-                        $isVisible = false;
-                    }
-
-                    // Montagem do item de menu
-                    $node = [
-                        'label' => Yii::t('app', $item['label']),
-                        'icon' => "{$item['icon']}",
-                        'iconStyle' => "{$item['icon_style']}",
-                        'url' => ["{$item['url']}"],
-                        'visible' => $isVisible,
-                        'items' => $item_nodes,
-                    ];
-
-                    if ($item['url'] !== '#') {
-                        $node['active'] = ($controller_id == $item['active']) ||
-                            ($controller_id . "/" . Yii::$app->controller->action->id == $item['active']);
-                    }
-
-                    if (!$item['only_admin'] || ($item['only_admin'] && AuthorizationController::isAdmin())) {
-                        $nodes[] = $node;
-                    }
-                }
-
-                return $nodes;
-            }
-
-            $nodes = getNodes(Yii::$app->controller->id);
-
-            echo WidgetsMenu::widget([
-                "options" => [
-                    'class' => 'nav nav-pills nav-sidebar flex-column nav-child-indent',
-                    'data-widget' => 'treeview',
-                    'role' => 'menu',
-                    'data-accordion' => 'false'
-                ],
-                'items' => array_merge($nodes, [[
-                    'label' => 'Logout',
-                    'icon' => 'fas fa-sign-out-alt',
-                    'url' => ['/site/logout']
-                ]])
-            ]);
-            ?>
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
+                <?php foreach ($menus as $menu): ?>
+                    <?php if (!empty($menu['children'])): ?>
+                        <li class="nav-item has-treeview">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon <?= $menu['icon'] ?>"></i>
+                                <p><?= $menu['label'] ?> <i class="right fas fa-angle-left"></i></p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <?php foreach ($menu['children'] as $child): ?>
+                                    <li class="nav-item">
+                                        <a href="<?= $child['url'] ?: Url::to([$child['controller'] . '/' . $child['action']]) ?>" class="nav-link">
+                                            <i class="nav-icon <?= $child['icon'] ?>"></i>
+                                            <p><?= $child['label'] ?></p>
+                                        </a>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </li>
+                    <?php else: ?>
+                        <li class="nav-item">
+                            <a href="<?= $menu['url'] ?: Url::to([$menu['controller'] . '/' . $menu['action']]) ?>" class="nav-link">
+                                <i class="nav-icon <?= $menu['icon'] ?>"></i>
+                                <p><?= $menu['label'] ?></p>
+                            </a>
+                        </li>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </ul>
         </nav>
     </div>
 </aside>
