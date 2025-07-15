@@ -4,6 +4,7 @@ namespace weebz\yii2basics\models;
 
 use weebz\yii2basics\controllers\AuthorizationController;
 use Yii;
+use yii\helpers\Url;
 
 /**
  * This is the model class for table "menus".
@@ -102,28 +103,92 @@ class Menu extends \yii\db\ActiveRecord
         $items = [];
         $byId = [];
 
+        // Controller atual (ex: "client")
+        $currentController = strtolower((new \ReflectionClass(Yii::$app->controller))->getShortName());
+        $currentController = preg_replace('/Controller$/', '', $currentController);
+        $currentAction = Yii::$app->controller->action->id;
+
         foreach ($menus as $menu) {
-            // Verifica permissão com base no controller e action
+
             if ($menu['controller'] && $menu['action']) {
                 if (!AuthorizationController::verAuthorization($menu['controller'], $menu['action'])) {
                     continue;
+                } else {
+                }
+            }
+            // Extrai o ID do controller do menu (ex: "ClientController" → "client")
+            $menuControllerId = null;
+            if (!empty($menu['controller'])) {
+                try {
+                    $menuControllerId = strtolower((new \ReflectionClass($menu['controller']))->getShortName());
+                    $menuControllerId = preg_replace('/Controller$/', '', $menuControllerId);
+                } catch (\ReflectionException $e) {
+                    $menuControllerId = null;
                 }
             }
 
+            // Define se está ativo
+            $menu['active'] = (
+                $menuControllerId === $currentController &&
+                ($menu['action'] === '*' || $menu['action'] === $currentAction)
+            );
+
             $menu['children'] = [];
+            // Verifica permissão com base no controller e action
+
             $byId[$menu['id']] = $menu;
         }
 
-        foreach ($byId as $id => $menu) {
+        // Monta hierarquia de menus
+        foreach ($byId as $id => &$menu) {
             if ($menu['menu_id']) {
                 if (isset($byId[$menu['menu_id']])) {
-                    $byId[$menu['menu_id']]['children'][] = &$byId[$id];
+                    $byId[$menu['menu_id']]['children'][] = &$menu;
                 }
             } else {
-                $items[] = &$byId[$id];
+                $items[] = &$menu;
             }
         }
 
+        // Propaga active do filho para o pai
+        foreach ($byId as &$menu) {
+            foreach ($menu['children'] as $child) {
+                if ($child['active']) {
+                    $menu['active'] = true;
+                    break;
+                }
+            }
+        }
         return $items;
+    }
+
+    public static function renderMenuItem($menu)
+    {
+        $hasChildren = !empty($menu['children']);
+        $url = $menu['url'] ?? Url::to([$menu['controller'] . '/' . $menu['action']]);
+
+        $html = '';
+        if ($hasChildren) {
+            $html .= '<li class="nav-item has-treeview ' . ($menu['active'] ? 'menu-open' : '') . '">';
+            $html .= '<a href="#" class="nav-link ' . ($menu['active'] ? 'active' : '') . '">';
+            $html .= '<i class="nav-icon ' . ($menu['icon'] ?? 'fas fa-circle') . '"></i>';
+            $html .= '<p>' . $menu['label'] . ' <i class="right fas fa-angle-left"></i></p>';
+            $html .= '</a>';
+            $html .= '<ul class="nav nav-treeview">';
+            foreach ($menu['children'] as $child) {
+                $html .= self::renderMenuItem($child);
+            }
+            $html .= '</ul>';
+            $html .= '</li>';
+        } else {
+            $html .= '<li class="nav-item">';
+            $html .= '<a href="' . $url . '" class="nav-link ' . ($menu['active'] ? 'active' : '') . '">';
+            $html .= '<i class="nav-icon ' . ($menu['icon'] ?? 'fas fa-circle') . '"></i>';
+            $html .= '<p>' . $menu['label'] . '</p>';
+            $html .= '</a>';
+            $html .= '</li>';
+        }
+
+        return $html;
     }
 }

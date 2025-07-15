@@ -1,0 +1,64 @@
+<?php
+
+use weebz\yii2basics\models\Menu;
+use yii\db\Migration;
+
+/**
+ * Handles the creation of table `{{%site_sections}}`.
+ */
+class m240916_191951_create_site_sections_table extends Migration
+{
+    /**
+     * {@inheritdoc}
+     */
+    public function safeUp()
+    {
+        $this->createTable('{{%site_sections}}', [
+            'id' => $this->primaryKey(),
+            'name' => $this->string()->notNull(),
+            'order' => $this->integer()->defaultValue(0)->notNull(),
+            'show_menu' => $this->boolean()->defaultValue(true)->notNull(),
+            'status' => $this->boolean()->defaultValue(false)->notNull(),
+        ]);
+        
+        $maxId = Menu::find()->where('id < 99')->max('id');
+        $id =  $maxId + 1;
+
+        $this->insert('menus', [
+            'id' => $id,
+            'menu_id' => 1,
+            'label'   => 'Site Sections',
+            'icon_style'=> 'fas',
+            'icon'    => 'fas fa-ellipsis-v',
+            'visible' => 'site-section;index',
+            'url'     => '/site-section/index',
+            'path'  => 'app',
+            'active'  => 'site-section',
+            'order'   => 0,
+            'status'  => true
+        ]);
+
+        $this->insert('site_sections', [
+            'name' => 'posts',
+            'order' => 3,
+            'show_menu' => true,
+            'status'=>true
+        ]);
+
+        $this->insert('site_sections', [
+            'name' => 'links',
+            'order' => 5,
+            'show_menu' => false,
+            'status'=>true
+        ]);
+
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function safeDown()
+    {
+        $this->dropTable('{{%site_sections}}');
+    }
+}

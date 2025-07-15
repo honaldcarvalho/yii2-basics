@@ -33,11 +33,10 @@ if (!empty($params->file_id) && $params->file != null) {
     $login_image = "<img src='{$assetsDir}/img/croacworks-logo-hq.png' alt='{$params->title}' class='brand-image elevation-3' style='opacity: .8'>";
 }
 
-
 ?>
 
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
-    <a href="<?=Yii::getAlias('/');?>" class="brand-link">
+    <a href="<?= Yii::getAlias('/'); ?>" class="brand-link">
         <?= $login_image ?>
         <span class="brand-text font-weight-light"><?= $params->title ?></span>
     </a>
@@ -70,34 +69,12 @@ if (!empty($params->file_id) && $params->file != null) {
         </div>
 
         <nav class="mt-2">
-            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
-                <?php foreach ($menus as $menu): ?>
-                    <?php if (!empty($menu['children'])): ?>
-                        <li class="nav-item has-treeview">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon <?= $menu['icon'] ?? 'fas fa-circle' ?>"></i>
-                                <p><?= $menu['label'] ?> <i class="right fas fa-angle-left"></i></p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <?php foreach ($menu['children'] as $child): ?>
-                                    <li class="nav-item">
-                                        <a href="<?= $child['url'] ?: Url::to([$child['controller'] . '/' . $child['action']]) ?>" class="nav-link">
-                                            <i class="nav-icon <?= $child['icon'] ?>"></i>
-                                            <p><?= $child['label'] ?></p>
-                                        </a>
-                                    </li>
-                                <?php endforeach; ?>
-                            </ul>
-                        </li>
-                    <?php else: ?>
-                        <li class="nav-item">
-                            <a href="<?= $menu['url'] ?: Url::to([$menu['controller'] . '/' . $menu['action']]) ?>" class="nav-link">
-                                <i class="nav-icon <?= $menu['icon'] ?? 'fas fa-circle' ?>"></i>
-                                <p><?= $menu['label'] ?></p>
-                            </a>
-                        </li>
-                    <?php endif; ?>
-                <?php endforeach; ?>
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" data-accordion="false" role="menu">
+                <?php
+                foreach ($menus as $menu) {
+                    echo Menu::renderMenuItem($menu);
+                }
+                ?>
             </ul>
         </nav>
     </div>
