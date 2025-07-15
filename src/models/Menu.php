@@ -2,6 +2,7 @@
 
 namespace weebz\yii2basics\models;
 
+use weebz\yii2basics\controllers\AuthorizationController;
 use Yii;
 
 /**
@@ -95,17 +96,34 @@ class Menu extends \yii\db\ActiveRecord
         if (!$userIsAdmin) {
             $query->andWhere(['only_admin' => 0]);
         }
+
         $menus = $query->orderBy(['order' => SORT_ASC])->asArray()->all();
 
-        // Organiza em árvore
         $items = [];
+        $byId = [];
+
         foreach ($menus as $menu) {
-            if (empty($menu['menu_id'])) {
-                $items[$menu['id']] = $menu + ['children' => []];
+            // Verifica permissão com base no controller e action
+            if ($menu['controller'] && $menu['action']) {
+                if (!AuthorizationController::verAuthorization($menu['controller'], $menu['action'])) {
+                    continue;
+                }
+            }
+
+            $menu['children'] = [];
+            $byId[$menu['id']] = $menu;
+        }
+
+        foreach ($byId as $id => $menu) {
+            if ($menu['menu_id']) {
+                if (isset($byId[$menu['menu_id']])) {
+                    $byId[$menu['menu_id']]['children'][] = &$byId[$id];
+                }
             } else {
-                $items[$menu['menu_id']]['children'][] = $menu;
+                $items[] = &$byId[$id];
             }
         }
+
         return $items;
     }
 }

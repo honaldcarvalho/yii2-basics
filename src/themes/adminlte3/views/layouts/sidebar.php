@@ -27,7 +27,7 @@ if (!Yii::$app->user->isGuest) {
 
 $assetsDir = ControllerCommon::getAssetsDir();
 if (!empty($params->file_id) && $params->file != null) {
-    $url = Yii::getAlias('@web') . $params->file->urlThumb;
+    $url = Yii::getAlias('@web') . $$menusparams->file->urlThumb;
     $login_image = "<img alt='{$params->title}' class='brand-image img-circle elevation-3' src='{$url}' style='opacity: .8' />";
 } else {
     $login_image = "<img src='{$assetsDir}/img/croacworks-logo-hq.png' alt='{$params->title}' class='brand-image elevation-3' style='opacity: .8'>";
@@ -75,7 +75,7 @@ if (!empty($params->file_id) && $params->file != null) {
                     <?php if (!empty($menu['children'])): ?>
                         <li class="nav-item has-treeview">
                             <a href="#" class="nav-link">
-                                <i class="nav-icon <?= $menu['icon'] ?>"></i>
+                                <i class="nav-icon <?= $menu['icon'] ?? 'fas fa-circle' ?>"></i>
                                 <p><?= $menu['label'] ?> <i class="right fas fa-angle-left"></i></p>
                             </a>
                             <ul class="nav nav-treeview">
@@ -92,7 +92,7 @@ if (!empty($params->file_id) && $params->file != null) {
                     <?php else: ?>
                         <li class="nav-item">
                             <a href="<?= $menu['url'] ?: Url::to([$menu['controller'] . '/' . $menu['action']]) ?>" class="nav-link">
-                                <i class="nav-icon <?= $menu['icon'] ?>"></i>
+                                <i class="nav-icon <?= $menu['icon'] ?? 'fas fa-circle' ?>"></i>
                                 <p><?= $menu['label'] ?></p>
                             </a>
                         </li>

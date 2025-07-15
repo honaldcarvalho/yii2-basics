@@ -55,10 +55,16 @@ class AuthorizationController extends ControllerCommon
 
     public function behaviors()
     {
+        $behaviors = parent::behaviors();
         $request = Yii::$app->request;
+
+        $controller = $this;
         $action = $this->action->id;
 
-        $allow = in_array($action, $this->free) || self::isAdmin() || $this->pageAuth();
+        $show = $this->pageAuth();
+        if (in_array($action, $this->free) || self::isAdmin()) {
+            $show = true;
+        }
 
         $behaviors = [
             'timestamp' => [
@@ -68,58 +74,73 @@ class AuthorizationController extends ControllerCommon
             'access' => [
                 'class' => AccessControl::class,
                 'rules' => [
-                    ['allow' => true, 'actions' => $this->free, 'roles' => ['?']],
-                    ['allow' => $allow, 'actions' => [$action], 'roles' => ['@']],
+                    [
+                        'allow' => true,
+                        'actions' => $this->free,
+                        'roles' => ['?'],
+                    ],
+                    [
+                        'allow' => $show,
+                        'actions' => [$action],
+                        'roles' => ['@'],
+                    ],
                 ],
             ],
         ];
 
-        if ($this->params->logging && Yii::$app->user->identity && $this->id !== 'log') {
-            $log = new Log([
-                'action' => $action,
-                'ip' => $this->getUserIP(),
-                'device' => $this->getOS(),
-                'controller' => $this->id,
-                'user_id' => Yii::$app->user->id,
-            ]);
+        if ($this->params->logging && $controller->id != 'log') {
+            if (Yii::$app->user->identity !== null) {
+                $log = new Log();
+                $log->action = $action;
+                $log->ip = $this->getUserIP();
+                $log->device = $this->getOS();
+                $log->controller = Yii::$app->controller->id;
+                $log->user_id = Yii::$app->user->identity->id;
 
-            if ($request->get('id')) {
-                $log->data = $request->get('id');
-            } elseif (!empty($request->post())) {
-                $data = json_encode($request->post());
-                if (!str_contains($data, 'password')) {
-                    $log->data = $data;
+                if ($request->get('id')) {
+                    $log->data = $request->get('id');
+                } elseif ($request->post()) {
+                    $data_json = json_encode($request->post());
+                    if (!str_contains($data_json, 'password')) {
+                        $log->data = $data_json;
+                    }
                 }
-            }
 
-            $log->save();
+                $log->save();
+            }
         }
 
         return $behaviors;
     }
 
-    public function pageAuth(): bool
+    public function pageAuth()
     {
-        if (self::isGuest()) return false;
-        if (self::isAdmin()) return true;
+        $show = false;
 
-        $controllerFQCN = static::getClassPath();
-        $actionId = Yii::$app->controller->action->id;
-        $groups = self::User()->getUserGroupsId();
+        if (!self::isGuest()) {
+            $controllerFQCN = static::getClassPath(); // <- Corrigido aqui
+            $request_action = Yii::$app->controller->action->id;
+            $groups = self::User()->getUserGroupsId();
 
-        $roles = Role::find()
-            ->where(['controller' => $controllerFQCN, 'status' => 1])
-            ->andWhere(['in', 'group_id', $groups])
-            ->all();
+            $query = Role::find()
+                ->where([
+                    'controller' => $controllerFQCN,
+                    'status' => 1,
+                ])
+                ->andWhere(['or', ['in', 'group_id', $groups], ['group_id' => self::User()->group_id]])
+                ->all();
 
-        foreach ($roles as $role) {
-            $actions = explode(';', $role->actions);
-            if (in_array($actionId, $actions, true)) {
-                return true;
+            foreach ($query as $role) {
+                $actions = explode(';', $role->actions ?? '');
+                foreach ($actions as $action) {
+                    if (trim($action) === trim($request_action)) {
+                        $show = true;
+                        break 2;
+                    }
+                }
             }
         }
-
-        return false;
+        return $show;
     }
 
     public static function verAuthorization($controllerFQCN, $request_action, $model = null)
@@ -163,7 +184,7 @@ class AuthorizationController extends ControllerCommon
         $groups = self::User()?->getUserGroupsId();
         if (self::isAdmin()) return true;
 
-        $licenses = License::find()->where(['in', 'group_id' , $groups])->all();
+        $licenses = License::find()->where(['in', 'group_id', $groups])->all();
 
         foreach ($licenses as $license) {
             if (strtotime($license->validate) >= strtotime(date('Y-m-d')) && $license->status) {
