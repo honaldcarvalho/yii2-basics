@@ -13,15 +13,19 @@ class m240916_191951_create_site_sections_table extends Migration
      */
     public function safeUp()
     {
-        $this->createTable('{{%site_sections}}', [
-            'id' => $this->primaryKey(),
-            'name' => $this->string()->notNull(),
-            'order' => $this->integer()->defaultValue(0)->notNull(),
-            'show_menu' => $this->boolean()->defaultValue(true)->notNull(),
-            'status' => $this->boolean()->defaultValue(false)->notNull(),
-        ]);
-        
-        $maxId = Menu::find()->where('id < 99')->max('id');
+        $tableName = '{{%site_sections}}';
+
+        if ($this->db->schema->getTableSchema($tableName, true) === null) {
+            $this->createTable($tableName, [
+                'id' => $this->primaryKey(),
+                'name' => $this->string()->notNull(),
+                'order' => $this->integer()->defaultValue(0)->notNull(),
+                'show_menu' => $this->boolean()->defaultValue(true)->notNull(),
+                'status' => $this->boolean()->defaultValue(false)->notNull(),
+            ]);
+        }
+
+        $maxId = Menu::find()->max('id');
         $id =  $maxId + 1;
 
         $this->insert('menus', [
