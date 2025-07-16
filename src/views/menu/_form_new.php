@@ -95,6 +95,17 @@ $this->registerJs($script);
                             ])->label('Menu');
                         ?>
 
+
+    <?= $form->field($model, 'controller_id')->dropDownList($controllers, [
+        'id' => 'controller-select',
+        'prompt' => '-- Selecione o controller --'
+    ])->label('Controller') ?>
+
+    <?= $form->field($model, 'action')->dropDownList([], [
+        'id' => 'action-select',
+        'prompt' => '-- Selecione a action --'
+    ])->label('Action') ?>
+
     <?= $form->field($model, 'label')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'icon')->dropDownList([], ['prompt' => '-- Selecione um Icone --']) ?>
