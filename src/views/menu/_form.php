@@ -12,8 +12,6 @@ use yii\bootstrap5\ActiveForm;
 $assetsDir = ControllerCommon::getAssetsDir();
 $script = <<< JS
 
-$controllers = RoleController::getAllControllers(); // FQCNs
-
 async function populateDropdown() {
 
     const response = await fetch('{$assetsDir}/plugins/fontawesome-free/list.json');
@@ -44,36 +42,6 @@ populateDropdown().then(iconsArray => {
 
     $('#menu-icon').val("{$model->icon}").trigger("change");
 });
-
-$('#controller-select').select2({ width: '100%', placeholder: 'Selecione um controller' });
-$('#action-select').select2({ width: '100%', placeholder: 'Selecione uma action' });
-
-function updateVisibleField() {
-    let controller = $('#controller-select').val();
-    let action = $('#action-select').val();
-    if (controller && action) {
-        $('#menu-visible').val(controller + ';' + action);
-    }
-}
-
-$('#controller-select').on('change', function() {
-    let controller = $(this).val();
-    $('#action-select').html('');
-    if (!controller) return;
-
-    $.post('{$actionUrl}', { controller }, function(res) {
-        if (res.success) {
-            let options = '<option></option>';
-            res.actions.forEach(function(action) {
-                options += `<option value=\"\${action}\">\${action}</option>`;
-            });
-            $('#action-select').html(options).trigger('change');
-        }
-    }, 'json');
-});
-
-$('#action-select').on('change', updateVisibleField);
-
 JS;
 
 $this->registerJs($script);
