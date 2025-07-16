@@ -25,23 +25,6 @@ class m240916_191951_create_site_sections_table extends Migration
             ]);
         }
 
-        $maxId = Menu::find()->max('id');
-        $id =  $maxId + 1;
-
-        $this->insert('menus', [
-            'id' => $id,
-            'menu_id' => 1,
-            'label'   => 'Site Sections',
-            'icon_style'=> 'fas',
-            'icon'    => 'fas fa-ellipsis-v',
-            'visible' => 'site-section;index',
-            'url'     => '/site-section/index',
-            'path'  => 'app',
-            'active'  => 'site-section',
-            'order'   => 0,
-            'status'  => true
-        ]);
-
         $this->insert('site_sections', [
             'name' => 'posts',
             'order' => 3,
