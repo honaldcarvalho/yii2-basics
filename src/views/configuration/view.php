@@ -123,6 +123,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 'name'=>'content',
                 'type'=>'text'
             ],
+            [
+                'name'=>'value',
+                'type'=>'text'
+            ],
         ]
     ]); ?>
 </div>
