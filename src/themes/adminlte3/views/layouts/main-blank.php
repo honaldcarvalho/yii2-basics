@@ -11,6 +11,7 @@ use weebz\yii2basics\themes\adminlte3\assets\WeebzAsset;
 use weebz\yii2basics\widgets\Alert;
 
 FontAwesomeAsset::register($this);
+PluginAsset::register($this)->add(['select2']);
 WeebzAsset::register($this);
 $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700');
 $this->registerCssFile('https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css');
