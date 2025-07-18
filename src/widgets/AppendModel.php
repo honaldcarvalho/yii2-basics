@@ -13,6 +13,7 @@ use yii\widgets\Pjax;
 /**
  Example:
              <?= AppendModel::widget([
+                'uniqueId'=>'InstituicaoAppendId',
                 'title'=>'Instituições',
                 'attactModel'=>'Instituicao',
                 'controller'=>'instituicao',
@@ -84,12 +85,14 @@ class AppendModel extends \yii\bootstrap5\Widget
      * {@inheritdoc}
      */
 
-    private $uniqueId;
+    public $uniqueId;
 
     public function init(): void
     {
         parent::init();
-        $this->uniqueId = uniqid($this->controller . '_');
+        if ($this->uniqueId === null) {
+            $this->uniqueId = uniqid($this->controller . '_');
+        }
     }
 
     public function run()
@@ -296,7 +299,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                             return false;
                         }
                         toastr.success("Removed!");
-                        $.pjax.reload({container: "#grid-{$this->uniqueId}", async: false});
+                        $.pjax.reload({container: "#list-{$this->uniqueId}-grid", async: false});
                     }).fail(function (response) {
                         toastr.error("Error on remove {$lower}!");
                     }).always(function (response) {
