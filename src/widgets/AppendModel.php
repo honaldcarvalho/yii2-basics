@@ -4,6 +4,7 @@ namespace weebz\yii2basics\widgets;
 
 use weebz\yii2basics\components\gridview\ActionColumn;
 use weebz\yii2basics\components\gridview\ResponsiveGridView;
+use weebz\yii2basics\themes\adminlte3\assets\PluginAsset;
 use Yii;
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
@@ -90,6 +91,7 @@ class AppendModel extends \yii\bootstrap5\Widget
     public function init(): void
     {
         parent::init();
+        PluginAsset::register($this)->add(['select2']);
         if ($this->uniqueId === null) {
             $this->uniqueId = uniqid($this->controller . '_');
         }
