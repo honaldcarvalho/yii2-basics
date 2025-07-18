@@ -103,7 +103,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => new \yii\data\ActiveDataProvider([
             'query' => $model->getMetaTags(),
         ]),
-        'showFields'=>['description','name'],
+        'showFields'=>['description','name','content'],
         'fields'=>
         [
             [
@@ -121,10 +121,6 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'name'=>'content',
-                'type'=>'text'
-            ],
-            [
-                'name'=>'value',
                 'type'=>'text'
             ],
         ]
