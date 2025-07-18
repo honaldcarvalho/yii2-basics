@@ -12,7 +12,7 @@ use weebz\yii2basics\widgets\Alert;
 
 FontAwesomeAsset::register($this);
 WeebzAsset::register($this);
-PluginAsset::register($this)->add(['select2']);
+PluginAsset::register($this)->add(['fontawesome', 'icheck-bootstrap','fancybox','jquery-ui','toastr','select2','sweetalert2']);
 $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700');
 $this->registerCssFile('https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css');
 PluginAsset::register($this)->add(['fontawesome','toastr','sweetalert2']);
