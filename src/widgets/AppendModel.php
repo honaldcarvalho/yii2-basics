@@ -373,6 +373,16 @@ class AppendModel extends \yii\bootstrap5\Widget
                 $field_str .=  $form->field($model, $field['name'])->checkbox(['id' => "{$this->uniqueId}-{$field['name']}",]);
             else if ($field['type'] == 'dropdown') {
                 $field_str .=  $form->field($model, $field['name'])->dropDownList($field['value'] ?? '', ['class' => 'form-control dropdown']);
+            }else if ($field['type'] == 'select2') {
+                $field_str .= $form->field($model, $field['name'])->dropDownList(
+                    $field['value'] ?? [],
+                    [
+                        'id' => "{$this->uniqueId}-{$field['name']}",
+                        'class' => 'form-control dropdown select2',
+                        'prompt' => 'Selecione',
+                        'data-placeholder' => 'Selecione',
+                    ]
+                );
             }
             $field_str .= '</div>';
         }
