@@ -90,6 +90,43 @@ class AppendModel extends \yii\bootstrap5\Widget
     public function init(): void
     {
         parent::init();
+        $style = <<< CSS
+            optgroup {
+                display:none;
+            }
+
+            .fancybox__content {
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .fancybox__slide::before, .fancybox__slide::after{
+                margin:0!important;
+            }
+
+            @media (max-width: 768px) {
+                .modal.show {
+                    display: flex !important;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                .modal-dialog {
+                    margin: auto !important;
+                    max-width: 90%;
+                }
+
+                .modal-content {
+                    max-height: 90vh;
+                    overflow-y: auto;
+                }
+
+                body.modal-open {
+                    overflow: hidden;
+                }
+            }
+        CSS;
+         \Yii::$app->view->registerCss($style);
         if ($this->uniqueId === null) {
             $this->uniqueId = uniqid($this->controller . '_');
         }
@@ -373,7 +410,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                 $field_str .=  $form->field($model, $field['name'])->checkbox(['id' => "{$this->uniqueId}-{$field['name']}",]);
             else if ($field['type'] == 'dropdown') {
                 $field_str .=  $form->field($model, $field['name'])->dropDownList($field['value'] ?? '', ['class' => 'form-control dropdown']);
-            }else if ($field['type'] == 'select2') {
+            } else if ($field['type'] == 'select2') {
                 $field_str .= $form->field($model, $field['name'])->dropDownList(
                     $field['value'] ?? [],
                     [
