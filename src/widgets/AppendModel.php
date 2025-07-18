@@ -177,7 +177,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                 modal_{$this->attactModel} = new bootstrap.Modal(document.getElementById('save-{$this->uniqueId}'), {
                     keyboard: true
                 });
-                $('#save-{$this->uniqueId} .dropdown-select2').select2({width:'100%',allowClear:true,placeholder:'Selecione',dropdownParent: $('#save-{$this->uniqueId}')});
+                $('.dropdown-select2').select2({width:'100%',allowClear:true,placeholder:'Selecione',dropdownParent: $('#save-{$this->uniqueId}')});
             });
 
             function save{$this->attactModel}(){
@@ -378,7 +378,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                     $field['value'] ?? [],
                     [
                         'id' => "{$this->uniqueId}-{$field['name']}",
-                        'class' => 'form-control dropdown-select2',
+                        'class' => 'form-control dropdown-select2 select2',
                         'prompt' => 'Selecione',
                         'data-placeholder' => 'Selecione',
                     ]
