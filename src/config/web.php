@@ -170,12 +170,12 @@ if (YII_ENV_DEV) {
                     'yii2-basics' => '@vendor/weebz/yii2-basics/src/gii/generators/crud/default' // template name => path to template
                 ]
             ],
-            'model' => [
-                'class' => 'weebz\yii2basics\gii\generators\model\CustomGenerator',
-                'templates' => [
-                    'custom' => '@vendor/weebz/yii2-basics/src/gii/generators/model/custom',
-                ],
-            ],
+            // 'model' => [
+            //     'class' => 'weebz\yii2basics\gii\generators\model\CustomGenerator',
+            //     'templates' => [
+            //         'custom' => '@vendor/weebz/yii2-basics/src/gii/generators/model/custom',
+            //     ],
+            // ],
         ]
     ];
 }
