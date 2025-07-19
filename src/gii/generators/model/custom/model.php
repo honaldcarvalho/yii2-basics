@@ -1,29 +1,26 @@
 <?php
-/**
- * This is the template for generating the model class of a specified table.
- */
-
-/** @var $enum array list of ENUM fields */
-/** @var yii\web\View $this */
-/** @var yii\gii\generators\model\Generator $generator */
-/** @var string $tableName full table name */
-/** @var string $className class name */
-/** @var string $queryClassName query class name */
-/** @var yii\db\TableSchema $tableSchema */
-/** @var array $properties list of properties (property => [type, name. comment]) */
-/** @var string[] $labels list of attribute labels (name => label) */
-/** @var string[] $rules list of validation rules */
-/** @var array $relations list of relations (name => relation declaration) */
-/** @var array $relationsClassHints */
-
 
 use weebz\yii2basics\models\ModelCommon;
 use Yii;
 
+/** @var $enum array */
+/** @var $generator yii\gii\generators\model\Generator */
+/** @var string $tableName */
+/** @var string $className */
+/** @var string $queryClassName */
+/** @var yii\db\TableSchema $tableSchema */
+/** @var array $properties */
+/** @var array $labels */
+/** @var array $rules */
+/** @var array $relations */
+/** @var array $relationsClassHints */
+
+echo "<?php\n";
 ?>
-<?php echo "<?php\n"; ?>
 
 namespace <?= $generator->ns ?>;
+
+use Yii;
 
 /**
  * This is the model class for table "<?= $generator->generateTableName($tableName) ?>".
@@ -40,27 +37,28 @@ namespace <?= $generator->ns ?>;
  */
 class <?= $className ?> extends ModelCommon
 {
-    public \$verGroup = false;
+    public $verGroup = false;
 
-    /**
-     * {@inheritdoc}
-     */
     public static function tableName()
     {
         return '<?= $generator->generateTableName($tableName) ?>';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function rules()
+    public function scenarios()
     {
-        return [<?= empty($rules) ? '' : ("\n            " . implode(",\n            ", $rules) . ",\n        ") ?>];
+        $scenarios = parent::scenarios();
+        return $scenarios;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    public function rules()
+    {
+        return [
+<?php foreach ($rules as $rule): ?>
+            <?= $rule ?>,
+<?php endforeach; ?>
+        ];
+    }
+
     public function attributeLabels()
     {
         return [
@@ -73,13 +71,13 @@ class <?= $className ?> extends ModelCommon
 <?php foreach ($relations as $name => $relation): ?>
     /**
      * Gets query for [[<?= $name ?>]].
-     *
      * @return <?= $relationsClassHints[$name] . "\n" ?>
      */
     public function get<?= $name ?>()
     {
         <?= $relation[0] . "\n" ?>
     }
+
 <?php endforeach; ?>
 
 <?php if ($queryClassName): ?>
@@ -95,6 +93,7 @@ class <?= $className ?> extends ModelCommon
 
 <?php if (!empty($enum)): ?>
 <?php foreach ($enum as $columnName => $columnData): ?>
+
     /**
      * column <?= $columnName ?> ENUM value labels
      * @return string[]
@@ -112,27 +111,23 @@ class <?= $className ?> extends ModelCommon
         ];
     }
 
-    /**
-     * @return string
-     */
     public function <?= $columnData['displayFunctionPrefix'] ?>()
     {
-        return self::<?= $columnData['funcOptsName'] ?>()[\$this-><?= $columnName ?>];
+        return self::<?= $columnData['funcOptsName'] ?>()[\$this-><?= $columnName ?>] ?? null;
     }
 
-<?php foreach ($columnData['values'] as $enumValue): ?>
-    /**
-     * @return bool
-     */
-    public function <?= $columnData['isFunctionPrefix'] . $enumValue['functionSuffix'] ?>()
+<?php foreach ($columnData['values'] as $value): ?>
+
+    public function <?= $columnData['isFunctionPrefix'] . $value['functionSuffix'] ?>()
     {
-        return \$this-><?= $columnName ?> === self::<?= $enumValue['constName'] ?>;
+        return \$this-><?= $columnName ?> === self::<?= $value['constName'] ?>;
     }
 
-    public function <?= $columnData['setFunctionPrefix'] . $enumValue['functionSuffix'] ?>()
+    public function <?= $columnData['setFunctionPrefix'] . $value['functionSuffix'] ?>()
     {
-        \$this-><?= $columnName ?> = self::<?= $enumValue['constName'] ?>;
+        \$this-><?= $columnName ?> = self::<?= $value['constName'] ?>;
     }
+
 <?php endforeach; ?>
 <?php endforeach; ?>
 <?php endif; ?>

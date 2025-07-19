@@ -171,7 +171,7 @@ if (YII_ENV_DEV) {
                 ]
             ],
             'model' => [
-                'class' => 'yii\gii\generators\model\Generator',
+                'class' => 'weebz\yii2basics\gii\generators\model\CustomGenerator',
                 'templates' => [
                     'custom' => '@vendor/weebz/yii2-basics/src/gii/generators/model/custom',
                 ],
