@@ -16,7 +16,13 @@ class CustomGenerator extends Generator
 
     public function requiredTemplates()
     {
-        return ['@vendor/weebz/yii2-basics/src/gii/generators/model/custom/model.php'];
+        return ['model.php'];
     }
 
+    public function generate()
+    {
+        // Define explicitamente o template customizado
+        $this->template = '@vendor/weebz/yii2-basics/src/gii/generators/model/custom/';
+        return parent::generate();
+    }
 }
