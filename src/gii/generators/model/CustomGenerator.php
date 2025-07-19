@@ -2,7 +2,7 @@
 
 namespace weebz\yii2basics\gii\generators\model;
 
-class CustomGenerator extends \yii\gii\generators\model\Generator
+class CustomGenerator extends Generator
 {
     public function getName()
     {
