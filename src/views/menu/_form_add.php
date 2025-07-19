@@ -99,7 +99,7 @@ $this->registerJs($script);
                         ?>
 
 
-    <?= $form->field($model, 'controller_id')->dropDownList($controllers, [
+    <?= $form->field($model, 'controller')->dropDownList($controllers, [
         'id' => 'controller-select',
         'prompt' => '-- Selecione o controller --'
     ])->label('Controller') ?>
