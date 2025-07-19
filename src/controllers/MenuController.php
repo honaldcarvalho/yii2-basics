@@ -36,7 +36,7 @@ class MenuController extends AuthController
     public function actionView($id)
     {
         $searchModel = new MenuSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams,$id);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $id);
         return $this->render('view', [
             'model' => $this->findModel($id),
             'dataProvider' => $dataProvider
@@ -52,15 +52,14 @@ class MenuController extends AuthController
     {
         $model = new Menu();
 
-        if ($model->load(Yii::$app->request->post())) 
-        {
+        if ($model->load(Yii::$app->request->post())) {
             $maxId = Menu::find()->max('id');
             $id =  $maxId + 1;
             $model->id = $id;
 
             if ($model->save()) {
-                if(!empty($model->menu_id) && $model->menu_id !== null){
-                    return $this->redirect(['view', 'id' => $model->menu_id]);    
+                if (!empty($model->menu_id) && $model->menu_id !== null) {
+                    return $this->redirect(['view', 'id' => $model->menu_id]);
                 }
                 return $this->redirect(['view', 'id' => $model->id]);
             }
@@ -69,6 +68,31 @@ class MenuController extends AuthController
         $model->menu_id = $id;
 
         return $this->render('create', [
+            'model' => $model,
+        ]);
+    }
+
+
+    public function actionAdd($id = null)
+    {
+        $model = new Menu();
+
+        if ($model->load(Yii::$app->request->post())) {
+            $maxId = Menu::find()->max('id');
+            $id =  $maxId + 1;
+            $model->id = $id;
+
+            if ($model->save()) {
+                if (!empty($model->menu_id) && $model->menu_id !== null) {
+                    return $this->redirect(['view', 'id' => $model->menu_id]);
+                }
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+        }
+
+        $model->menu_id = $id;
+
+        return $this->render('add', [
             'model' => $model,
         ]);
     }
@@ -107,20 +131,20 @@ class MenuController extends AuthController
         return $this->redirect(['index']);
     }
 
-    public function actionOrderMenu()   {
+    public function actionOrderMenu()
+    {
         $menus = [];
 
         if (Yii::$app->request->isPost) {
 
             $menus = $_POST['items'];
 
-            foreach ($menus as $key => $value) {               
+            foreach ($menus as $key => $value) {
                 $rst = Yii::$app->db->createCommand()->update('menus', ['order' => $key + 1], "id = {$value}")->execute();
                 echo $rst;
             }
-
         }
-        return \yii\helpers\Json::encode(['atualizado'=>$menus]);
+        return \yii\helpers\Json::encode(['atualizado' => $menus]);
     }
 
     /**
@@ -130,7 +154,7 @@ class MenuController extends AuthController
      * @return Menu the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id,$model=null)
+    protected function findModel($id, $model = null)
     {
         if (($model = Menu::findOne($id)) !== null) {
             return $model;
