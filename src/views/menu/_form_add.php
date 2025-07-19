@@ -5,6 +5,7 @@ use weebz\yii2basics\controllers\RoleController;
 use weebz\yii2basics\models\Menu;
 use yii\helpers\Html;
 use yii\bootstrap5\ActiveForm;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model weebz\yii2basics\models\Menu */
@@ -12,6 +13,7 @@ use yii\bootstrap5\ActiveForm;
 
 $assetsDir = ControllerCommon::getAssetsDir();
 $controllers = RoleController::getAllControllers(); // FQCNs
+$actionUrl = Url::to(['/role/get-actions']); // AJAX para buscar actions
 
 $script = <<< JS
 
