@@ -97,6 +97,41 @@ class MenuController extends AuthController
         ]);
     }
 
+    public function actionAutoAdd($controller, $action = 'index')
+    {
+        if (!$controller || !class_exists($controller)) {
+            throw new \yii\web\NotFoundHttpException("Controller inválido: $controller");
+        }
+
+        // Reflete o controller
+        $reflection = new \ReflectionClass($controller);
+        $controllerId = strtolower(preg_replace('/Controller$/', '', $reflection->getShortName()));
+        $namespaceParts = explode('\\', $controller);
+        $path = strtolower($namespaceParts[0]) ?? 'app';
+
+        // Define valores padrão
+        $model = new \weebz\yii2basics\models\Menu();
+        $model->label = ucfirst($controllerId);
+        $model->controller = $controller;
+        $model->action = $action;
+        $model->visible = "$controller;$action";
+        $model->url = "/$controllerId/$action";
+        $model->icon = 'fas fa-circle'; // Sugestão: personalize depois
+        $model->icon_style = 'fas';
+        $model->path = $path;
+        $model->active = $controllerId;
+        $model->order = (Menu::find()->max('order') ?? 0) + 1;
+        $model->status = 1;
+
+        if ($model->save()) {
+            Yii::$app->session->setFlash('success', "Menu para <code>$controller::$action</code> criado com sucesso.");
+            return $this->redirect(['view', 'id' => $model->id]);
+        }
+
+        Yii::$app->session->setFlash('error', "Erro ao criar menu.");
+        return $this->redirect(['index']);
+    }
+
     /**
      * Updates an existing Menu model.
      * If update is successful, the browser will be redirected to the 'view' page.

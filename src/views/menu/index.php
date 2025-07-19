@@ -43,7 +43,35 @@ $script = <<< JS
         });
 
     });
-  
+  $('#submit-auto-add').on('click', function() {
+    const controller = $('#controller').val().trim();
+    const action = $('#action').val().trim() || 'index';
+
+    if (!controller) {
+        toastr.error('Informe o controller.');
+        return;
+    }
+
+    $('#submit-auto-add').prop('disabled', true);
+
+    $.ajax({
+        url: '/menu/auto-add',
+        method: 'GET',
+        data: { controller, action },
+        success: function(response) {
+            location.reload();
+        },
+        error: function(xhr) {
+            const msg = xhr.responseText || 'Erro ao adicionar menu.';
+            toastr.error(msg);
+        },
+        complete: function() {
+            $('#submit-auto-add').prop('disabled', false);
+            $('#modal-auto-add').modal('hide');
+        }
+    });
+});
+
 JS;
 
 $this::registerJs($script, $this::POS_END);
@@ -56,10 +84,17 @@ $this::registerJs($script, $this::POS_END);
                 <div class="card-body">
                     <div class="row mb-2">
                     <div class="col-md-12">
-                            <?= weebz\yii2basics\widgets\DefaultButtons::widget(
-                            [
-                                'controller' => Yii::$app->controller->id,'show'=>['create'],'verGroup'=>false
-                            ]) ?>
+<div class="btn-group">
+    <?= weebz\yii2basics\widgets\DefaultButtons::widget([
+        'controller' => Yii::$app->controller->id,
+        'show' => ['create'],
+        'verGroup' => false
+    ]) ?>
+
+    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modal-auto-add">
+        <i class="fas fa-plus-circle"></i> Adicionar Automático
+    </button>
+</div>
                         </div>
                     </div>
 
@@ -95,4 +130,33 @@ $this::registerJs($script, $this::POS_END);
         <!--.col-md-12-->
     </div>
     <!--.row-->
+</div>
+
+
+<div class="modal fade" id="modal-auto-add" tabindex="-1" aria-labelledby="modalAutoAddLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalAutoAddLabel">Adicionar Menu Automático</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <form id="auto-add-form">
+          <div class="mb-3">
+            <label for="controller" class="form-label">Controller (FQCN)</label>
+            <input type="text" class="form-control" id="controller" name="controller" required>
+            <div class="form-text">Ex: <code>app\controllers\ClientController</code></div>
+          </div>
+          <div class="mb-3">
+            <label for="action" class="form-label">Action</label>
+            <input type="text" class="form-control" id="action" name="action" value="index" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+        <button type="button" class="btn btn-primary" id="submit-auto-add">Adicionar</button>
+      </div>
+    </div>
+  </div>
 </div>
