@@ -41,7 +41,7 @@ class <?= $className ?> extends ModelCommon
 
     public static function tableName()
     {
-        return '<?= $generator->generateTableName($tableName) ?>';
+        return '<?= $tableName ?>';
     }
 
     public function scenarios()
