@@ -4,6 +4,8 @@ use yii\grid\GridView;
 use weebz\yii2basics\widgets\DefaultButtons;
 use weebz\yii2basics\components\gridview\ActionColumn;
 use weebz\yii2basics\controllers\AuthController;
+use weebz\yii2basics\controllers\RoleController;
+use yii\bootstrap5\Html;
 
 /* @var $this yii\web\View */
 /* @var $searchModel weebz\yii2basics\models\MenuSearch */
@@ -73,7 +75,7 @@ $script = <<< JS
 });
 
 JS;
-
+$controllers = RoleController::getAllControllers(); // FQCNs
 $this::registerJs($script, $this::POS_END);
 
 ?>
@@ -144,7 +146,11 @@ $this::registerJs($script, $this::POS_END);
         <form id="auto-add-form">
           <div class="mb-3">
             <label for="controller" class="form-label">Controller (FQCN)</label>
-            <input type="text" class="form-control" id="controller" name="controller" required>
+            <?= Html::dropDownList('controller', null, $controllers, [
+                'id' => 'controller',
+                'prompt' => '-- Selecione o controller --',
+                'class' => 'form-select'
+            ]) ?>
             <div class="form-text">Ex: <code>app\controllers\ClientController</code></div>
           </div>
           <div class="mb-3">
