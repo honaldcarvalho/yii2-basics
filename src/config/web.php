@@ -169,7 +169,13 @@ if (YII_ENV_DEV) {
                 'templates' => [ // setting for our templates
                     'yii2-basics' => '@vendor/weebz/yii2-basics/src/gii/generators/crud/default' // template name => path to template
                 ]
-            ]
+            ],
+            'model' => [
+                'class' => 'yii\gii\generators\model\Generator',
+                'templates' => [
+                    'custom' => '@vendor/weebz/yii2-basics/src/gii/generators/model/custom',
+                ],
+            ],
         ]
     ];
 }
