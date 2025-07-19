@@ -1,66 +1,139 @@
 <?php
+/**
+ * This is the template for generating the model class of a specified table.
+ */
 
-use yii\helpers\StringHelper;
+/** @var $enum array list of ENUM fields */
+/** @var yii\web\View $this */
+/** @var yii\gii\generators\model\Generator $generator */
+/** @var string $tableName full table name */
+/** @var string $className class name */
+/** @var string $queryClassName query class name */
+/** @var yii\db\TableSchema $tableSchema */
+/** @var array $properties list of properties (property => [type, name. comment]) */
+/** @var string[] $labels list of attribute labels (name => label) */
+/** @var string[] $rules list of validation rules */
+/** @var array $relations list of relations (name => relation declaration) */
+/** @var array $relationsClassHints */
 
-/* @var $generator yii\gii\generators\model\Generator */
-/* @var $className string */
-/* @var $tableName string */
-/* @var $properties array */
-/* @var $labels string[] */
-/* @var $rules array */
-/* @var $relations array */
-
-echo "<?php\n";
-?>
-
-namespace <?= StringHelper::dirname(ltrim($generator->ns, '\\')) ?>;
 
 use weebz\yii2basics\models\ModelCommon;
 use Yii;
 
-<?php foreach ($relations as $relation): ?>
-use <?= $relation[1] ?>;
-<?php endforeach; ?>
+?>
+<?php echo "<?php\n"; ?>
+
+namespace <?= $generator->ns ?>;
 
 /**
- * This is the model class for table "<?= $tableName ?>".
+ * This is the model class for table "<?= $generator->generateTableName($tableName) ?>".
  *
-<?php foreach ($properties as $property): ?>
- * @property <?= $property['type'] ?> $<?= $property['name'] ?> <?= $property['comment'] ?>
-
+<?php foreach ($properties as $property => $data): ?>
+ * @property <?= "{$data['type']} \${$property}"  . ($data['comment'] ? ' ' . strtr($data['comment'], ["\n" => ' ']) : '') . "\n" ?>
 <?php endforeach; ?>
+<?php if (!empty($relations)): ?>
+ *
+<?php foreach ($relations as $name => $relation): ?>
+ * @property <?= $relation[1] . ($relation[2] ? '[]' : '') . ' $' . lcfirst($name) . "\n" ?>
+<?php endforeach; ?>
+<?php endif; ?>
  */
 class <?= $className ?> extends ModelCommon
 {
-    public $verGroup = false;
+    public \$verGroup = false;
 
+    /**
+     * {@inheritdoc}
+     */
     public static function tableName()
     {
-        return '<?= $tableName ?>';
+        return '<?= $generator->generateTableName($tableName) ?>';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function rules()
     {
-        return <?= $generator->generateString($rules) ?>;
+        return [<?= empty($rules) ? '' : ("\n            " . implode(",\n            ", $rules) . ",\n        ") ?>];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function attributeLabels()
     {
         return [
 <?php foreach ($labels as $name => $label): ?>
-            '<?= $name ?>' => Yii::t('app', '<?= $label ?>'),
+            '<?= $name ?>' => Yii::t('app', '<?= addslashes($label) ?>'),
 <?php endforeach; ?>
         ];
     }
 
 <?php foreach ($relations as $name => $relation): ?>
     /**
-     * @return \yii\db\ActiveQuery
+     * Gets query for [[<?= $name ?>]].
+     *
+     * @return <?= $relationsClassHints[$name] . "\n" ?>
      */
-    public function <?= $name ?>()
+    public function get<?= $name ?>()
     {
-        return $this-><?= $relation[0] ?>;
+        <?= $relation[0] . "\n" ?>
+    }
+<?php endforeach; ?>
+
+<?php if ($queryClassName): ?>
+    /**
+     * {@inheritdoc}
+     * @return <?= ($generator->ns === $generator->queryNs) ? $queryClassName : '\\' . $generator->queryNs . '\\' . $queryClassName ?> the active query used by this AR class.
+     */
+    public static function find()
+    {
+        return new <?= ($generator->ns === $generator->queryNs) ? $queryClassName : '\\' . $generator->queryNs . '\\' . $queryClassName ?>(get_called_class());
+    }
+<?php endif; ?>
+
+<?php if (!empty($enum)): ?>
+<?php foreach ($enum as $columnName => $columnData): ?>
+    /**
+     * column <?= $columnName ?> ENUM value labels
+     * @return string[]
+     */
+    public static function <?= $columnData['funcOptsName'] ?>()
+    {
+        return [
+<?php foreach ($columnData['values'] as $k => $value): ?>
+<?php if ($generator->enableI18N): ?>
+            self::<?= $value['constName'] ?> => Yii::t('<?= $generator->messageCategory ?>', '<?= $value['value'] ?>'),
+<?php else: ?>
+            self::<?= $value['constName'] ?> => '<?= $value['value'] ?>',
+<?php endif; ?>
+<?php endforeach; ?>
+        ];
     }
 
+    /**
+     * @return string
+     */
+    public function <?= $columnData['displayFunctionPrefix'] ?>()
+    {
+        return self::<?= $columnData['funcOptsName'] ?>()[\$this-><?= $columnName ?>];
+    }
+
+<?php foreach ($columnData['values'] as $enumValue): ?>
+    /**
+     * @return bool
+     */
+    public function <?= $columnData['isFunctionPrefix'] . $enumValue['functionSuffix'] ?>()
+    {
+        return \$this-><?= $columnName ?> === self::<?= $enumValue['constName'] ?>;
+    }
+
+    public function <?= $columnData['setFunctionPrefix'] . $enumValue['functionSuffix'] ?>()
+    {
+        \$this-><?= $columnName ?> = self::<?= $enumValue['constName'] ?>;
+    }
 <?php endforeach; ?>
+<?php endforeach; ?>
+<?php endif; ?>
 }

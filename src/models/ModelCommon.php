@@ -28,10 +28,6 @@ class ModelCommon extends \yii\db\ActiveRecord
         return $scenarios;
     }
 
-    public static function tableName()
-    {
-        return parent::tableName(); // ou remova completamente esse método
-    }
 
     public static function find($verGroup = null)
     {
