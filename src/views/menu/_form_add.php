@@ -1,6 +1,7 @@
 <?php
 
 use weebz\yii2basics\controllers\ControllerCommon;
+use weebz\yii2basics\controllers\RoleController;
 use weebz\yii2basics\models\Menu;
 use yii\helpers\Html;
 use yii\bootstrap5\ActiveForm;
@@ -10,9 +11,9 @@ use yii\bootstrap5\ActiveForm;
 /* @var $form yii\bootstrap5\ActiveForm */
 
 $assetsDir = ControllerCommon::getAssetsDir();
-$script = <<< JS
-
 $controllers = RoleController::getAllControllers(); // FQCNs
+
+$script = <<< JS
 
 async function populateDropdown() {
 
