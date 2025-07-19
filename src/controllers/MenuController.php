@@ -120,7 +120,7 @@ class MenuController extends AuthController
         $model->icon_style = 'fas';
         $model->path = $path;
         $model->active = $controllerId;
-        $model->order = (Menu::find()->max('order') ?? 0) + 1;
+        $model->order = (Menu::find()->max('`order`') ?? 0) + 1;
         $model->status = 1;
 
         if ($model->save()) {
