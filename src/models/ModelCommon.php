@@ -30,7 +30,7 @@ class ModelCommon extends \yii\db\ActiveRecord
 
     public static function tableName()
     {
-        return false;
+        return parent::tableName(); // ou remova completamente esse método
     }
 
     public static function find($verGroup = null)
