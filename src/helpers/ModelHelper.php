@@ -59,12 +59,14 @@ class ModelHelper
             }
 
             $instance = new $class();
-            $attributes = $instance->attributes();
+            $attributeNames = array_keys($instance->attributes);
 
-            foreach ($attributes as $attr => $value) {
-                $fields[] = ['id' => $attr, 'text' => $instance->getAttributeLabel($attr)];
+            foreach ($attributeNames as $attr) {
+                $fields[] = [
+                    'id' => $attr,
+                    'text' => $instance->getAttributeLabel($attr),
+                ];
             }
-
             return $fields;
         } catch (\Throwable $e) {
             return [];
