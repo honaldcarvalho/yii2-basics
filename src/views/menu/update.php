@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
         <div class="card-body">
             <div class="row">
                 <div class="col-md-12">
-                    <?=$this->render('_form', [
+                    <?=$this->render('_form_add', [
                         'model' => $model
                     ]) ?>
                 </div>
