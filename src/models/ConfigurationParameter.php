@@ -14,7 +14,7 @@ use Yii;
  * @property Configuration $configuration
  * @property Parameter $parameter
  */
-class ConfigurationParameter extends  ModelCommon
+class ConfigurationParameter extends ModelCommon
 {
     /**
      * {@inheritdoc}

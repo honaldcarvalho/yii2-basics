@@ -16,7 +16,7 @@ use Yii;
  *
  * @property States[] $states
  */
-class Country extends  ModelCommon
+class Country extends ModelCommon
 {
     /**
      * {@inheritdoc}

@@ -14,7 +14,7 @@ use Yii;
  * @property Groups $group
  * @property Users $user
  */
-class UserGroup extends  ModelCommon
+class UserGroup extends ModelCommon
 {
     /**
      * {@inheritdoc}

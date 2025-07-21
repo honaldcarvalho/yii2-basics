@@ -35,7 +35,7 @@ use yii\web\IdentityInterface;
  * @property Rule[] $rules
  * @property UserGroups[] $userGroups
  */
-class User extends  ModelCommon implements IdentityInterface
+class User extends ModelCommon implements IdentityInterface
 {
 
     public $verGroup = false;

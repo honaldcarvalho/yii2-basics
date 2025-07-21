@@ -18,7 +18,7 @@ use Yii;
  *
  * @property User $user
  */
-class Log extends  ModelCommon
+class Log extends ModelCommon
 {
     public $verGroup = false;
     /**

@@ -25,7 +25,7 @@ use yii\helpers\Url;
  * @property Menu $menu
  * @property Menu[] $menus
  */
-class Menu extends  ModelCommon
+class Menu extends ModelCommon
 {
     public $verGroup = false;
     /**

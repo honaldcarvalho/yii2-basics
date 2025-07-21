@@ -14,7 +14,7 @@ use Yii;
  * @property Files $file
  * @property Pages $page
  */
-class PageFile extends  ModelCommon
+class PageFile extends ModelCommon
 {
     /**
      * {@inheritdoc}

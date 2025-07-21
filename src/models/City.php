@@ -15,7 +15,7 @@ use Yii;
  *
  * @property State $state
  */
-class City extends  ModelCommon
+class City extends ModelCommon
 {
     /**
      * {@inheritdoc}

@@ -17,7 +17,7 @@ use Yii;
  *
  * @property Licenses[] $licenses
  */
-class LicenseType extends  ModelCommon
+class LicenseType extends ModelCommon
 {
     
     public $verGroup = false;
