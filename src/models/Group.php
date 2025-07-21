@@ -16,7 +16,7 @@ use Yii;
  * @property Rules[] $rules
  * @property UserGroup[] $userGroups
  */
-class Group extends \yii\db\ActiveRecord
+class Group extends  ModelCommon
 {
     public $verGroup = false;
     /**

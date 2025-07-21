@@ -18,7 +18,7 @@ use Yii;
  *
  * @property User $user
  */
-class Log extends \yii\db\ActiveRecord
+class Log extends  ModelCommon
 {
     public $verGroup = false;
     /**

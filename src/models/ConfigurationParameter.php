@@ -14,7 +14,7 @@ use Yii;
  * @property Configuration $configuration
  * @property Parameter $parameter
  */
-class ConfigurationParameter extends \yii\db\ActiveRecord
+class ConfigurationParameter extends  ModelCommon
 {
     /**
      * {@inheritdoc}

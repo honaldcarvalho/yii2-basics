@@ -20,7 +20,7 @@ use yii\helpers\Inflector;
  * @property Groups $group
  * @property Users $user
  */
-class Rule extends \yii\db\ActiveRecord
+class Rule extends  ModelCommon
 {
     public $verGroup = false;
     /**

@@ -21,7 +21,7 @@ class SourceMessageController extends AuthController
      */
     public function actionIndex()
     {
-        $searchModel = new SourceMessageSearch();
+        $searchModel = new SourceMessage();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [

@@ -17,7 +17,7 @@ class LogController extends AuthController
      */
     public function actionIndex()
     {
-        $searchModel = new LogSearch();
+        $searchModel = new Log();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [

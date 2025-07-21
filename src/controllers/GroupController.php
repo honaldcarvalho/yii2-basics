@@ -22,7 +22,7 @@ class GroupController extends AuthController
      */
     public function actionIndex()
     {
-        $searchModel = new GroupSearch();
+        $searchModel = new Group();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [

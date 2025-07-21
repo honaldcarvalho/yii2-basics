@@ -29,7 +29,7 @@ class UserController extends AuthController
      */
     public function actionIndex()
     {
-        $searchModel = new UserSearch();
+        $searchModel = new User();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [

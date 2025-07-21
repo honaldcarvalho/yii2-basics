@@ -13,7 +13,7 @@ use Yii;
 * @property SourceMessage $sourceMessage
  */
 
-class Message extends \yii\db\ActiveRecord
+class Message extends  ModelCommon
 {
     public $verGroup = false;
     /**

@@ -24,7 +24,7 @@ class RuleController extends AuthController
      */
     public function actionIndex()
     {
-        $searchModel = new RuleSearch();
+        $searchModel = new Rule();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [

@@ -20,7 +20,7 @@ class LanguageController extends AuthController
      */
     public function actionIndex()
     {
-        $searchModel = new LanguageSearch();
+        $searchModel = new Language();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [

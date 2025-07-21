@@ -19,7 +19,7 @@ class MenuController extends AuthController
      */
     public function actionIndex()
     {
-        $searchModel = new MenuSearch();
+        $searchModel = new Menu();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -36,7 +36,7 @@ class MenuController extends AuthController
      */
     public function actionView($id)
     {
-        $searchModel = new MenuSearch();
+        $searchModel = new Menu();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $id);
         return $this->render('view', [
             'model' => $this->findModel($id),

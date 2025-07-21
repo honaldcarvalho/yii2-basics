@@ -18,7 +18,7 @@ use Yii;
  * @property Cities[] $cities
  * @property Country $country
  */
-class State extends \yii\db\ActiveRecord
+class State extends  ModelCommon
 {
     /**
      * {@inheritdoc}

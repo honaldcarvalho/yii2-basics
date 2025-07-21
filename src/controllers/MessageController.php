@@ -19,7 +19,7 @@ class MessageController extends AuthController
      */
     public function actionIndex()
     {
-        $searchModel = new MessageSearch();
+        $searchModel = new Message();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [

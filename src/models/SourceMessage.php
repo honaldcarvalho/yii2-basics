@@ -11,7 +11,7 @@ use Yii;
  * @property string|null $category
  * @property string|null $message
  */
-class SourceMessage extends \yii\db\ActiveRecord
+class SourceMessage extends  ModelCommon
 {
     public $verGroup = false;
     /**

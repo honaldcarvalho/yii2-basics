@@ -19,7 +19,7 @@ use Yii;
  * @property LicenseType $licenseType
  */
 
-class License extends \yii\db\ActiveRecord
+class License extends  ModelCommon
 {
     public $verGroup = false;
     

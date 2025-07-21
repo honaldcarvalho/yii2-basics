@@ -12,7 +12,7 @@ use Yii;
  * @property string $name
  * @property int|null $status
  */
-class Language extends \yii\db\ActiveRecord
+class Language extends  ModelCommon
 {
     public $verGroup = false;
     /**

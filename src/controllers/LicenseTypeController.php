@@ -19,7 +19,7 @@ class LicenseTypeController extends AuthController
      */
     public function actionIndex()
     {
-        $searchModel = new LicenseTypeSearch();
+        $searchModel = new LicenseType();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
