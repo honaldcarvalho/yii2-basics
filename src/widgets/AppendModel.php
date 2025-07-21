@@ -69,6 +69,7 @@ class AppendModel extends \yii\bootstrap5\Widget
     public $childField;
     public $path = 'app';
     public $template = '{status}{view}{edit}{remove}';
+    public $gridId = null;
     public $fields;
     public $options = [];
     public $showFields;
@@ -132,6 +133,9 @@ class AppendModel extends \yii\bootstrap5\Widget
         if ($this->uniqueId === null) {
             $this->uniqueId = uniqid($this->controller . '_');
         }
+        if($this->gridId === null){
+            $this->gridId = "#grid-{$this->controller}";
+        }
     }
 
     public function run()
@@ -155,6 +159,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                 'template' => $this->template,
                 'path' =>  $this->path,
                 'controller' => $this->controller,
+                'gridId' => "#list-{$this->uniqueId}-grid",
                 'order' => $this->order,
                 'orderField' => $this->orderField,
                 'orderModel' => $this->orderModel,

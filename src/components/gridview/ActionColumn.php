@@ -23,6 +23,7 @@ class ActionColumn extends \yii\grid\ActionColumn
     public $orderField = 'order';
     public $orderModel = null;
     public $modelClass = null;
+    public $gridId = null;
     /**
      * Initializes the default button rendering callbacks.
      */
@@ -36,7 +37,11 @@ class ActionColumn extends \yii\grid\ActionColumn
             $this->model = $class_name;
             $this->modelClass = $this->grid->filterModel;
         }
-
+        
+        if($this->gridId === null){
+            $this->gridId = "#grid-{$this->controller}";
+        }
+        
         $this->grid->summaryOptions = ['class' => 'summary mb-2'];
         $this->grid->pager = ['class' => 'yii\bootstrap5\LinkPager'];
         parent::init();
@@ -116,7 +121,7 @@ class ActionColumn extends \yii\grid\ActionColumn
                 object.addClass('fas fa-sync fa-spin');
 
                 $('#overlay-{$this->controller}').show();
-                $( "#grid-{$this->controller} .table tbody tr" ).each(function( index ) {
+                $( "{$this->gridId} .table tbody tr" ).each(function( index ) {
                     items[items.length] = $( this ).attr("data-key");
                 });
                 $.ajax({
@@ -124,7 +129,7 @@ class ActionColumn extends \yii\grid\ActionColumn
                     url: `/{$this->controller}/\${action}?id=\${id}`
                 }).done(function(response) {        
                     toastr.success("Success!");  
-                    $.pjax.reload({container: "#grid-{$this->controller}", async: false}); 
+                    $.pjax.reload({container: "{$this->gridId}", async: false}); 
                     return false;
                 }).fail(function (response) {
                     toastr.error("Fail!");
@@ -158,7 +163,7 @@ class ActionColumn extends \yii\grid\ActionColumn
                 let i = 0;
 
                 $('#overlay-{$this->controller}').show();
-                $( "#grid-{$this->controller} .table tbody tr" ).each(function( index ) {
+                $( "{$this->gridId} .table tbody tr" ).each(function( index ) {
                     items[items.length] = $( this ).attr("data-key");
                 });
 
@@ -168,7 +173,7 @@ class ActionColumn extends \yii\grid\ActionColumn
                     data: {'items':items,'field':'{$this->orderField}','modelClass':'$this->orderModel'}
                 }).done(function(response) {        
                     toastr.success("atualizado");  
-                    $.pjax.reload({container: "#grid-{$this->controller}", async: false}); 
+                    $.pjax.reload({container: "{$this->gridId}", async: false}); 
                     setSortable();
                 }).fail(function (response) {
                     toastr.error("Error ao atualizar a ordem. Recarregue a pagina");
@@ -179,7 +184,7 @@ class ActionColumn extends \yii\grid\ActionColumn
             }
 
             function setSortable(){
-                jQuery("#grid-{$this->controller} .table tbody").sortable({
+                jQuery("{$this->gridId} .table tbody").sortable({
                     update: function(event, ui) {
                         updateOrder();
                     }
