@@ -15,6 +15,7 @@ class ModelHelper
 
     public static function getAllModelClasses(): array
     {
+        $models = [];
         foreach (self::$namespaces as $ns => $path) {
             if (!is_dir($path)) continue;
             $files = scandir($path);
