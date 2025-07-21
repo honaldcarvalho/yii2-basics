@@ -471,7 +471,6 @@ class AppendModel extends \yii\bootstrap5\Widget
             </div>
         HTML;
 
-
         echo $head;
         Pjax::begin(['id' => "list-{$this->uniqueId}-grid"]);
         echo $gridView;
