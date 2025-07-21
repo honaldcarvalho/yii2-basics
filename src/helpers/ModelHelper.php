@@ -2,29 +2,49 @@
 
 namespace weebz\yii2basics\helpers;
 
+use Yii;
+
 class ModelHelper
 {
 
-    public static $namespaces = [
-        'app\models' => '@app/models',
-        'weebz\yii2basics\models' => '@weebz/yii2basics/models',
+    public static $paths = [
+        '@app/models',
+        '@weebz/yii2basics/models'
     ];
 
     public static function getAllModelClasses(): array
     {
         $models = [];
-        foreach (self::$namespaces as $ns => $path) {
-            if (!is_dir($path)) continue;
-            $files = scandir($path);
-            foreach ($files as $file) {
-                if (preg_match('/^[A-Z]\w+\.php$/', $file)) {
-                    $className = pathinfo($file, PATHINFO_FILENAME);
-                    $fqcn = $ns . '\\' . $className;
 
-                    if (class_exists($fqcn) && is_subclass_of($fqcn, \yii\db\ActiveRecord::class)) {
-                        $models[$fqcn] = $className;
-                    }
-                }
+        foreach (static::$paths as $pathAlias) {
+            $path = Yii::getAlias($pathAlias);
+            if (!is_dir($path)) continue;
+
+            $files = scandir($path);
+
+            foreach ($files as $file) {
+                // Ignora arquivos não .php ou abstratos
+                if (!preg_match('/^[A-Z]\w+\.php$/', $file)) continue;
+
+                $fullPath = $path . DIRECTORY_SEPARATOR . $file;
+                if (!is_file($fullPath)) continue;
+
+                $content = file_get_contents($fullPath);
+
+                // Extrai namespace
+                if (!preg_match('/namespace\s+([^;]+);/', $content, $nsMatch)) continue;
+                // Extrai nome da classe
+                if (!preg_match('/class\s+(\w+)/', $content, $classMatch)) continue;
+
+                $namespace = trim($nsMatch[1]);
+                $className = trim($classMatch[1]);
+                $fqcn = $namespace . '\\' . $className;
+
+                // Verifica se é um ActiveRecord válido
+                if (!class_exists($fqcn)) continue;
+                if (!is_subclass_of($fqcn, \yii\db\ActiveRecord::class)) continue;
+
+                $models[$fqcn] = $className;
             }
         }
 
@@ -50,5 +70,4 @@ class ModelHelper
             return [];
         }
     }
-
 }
