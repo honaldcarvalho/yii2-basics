@@ -420,6 +420,9 @@ class AppendModel extends \yii\bootstrap5\Widget
             if ($field['type'] == 'text')
                 $field_str .= $form->field($model, $field['name'])->textInput(
             array_merge($this->options,['id' => "{$this->uniqueId}-{$field['name']}", 'maxlength' => true, 'value' => $field['value'] ?? '']));
+            else if ($field['type'] == 'textarea')
+                $field_str .=  $form->field($model, $field['name'])->textarea( 
+            array_merge($this->options,['id' => "{$this->uniqueId}-{$field['name']}", 'maxlength' => true, 'value' => $field['value'] ?? '']));
             else if ($field['type'] == 'number')
                 $field_str .=  $form->field($model, $field['name'])->input('number', 
             array_merge($this->options,['id' => "{$this->uniqueId}-{$field['name']}", 'maxlength' => true, 'value' => $field['value'] ?? '']));
