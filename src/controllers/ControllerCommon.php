@@ -5,6 +5,7 @@ namespace weebz\yii2basics\controllers;
 use weebz\yii2basics\controllers\rest\StorageController;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use weebz\yii2basics\helpers\ModelHelper;
 use weebz\yii2basics\models\Configuration;
 use weebz\yii2basics\models\ModelCommon;
 use Yii;
@@ -46,7 +47,7 @@ class ControllerCommon extends \yii\web\Controller
 
         return strtoupper($path_parts[0]);
     }
-    
+
     public static function getAssetsDir()
     {
         return Yii::$app->assetManager->getPublishedUrl('@vendor/weebz/yii2-basics/src/themes/adminlte3/web/dist');
@@ -70,7 +71,7 @@ class ControllerCommon extends \yii\web\Controller
         }
         $cookies = Yii::$app->request->cookies;
         $post = Yii::$app->request->post();
-        
+
         if (!\Yii::$app->user->isGuest) {
             $language = \Yii::$app->user->identity->language->code;
         } else if (($cookie = $cookies->get('lang')) !== null && !isset($post['lang'])) {
@@ -92,10 +93,11 @@ class ControllerCommon extends \yii\web\Controller
         return $behaviors;
     }
 
-    static function classExist($modelClass) {
+    static function classExist($modelClass)
+    {
         $modelClassCommon = '\\weebz\\yii2basics\\models\\' . $modelClass;
         $modelClassApp = '\\app\\models\\' . $modelClass;
-        
+
         if (class_exists($modelClassCommon)) {
             return $modelClassCommon;
         } else if (class_exists($modelClassApp)) {
@@ -105,8 +107,13 @@ class ControllerCommon extends \yii\web\Controller
     }
 
     public function actionClearCache($cacheKey)
-    {   
+    {
         return ModelCommon::clearCacheCustom($cacheKey);
+    }
+
+    public function actionGetFields($class)
+    {
+        return $this->asJson(['results' => ModelHelper::getFields($class)]);
     }
 
     public function actionStatus($id)
@@ -115,10 +122,11 @@ class ControllerCommon extends \yii\web\Controller
         $model = $this->findModel($id);
         $model->status == 0 ? $model->status = 1 : $model->status = 0;
         $model->save();
-        return ['success'=> $model->save(), 'result'=> $model->getErrors()];
+        return ['success' => $model->save(), 'result' => $model->getErrors()];
     }
-    
-    public static function listModels(){
+
+    public static function listModels()
+    {
         $modelsPath = __DIR__ . '/../models'; // Caminho para o diretório de modelos
         $files = scandir($modelsPath);
         $models = [];
@@ -137,27 +145,27 @@ class ControllerCommon extends \yii\web\Controller
 
         $model = $this->findModel($id);
         $file = null;
-        
-        if($model !== null){
+
+        if ($model !== null) {
             if (method_exists($model, 'getFile')) {
                 $file = $model->getFile()->one();
-                if($file !== null){
+                if ($file !== null) {
                     StorageController::removeFile($file->id);
                 }
-            }            
+            }
             if (method_exists($model, 'getFiles')) {
                 $files = $model->getFiles()->all();
-                if($file !== null){
+                if ($file !== null) {
                     StorageController::removeFile($file->id);
                 }
-                foreach($files as $file){
+                foreach ($files as $file) {
                     StorageController::removeFile($file->id);
                 }
-            }    
+            }
             $result = $model->delete();
         }
 
-        return ['success'=> $result, 'result'=> $model->getErrors()];
+        return ['success' => $result, 'result' => $model->getErrors()];
     }
 
     public function actionDelete($id)
@@ -166,61 +174,59 @@ class ControllerCommon extends \yii\web\Controller
 
         $model = $this->findModel($id);
         $this->goBack();
-        if($model !== null){
+        if ($model !== null) {
             if (method_exists($model, 'getFile')) {
                 $file = $model->getFile()->one();
-                if($file !== null){
+                if ($file !== null) {
                     StorageController::removeFile($file->id);
                 }
-            }            
+            }
             if (method_exists($model, 'getFiles')) {
                 $files = $model->getFiles()->all();
-                if($file !== null){
+                if ($file !== null) {
                     StorageController::removeFile($file->id);
                 }
-                foreach($files as $file){
+                foreach ($files as $file) {
                     StorageController::removeFile($file->id);
                 }
-            }    
+            }
             $model->delete();
             return $this->redirect(['index']);
         }
         $this->goBack();
-
     }
 
-    public function updateUpload($model,$post,$thumb_aspect = '1/1',$quality = 80)
+    public function updateUpload($model, $post, $thumb_aspect = '1/1', $quality = 80)
     {
         $old = $model->file_id;
         $changed = false;
 
         $uploadFile = \yii\web\UploadedFile::class;
         $file = $uploadFile::getInstance($model, 'file_id');
-        if(!empty($file) && $file !== null){
-            $file = StorageController::uploadFile($file,['save'=>true,'thumb_aspect'=>$thumb_aspect ,'quality'=>$quality]);
+        if (!empty($file) && $file !== null) {
+            $file = StorageController::uploadFile($file, ['save' => true, 'thumb_aspect' => $thumb_aspect, 'quality' => $quality]);
             if ($file['success'] === true) {
                 $model->file_id = $file['data']['id'];
                 $changed = true;
-            }else{
+            } else {
                 Yii::$app->getSession()->setFlash('error', serialize($file['data']));
                 $model->file_id = $old;
             }
-        } else if(isset($post['remove']) && $post['remove'] == 1){
+        } else if (isset($post['remove']) && $post['remove'] == 1) {
             $model->file_id = null;
             $changed = true;
         }
 
-        if(!$changed){
+        if (!$changed) {
             $model->file_id = $old;
         }
 
-        if($model->save()) {
+        if ($model->save()) {
             Yii::$app->getSession()->setFlash('success', Yii::t('app', 'File updated successfully!'));
-            if($changed){
+            if ($changed) {
                 StorageController::removeFile($old);
             }
         }
-
     }
 
     public function actionClone($id)
@@ -228,19 +234,19 @@ class ControllerCommon extends \yii\web\Controller
         // Detecta automaticamente a classe do model com base no nome do controller
         $controllerName = Yii::$app->controller->id;
         $modelName = str_replace(' ', '', ucwords(str_replace('-', ' ', $controllerName)));
-    
+
         // Procura a classe do model
         $modelClass = self::classExist($modelName);
         if ($modelClass === null) {
             throw new NotFoundHttpException("Model class for '$modelName' not found.");
         }
-    
+
         // Busca o registro original
         $originalModel = $modelClass::findOne($id);
         if (!$originalModel) {
             throw new NotFoundHttpException("Model with ID $id not found.");
         }
-    
+
         // Clona o model
         $clone = new $modelClass();
         $clone->attributes = $originalModel->attributes;
@@ -256,17 +262,17 @@ class ControllerCommon extends \yii\web\Controller
             'model' => $clone,
         ]);
     }
-    
+
     // Generalized function to save or update a model
     public function actionSaveModel($modelClass)
-    {   
+    {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
         $verClass = self::classExist($modelClass);
         if ($verClass === null) {
             return ['success' => false, 'message' => "Model class '$modelClass' does not exist."];
-        } else{
-            $modelClassNamespace = $verClass; 
+        } else {
+            $modelClassNamespace = $verClass;
         }
 
         if (Yii::$app->request->isPost) {
@@ -292,8 +298,8 @@ class ControllerCommon extends \yii\web\Controller
         $verClass = self::classExist($modelClass);
         if ($verClass === null) {
             return ['success' => false, 'message' => "Model class '$modelClass' does not exist."];
-        } else{
-            $modelClassNamespace = $verClass; 
+        } else {
+            $modelClassNamespace = $verClass;
         }
         return $modelClassNamespace::findOne($id);
     }
@@ -303,15 +309,15 @@ class ControllerCommon extends \yii\web\Controller
     {
         $items = [];
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        if(\Yii::$app->request->isPost){
+        if (\Yii::$app->request->isPost) {
             $post = \Yii::$app->request->post();
             $verClass = self::classExist($post['modelClass']);
             if ($verClass === null) {
                 return ['success' => false, 'message' => "Model class '{$post['modelClass']}' does not exist."];
-            } else{
-                $modelClassNamespace = $verClass; 
+            } else {
+                $modelClassNamespace = $verClass;
             }
-            $items = $modelClassNamespace::find()->select("id,{$post['modelField']}")->where([$post['condition'], $post['modelField'] , $post['value']])->limit(20)->all();
+            $items = $modelClassNamespace::find()->select("id,{$post['modelField']}")->where([$post['condition'], $post['modelField'], $post['value']])->limit(20)->all();
         }
         return $items;
     }
@@ -319,27 +325,27 @@ class ControllerCommon extends \yii\web\Controller
     public function actionCloneModel($modelClass, $id)
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-    
+
         try {
             $verClass = self::classExist($modelClass);
             if ($verClass === null) {
                 return ['success' => false, 'message' => "Model class '$modelClass' does not exist."];
             }
-    
+
             /** @var \yii\db\ActiveRecord $modelClassNamespace */
             $modelClassNamespace = $verClass;
             $originalModel = $modelClassNamespace::findOne($id);
-    
+
             if ($originalModel === null) {
                 return ['success' => false, 'message' => "Model with ID $id not found."];
             }
-    
+
             // Clona o model e limpa o ID
             $newModel = new $modelClassNamespace();
             $newModel->attributes = $originalModel->attributes;
             $newModel->setIsNewRecord(true);
             $newModel->id = null;
-    
+
             // Se o model tiver timestamps automáticos, eles serão atualizados no save
             if ($newModel->save()) {
                 return ['success' => true, 'message' => 'Model cloned successfully.', 'id' => $newModel->id];
@@ -357,13 +363,14 @@ class ControllerCommon extends \yii\web\Controller
         $verClass = self::classExist($modelClass);
         if ($verClass === null) {
             return ['success' => false, 'message' => "Model class '$modelClass' does not exist."];
-        } else{
-            $modelClassNamespace = $verClass; 
+        } else {
+            $modelClassNamespace = $verClass;
         }
         return $modelClassNamespace::findOne($id)->delete();
     }
 
-    public function actionOrderModel()   {
+    public function actionOrderModel()
+    {
         $items = [];
         $resuts = [];
 
@@ -377,47 +384,46 @@ class ControllerCommon extends \yii\web\Controller
 
             if ($verClass === null) {
                 return \yii\helpers\Json::encode(['success' => false, 'message' => "Model class '{$post['modelClass']}' does not exist."]);
-            } else{
-                $modelClassNamespace = $verClass; 
+            } else {
+                $modelClassNamespace = $verClass;
             }
 
-            foreach ($items as $key => $value) {  
-                $model = $modelClassNamespace::find()->where(['id'=>$value])->one();
+            foreach ($items as $key => $value) {
+                $model = $modelClassNamespace::find()->where(['id' => $value])->one();
                 $model->{$field} =  $key + 1;
-                $resuts[$value] = ['save'=>$model->save(),'model'=>$model,'key'=>$key + 1];
+                $resuts[$value] = ['save' => $model->save(), 'model' => $model, 'key' => $key + 1];
             }
-            
         }
 
-        return \yii\helpers\Json::encode(['atualizado'=>$resuts]);
+        return \yii\helpers\Json::encode(['atualizado' => $resuts]);
     }
 
     public function actionStatusModel($modelClass, $id)
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-    
+
         $verClass = self::classExist($modelClass);
         if ($verClass === null) {
             return ['success' => false, 'message' => "Model class '$modelClass' does not exist."];
         }
-    
+
         $modelClassNamespace = $verClass;
         $model = $modelClassNamespace::findOne($id);
-    
+
         if (!$model) {
             return ['success' => false, 'message' => "Model with ID '$id' not found."];
         }
-    
+
         if (!property_exists($model, 'status')) {
             return ['success' => false, 'message' => "The model '$modelClass' does not have a 'status' property."];
         }
-    
+
         $model->status = $model->status == 0 ? 1 : 0;
-    
+
         if ($model->save()) {
             return ['success' => true, 'status' => $model->status];
         }
-    
+
         return ['success' => false, 'errors' => $model->getErrors()];
     }
 
@@ -539,20 +545,19 @@ class ControllerCommon extends \yii\web\Controller
     }
 
     public static function error($th)
-    {   
-        if(isset($th->statusCode )){
-            if($th->statusCode == 400){
+    {
+        if (isset($th->statusCode)) {
+            if ($th->statusCode == 400) {
                 throw new \yii\web\BadRequestHttpException($th->getMessage());
-            } else if($th->statusCode == 401){
+            } else if ($th->statusCode == 401) {
                 throw new \yii\web\MethodNotAllowedHttpException($th->getMessage());
-            } else if($th->statusCode == 403){
+            } else if ($th->statusCode == 403) {
                 throw new \yii\web\ForbiddenHttpException($th->getMessage());
-            } else if($th->statusCode == 404){
+            } else if ($th->statusCode == 404) {
                 throw new \yii\web\NotFoundHttpException($th->getMessage());
             }
         }
         throw new \yii\web\ServerErrorHttpException(Yii::t('app', $th->getMessage()));
-    
     }
 
     public static function customControllersUrl($controllers, $folder = 'custom')
@@ -688,7 +693,7 @@ class ControllerCommon extends \yii\web\Controller
         return $mailer;
     }
 
-    public function sendEmail($name, $from, $to, $subject, $message,$layout= '@vendor/weebz/yii2-basics/email/layouts/template' )
+    public function sendEmail($name, $from, $to, $subject, $message, $layout = '@vendor/weebz/yii2-basics/email/layouts/template')
     {
 
         $URL = Yii::$app->params['rootUrl'];
@@ -737,16 +742,18 @@ class ControllerCommon extends \yii\web\Controller
         $str = preg_replace('/_+/', '-', $str);
         return $str;
     }
-    
-    public static function sanatize($str) {
-        $removeItens = ["[","]",",","(",")",";",":","|","!","\"","$","%","&","#","=","?","~",">","<","ª","º","-",".","\/"," "];
-        foreach ($removeItens as $item){
-            $str = preg_replace('/['.$item.']/', '', $str);            
+
+    public static function sanatize($str)
+    {
+        $removeItens = ["[", "]", ",", "(", ")", ";", ":", "|", "!", "\"", "$", "%", "&", "#", "=", "?", "~", ">", "<", "ª", "º", "-", ".", "\/", " "];
+        foreach ($removeItens as $item) {
+            $str = preg_replace('/[' . $item . ']/', '', $str);
         }
         return $str;
     }
 
-    public static function sanatizeReplaced($str, $replace) {
+    public static function sanatizeReplaced($str, $replace)
+    {
         $str = preg_replace('/[áàãâä]/ui', 'a', $str);
         $str = preg_replace('/[éèêë]/ui', 'e', $str);
         $str = preg_replace('/[íìîï]/ui', 'i', $str);
@@ -755,9 +762,9 @@ class ControllerCommon extends \yii\web\Controller
         $str = preg_replace('/[ç]/ui', 'c', $str);
         $str = preg_replace('/[^a-z0-9]/i', '_', $str);
         $str = preg_replace('/_+/', '-', $str);
-        $removeItens = ["[","]",",","(",")",";",":","|","!","\"","$","%","&","#","=","?","~",">","<","ª","º","-",".","\/"," "];
-        foreach ($removeItens as $item){
-            $str = preg_replace('/['.$item.']/', $replace, $str);            
+        $removeItens = ["[", "]", ",", "(", ")", ";", ":", "|", "!", "\"", "$", "%", "&", "#", "=", "?", "~", ">", "<", "ª", "º", "-", ".", "\/", " "];
+        foreach ($removeItens as $item) {
+            $str = preg_replace('/[' . $item . ']/', $replace, $str);
         }
         return $str;
     }
@@ -846,35 +853,36 @@ class ControllerCommon extends \yii\web\Controller
         // Match Enclosed Alphanumeric Supplement
         $regex_alphanumeric = '/[\x{1F100}-\x{1F1FF}]/u';
         $clear_string = preg_replace($regex_alphanumeric, '', $string);
-    
+
         // Match Miscellaneous Symbols and Pictographs
         $regex_symbols = '/[\x{1F300}-\x{1F5FF}]/u';
         $clear_string = preg_replace($regex_symbols, '', $clear_string);
-    
+
         // Match Emoticons
         $regex_emoticons = '/[\x{1F600}-\x{1F64F}]/u';
         $clear_string = preg_replace($regex_emoticons, '', $clear_string);
-    
+
         // Match Transport And Map Symbols
         $regex_transport = '/[\x{1F680}-\x{1F6FF}]/u';
         $clear_string = preg_replace($regex_transport, '', $clear_string);
-        
+
         // Match Supplemental Symbols and Pictographs
         $regex_supplemental = '/[\x{1F900}-\x{1F9FF}]/u';
         $clear_string = preg_replace($regex_supplemental, '', $clear_string);
-    
+
         // Match Miscellaneous Symbols
         $regex_misc = '/[\x{2600}-\x{26FF}]/u';
         $clear_string = preg_replace($regex_misc, '', $clear_string);
-    
+
         // Match Dingbats
         $regex_dingbats = '/[\x{2700}-\x{27BF}]/u';
         $clear_string = preg_replace($regex_dingbats, '', $clear_string);
-    
+
         return $clear_string;
     }
 
-    static function stripEmojis($string) {
+    static function stripEmojis($string)
+    {
         // Convert question marks to a special thing so that we can remove
         // question marks later without any problems.
         $string = str_replace("?", "{%}", $string);
