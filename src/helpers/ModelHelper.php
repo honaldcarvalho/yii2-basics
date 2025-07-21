@@ -4,10 +4,10 @@ namespace weebz\yii2basics\helpers;
 
 class ModelHelper
 {
-    public $namespaces =  [];
+    public static $namespaces =  [];
 
     public function __construct() {
-        $this->namespaces =  [
+        self::$namespaces =  [
                 'app\models' => \Yii::getAlias('@app/models'),
                 'weebz\yii2basics\models' => \Yii::getAlias('@weebz/yii2basics/models'),
         ];
