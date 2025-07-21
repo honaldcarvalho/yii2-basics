@@ -34,7 +34,7 @@ class ModelHelper
                 // Extrai namespace
                 if (!preg_match('/namespace\s+([^;]+);/', $content, $nsMatch)) continue;
                 // Extrai nome da classe
-                if (!preg_match('/class\s+(\w+)/', $content, $classMatch)) continue;
+                if (!preg_match('/class\s+([A-Z]\w*)/', $content, $classMatch)) continue;
 
                 $namespace = trim($nsMatch[1]);
                 $className = trim($classMatch[1]);
