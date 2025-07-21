@@ -56,7 +56,6 @@ class ActionColumn extends \yii\grid\ActionColumn
 
             function clearForms()
             {
-                document.getElementById("form-{$this->controller}").reset();
                 $(':input').not(':button, :submit, :reset, :hidden, :checkbox, :radio').val('');
                 $('#btn-add-translate').prop('disabled',false);
                 $('select').val(null).trigger('change');
