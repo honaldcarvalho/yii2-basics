@@ -218,6 +218,15 @@ class AppendModel extends \yii\bootstrap5\Widget
                 $('.dropdown-select2').select2({width:'100%',allowClear:true,placeholder:'Selecione',dropdownParent: $('#save-{$this->uniqueId}')});
             });
 
+            function clearForms{$this->attactModel}()
+            {
+                document.getElementById("form-{$this->uniqueId}").reset();
+                $(':input').not(':button, :submit, :reset, :hidden, :checkbox, :radio').val('');
+                $('#btn-add-translate').prop('disabled',false);
+                $('select').val(null).trigger('change');
+                return true;
+            }   
+
             function save{$this->attactModel}(){
                 $('#overlay-form-{$this->uniqueId}').show();
                 var formData = $("#form-{$this->uniqueId}").serialize();
@@ -362,7 +371,7 @@ class AppendModel extends \yii\bootstrap5\Widget
         \Yii::$app->view->registerJs($script, View::POS_END);
         $field_str = '';
 
-        $button = Html::a('<i class="fas fa-plus-square"></i> Novo', "javascript:modal_{$this->attactModel}.show();clearForms();", ['class' => 'btn btn-success', 'id' => "btn-show-{$this->uniqueId}"]);
+        $button = Html::a('<i class="fas fa-plus-square"></i> Novo', "javascript:modal_{$this->attactModel}.show();clearForms{$this->attactModel}();", ['class' => 'btn btn-success', 'id' => "btn-show-{$this->uniqueId}"]);
         $button_save = Yii::t('app', "Save");
         $button_cancel = Yii::t('app', 'Cancel');
         $begin = <<< HTML
