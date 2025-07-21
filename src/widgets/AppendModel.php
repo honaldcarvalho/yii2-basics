@@ -65,6 +65,7 @@ class AppendModel extends \yii\bootstrap5\Widget
     public $attactModel;
     public $childModel;
     public $callBack = '';
+    public $delCallBack = '';
     public $childField;
     public $path = 'app';
     public $template = '{status}{view}{edit}{remove}';
@@ -347,6 +348,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                         }
                         toastr.success("Removed!");
                         $.pjax.reload({container: "#list-{$this->uniqueId}-grid", async: false});
+                        {$this->delCallBack}
                     }).fail(function (response) {
                         toastr.error("Error on remove {$lower}!");
                     }).always(function (response) {
@@ -424,7 +426,7 @@ class AppendModel extends \yii\bootstrap5\Widget
             array_merge($this->options,['id' => "{$this->uniqueId}-{$field['name']}",]));
             else if ($field['type'] == 'dropdown') {
                 $field_str .=  $form->field($model, $field['name'])->dropDownList($field['value'] ?? '', 
-            array_merge($this->options,['class' => 'form-control dropdown']));
+            array_merge($this->options,['class' => 'form-control dropdown','id' => "{$this->uniqueId}-{$field['name']}"]));
             } else if ($field['type'] == 'select2') {
                 $field_str .= $form->field($model, $field['name'])->dropDownList(
                     $field['value'] ?? [],
