@@ -69,6 +69,7 @@ class AppendModel extends \yii\bootstrap5\Widget
     public $path = 'app';
     public $template = '{status}{view}{edit}{remove}';
     public $fields;
+    public $fieldOptions = [];
     public $showFields;
     public $order = false;
     public $orderField = 'order';
@@ -401,24 +402,29 @@ class AppendModel extends \yii\bootstrap5\Widget
         foreach ($this->fields as $key => $field) {
             $field_str .= '<div class="col-md-12">';
             if ($field['type'] == 'text')
-                $field_str .= $form->field($model, $field['name'])->textInput(['id' => "{$this->uniqueId}-{$field['name']}", 'maxlength' => true, 'value' => $field['value'] ?? '']);
+                $field_str .= $form->field($model, $field['name'])->textInput(
+            array_merge($this->fieldOptions,['id' => "{$this->uniqueId}-{$field['name']}", 'maxlength' => true, 'value' => $field['value'] ?? '']));
             else if ($field['type'] == 'number')
-                $field_str .=  $form->field($model, $field['name'])->input('number', ['id' => "{$this->uniqueId}-{$field['name']}", 'maxlength' => true, 'value' => $field['value'] ?? '']);
+                $field_str .=  $form->field($model, $field['name'])->input('number', 
+            array_merge($this->fieldOptions,['id' => "{$this->uniqueId}-{$field['name']}", 'maxlength' => true, 'value' => $field['value'] ?? '']));
             else if ($field['type'] == 'hidden')
-                $field_str .=  $form->field($model, $field['name'])->hiddenInput(['id' => "{$this->uniqueId}-{$field['name']}", 'maxlength' => true, 'value' => $field['value'] ?? ''])->label(false);
+                $field_str .=  $form->field($model, $field['name'])->hiddenInput(
+            array_merge($this->fieldOptions,['id' => "{$this->uniqueId}-{$field['name']}", 'maxlength' => true, 'value' => $field['value'] ?? '']))->label(false);
             else if ($field['type'] == 'checkbox')
-                $field_str .=  $form->field($model, $field['name'])->checkbox(['id' => "{$this->uniqueId}-{$field['name']}",]);
+                $field_str .=  $form->field($model, $field['name'])->checkbox(
+            array_merge($this->fieldOptions,['id' => "{$this->uniqueId}-{$field['name']}",]));
             else if ($field['type'] == 'dropdown') {
-                $field_str .=  $form->field($model, $field['name'])->dropDownList($field['value'] ?? '', ['class' => 'form-control dropdown']);
+                $field_str .=  $form->field($model, $field['name'])->dropDownList($field['value'] ?? '', 
+            array_merge($this->fieldOptions,['class' => 'form-control dropdown']));
             } else if ($field['type'] == 'select2') {
                 $field_str .= $form->field($model, $field['name'])->dropDownList(
                     $field['value'] ?? [],
-                    [
+                    array_merge($this->fieldOptions,[
                         'id' => "{$this->uniqueId}-{$field['name']}",
                         'class' => 'form-control dropdown-select2 select2',
                         'prompt' => 'Selecione',
                         'data-placeholder' => 'Selecione',
-                    ]
+                    ])
                 );
             }
             $field_str .= '</div>';
