@@ -57,6 +57,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= AppendModel::widget([
         'attactModel'=>'Parameter',
+        'uniqueId'=>'ParameterAppend',
         'controller'=>'configuration',
         'template' => '{edit}{remove}',
         'attactClass'=>'weebz\\yii2basics\\models\\Parameter',
@@ -97,6 +98,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= AppendModel::widget([
         'attactModel'=>'MetaTag',
+        'uniqueId'=>'MetaTagAppend',
         'controller'=>'configuration',
         'template' => '{edit}{remove}',
         'attactClass'=>'weebz\\yii2basics\\models\\MetaTag',
