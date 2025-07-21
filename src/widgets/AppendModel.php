@@ -437,7 +437,7 @@ class AppendModel extends \yii\bootstrap5\Widget
             <div class="card" id="list-{$this->uniqueId}">
     
                 <div class="card-header">
-                    <h3 class="card-title">List {$this->title}</h3>
+                    <h3 class="card-title">{$this->title}</h3>
                 </div>
     
                 <div class="card-body">
