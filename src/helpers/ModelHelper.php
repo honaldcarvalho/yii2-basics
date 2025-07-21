@@ -32,4 +32,24 @@ class ModelHelper
 
         return $models;
     }
+
+    public static function getFields($class)
+    {
+        try {
+            if (!class_exists($class)) {
+                return [];
+            }
+
+            $instance = new $class();
+            $attributes = $instance->attributes();
+
+            foreach ($attributes as $attr => $value) {
+                $fields[] = ['id' => $attr, 'text' => $instance->getAttributeLabel($attr)];
+            }
+
+            return $fields;
+        } catch (\Throwable $e) {
+            return [];
+        }
+    }
 }
