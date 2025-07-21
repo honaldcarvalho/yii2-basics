@@ -5,6 +5,7 @@ namespace weebz\yii2basics\controllers;
 use Yii;
 use weebz\yii2basics\models\Menu;
 use weebz\yii2basics\models\MenuSearch;
+use yii\helpers\Inflector;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -103,20 +104,33 @@ class MenuController extends AuthController
             throw new \yii\web\NotFoundHttpException("Controller inválido: $controller");
         }
 
-        // Reflete o controller
-        $reflection = new \ReflectionClass($controller);
-        $controllerId = strtolower(preg_replace('/Controller$/', '', $reflection->getShortName()));
-        $namespaceParts = explode('\\', $controller);
-        $path = strtolower($namespaceParts[0]) ?? 'app';
+        // Verifica duplicata
+        $exists = Menu::find()
+            ->where(['controller' => $controller, 'action' => $action])
+            ->exists();
 
-        // Define valores padrão
-        $model = new \weebz\yii2basics\models\Menu();
-        $model->label = ucfirst($controllerId);
+        if ($exists) {
+            Yii::$app->session->setFlash('warning', "Já existe um menu para <code>$controller::$action</code>.");
+            return $this->redirect(['index']);
+        }
+
+        // Extrai o nome base do controller e converte para ID
+        $reflection = new \ReflectionClass($controller);
+        $baseName = preg_replace('/Controller$/', '', $reflection->getShortName()); // ex: FormResponse
+        $controllerId = Inflector::camel2id($baseName); // ex: form-response
+
+        // Define o caminho base (ex: app, backend, etc)
+        $namespaceParts = explode('\\', $controller);
+        $path = isset($namespaceParts[0]) ? strtolower($namespaceParts[0]) : 'app';
+
+        // Cria novo item de menu
+        $model = new Menu();
+        $model->label = Inflector::camel2words($baseName);              // Ex: Form Response
         $model->controller = $controller;
         $model->action = $action;
         $model->visible = "$controller;$action";
         $model->url = "/$controllerId/$action";
-        $model->icon = 'fas fa-circle'; // Sugestão: personalize depois
+        $model->icon = 'fas fa-circle';
         $model->icon_style = 'fas';
         $model->path = $path;
         $model->active = $controllerId;
@@ -131,6 +145,7 @@ class MenuController extends AuthController
         Yii::$app->session->setFlash('error', "Erro ao criar menu.");
         return $this->redirect(['index']);
     }
+
 
     /**
      * Updates an existing Menu model.
