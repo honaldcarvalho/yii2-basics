@@ -66,6 +66,7 @@ class AppendModel extends \yii\bootstrap5\Widget
     public $childModel;
     public $callBack = '';
     public $delCallBack = '';
+    public $editCallBack = '';
     public $childField;
     public $path = 'app';
     public $template = '{status}{view}{edit}{remove}';
@@ -290,6 +291,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                             }
                         });
                         modal_{$this->attactModel}.show();
+                        {$this->editCallBack}
                     }
                 }).fail(function (response) {
                     toastr.error("Error on remove {$lower}!");
