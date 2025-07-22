@@ -245,6 +245,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                 }).done(function(response) {       
                     if(response.success) {
                         toastr.success("Save!");
+                        clearForms{$this->attactModel}();
                         modal_{$this->attactModel}.hide();
                         $.pjax.reload({container: "#list-{$this->uniqueId}-grid", async: false});
                         {$this->callBack}
@@ -266,7 +267,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                 let old_class = el.children("i").attr('class');
                 object.removeClass(old_class);
                 object.addClass('fas fa-sync fa-spin');
-
+                clearForms{$this->attactModel}();
                 $.ajax({
                     type: "POST",
                     url: el.data('link'),
