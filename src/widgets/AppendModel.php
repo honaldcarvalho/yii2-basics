@@ -130,11 +130,11 @@ class AppendModel extends \yii\bootstrap5\Widget
                 }
             }
         CSS;
-         \Yii::$app->view->registerCss($style);
+        \Yii::$app->view->registerCss($style);
         if ($this->uniqueId === null) {
             $this->uniqueId = uniqid($this->controller . '_');
         }
-        if($this->gridId === null){
+        if ($this->gridId === null) {
             $this->gridId = "#grid-{$this->controller}";
         }
     }
@@ -225,14 +225,39 @@ class AppendModel extends \yii\bootstrap5\Widget
                 $('.dropdown-select2').select2({width:'100%',allowClear:true,placeholder:'Selecione',dropdownParent: $('#save-{$this->uniqueId}')});
             });
 
-            function clearForms{$this->attactModel}()
-            {
-                document.getElementById("form-{$this->uniqueId}").reset();
-                $(':input').not(':button, :submit, :reset, :hidden, :checkbox, :radio').val('');
-                $('#btn-add-translate').prop('disabled',false);
-                $('select').val(null).trigger('change');
+            function clearForms{$this->attactModel}() {
+                const form = $("#form-{$this->uniqueId}");
+
+                // Reset nativo do form
+                form[0].reset();
+
+                // Limpa TODOS os inputs, inclusive hidden
+                form.find(':input')
+                    .not(':button, :submit, :reset')
+                    .val('')
+                    .prop('checked', false)
+                    .prop('selected', false);
+
+                // Limpa selects com select2 se houver
+                form.find('select').val(null).trigger('change');
+
+                // Limpa textareas
+                form.find('textarea').val('');
+
+                // Habilita botão de tradução, se existir
+                $('#btn-add-translate').prop('disabled', false);
+
+                // Limpa todos os campos visuais de lista de itens (se houver)
+                form.find('[id$="-items"]').val('');
+                form.find('[id$="-item-list"]').html('');
+
+                // Zera arrays globais, se existirem (ex: itemsArray)
+                if (typeof itemsArray !== 'undefined') {
+                    itemsArray = [];
+                }
+
                 return true;
-            }   
+            } 
 
             function save{$this->attactModel}(){
                 $('#overlay-form-{$this->uniqueId}').show();
@@ -420,7 +445,7 @@ class AppendModel extends \yii\bootstrap5\Widget
 
         foreach ($this->fields as $key => $field) {
             $field_str .= '<div class="col-md-12">';
-            
+
             $before = $field['before'] ?? '';
             $after = $field['after'] ?? '';
             $fieldId = "{$this->uniqueId}-{$field['name']}";
@@ -435,26 +460,34 @@ class AppendModel extends \yii\bootstrap5\Widget
 
             if ($field['type'] == 'text')
                 $field_str .= $form->field($model, $field['name'])->textInput(
-            array_merge($this->options,['id' => "{$this->uniqueId}-{$field['name']}", 'maxlength' => true, 'value' => $field['value'] ?? '']));
+                    array_merge($this->options, ['id' => "{$this->uniqueId}-{$field['name']}", 'maxlength' => true, 'value' => $field['value'] ?? ''])
+                );
             else if ($field['type'] == 'textarea')
-                $field_str .=  $form->field($model, $field['name'])->textarea( 
-            array_merge($this->options,['id' => "{$this->uniqueId}-{$field['name']}", 'maxlength' => true, 'value' => $field['value'] ?? '']));
+                $field_str .=  $form->field($model, $field['name'])->textarea(
+                    array_merge($this->options, ['id' => "{$this->uniqueId}-{$field['name']}", 'maxlength' => true, 'value' => $field['value'] ?? ''])
+                );
             else if ($field['type'] == 'number')
-                $field_str .=  $form->field($model, $field['name'])->input('number', 
-            array_merge($this->options,['id' => "{$this->uniqueId}-{$field['name']}", 'maxlength' => true, 'value' => $field['value'] ?? '']));
+                $field_str .=  $form->field($model, $field['name'])->input(
+                    'number',
+                    array_merge($this->options, ['id' => "{$this->uniqueId}-{$field['name']}", 'maxlength' => true, 'value' => $field['value'] ?? ''])
+                );
             else if ($field['type'] == 'hidden')
                 $field_str .=  $form->field($model, $field['name'])->hiddenInput(
-            array_merge($this->options,['id' => "{$this->uniqueId}-{$field['name']}", 'maxlength' => true, 'value' => $field['value'] ?? '']))->label(false);
+                    array_merge($this->options, ['id' => "{$this->uniqueId}-{$field['name']}", 'maxlength' => true, 'value' => $field['value'] ?? ''])
+                )->label(false);
             else if ($field['type'] == 'checkbox')
                 $field_str .=  $form->field($model, $field['name'])->checkbox(
-            array_merge($this->options,['id' => "{$this->uniqueId}-{$field['name']}",]));
+                    array_merge($this->options, ['id' => "{$this->uniqueId}-{$field['name']}",])
+                );
             else if ($field['type'] == 'dropdown') {
-                $field_str .=  $form->field($model, $field['name'])->dropDownList($field['value'] ?? '', 
-            array_merge($this->options,['class' => 'form-control dropdown','id' => "{$this->uniqueId}-{$field['name']}"]));
+                $field_str .=  $form->field($model, $field['name'])->dropDownList(
+                    $field['value'] ?? '',
+                    array_merge($this->options, ['class' => 'form-control dropdown', 'id' => "{$this->uniqueId}-{$field['name']}"])
+                );
             } else if ($field['type'] == 'select2') {
                 $field_str .= $form->field($model, $field['name'])->dropDownList(
                     $field['value'] ?? [],
-                    array_merge($this->options,[
+                    array_merge($this->options, [
                         'id' => "{$this->uniqueId}-{$field['name']}",
                         'class' => 'form-control dropdown-select2 select2',
                         'prompt' => 'Selecione',
