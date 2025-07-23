@@ -67,6 +67,7 @@ class AppendModel extends \yii\bootstrap5\Widget
     public $callBack = '';
     public $delCallBack = '';
     public $editCallBack = '';
+    public $editCallBefore = '';
     public $childField;
     public $path = 'app';
     public $template = '{status}{view}{edit}{remove}';
@@ -226,7 +227,7 @@ class AppendModel extends \yii\bootstrap5\Widget
             });
 
             function clearForms{$this->attactModel}() {
-                console.log('clearForms{$this->attactModel}');
+                
                 const form = $("#form-{$this->uniqueId}");
 
                 // Reset nativo do form
@@ -282,6 +283,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                 object.removeClass(old_class);
                 object.addClass('fas fa-sync fa-spin');
                 clearForms{$this->attactModel}();
+                {$this->editCallBefore}
                 $.ajax({
                     type: "POST",
                     url: el.data('link'),
