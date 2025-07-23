@@ -420,6 +420,19 @@ class AppendModel extends \yii\bootstrap5\Widget
 
         foreach ($this->fields as $key => $field) {
             $field_str .= '<div class="col-md-12">';
+            
+            $before = $field['before'] ?? '';
+            $after = $field['after'] ?? '';
+            $fieldId = "{$this->uniqueId}-{$field['name']}";
+
+            $inputOptions = array_merge($this->options, [
+                'id' => $fieldId,
+                'maxlength' => true,
+                'value' => $field['value'] ?? '',
+            ]);
+
+            $field_str .= $before;
+
             if ($field['type'] == 'text')
                 $field_str .= $form->field($model, $field['name'])->textInput(
             array_merge($this->options,['id' => "{$this->uniqueId}-{$field['name']}", 'maxlength' => true, 'value' => $field['value'] ?? '']));
@@ -449,6 +462,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                     ])
                 );
             }
+            $field_str .= $after;
             $field_str .= '</div>';
         }
         echo $field_str;
