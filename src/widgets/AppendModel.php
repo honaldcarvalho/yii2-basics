@@ -244,18 +244,6 @@ class AppendModel extends \yii\bootstrap5\Widget
                 // Limpa textareas
                 form.find('textarea').val('');
 
-                // Habilita botão de tradução, se existir
-                $('#btn-add-translate').prop('disabled', false);
-
-                // Limpa todos os campos visuais de lista de itens (se houver)
-                form.find('[id$="-items"]').val('');
-                form.find('[id$="-item-list"]').html('');
-
-                // Zera arrays globais, se existirem (ex: itemsArray)
-                if (typeof itemsArray !== 'undefined') {
-                    itemsArray = [];
-                }
-
                 return true;
             } 
 
