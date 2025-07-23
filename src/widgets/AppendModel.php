@@ -226,6 +226,7 @@ class AppendModel extends \yii\bootstrap5\Widget
             });
 
             function clearForms{$this->attactModel}() {
+                console.log('clearForms{$this->attactModel}');
                 const form = $("#form-{$this->uniqueId}");
 
                 // Reset nativo do form
