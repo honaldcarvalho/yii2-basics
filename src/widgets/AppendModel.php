@@ -283,8 +283,9 @@ class AppendModel extends \yii\bootstrap5\Widget
                 let old_class = el.children("i").attr('class');
                 object.removeClass(old_class);
                 object.addClass('fas fa-sync fa-spin');
-                clearForms{$this->attactModel}();
+                
                 {$this->editCallBefore}
+
                 $.ajax({
                     type: "POST",
                     url: el.data('link'),
