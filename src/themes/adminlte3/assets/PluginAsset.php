@@ -18,6 +18,10 @@ class PluginAsset extends AssetBundle
             'js' => 'ckeditor/ckeditor5.umd.js',
             'css' => 'ckeditor/ckeditor5.css',
         ],
+        'ace' => [
+            'js' => 'ace/ace.js',
+            'css' => 'ace/css/ace.css',
+        ],
         'tinymce' => [
             'js' => 'tinymce/tinymce.min.js',
         ],

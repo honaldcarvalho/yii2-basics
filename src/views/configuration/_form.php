@@ -26,7 +26,6 @@ if(!empty($model->file_id && $model->file != null)){
             'fileField'=>'configuration-file_id',
             'aspectRatio'=>'1'
         ])?>
-
     </div>
 
     <div class="col-md-6">
