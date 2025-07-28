@@ -39,14 +39,14 @@ public function run()
     // Corrigir o nome da variável JS
     $varName = 'editor_' . str_replace(['-', '.'], '_', $id);
 
-    $mode = Json::htmlEncode($this->mode);
-    $theme = Json::htmlEncode($this->theme);
+    $mode = $this->mode;
+    $theme = $this->theme;
     $readOnly = $this->readOnly ? 'true' : 'false';
 
     $js = <<<JS
-    var {$varName} = ace.edit("$id");
-    {$varName}.setTheme("ace/theme/$theme");
-    {$varName}.session.setMode("ace/mode/$mode");
+    var {$varName} = ace.edit("{$id}");
+    {$varName}.setTheme("ace/theme/{$theme}");
+    {$varName}.session.setMode("ace/mode/{$mode}");
     {$varName}.setReadOnly($readOnly);
     {$varName}.session.setValue(document.getElementById("{$id}_hidden").value);
 
