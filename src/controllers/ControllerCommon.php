@@ -196,14 +196,14 @@ class ControllerCommon extends \yii\web\Controller
         $this->goBack();
     }
 
-    public function updateUploads($model,$post)
+    public function updateUpload($model,$post)
     {
 
         $old = $model->file_id;
         $changed = false;
         $post = Yii::$app->request->post();
 
-        if ($model->validate() && $model->load($post)) {
+        if ($model->load($post)) {
 
             $file = \yii\web\UploadedFile::getInstance($model, 'file_id');
             if (!empty($file) && $file !== null) {
