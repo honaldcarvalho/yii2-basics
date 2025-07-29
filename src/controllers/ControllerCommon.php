@@ -196,37 +196,39 @@ class ControllerCommon extends \yii\web\Controller
         $this->goBack();
     }
 
-    public function updateUpload($model, $post, $thumb_aspect = '1/1', $quality = 80)
+    public function updateUploads($model,$post)
     {
+
         $old = $model->file_id;
         $changed = false;
+        $post = Yii::$app->request->post();
 
-        $uploadFile = \yii\web\UploadedFile::class;
-        $file = $uploadFile::getInstance($model, 'file_id');
-        if (!empty($file) && $file !== null) {
-            $file = StorageController::uploadFile($file, ['save' => true, 'thumb_aspect' => $thumb_aspect, 'quality' => $quality]);
-            if ($file['success'] === true) {
-                $model->file_id = $file['data']['id'];
+        if ($model->validate() && $model->load($post)) {
+
+            $file = \yii\web\UploadedFile::getInstance($model, 'file_id');
+            if (!empty($file) && $file !== null) {
+                $file = StorageController::uploadFile($file, ['save' => true]);
+                if ($file['success'] === true) {
+                    $model->file_id = $file['data']['id'];
+                    $changed = true;
+                }
+            } else if (isset($post['remove']) && $post['remove'] == 1) {
+                $model->file_id = null;
                 $changed = true;
-            } else {
-                Yii::$app->getSession()->setFlash('error', serialize($file['data']));
+            }
+
+            if (!$changed) {
                 $model->file_id = $old;
             }
-        } else if (isset($post['remove']) && $post['remove'] == 1) {
-            $model->file_id = null;
-            $changed = true;
-        }
 
-        if (!$changed) {
-            $model->file_id = $old;
-        }
-
-        if ($model->save()) {
-            Yii::$app->getSession()->setFlash('success', Yii::t('app', 'File updated successfully!'));
-            if ($changed) {
-                StorageController::removeFile($old);
+            if ($model->save()) {
+                if ($changed) {
+                    StorageController::removeFile($old);
+                }
+                Yii::$app->getSession()->setFlash('success', Yii::t('app', 'File updated successfully!'));
             }
         }
+        Yii::$app->getSession()->setFlash('error', Yii::t('app', 'File not updated!'));
     }
 
     public function actionClone($id)
