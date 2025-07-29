@@ -203,13 +203,24 @@ class ControllerCommon extends \yii\web\Controller
 
         $uploadFile = \yii\web\UploadedFile::class;
         $file = $uploadFile::getInstance($model, 'file_id');
+
         if (!empty($file) && $file !== null) {
-            $file = StorageController::uploadFile($file, ['save' => true, 'thumb_aspect' => $thumb_aspect, 'quality' => $quality]);
-            if ($file['success'] === true) {
-                $model->file_id = $file['data']['id'];
-                $changed = true;
+            $uploaded = StorageController::uploadFile($file, [
+                'save' => true,
+                'thumb_aspect' => $thumb_aspect,
+                'quality' => $quality
+            ]);
+
+            if ($uploaded['success'] === true) {
+                $newFileId = $uploaded['data']['id'];
+                $model->file_id = $newFileId;
+
+                // Só marca como alterado se o ID do arquivo realmente mudou
+                if ($newFileId != $old) {
+                    $changed = true;
+                }
             } else {
-                Yii::$app->getSession()->setFlash('error', serialize($file['data']));
+                Yii::$app->getSession()->setFlash('error', serialize($uploaded['data']));
                 $model->file_id = $old;
             }
         } else if (isset($post['remove']) && $post['remove'] == 1) {
@@ -223,9 +234,12 @@ class ControllerCommon extends \yii\web\Controller
 
         if ($model->save()) {
             Yii::$app->getSession()->setFlash('success', Yii::t('app', 'File updated successfully!'));
-            if ($changed) {
+            // Se houve alteração e havia arquivo antigo, remove
+            if ($changed && $old) {
                 StorageController::removeFile($old);
             }
+        } else {
+            Yii::error($model->getErrors(), __METHOD__);
         }
     }
 
