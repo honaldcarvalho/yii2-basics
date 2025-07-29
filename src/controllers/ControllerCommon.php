@@ -226,9 +226,11 @@ class ControllerCommon extends \yii\web\Controller
                     StorageController::removeFile($old);
                 }
                 Yii::$app->getSession()->setFlash('success', Yii::t('app', 'File updated successfully!'));
+                return true;
             }
         }
         Yii::$app->getSession()->setFlash('error', Yii::t('app', 'File not updated!'));
+        return false;
     }
 
     public function actionClone($id)
