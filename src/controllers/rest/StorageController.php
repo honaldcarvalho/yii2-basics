@@ -294,7 +294,7 @@ class StorageController extends ControllerRest {
                         $errors[] = Image::crop($filePathRoot, $min, $min, $point)
                         ->save($filePathThumbRoot, ['quality' => 100]);
                         
-                        if($min > 300){
+                        if ($min < 300) {
                             $errors[] = Image::thumbnail($filePathThumbRoot, 300, 300)
                             ->save($filePathThumbRoot, ['quality' => 100]);
                         }
@@ -373,7 +373,7 @@ class StorageController extends ControllerRest {
                         $errors[] = Image::crop($filePathThumbRoot, $min, $min, $point)
                         ->save($filePathThumbRoot, ['quality' => 100]);
 
-                        if($min > 300){
+                        if ($min < 300) {
                             $errors[] = Image::thumbnail($filePathThumbRoot, 300, 300)
                             ->save($filePathThumbRoot, ['quality' => 100]);
                         }
