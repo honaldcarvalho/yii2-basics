@@ -198,50 +198,48 @@ class ControllerCommon extends \yii\web\Controller
 
     public function updateUpload($model, $post, $thumb_aspect = '1/1', $quality = 80)
     {
-        $old = $model->file_id;
+        $oldFileId = $model->file_id;
+        $newFileId = null;
         $changed = false;
 
         $uploadFile = \yii\web\UploadedFile::class;
         $file = $uploadFile::getInstance($model, 'file_id');
 
         if (!empty($file) && $file !== null) {
-            $uploaded = StorageController::uploadFile($file, [
+            $uploadResult = StorageController::uploadFile($file, [
                 'save' => true,
                 'thumb_aspect' => $thumb_aspect,
-                'quality' => $quality
+                'quality' => $quality,
             ]);
 
-            if ($uploaded['success'] === true) {
-                $newFileId = $uploaded['data']['id'];
+            if ($uploadResult['success'] === true) {
+                $newFileId = $uploadResult['data']['id'];
                 $model->file_id = $newFileId;
-
-                // Só marca como alterado se o ID do arquivo realmente mudou
-                if ($newFileId != $old) {
+                if ($newFileId != $oldFileId) {
                     $changed = true;
                 }
             } else {
-                Yii::$app->getSession()->setFlash('error', serialize($uploaded['data']));
-                $model->file_id = $old;
+                Yii::$app->getSession()->setFlash('error', serialize($uploadResult['data']));
+                $model->file_id = $oldFileId;
             }
-        } else if (isset($post['remove']) && $post['remove'] == 1) {
+        } elseif (isset($post['remove']) && $post['remove'] == 1) {
             $model->file_id = null;
             $changed = true;
-        }
-
-        if (!$changed) {
-            $model->file_id = $old;
+        } else {
+            $model->file_id = $oldFileId;
         }
 
         if ($model->save()) {
             Yii::$app->getSession()->setFlash('success', Yii::t('app', 'File updated successfully!'));
-            // Se houve alteração e havia arquivo antigo, remove
-            if ($changed && $old) {
-                StorageController::removeFile($old);
+
+            if ($changed && $oldFileId) {
+                StorageController::removeFile($oldFileId);
             }
         } else {
             Yii::error($model->getErrors(), __METHOD__);
         }
     }
+
 
     public function actionClone($id)
     {

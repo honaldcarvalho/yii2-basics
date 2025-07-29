@@ -294,10 +294,10 @@ class StorageController extends ControllerRest {
                         $errors[] = Image::crop($filePathRoot, $min, $min, $point)
                         ->save($filePathThumbRoot, ['quality' => 100]);
                         
-                        if ($min < 300) {
-                            $errors[] = Image::thumbnail($filePathThumbRoot, 300, 300)
-                            ->save($filePathThumbRoot, ['quality' => 100]);
-                        }
+
+                        $errors[] = Image::thumbnail($filePathThumbRoot, 300, 300)
+                        ->save($filePathThumbRoot, ['quality' => 100]);
+                    
                     } else {
                         [$thumbWidth, $thumbHeigh] = explode('/',$options['thumb_aspect']);
                         $errors[] = self::createThumbnail($filePathRoot, $filePathThumbRoot, $thumbWidth, $thumbHeigh);
@@ -373,10 +373,10 @@ class StorageController extends ControllerRest {
                         $errors[] = Image::crop($filePathThumbRoot, $min, $min, $point)
                         ->save($filePathThumbRoot, ['quality' => 100]);
 
-                        if ($min < 300) {
-                            $errors[] = Image::thumbnail($filePathThumbRoot, 300, 300)
-                            ->save($filePathThumbRoot, ['quality' => 100]);
-                        }
+                        
+                        $errors[] = Image::thumbnail($filePathThumbRoot, 300, 300)
+                        ->save($filePathThumbRoot, ['quality' => 100]);
+                        
                     } else {
                         [$thumbWidth, $thumbHeigh] = explode('/',$options['thumb_aspect']);
                         $errors[] = self::createThumbnail($filePathThumbRoot, $filePathThumbRoot, $thumbWidth, $thumbHeigh);
