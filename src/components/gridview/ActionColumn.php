@@ -61,8 +61,7 @@ class ActionColumn extends \yii\grid\ActionColumn
         }
 
         $script = <<< JS
-            console.log("{$this->gridId}");
-            console.log("{$this->controller}");
+
             function clearForms()
             {
                 $(':input').not(':button, :submit, :reset, :hidden, :checkbox, :radio').val('');
