@@ -30,6 +30,11 @@ class ActionColumn extends \yii\grid\ActionColumn
     public function init(): void
     {
         $this->contentOptions['class'] = 'action-column';
+
+        if($this->controller == null){
+            $this->controller = Yii::$app->controller->id;
+        }   
+
         if($this->grid->filterModel  !== null){
             $class_path = get_class($this->grid->filterModel);
             $class_path_parts = explode('\\',$class_path);
@@ -48,10 +53,7 @@ class ActionColumn extends \yii\grid\ActionColumn
     }
 
     protected function registerScript()
-    {   
-        if($this->controller == null){
-            $this->controller = Yii::$app->controller->id;
-        }     
+    {     
             
         $order = 0;
         if($this->order){
@@ -59,8 +61,8 @@ class ActionColumn extends \yii\grid\ActionColumn
         }
 
         $script = <<< JS
-            console.log($this->gridId);
-            console.log($this->controller);
+            console.log("{$this->gridId}");
+            console.log("{$this->controller}");
             function clearForms()
             {
                 $(':input').not(':button, :submit, :reset, :hidden, :checkbox, :radio').val('');
