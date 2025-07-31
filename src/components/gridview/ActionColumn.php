@@ -143,7 +143,7 @@ class ActionColumn extends \yii\grid\ActionColumn
 
             $(function(){
 
-                if($order == 1){
+                if({$order} == 1){
                     setSortable();
                 }
                 $(document).on('pjax:start', function() {
