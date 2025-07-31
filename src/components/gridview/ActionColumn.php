@@ -53,7 +53,7 @@ class ActionColumn extends \yii\grid\ActionColumn
     }
 
     protected function registerScript()
-    {     
+    {
             
         $order = 0;
         if($this->order){
