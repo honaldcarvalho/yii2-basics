@@ -49,9 +49,10 @@ class ActionColumn extends \yii\grid\ActionColumn
 
     protected function registerScript()
     {   
-        if($this->controller == null)     
+        if($this->controller == null){
             $this->controller = Yii::$app->controller->id;
-        
+        }     
+            
         $order = 0;
         if($this->order){
             $order = 1;
