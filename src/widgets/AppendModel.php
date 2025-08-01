@@ -261,7 +261,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                 }).done(function(response) {       
                     if(response.success) {
                         toastr.success("Save!");
-                        clearForms{$this->attactModel}();
+                        //clearForms{$this->attactModel}();
                         modal_{$this->attactModel}.hide();
                         $.pjax.reload({container: "#list-{$this->uniqueId}-grid", async: false});
                         {$this->callBack}
