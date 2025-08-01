@@ -110,6 +110,8 @@ class Custom extends \yii\i18n\Formatter
     public function asBytes($bytes, $precision = 2) { 
         if($bytes === null){
             return null;
+        } else if ($bytes === 0){
+            return '0 Kbps';
         }
         $base = log($bytes, 1024);
         $suffixes = array('', 'Kb', 'Mb', 'Gb', 'Tb');   
