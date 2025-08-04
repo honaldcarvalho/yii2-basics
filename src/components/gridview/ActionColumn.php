@@ -14,27 +14,26 @@ use weebz\yii2basics\controllers\AuthController;
 
 class ActionColumn extends \yii\grid\ActionColumn
 {
-    public $template = '{view} {update} {delete}';
+    public $template = '{view}{update}{delete}';
     public $verGroup = true;
     public $controller = null;
     public $path = null;
     public $model = null;
     public $order = false;
+    public $uniqueId = null;
     public $orderField = 'order';
     public $orderModel = null;
     public $modelClass = null;
-    public $gridId = null;
     /**
      * Initializes the default button rendering callbacks.
      */
     public function init(): void
     {
+        if($this->uniqueId === null){
+            $this->uniqueId = "$this->controller";
+        }
+        
         $this->contentOptions['class'] = 'action-column';
-
-        if($this->controller == null){
-            $this->controller = Yii::$app->controller->id;
-        }   
-
         if($this->grid->filterModel  !== null){
             $class_path = get_class($this->grid->filterModel);
             $class_path_parts = explode('\\',$class_path);
@@ -42,19 +41,17 @@ class ActionColumn extends \yii\grid\ActionColumn
             $this->model = $class_name;
             $this->modelClass = $this->grid->filterModel;
         }
-        
-        if($this->gridId === null){
-            $this->gridId = "#grid-{$this->controller}";
-        }
-        
+
         $this->grid->summaryOptions = ['class' => 'summary mb-2'];
         $this->grid->pager = ['class' => 'yii\bootstrap5\LinkPager'];
         parent::init();
     }
 
     protected function registerScript()
-    {
-            
+    {   
+        if($this->controller == null){
+            $this->controller = Yii::$app->controller->id;
+        }
         $order = 0;
         if($this->order){
             $order = 1;
@@ -64,6 +61,7 @@ class ActionColumn extends \yii\grid\ActionColumn
 
             function clearForms()
             {
+                document.getElementById("form-{$this->uniqueId}").reset();
                 $(':input').not(':button, :submit, :reset, :hidden, :checkbox, :radio').val('');
                 $('#btn-add-translate').prop('disabled',false);
                 $('select').val(null).trigger('change');
@@ -123,8 +121,8 @@ class ActionColumn extends \yii\grid\ActionColumn
                 object.removeClass(old_class);
                 object.addClass('fas fa-sync fa-spin');
 
-                $('#overlay-{$this->controller}').show();
-                $( "{$this->gridId} .table tbody tr" ).each(function( index ) {
+                $('#overlay-{$this->uniqueId}').show();
+                $( "#grid-{$this->uniqueId} .table tbody tr" ).each(function( index ) {
                     items[items.length] = $( this ).attr("data-key");
                 });
                 $.ajax({
@@ -132,12 +130,12 @@ class ActionColumn extends \yii\grid\ActionColumn
                     url: `/{$this->controller}/\${action}?id=\${id}`
                 }).done(function(response) {        
                     toastr.success("Success!");  
-                    $.pjax.reload({container: "{$this->gridId}", async: false}); 
+                    $.pjax.reload({container: "#grid-{$this->uniqueId}", async: false}); 
                     return false;
                 }).fail(function (response) {
                     toastr.error("Fail!");
                 }).always(function (response) {
-                    $('#overlay-{$this->controller}').hide();
+                    $('#overlay-{$this->uniqueId}').hide();
                     el.prop('disabled',false);
                     object.removeClass('fas fa-sync fa-spin');
                     object.attr('class',old_class);
@@ -146,14 +144,14 @@ class ActionColumn extends \yii\grid\ActionColumn
 
             $(function(){
 
-                if({$order} == 1){
+                if($order == 1){
                     setSortable();
                 }
                 $(document).on('pjax:start', function() {
-                    $('#overlay-{$this->controller}').show();
+                    $('#overlay-{$this->uniqueId}').show();
                 });
                 $(document).on('pjax:complete', function() {
-                    $('#overlay-{$this->controller}').hide();
+                    $('#overlay-{$this->uniqueId}').hide();
                 });
 
             });
@@ -165,8 +163,8 @@ class ActionColumn extends \yii\grid\ActionColumn
                 let items  = [];
                 let i = 0;
 
-                $('#overlay-{$this->controller}').show();
-                $( "{$this->gridId} .table tbody tr" ).each(function( index ) {
+                $('#overlay-{$this->uniqueId}').show();
+                $( "#grid-{$this->uniqueId} .table tbody tr" ).each(function( index ) {
                     items[items.length] = $( this ).attr("data-key");
                 });
 
@@ -176,18 +174,18 @@ class ActionColumn extends \yii\grid\ActionColumn
                     data: {'items':items,'field':'{$this->orderField}','modelClass':'$this->orderModel'}
                 }).done(function(response) {        
                     toastr.success("atualizado");  
-                    $.pjax.reload({container: "{$this->gridId}", async: false}); 
+                    $.pjax.reload({container: "#grid-{$this->uniqueId}", async: false}); 
                     setSortable();
                 }).fail(function (response) {
                     toastr.error("Error ao atualizar a ordem. Recarregue a pagina");
                 }).always(function (response) {
-                    $('#overlay-{$this->controller}').hide();
+                    $('#overlay-{$this->uniqueId}').hide();
                 });
 
             }
 
             function setSortable(){
-                jQuery("{$this->gridId} .table tbody").sortable({
+                jQuery("#grid-{$this->uniqueId} .table tbody").sortable({
                     update: function(event, ui) {
                         updateOrder();
                     }
@@ -216,9 +214,8 @@ class ActionColumn extends \yii\grid\ActionColumn
             'data-confirm' => Yii::t('yii', 'Você tem certeza que quer remover esse item?'),
             'data-method' => 'post',
         ]);
-        if(str_contains($this->template, 'status') || str_contains($this->template, 'remove') || str_contains($this->template, 'status')){
-            $this->registerScript();
-        }
+        
+        $this->registerScript();
 
     }
 
@@ -294,6 +291,7 @@ class ActionColumn extends \yii\grid\ActionColumn
 
                 if($this->verGroup && !AuthController::isAdmin()){
                     if(AuthController::verAuthorization($this->controller,$name,$model,$this->path)){
+                        //dd([$name,$this->verGroup,$link ]);
                         return $link;
                     }
                 }else if(!AuthController::isAdmin()){
