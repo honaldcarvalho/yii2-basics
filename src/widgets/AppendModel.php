@@ -302,9 +302,8 @@ class AppendModel extends \yii\bootstrap5\Widget
                                 } else {
                                     el.prop('checked', false);
                                 }
-                            } else if(el.attr('type') == 'select') {
-                                el.val(value); // Select the option with a value of '1'
-                                el.trigger('change');
+                            } else if (el.is('select')) {
+                                el.val(value).trigger('change'); // para select2 funcionar corretamente
                             } else {
                                 el.val(value);
                             }
