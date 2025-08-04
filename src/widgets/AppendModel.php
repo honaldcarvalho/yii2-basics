@@ -162,7 +162,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                 'template' => $this->template,
                 'path' =>  $this->path,
                 'controller' => $this->controller,
-                'gridId' => "#list-{$this->uniqueId}-grid",
+                'uniqueId' => "{$this->uniqueId}",
                 'order' => $this->order,
                 'orderField' => $this->orderField,
                 'orderModel' => $this->orderModel,
