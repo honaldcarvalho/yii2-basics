@@ -15,7 +15,7 @@ class AceEditor extends InputWidget
     public $mode = 'php';      // linguagem padrão
     public $height = '400px';  // altura do editor
     public $readOnly = false;  // somente leitura
-    public $clientOptions = [];
+    public $clientOptions = []; //hml
 
     public function run()
     {
