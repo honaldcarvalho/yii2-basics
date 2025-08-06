@@ -304,7 +304,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                                 }
                             } else if (el.is('select')) {
                                 el.val(value).trigger('change'); // para select2 funcionar corretamente
-                            } else if (el.hasClass('ace_editor')) {
+                            } else if (el.hasClass('ace_field')) {
                                 let editor = ace.edit(el.attr('id'));
                                 editor.setValue(value, -1); // -1 move o cursor para o início
                             } else {
@@ -468,6 +468,9 @@ class AppendModel extends \yii\bootstrap5\Widget
                     'mode' => $field['mode'] ?? 'html',
                     'theme' => $field['theme'] ?? 'twilight',
                     'height' => $field['height'] ?? '500px',
+                    'clientOptions'=>[
+                        'class'=> 'ace_field'
+                    ]
                 ]);     
             else if ($field['type'] == 'number')
                 $field_str .=  $form->field($model, $field['name'])->input(
