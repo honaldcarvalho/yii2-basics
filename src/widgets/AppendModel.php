@@ -458,6 +458,14 @@ class AppendModel extends \yii\bootstrap5\Widget
                 $field_str .=  $form->field($model, $field['name'])->textarea(
                     array_merge($this->options, ['id' => "{$this->uniqueId}-{$field['name']}", 'maxlength' => true, 'value' => $field['value'] ?? ''])
                 );
+            else if ($field['type'] == 'ace')
+                $field_str .=  AceEditor::widget([
+                'model' => $model,
+                'attribute' => $field['name'],
+                'mode' => $field['mode'] ?? 'html',
+                'theme' => $field['theme'] ?? 'twilight',
+                'height' => $field['height'] ?? '500px',
+                ]);     
             else if ($field['type'] == 'number')
                 $field_str .=  $form->field($model, $field['name'])->input(
                     'number',
