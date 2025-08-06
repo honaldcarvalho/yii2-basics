@@ -133,6 +133,18 @@ class AppendModel extends \yii\bootstrap5\Widget
             }
         CSS;
         \Yii::$app->view->registerCss($style);
+        $style = <<<CSS
+            .modal .modal-body {
+                max-height: 70vh;
+                overflow-y: auto;
+            }
+
+            .modal .ace-container {
+                min-height: 300px;
+            }
+        CSS;
+
+        Yii::$app->view->registerCss($style);
         if ($this->uniqueId === null) {
             $this->uniqueId = uniqid($this->controller . '_');
         }
@@ -303,9 +315,10 @@ class AppendModel extends \yii\bootstrap5\Widget
                                     el.prop('checked', false);
                                 }
                             } else if (el.is('select')) {
-                                el.val(value).trigger('change'); // para select2 funcionar corretamente
-                            } else if (el.hasClass('ace_field')) {
-                                editor_captivepage_login_page.setValue(value, -1); // -1 move o cursor para o início
+                                el.val(value).trigger('change');
+                            } else if (el.hasClass('ace_editor')) {
+                                let editor = ace.edit(el.attr('id'));
+                                editor.setValue(value, -1);
                             } else {
                                 el.val(value);
                             }
@@ -467,10 +480,10 @@ class AppendModel extends \yii\bootstrap5\Widget
                     'mode' => $field['mode'] ?? 'html',
                     'theme' => $field['theme'] ?? 'twilight',
                     'height' => $field['height'] ?? '500px',
-                    'clientOptions'=>[
-                        'class'=> 'ace_field'
-                    ]
-                ]);     
+                    'options' => [
+                        'id' => "{$this->uniqueId}-{$field['name']}",
+                    ],
+                ]);   
             else if ($field['type'] == 'number')
                 $field_str .=  $form->field($model, $field['name'])->input(
                     'number',

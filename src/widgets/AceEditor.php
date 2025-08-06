@@ -5,58 +5,76 @@ namespace weebz\yii2basics\widgets;
 use Yii;
 use yii\helpers\Html;
 use yii\helpers\Json;
-use yii\web\View;
 use yii\widgets\InputWidget;
 use weebz\yii2basics\themes\adminlte3\assets\PluginAsset;
 
 class AceEditor extends InputWidget
 {
-    public $theme = 'monokai'; // tema padrão
-    public $mode = 'php';      // linguagem padrão
-    public $height = '400px';  // altura do editor
-    public $readOnly = false;  // somente leitura
+    public $theme = 'monokai';
+    public $mode = 'php';
+    public $height = '400px'; // altura padrão
+    public $readOnly = false;
     public $clientOptions = [];
+
+    public function init(): void
+    {
+        parent::init();
+        PluginAsset::register($this->getView())->add(['ace']);
+    }
 
     public function run()
     {
-        $id = $this->options['id'];
         $view = $this->getView();
+        $id = $this->options['id'];
+        $editorId = "editor_{$id}";
+        $inputId = "input_{$id}";
 
-        PluginAsset::register($view)->add(['ace']); // assume que você incluiu o `ace.js`
+        $value = $this->hasModel()
+            ? Html::getAttributeValue($this->model, $this->attribute)
+            : $this->value;
 
-        $style = "width: 100%; height: {$this->height};";
+        // Campo hidden sincronizado com Ace
+        $hiddenInput = $this->hasModel()
+            ? Html::activeHiddenInput($this->model, $this->attribute, ['id' => $inputId])
+            : Html::hiddenInput($this->name, $value, ['id' => $inputId]);
 
-        // Renderiza label (legenda)
-        if ($this->hasModel()) {
-            echo Html::label($this->model->getAttributeLabel($this->attribute), null, ['for' => $id]);
-            $input = Html::activeHiddenInput($this->model, $this->attribute, array_merge(['id' => "{$id}_hidden"],$this->clientOptions));
-        } else {
-            echo Html::label($this->name, null, ['for' => $id]);
-            $input = Html::hiddenInput($this->name, $this->value, ['id' => "{$id}_hidden"]);
-        }
+        // Container com altura configurável
+        echo Html::beginTag('div', ['style' => "width:100%; height:{$this->height};", 'class' => 'ace-container']);
+        echo Html::tag('div', '', [
+            'id' => $editorId,
+            'class' => 'ace_editor',
+            'style' => "width:100%; height:100%; border:1px solid #ccc; border-radius:4px;"
+        ]);
+        echo Html::endTag('div');
+        echo $hiddenInput;
 
-        echo $input;
-        echo Html::tag('div', Html::encode($this->value), ['id' => $id, 'style' => $style]);
+        $options = Json::encode(array_merge([
+            'mode' => "ace/mode/{$this->mode}",
+            'theme' => "ace/theme/{$this->theme}",
+            'readOnly' => $this->readOnly,
+        ], $this->clientOptions));
 
-        // Corrige o nome da variável JS
-        $varName = 'editor_' . str_replace(['-', '.'], '_', $id);
-
-        $mode = $this->mode;
-        $theme = $this->theme;
-        $readOnly = $this->readOnly ? 'true' : 'false';
+        $var = 'ace_' . str_replace(['-', '.'], '_', $id);
+        $escapedValue = Json::encode($value);
 
         $js = <<<JS
-        var {$varName} = ace.edit("{$id}");
-        {$varName}.setTheme("ace/theme/{$theme}");
-        {$varName}.session.setMode("ace/mode/{$mode}");
-        {$varName}.setReadOnly($readOnly);
-        {$varName}.session.setValue(document.getElementById("{$id}_hidden").value);
 
-        {$varName}.session.on('change', function(){
-            document.getElementById("{$id}_hidden").value = {$varName}.getValue();
+        var {$var} = ace.edit("{$editorId}", {$options});
+        {$var}.session.setValue({$escapedValue});
+        {$var}.session.on('change', function(){
+            $("#{$inputId}").val({$var}.getValue());
+        });
+        {$var}.resize();
+
+        // resize automático no carregamento e ao abrir modais
+        setTimeout(() => { {$var}.resize(); }, 300);
+
+        // se o modal for Bootstrap 5, re-resize ao mostrar
+        $('#{$editorId}').closest('.modal').on('shown.bs.modal', function () {
+            {$var}.resize();
         });
         JS;
 
-        $view->registerJs($js, View::POS_READY);
+        $view->registerJs($js);
     }
 }
