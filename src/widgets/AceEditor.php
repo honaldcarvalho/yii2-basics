@@ -29,10 +29,10 @@ class AceEditor extends InputWidget
         // Renderiza label (legenda)
         if ($this->hasModel()) {
             echo Html::label($this->model->getAttributeLabel($this->attribute), null, ['for' => $id]);
-            $input = Html::activeHiddenInput($this->model, $this->attribute, array_merge(['id' => "{$id}"],$this->clientOptions));
+            $input = Html::activeHiddenInput($this->model, $this->attribute, array_merge(['id' => "{$id}_hidden"],$this->clientOptions));
         } else {
             echo Html::label($this->name, null, ['for' => $id]);
-            $input = Html::hiddenInput($this->name, $this->value, ['id' => "{$id}"]);
+            $input = Html::hiddenInput($this->name, $this->value, ['id' => "{$id}_hidden"]);
         }
 
         echo $input;
@@ -50,10 +50,10 @@ class AceEditor extends InputWidget
         {$varName}.setTheme("ace/theme/{$theme}");
         {$varName}.session.setMode("ace/mode/{$mode}");
         {$varName}.setReadOnly($readOnly);
-        {$varName}.session.setValue(document.getElementById("{$id}").value);
+        {$varName}.session.setValue(document.getElementById("{$id}_hidden").value);
 
         {$varName}.session.on('change', function(){
-            document.getElementById("{$id}").value = {$varName}.getValue();
+            document.getElementById("{$id}_hidden").value = {$varName}.getValue();
         });
         JS;
 
