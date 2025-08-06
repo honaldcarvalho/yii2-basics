@@ -305,8 +305,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                             } else if (el.is('select')) {
                                 el.val(value).trigger('change'); // para select2 funcionar corretamente
                             } else if (el.hasClass('ace_field')) {
-                                let editor = ace.edit(el.attr('id'));
-                                editor.setValue(value, -1); // -1 move o cursor para o início
+                                editor_captivepage_login_page.setValue(value, -1); // -1 move o cursor para o início
                             } else {
                                 el.val(value);
                             }
