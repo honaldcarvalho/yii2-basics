@@ -32,7 +32,7 @@ class AceEditor extends InputWidget
             $input = Html::activeHiddenInput($this->model, $this->attribute, array_merge(['id' => "{$id}"],$this->clientOptions));
         } else {
             echo Html::label($this->name, null, ['for' => $id]);
-            $input = Html::hiddenInput($this->name, $this->value, ['id' => "{$id}_hidden"]);
+            $input = Html::hiddenInput($this->name, $this->value, ['id' => "{$id}"]);
         }
 
         echo $input;
