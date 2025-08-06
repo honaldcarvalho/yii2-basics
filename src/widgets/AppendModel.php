@@ -308,6 +308,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                     } else {
                         Object.entries(response).forEach(([key, value]) => {
                             var el = $(`#{$this->uniqueId}-\${key}`);
+                            
                             if(el.attr('type') == 'checkbox') {
                                 if (value === 1) {
                                     el.prop('checked', true);
@@ -316,11 +317,14 @@ class AppendModel extends \yii\bootstrap5\Widget
                                 }
                             } else if (el.is('select')) {
                                 el.val(value).trigger('change');
-                            } else if (el.hasClass('ace_editor')) {
-                                let editor = ace.edit(el.attr('id'));
-                                editor.setValue(value, -1);
                             } else {
-                                el.val(value);
+                                let aceDiv = document.querySelector(`#editor_\${el.attr('id')}`);
+                                if (aceDiv && aceDiv.classList.contains('ace_editor')) {
+                                    let editor = ace.edit(`editor_\${el.attr('id')}`);
+                                    editor.setValue(value, -1);
+                                } else {
+                                    el.val(value);
+                                }
                             }
                         });
                         modal_{$this->attactModel}.show();
