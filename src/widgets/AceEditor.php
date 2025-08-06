@@ -29,7 +29,7 @@ class AceEditor extends InputWidget
         // Renderiza label (legenda)
         if ($this->hasModel()) {
             echo Html::label($this->model->getAttributeLabel($this->attribute), null, ['for' => $id]);
-            $input = Html::activeHiddenInput($this->model, $this->attribute, ['id' => "{$id}_hidden"]);
+            $input = Html::activeHiddenInput($this->model, $this->attribute, array_merge(['id' => "{$id}_hidden"],$this->clientOptions));
         } else {
             echo Html::label($this->name, null, ['for' => $id]);
             $input = Html::hiddenInput($this->name, $this->value, ['id' => "{$id}_hidden"]);
