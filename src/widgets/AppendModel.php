@@ -60,6 +60,7 @@ class AppendModel extends \yii\bootstrap5\Widget
 
     public $dataProvider;
     public $title = '';
+    public $modalSize = '';
     public $controller = null;
     public $attactClass;
     public $attactModel;
@@ -423,7 +424,7 @@ class AppendModel extends \yii\bootstrap5\Widget
         $begin = <<< HTML
             <!-- Modal -->
             <div class="modal fade" id="save-{$this->uniqueId}" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                <div class="modal-dialog">
+                <div class="modal-dialog {$this->modalSize}">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="staticBackdropLabel">{$this->title}</h5>
