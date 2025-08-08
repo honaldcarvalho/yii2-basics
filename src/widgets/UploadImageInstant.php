@@ -74,16 +74,17 @@ use weebz\yii2basics\themes\adminlte3\assets\PluginAsset;
  *
  * B) UPDATE sem submit do form: mode='instant' (vincula já no upload)
  *
- *    <?= \weebz\yii2basics\widgets\UploadImageInstant::widget([
- *         'mode'                => 'instant',
- *         'model'               => $model,           // precisa ter PK
- *         'attribute'           => 'file_id',
- *         'imageUrl'            => $model->file->url ?? '',
- *         'aspectRatio'         => '16/9',
- *         'linkModelOnSend'     => true,            // envia model_class/id/field
- *         'deleteOldOnReplace'  => true,            // apaga antigo ao trocar
- *         'authToken'           => Yii::$app->user->identity->access_token ?? null,
- *    ]) ?>
+        <?= \weebz\yii2basics\widgets\UploadImageInstant::widget([
+            'mode'                => 'instant',
+            'model'               => $model,           // precisa ter PK
+            'attribute'           => 'file_id',
+            'imageUrl'            => $model->file->url ?? '',
+            'aspectRatio'         => '1',
+            'linkModelOnSend'     => true,            // envia model_class/id/field
+            'deleteOldOnReplace'  => true,            // apaga antigo ao trocar
+            'authToken'           => Yii::$app->user->identity->access_token ?? null,
+            'hideSaveButton' => false,                // não exige “Salvar” no modal
+        ]) ?>   
  *
  *    // O widget enviará para /rest/storage/send:
  *    //   file=..., save=1, folder_id, group_id, thumb_aspect, quality,

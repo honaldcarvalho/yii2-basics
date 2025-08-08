@@ -543,7 +543,6 @@ class StorageController extends ControllerRest
             if (!class_exists($class)) {
                 return ['linked' => false, 'error' => "Class not found: {$class}"];
             }
-            // precisa ser um ActiveRecord
             if (!is_subclass_of($class, \yii\db\ActiveRecord::class)) {
                 return ['linked' => false, 'error' => "Class is not ActiveRecord: {$class}"];
             }
@@ -557,33 +556,65 @@ class StorageController extends ControllerRest
                 return ['linked' => false, 'error' => "Field '{$field}' not found in {$class}"];
             }
 
+            $table = method_exists($class, 'tableName') ? $class::tableName() : '(unknown)';
             $oldId = (int)$model->getAttribute($field);
-            $model->setAttribute($field, $fileId);
 
-            if (!$model->save(false)) {
-                return ['linked' => false, 'error' => 'Model save(false) failed'];
+            // já está igual? então só confirma e sai
+            if ($oldId === $fileId) {
+                $after = (int)$class::find()->select($field)->where(['id' => $id])->scalar();
+                return [
+                    'linked'       => true,
+                    'model_class'  => $class,
+                    'model_id'     => $id,
+                    'table'        => $table,
+                    'field'        => $field,
+                    'file_id'      => $fileId,
+                    'old_id'       => $oldId,
+                    'after'        => $after,
+                    'updated_rows' => 0,
+                    'removed_old'  => false,
+                    'note'         => 'already linked'
+                ];
             }
 
+            // ⚠️ forçar update direto na coluna (sem validação/eventos)
+            $updatedRows = 0;
+            $tx = $model->getDb()->beginTransaction();
+            try {
+                $updatedRows = $model->updateAttributes([$field => $fileId]); // retorna nº de linhas atualizadas
+                $tx->commit();
+            } catch (\Throwable $e) {
+                $tx->rollBack();
+                return ['linked' => false, 'error' => 'updateAttributes failed: ' . $e->getMessage()];
+            }
+
+            // revalida no BD
+            $after = (int)$class::find()->select($field)->where(['id' => $id])->scalar();
+
+            // remover antigo se pedido
             $removed = false;
             if ($deleteOld && $oldId && $oldId !== $fileId) {
                 $rm = self::removeFile($oldId);
-                $removed = $rm['success'] ?? false;
+                $removed = (bool)($rm['success'] ?? false);
             }
 
             return [
-                'linked'       => true,
+                'linked'       => ($after === $fileId),
                 'model_class'  => $class,
                 'model_id'     => $id,
+                'table'        => $table,
                 'field'        => $field,
                 'file_id'      => $fileId,
                 'old_id'       => $oldId,
+                'after'        => $after,
+                'updated_rows' => $updatedRows,
                 'removed_old'  => $removed,
+                'error'        => ($after === $fileId ? null : 'after-check mismatch')
             ];
         } catch (\Throwable $e) {
             return ['linked' => false, 'error' => $e->getMessage()];
         }
     }
-
 
     public static function removeFile($id)
     {
