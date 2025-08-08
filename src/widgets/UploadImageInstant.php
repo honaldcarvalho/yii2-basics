@@ -42,10 +42,11 @@ use weebz\yii2basics\themes\adminlte3\assets\PluginAsset;
  * • imageUrl: string                       (URL do preview inicial)
  * • aspectRatio: '1' | '16/9' | 'NaN'      (NaN = livre)
  * • maxWidth (px), maxSizeMB (MB)          (compressão client-side)
- * • sendUrl, removeUrl                     (modo instant; padrões: /rest/storage/send e /rest/storage/remove-file)
+ * • sendUrl                                (modo instant; padrão: /rest/storage/send)
  * • linkModelOnSend: bool                  (instant → envia model_* p/ vincular no StorageController)
- * • deleteOldOnReplace: bool               (instant → remove file antigo ao trocar)
+ * • deleteOldOnReplace: bool               (instant → remove file antigo ao trocar no server)
  * • attactModelClass, attactModelFields    (opcional; cria pivot via attact_model junto do upload)
+ * • removeFlagParam, removeFlagScoped      (integração com AttachFileBehavior p/ remoção no submit)
  * • authToken / meta api-token / storage 'token' / cookie 'token'
  *
  * COMO USAR
@@ -69,27 +70,18 @@ use weebz\yii2basics\themes\adminlte3\assets\PluginAsset;
  *         'aspectRatio' => '16/9',
  *    ]) ?>
  *
- *    // No backend (exemplo): Behavior para tratar o UploadedFile no save
- *    // - cria File, atualiza file_id, remove antigo se trocar.
- *
  * B) UPDATE sem submit do form: mode='instant' (vincula já no upload)
  *
-        <?= \weebz\yii2basics\widgets\UploadImageInstant::widget([
-            'mode'                => 'instant',
-            'model'               => $model,           // precisa ter PK
-            'attribute'           => 'file_id',
-            'imageUrl'            => $model->file->url ?? '',
-            'aspectRatio'         => '1',
-            'linkModelOnSend'     => true,            // envia model_class/id/field
-            'deleteOldOnReplace'  => true,            // apaga antigo ao trocar
-            'authToken'           => Yii::$app->user->identity->access_token ?? null,
-            'hideSaveButton' => false,                // não exige “Salvar” no modal
-        ]) ?>   
- *
- *    // O widget enviará para /rest/storage/send:
- *    //   file=..., save=1, folder_id, group_id, thumb_aspect, quality,
- *    //   model_class=\backend\models\Captive, model_id=<PK>, model_field=file_id, delete_old=1
- *    // O StorageController salva o File, grava Captive.file_id e opcionalmente remove o antigo.
+ *    <?= \weebz\yii2basics\widgets\UploadImageInstant::widget([
+ *         'mode'                => 'instant',
+ *         'model'               => $model,           // precisa ter PK
+ *         'attribute'           => 'file_id',
+ *         'imageUrl'            => $model->file->url ?? '',
+ *         'aspectRatio'         => '16/9',
+ *         'linkModelOnSend'     => true,            // envia model_class/id/field
+ *         'deleteOldOnReplace'  => true,            // apaga antigo ao trocar (no server)
+ *         'authToken'           => Yii::$app->user->identity->access_token ?? null,
+ *    ]) ?>
  *
  * C) Upload avulso (sem modelo) no instant
  *
@@ -101,14 +93,17 @@ use weebz\yii2basics\themes\adminlte3\assets\PluginAsset;
  *
  *    <script>
  *      document.addEventListener('uploadImage:saved', (e) => {
- *        console.log('Arquivo salvo:', e.detail.file); // {id, url, urlThumb, ...}
+ *        console.log('Arquivo salvo:', e.detail.file); // {id, url, ...}
  *      });
  *    </script>
  *
- * REMOÇÃO
- * ───────
- * • defer: o botão “Remover” apenas limpa o input/hidden (remover antigo fica a cargo do backend no submit).
- * • instant: tenta POST /rest/storage/remove-file?id=<fileId> e limpa o hidden/preview local.
+ * REMOÇÃO (agora 100% via Behavior no submit)
+ * ───────────────────────────────────────────
+ * • O botão “Remover” (nos dois modos) apenas:
+ *     - limpa o preview e os inputs locais;
+ *     - seta um hidden remove=1 (nome controlado por removeFlagParam/Scoped).
+ * • A remoção REAL (desvincular e apagar o File antigo) acontece no submit,
+ *   dentro do AttachFileBehavior (deleteOldOnReplace / flag de remoção).
  *
  * EVENTOS JS
  * ──────────
@@ -122,7 +117,7 @@ use weebz\yii2basics\themes\adminlte3\assets\PluginAsset;
  * ─────────────────────────────────────────────────────────
  * • Obrigatório: file (multipart). Use save=1 para retornar o ID do File.
  * • Úteis: folder_id, group_id, thumb_aspect, quality.
- * • Vínculo direto ao modelo (novo):
+ * • Vínculo direto ao modelo:
  *     model_class, model_id, model_field, delete_old(0/1)
  * • Pivot opcional:
  *     attact_model (JSON: {class_name, fields:['model_id','file_id'], id:<PK do seu modelo>})
@@ -134,7 +129,6 @@ use weebz\yii2basics\themes\adminlte3\assets\PluginAsset;
  * • “401/403”: confira o token (meta, prop PHP, localStorage, cookie). O widget também pode usar ?access-token=.
  * • “Corte fora do centro/tela”: o modal é limitado a ~92vh; o widget centraliza a crop box automaticamente.
  */
-
 class UploadImageInstant extends \yii\bootstrap5\Widget
 {
   /** Preview inicial */
@@ -154,10 +148,8 @@ class UploadImageInstant extends \yii\bootstrap5\Widget
   /** Esconder o botão "Salvar" do modal? (no 'defer' o "Cortar" já injeta e fecha) */
   public bool $hideSaveButton = true;
 
-  /** Endpoints (usados no modo 'instant') */
-  public $sendUrl        = ['/rest/storage/send'];
-  public $removeUrl      = ['/rest/storage/remove-file'];     // POST + ?id=
-  public $updateFieldUrl = ['/rest/controller-custom/update-field']; // opcional (não usado no link direto)
+  /** Endpoints (usado no modo 'instant') */
+  public $sendUrl = ['/rest/storage/send'];
 
   /** Associação com o modelo/atributo (para descobrir name/id corretos) */
   public $model = null;               // \yii\db\ActiveRecord|null
@@ -170,15 +162,15 @@ class UploadImageInstant extends \yii\bootstrap5\Widget
   public ?string $attactModelClass = null;
   public array $attactModelFields = [];
 
+  /** No upload instant, enviar também model_* para o StorageController linkar no servidor */
+  public bool $linkModelOnSend = true;
+  public bool $deleteOldOnReplace = true;
+
   /** Parâmetros de envio */
   public int $folderId = 2;
   public int $groupId  = 1;
   public $thumbAspect = 1;  // 1 ou "L/H" (ex.: "160/99")
   public int $quality  = 85;
-
-  /** Ao usar modo 'instant', envia model_class/model_id/model_field e manda apagar o antigo? */
-  public bool $linkModelOnSend   = true;
-  public bool $deleteOldOnReplace = true;
 
   /** Labels */
   public string $labelSelect = 'Selecione a imagem';
@@ -193,12 +185,13 @@ class UploadImageInstant extends \yii\bootstrap5\Widget
   public ?string $authToken = null;
   public string $authMetaName = 'api-token';
   public string $authStorageKey = 'token';
-
-  /** Lê token do cookie também (nome padrão "token") */
   public string $authCookieName = 'token';
-
   public bool $withCredentials = true;
   public bool $authQueryFallback = true;
+
+  /** Integração com o AttachFileBehavior (remoção no submit) */
+  public string $removeFlagParam  = 'remove';
+  public bool   $removeFlagScoped = false; // true => envia como Model[remove]
 
   public function init(): void
   {
@@ -218,15 +211,15 @@ class UploadImageInstant extends \yii\bootstrap5\Widget
     $view = $this->getView();
     $id = $this->getId();
 
-    $wrapId   = "uii_wrap_{$id}";
-    $photoId  = "uii_photo_{$id}";
-    $imgId    = "uii_img_{$id}";
-    $inputId  = "uii_input_{$id}";
-    $modalId  = "uii_modal_{$id}";
-    $cropId   = "uii_crop_{$id}";
-    $saveId   = "uii_save_{$id}";
-    $cancelId = "uii_cancel_{$id}";
-    $removeId = "uii_remove_{$id}";
+    $wrapId    = "uii_wrap_{$id}";
+    $photoId   = "uii_photo_{$id}";
+    $imgId     = "uii_img_{$id}";
+    $inputId   = "uii_input_{$id}";
+    $modalId   = "uii_modal_{$id}";
+    $cropId    = "uii_crop_{$id}";
+    $saveId    = "uii_save_{$id}";
+    $cancelId  = "uii_cancel_{$id}";
+    $removeBtn = "uii_removebtn_{$id}";
     $overlayId = "uii_overlay_{$id}";
 
     $initialUrl = $this->imageUrl ?: $this->placeholder;
@@ -235,20 +228,23 @@ class UploadImageInstant extends \yii\bootstrap5\Widget
     $csrfParam = Yii::$app->request->csrfParam;
     $csrfToken = Yii::$app->request->getCsrfToken();
 
-    // MODEL
+    //MODEL FILE
     $haveModel  = $this->model !== null && $this->model->hasAttribute($this->attribute);
     $modelClass = $haveModel ? addslashes(get_class($this->model)) : '';
     $modelId    = $haveModel ? (string)$this->model->getPrimaryKey() : '';
-    $modelAttr  = $this->attribute;
 
     // URLs
-    $sendUrl        = Url::to($this->sendUrl);
-    $removeUrl      = Url::to($this->removeUrl);
-    $updateFieldUrl = Url::to($this->updateFieldUrl);
+    $sendUrl = Url::to($this->sendUrl);
 
     // Nome/ID do input file do modelo
     $inputName   = $haveModel ? Html::getInputName($this->model, $this->attribute) : 'file_id';
     $inputIdPhp  = $this->fileInputId ?: ($haveModel ? Html::getInputId($this->model, $this->attribute) : 'uii_file_' . $id);
+
+    // Hidden de remoção (Behavior)
+    $removeHiddenId = "uii_remove_{$id}";
+    $removeHiddenName = $this->removeFlagScoped && $haveModel
+      ? Html::getInputName($this->model, $this->removeFlagParam)
+      : $this->removeFlagParam;
 
     // attact_model opcional
     $attactClass  = $this->attactModelClass ? addslashes($this->attactModelClass) : '';
@@ -273,8 +269,9 @@ class UploadImageInstant extends \yii\bootstrap5\Widget
 
     $mode              = $this->mode;
     $hideSaveButton    = $this->hideSaveButton ? 'true' : 'false';
+
     $linkOnSend        = $this->linkModelOnSend ? 'true' : 'false';
-    $deleteOld         = $this->deleteOldOnReplace ? 'true' : 'false';
+    $deleteOld         = $this->deleteOldOnReplace ? '1' : '0';
 
     // ===== CSS =====
     $css = <<<CSS
@@ -313,12 +310,10 @@ CSS;
   const AUTH_COOKIE_NAME    = '{$authCookieName}';
   const WITH_CREDS          = '{$withCreds}';
   const AUTH_QUERY_FALLBACK = {$authQueryFallback};
-
   const MODEL_CLASS = '{$modelClass}';
   const MODEL_ID    = '{$modelId}';
-  const MODEL_ATTR  = '{$modelAttr}';
-  const LINK_ON_SEND = {$linkOnSend};
-  const DELETE_OLD   = {$deleteOld};
+  const LINK_ON_SEND= {$linkOnSend};
+  const DELETE_OLD  = {$deleteOld};
 
   function getCookie(name){
     return document.cookie
@@ -356,9 +351,13 @@ CSS;
   const overlay = document.getElementById('$overlayId');
 
   const btnCrop   = document.getElementById('$cropId');
-  const btnSave   = document.getElementById('$saveId'); btnSave.style.display = 'none';
+  const btnSave   = document.getElementById('$saveId');
+  btnSave.style.display = 'none';
   const btnCancel = document.getElementById('$cancelId');
-  const btnRemove = document.getElementById('$removeId');
+  const btnRemove = document.getElementById('$removeBtn');
+
+  const removeHidden = document.getElementById('$removeHiddenId');
+  function setRemoveFlag(v){ if (removeHidden) removeHidden.value = String(v); }
 
   const modalEl = document.getElementById('$modalId');
   const modal = new bootstrap.Modal(modalEl, {backdrop:'static', keyboard:false});
@@ -366,9 +365,10 @@ CSS;
   const MODE = '{$mode}';
   const HIDE_SAVE_BTN = {$hideSaveButton};
 
-  // Input file REAL do modelo (apenas para 'defer')
+  // Input file REAL do modelo
   const MODEL_INPUT_ID = '{$inputIdPhp}';
   const MODEL_INPUT_NAME = '{$inputName}';
+
   function ensureModelFileInput() {
     let el = document.getElementById(MODEL_INPUT_ID);
     if (el && el.type === 'file') return el;
@@ -388,24 +388,28 @@ CSS;
   }
   const modelFileInput = (MODE === 'defer') ? ensureModelFileInput() : null;
 
-  // No modo 'instant', guardamos um hidden Model[field] com o id retornado
+  // No modo 'instant', sincronizamos um hidden [Model][file_id] (para o submit futuro)
   let hidden = null;
   if (MODE === 'instant') {
+    // 1) achar/criar um HIDDEN com o mesmo name do atributo do modelo
     hidden = document.querySelector(`input[type="hidden"][name="\${CSS.escape(MODEL_INPUT_NAME)}"]`);
     if (!hidden) {
       const form = wrap.closest('form');
       if (form) {
         hidden = document.createElement('input');
         hidden.type  = 'hidden';
-        hidden.name  = MODEL_INPUT_NAME;
+        hidden.name  = MODEL_INPUT_NAME;  // ex.: Captive[file_id]
         hidden.value = '';
         form.appendChild(hidden);
       }
     }
+    // 2) se houver <input type="file" name="Model[file_id]">, RENOMEIE para não conflitar
     const fileSameName = document.querySelector(`input[type="file"][name="\${CSS.escape(MODEL_INPUT_NAME)}"]`);
-    if (fileSameName) fileSameName.name = MODEL_INPUT_NAME + '__ignore';
+    if (fileSameName) {
+      fileSameName.name = MODEL_INPUT_NAME + '__ignore'; // evita colisão no submit
+    }
   }
-
+  
   // ---- CONFIG ----
   const CSRF_PARAM = '{$csrfParam}';
   const CSRF_TOKEN = '{$csrfToken}';
@@ -415,9 +419,7 @@ CSS;
   const MAX_BYTES = MAX_MB * 1024 * 1024;
   const ASPECT = (function(){ try { return eval('{$aspect}'); } catch(e){ return NaN; }})();
 
-  const SEND_URL        = '{$sendUrl}';
-  const UPDATE_FIELD_URL= '{$updateFieldUrl}';
-  const REMOVE_URL_BASE = '{$removeUrl}';
+  const SEND_URL = '{$sendUrl}';
 
   const FOLDER_ID   = {$folder};
   const GROUP_ID    = {$group};
@@ -499,28 +501,28 @@ CSS;
     const fileName = (tmpFile?.name || 'image.jpg');
     const file = (blobOrFile instanceof File) ? blobOrFile : new File([blobOrFile], fileName, {type: blobOrFile.type || 'image/jpeg', lastModified: Date.now()});
     fd.append('file', file);
-    fd.append('save', '1'); // precisa salvar para ter ID
+    fd.append('save', '1');
     fd.append('folder_id', String(FOLDER_ID));
     fd.append('group_id', String(GROUP_ID));
     fd.append('thumb_aspect', String(THUMB_ASPECT));
     fd.append('quality', String(QUALITY));
     fd.append(CSRF_PARAM, CSRF_TOKEN);
 
-    // --- NOVO: link direto no StorageController (model_class/model_id/model_field/delete_old) ---
-    if (LINK_ON_SEND && MODEL_CLASS && MODEL_ID && MODEL_ATTR) {
+    if (LINK_ON_SEND && MODEL_CLASS && MODEL_ID) {
       fd.append('model_class', MODEL_CLASS);
-      fd.append('model_id',    MODEL_ID);
-      fd.append('model_field', MODEL_ATTR);
-      fd.append('delete_old',  DELETE_OLD ? '1' : '0');
+      fd.append('model_id', String(MODEL_ID));
+      fd.append('model_field', MODEL_INPUT_NAME.split(']').slice(-2, -1)[0] || 'file_id'); // tenta extrair o nome do atributo
+      fd.append('delete_old', String(DELETE_OLD));
     }
 
-    // (Opcional) pivot adicional
     if (attactClass && attactFields.length === 2 && MODEL_ID) {
       const payload = { class_name: attactClass, fields: attactFields, id: MODEL_ID };
       fd.append('attact_model', JSON.stringify(payload));
     }
 
-    const res = await fetch(withAccessToken(SEND_URL), {
+    let urlSend = withAccessToken(SEND_URL);
+
+    const res = await fetch(urlSend, {
       method: 'POST',
       body: fd,
       headers: commonHeaders(),
@@ -554,6 +556,7 @@ CSS;
       }
       imageEl.src = toPreview;
       btnSave.style.display = 'block';
+      setRemoveFlag(0); // escolheu arquivo → não remover
       modal.show();
     } catch(err){
       alert(err);
@@ -584,7 +587,7 @@ CSS;
 
   btnCancel.addEventListener('click', () => modal.hide());
 
-  // CORTAR
+  // CORTAR: no 'defer' injeta arquivo e fecha; no 'instant' só atualiza preview
   btnCrop.addEventListener('click', async () => {
     if (!cropper) return;
     try{
@@ -604,7 +607,8 @@ CSS;
       photo.src = URL.createObjectURL(finalFile);
 
       if (MODE === 'defer') {
-        assignFileToModelInput(finalFile);
+        assignFileToModelInput(finalFile); // entrega pro form
+        setRemoveFlag(0); // vai salvar com imagem → não remover
         document.dispatchEvent(new CustomEvent('uploadImage:pending', { detail: { widgetId: '$id' }}));
       }
       btnSave.style.display = 'block';
@@ -616,7 +620,7 @@ CSS;
     }
   });
 
-  // SALVAR
+  // SALVAR: no 'defer' faz o mesmo que CORTAR; no 'instant' envia pro servidor
   btnSave.addEventListener('click', async () => {
     if (!cropper) return;
     try{
@@ -635,6 +639,7 @@ CSS;
       if (MODE === 'defer') {
         photo.src = URL.createObjectURL(finalFile);
         assignFileToModelInput(finalFile);
+        setRemoveFlag(0);
         modal.hide();
         return;
       }
@@ -642,8 +647,9 @@ CSS;
       // instant
       const saved = await uploadFinalFile(finalFile);
       lastSavedFileId = saved.id || null;
-      if (saved.url) photo.src = saved.url;
+      if (saved.url) photo.src = saved.url + '?v=' + Date.now();
       if (hidden) hidden.value = String(lastSavedFileId ?? '');
+      setRemoveFlag(0); // temos imagem → não remover no submit
       document.dispatchEvent(new CustomEvent('uploadImage:saved', { detail: { file: saved, widgetId: '$id' }}));
       modal.hide();
     } catch(err){
@@ -654,31 +660,23 @@ CSS;
     }
   });
 
-  // REMOVER
+  // REMOVER — agora 100% via Behavior (somente marca a intenção e limpa UI)
   btnRemove.addEventListener('click', async () => {
     try{
       showOverlay();
-      photo.src = '{$this->placeholder}';
-      if (MODE === 'defer') {
-        // limpa input file
-        // (não há como programaticamente setar value != '' em file input)
-        if (hidden) hidden.value = ''; // caso exista um hidden
-        return;
-      }
 
-      if (!lastSavedFileId && hidden?.value) lastSavedFileId = hidden.value;
-      if (!lastSavedFileId) { if (hidden) hidden.value = ''; return; }
+      // visual
+      photo.src = '<?= addslashes($this->placeholder) ?>';
+      btnSave.style.display = 'none';
 
-      const fd = new FormData();
-      fd.append(CSRF_PARAM, CSRF_TOKEN);
-      const res = await fetch(withAccessToken('{$removeUrl}' + '?id=' + encodeURIComponent(lastSavedFileId)), {
-        method:'POST',
-        body: fd,
-        headers: commonHeaders(),
-        credentials: WITH_CREDS,
-      });
+      // limpa inputs locais
+      if (modelFileInput) modelFileInput.value = '';
       if (hidden) hidden.value = '';
-      lastSavedFileId = null;
+
+      // marca para o Behavior remover no submit
+      setRemoveFlag(1);
+
+      // não removemos no servidor aqui; o Behavior cuida no afterSave
     } catch(err){
       console.error(err);
     } finally {
@@ -714,6 +712,9 @@ JS;
             <!-- input fora do label -->
             <input id="<?= $inputId ?>" type="file" accept="<?= Html::encode($this->accept) ?>" class="d-none">
 
+            <!-- hidden de remoção para o Behavior -->
+            <input type="hidden" id="<?= $removeHiddenId ?>" name="<?= Html::encode($removeHiddenName) ?>" value="0">
+
             <div class="btn-group" role="group" aria-label="upload actions">
               <label class="btn btn-primary mb-0" for="<?= $inputId ?>">
                 <i class="fas fa-file-upload me-1"></i><?= Html::encode($this->labelSelect) ?>
@@ -723,7 +724,7 @@ JS;
                 <i class="fas fa-save me-1"></i><?= Html::encode($this->labelSave) ?>
               </button>
 
-              <button type="button" id="<?= $removeId ?>" class="btn btn-danger <?= $showRemove ?>">
+              <button type="button" id="<?= $removeBtn ?>" class="btn btn-danger <?= $showRemove ?>">
                 <i class="fas fa-trash me-1"></i><?= Html::encode($this->labelRemove) ?>
               </button>
             </div>
