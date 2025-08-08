@@ -459,125 +459,131 @@ class StorageController extends ControllerRest
         }
     }
 
-    /**
-     * Vincula um File recém-salvo ao modelo informado e (opcional) remove o antigo.
-     *
-     * @return array{linked:bool, model_id:mixed, field:string, old_id:int|null, removed_old:bool}
-     * @throws BadRequestHttpException|NotFoundHttpException|ServerErrorHttpException
-     */
-    private static function linkFileToModel(int $fileId, string $className, $pk, string $field, bool $deleteOld = true): array
-    {
-        if (!$className || !$pk || !$field) {
-            throw new BadRequestHttpException('Parâmetros de vínculo incompletos.');
-        }
-        if (!class_exists($className)) {
-            throw new BadRequestHttpException("Classe de modelo inválida: {$className}");
-        }
-
-        /** @var ActiveRecord|null $model */
-        $model = $className::findOne($pk);
-        if (!$model) {
-            throw new NotFoundHttpException('Modelo alvo não encontrado.');
-        }
-        if (!$model->hasAttribute($field)) {
-            throw new BadRequestHttpException("Atributo '{$field}' não existe em {$className}.");
-        }
-
-        $oldId = (int)($model->{$field} ?? 0);
-        $model->scenario = ModelCommon::SCENARIO_FILE;
-        $model->{$field} = $fileId;
-
-        // se quiser validação, troque para save() e trate os erros
-        if ($model->save(false) === false) {
-            throw new ServerErrorHttpException('Não foi possível atualizar o modelo alvo.');
-        }
-
-        $removed = false;
-        if ($deleteOld && $oldId && $oldId !== $fileId) {
-            $rem = self::removeFile($oldId);
-            $removed = (bool)($rem['success'] ?? false);
-        }
-
-        return [
-            'linked'      => true,
-            'model_id'    => $model->getPrimaryKey(),
-            'field'       => $field,
-            'old_id'      => $oldId ?: null,
-            'removed_old' => $removed,
-        ];
-    }
-
     public function actionSend()
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
         try {
-            if ($this->request->isPost && ($temp_file = UploadedFile::getInstanceByName('file')) !== null) {
+            if (!($this->request->isPost) || ($temp_file = UploadedFile::getInstanceByName('file')) === null) {
+                throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
+            }
 
-                $post = $this->request->post();
+            $post = $this->request->post();
 
-                // --- NOVOS CAMPOS PARA VÍNCULO DIRETO ---
-                $linkClass = $post['model_class'] ?? null;  // ex.: backend\models\Captive
-                $linkId    = $post['model_id']    ?? null;  // ex.: 42
-                $linkField = $post['model_field'] ?? null;  // ex.: file_id
-                $deleteOld = isset($post['delete_old']) ? ((int)$post['delete_old'] === 1) : true;
+            // opções do upload
+            $options = [];
+            $options['file_name']     = $post['file_name']     ?? false;
+            $options['description']   = $post['description']   ?? $temp_file->name;
+            $options['folder_id']     = $post['folder_id']     ?? 1;
+            $options['group_id']      = $post['group_id']      ?? 1;
+            $options['save']          = $post['save']          ?? 0;
+            $options['attact_model']  = $post['attact_model']  ?? false;
+            $options['convert_video'] = $post['convert_video'] ?? true;
+            $options['thumb_aspect']  = $post['thumb_aspect']  ?? 1;
+            $options['quality']       = $post['quality']       ?? 80;
 
-                $linkRequested = !empty($linkClass) && !empty($linkId) && !empty($linkField);
+            // imagem: comprime temp
+            [$type, $format] = explode('/', $temp_file->type);
+            if ($type === 'image') {
+                self::compressImage($temp_file->tempName, 5);
+            }
 
-                // Opções do upload
-                $options = [];
-                $options['file_name']     = $post['file_name']     ?? false;
-                $options['description']   = $post['description']   ?? $temp_file->name;
-                $options['folder_id']     = $post['folder_id']     ?? 1;
-                $options['group_id']      = $post['group_id']      ?? 1;
-                $options['save']          = $post['save']          ?? 0;
-                $options['attact_model']  = $post['attact_model']  ?? false;
-                $options['convert_video'] = $post['convert_video'] ?? true;
-                $options['thumb_aspect']  = $post['thumb_aspect']  ?? 1;
-                $options['quality']       = $post['quality']       ?? 80;
+            // faz upload (pode retornar data como objeto File OU array)
+            $result = self::uploadFile($temp_file, $options);
 
-                // Se for vincular ao modelo, precisamos que o File seja salvo no DB
-                if ($linkRequested) {
-                    $options['save'] = 1;
-                }
-
-                // Compressão básica para imagem
-                [$type, $format] = explode('/', $temp_file->type);
-                if ($type === 'image') {
-                    self::compressImage($temp_file->tempName, 5);
-                }
-
-                // Faz o upload (mantém sua lógica)
-                $result = self::uploadFile($temp_file, $options);
-
-                // Vincula ao modelo, se solicitado e se o upload deu certo
-                if (($result['success'] ?? false) && $linkRequested) {
-
-                    $fileData = $result['data'] ?? null;
-                    $fileId   = 0;
-
-                    if (is_object($fileData) && isset($fileData->id)) {
-                        $fileId = (int)$fileData->id;
-                    } elseif (is_array($fileData) && isset($fileData['id'])) {
-                        $fileId = (int)$fileData['id'];
-                    }
-
-                    if ($fileId <= 0) {
-                        $result['link'] = ['linked' => false, 'error' => 'Upload não retornou ID do arquivo (data sem id).'];
-                        return $result; // ou lança exceção
-                    }
-
-                    $result['link'] = self::linkFileToModel($fileId, $linkClass, $linkId, $linkField, $deleteOld);
-                }
-
+            // Se não deu upload, devolve como está
+            if (empty($result['success'])) {
                 return $result;
             }
 
-            throw new \yii\web\BadRequestHttpException(Yii::t('app', 'Bad Request.'));
+            // --- LINK DIRETO AO MODELO (novo) ---
+            $linkClass = $post['model_class'] ?? null;
+            $linkId    = $post['model_id']    ?? null;       // PK
+            $linkField = $post['model_field'] ?? null;       // ex: 'file_id'
+            $deleteOld = (int)($post['delete_old'] ?? 1);
+
+            $linkRequested = !empty($linkClass) && $linkId !== null && !empty($linkField);
+
+            if ($linkRequested) {
+                // Extrai o ID do arquivo salvo (objeto ou array)
+                $fileData = $result['data'] ?? null;
+                $fileId   = 0;
+                if (is_object($fileData) && isset($fileData->id)) {
+                    $fileId = (int)$fileData->id;
+                } elseif (is_array($fileData) && isset($fileData['id'])) {
+                    $fileId = (int)$fileData['id'];
+                }
+
+                if ($fileId <= 0) {
+                    $result['link'] = [
+                        'linked' => false,
+                        'error'  => 'Upload ok mas não retornou ID do arquivo.'
+                    ];
+                    return $result;
+                }
+
+                // tenta vincular
+                $result['link'] = self::linkFileToModel($fileId, $linkClass, (int)$linkId, $linkField, $deleteOld);
+            }
+
+            return $result;
         } catch (\Throwable $th) {
             AuthController::error($th);
+            return ['code' => 500, 'success' => false, 'data' => ['Exception' => $th->getMessage()]];
         }
     }
+
+    /**
+     * Vincula o arquivo ($fileId) ao modelo ($class::$id) no campo $field.
+     * Se $deleteOld=1, remove o antigo quando diferente.
+     */
+    protected static function linkFileToModel(int $fileId, string $class, int $id, string $field, int $deleteOld = 1): array
+    {
+        try {
+            if (!class_exists($class)) {
+                return ['linked' => false, 'error' => "Class not found: {$class}"];
+            }
+            // precisa ser um ActiveRecord
+            if (!is_subclass_of($class, \yii\db\ActiveRecord::class)) {
+                return ['linked' => false, 'error' => "Class is not ActiveRecord: {$class}"];
+            }
+
+            /** @var \yii\db\ActiveRecord $model */
+            $model = $class::findOne($id);
+            if (!$model) {
+                return ['linked' => false, 'error' => "Model id #{$id} not found for {$class}"];
+            }
+            if (!$model->hasAttribute($field)) {
+                return ['linked' => false, 'error' => "Field '{$field}' not found in {$class}"];
+            }
+
+            $oldId = (int)$model->getAttribute($field);
+            $model->setAttribute($field, $fileId);
+
+            if (!$model->save(false)) {
+                return ['linked' => false, 'error' => 'Model save(false) failed'];
+            }
+
+            $removed = false;
+            if ($deleteOld && $oldId && $oldId !== $fileId) {
+                $rm = self::removeFile($oldId);
+                $removed = $rm['success'] ?? false;
+            }
+
+            return [
+                'linked'       => true,
+                'model_class'  => $class,
+                'model_id'     => $id,
+                'field'        => $field,
+                'file_id'      => $fileId,
+                'old_id'       => $oldId,
+                'removed_old'  => $removed,
+            ];
+        } catch (\Throwable $e) {
+            return ['linked' => false, 'error' => $e->getMessage()];
+        }
+    }
+
 
     public static function removeFile($id)
     {
