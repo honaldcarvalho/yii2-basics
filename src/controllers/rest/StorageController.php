@@ -550,12 +550,22 @@ class StorageController extends ControllerRest
 
                 // Vincula ao modelo, se solicitado e se o upload deu certo
                 if (($result['success'] ?? false) && $linkRequested) {
-                    $fileId = (int)($result['data']['id'] ?? 0);
-                    if ($fileId > 0) {
-                        $result['link'] = self::linkFileToModel($fileId, $linkClass, $linkId, $linkField, $deleteOld);
-                    } else {
-                        $result['link'] = ['linked' => false, 'error' => 'Upload não retornou ID do arquivo.'];
+
+                    $fileData = $result['data'] ?? null;
+                    $fileId   = 0;
+
+                    if (is_object($fileData) && isset($fileData->id)) {
+                        $fileId = (int)$fileData->id;
+                    } elseif (is_array($fileData) && isset($fileData['id'])) {
+                        $fileId = (int)$fileData['id'];
                     }
+
+                    if ($fileId <= 0) {
+                        $result['link'] = ['linked' => false, 'error' => 'Upload não retornou ID do arquivo (data sem id).'];
+                        return $result; // ou lança exceção
+                    }
+
+                    $result['link'] = self::linkFileToModel($fileId, $linkClass, $linkId, $linkField, $deleteOld);
                 }
 
                 return $result;
