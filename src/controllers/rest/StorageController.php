@@ -15,6 +15,7 @@ use FFMpeg\Format\Video\X264;
 use weebz\yii2basics\models\File;
 use weebz\yii2basics\models\Folder;
 use weebz\yii2basics\controllers\AuthController;
+use weebz\yii2basics\models\ModelCommon;
 use yii\db\ActiveRecord;
 use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
@@ -483,6 +484,7 @@ class StorageController extends ControllerRest
         }
 
         $oldId = (int)($model->{$field} ?? 0);
+        $model->scenario = ModelCommon::SCENARIO_FILE;
         $model->{$field} = $fileId;
 
         // se quiser validação, troque para save() e trate os erros
