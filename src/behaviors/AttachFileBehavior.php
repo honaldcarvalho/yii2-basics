@@ -1,4 +1,5 @@
 <?php
+
 namespace weebz\yii2basics\behaviors;
 
 use Yii;
@@ -89,24 +90,17 @@ class AttachFileBehavior extends Behavior
         $attr  = $this->attribute;
         $req   = Yii::$app->request;
 
-        // Captura POST aninhado e plano
+        // POST aninhado/flat
         $postedModel  = $req->post($owner->formName(), []);
         $hasPostedKey = array_key_exists($attr, $postedModel) || $req->post($attr, null) !== null;
         $postedId     = $hasPostedKey ? ($postedModel[$attr] ?? $req->post($attr, null)) : null;
 
-        // Flag de remoção: tanto global quanto aninhado
+        // Flag de remoção (global ou aninhada)
         $removeFlag = (int)($req->post($this->removeFlagParam, $postedModel[$this->removeFlagParam] ?? 0));
 
-        $this->log('incoming', [
-            'hasPostedKey' => $hasPostedKey,
-            'postedId'     => $postedId,
-            'removeFlag'   => $removeFlag,
-        ]);
-
-        // 1) Upload síncrono (arquivo no mesmo atributo)
+        // 1) Upload síncrono
         $uploaded = UploadedFile::getInstance($owner, $attr);
         if ($uploaded instanceof UploadedFile) {
-            $this->log('sync upload detected', ['name' => $uploaded->name, 'type' => $uploaded->type]);
             try {
                 $resp = StorageController::uploadFile($uploaded, ['save' => true, 'thumb_aspect' => 1]);
                 if (!empty($resp['success'])) {
@@ -115,42 +109,45 @@ class AttachFileBehavior extends Behavior
                     if ($this->deleteOldOnReplace && $this->oldId && $this->oldId != $newId) {
                         $this->toDeleteId = $this->oldId;
                     }
-                    $this->log('sync upload ok', ['newId' => $newId, 'toDelete' => $this->toDeleteId]);
                     return;
                 }
-                // Falha no contrato
-                $this->log('sync upload fail', ['resp' => $resp]);
                 $owner->addError($attr, Yii::t('app', 'Falha ao enviar imagem.'));
                 $event->isValid = false;
                 return;
             } catch (\Throwable $e) {
-                $this->log('sync upload exception', ['err' => $e->getMessage()]);
                 $owner->addError($attr, Yii::t('app', 'Falha ao enviar imagem.'));
                 $event->isValid = false;
                 return;
             }
         }
 
-        // 2) ID vindo por hidden (widget assíncrono / instant / outro fluxo)
+        // 2) ***PRIORIDADE PARA REMOÇÃO EXPLÍCITA***
+        // Se usuário clicou "Remover", removemos independentemente do postedId estar vazio
+        if ($removeFlag === 1) {
+            if ($this->oldId) {
+                $this->toDeleteId = $this->oldId;
+            }
+            $owner->{$attr} = null;
+            return;
+        }
+
+        // 3) ID vindo por hidden (instant/defer)
         if ($hasPostedKey) {
             $raw = trim((string)$postedId);
 
-            // vazio: não trata como remoção; mantém o antigo
+            // vazio SEM flag de remoção -> mantém
             if ($raw === '') {
                 $owner->{$attr} = $this->oldId;
-                $this->log('hidden empty -> keep old', ['oldId' => $this->oldId]);
                 return;
             }
 
-            // '0' ou 'null': só remove com flag explícita (ou se emptyMeansRemove=true)
+            // '0'/'null' só remove se explicitado via emptyMeansRemove (opcional)
             if ($raw === '0' || strtolower($raw) === 'null') {
-                if ($removeFlag === 1 || $this->emptyMeansRemove) {
+                if ($this->emptyMeansRemove) {
                     if ($this->oldId) $this->toDeleteId = $this->oldId;
                     $owner->{$attr} = null;
-                    $this->log('hidden zero/null with removeFlag -> remove', ['toDelete' => $this->toDeleteId]);
                 } else {
                     $owner->{$attr} = $this->oldId;
-                    $this->log('hidden zero/null without removeFlag -> keep', ['oldId' => $this->oldId]);
                 }
                 return;
             }
@@ -162,27 +159,14 @@ class AttachFileBehavior extends Behavior
                     $this->toDeleteId = $this->oldId;
                 }
                 $owner->{$attr} = $newId;
-                $this->log('hidden new id', ['newId' => $newId, 'toDelete' => $this->toDeleteId]);
             } else {
                 $owner->{$attr} = $this->oldId;
-                $this->log('hidden same id -> keep', ['id' => $this->oldId]);
             }
-            return;
-        }
-
-        // 3) Flag de remoção isolada (sem ID)
-        if ($removeFlag === 1) {
-            if ($this->oldId) {
-                $this->toDeleteId = $this->oldId;
-            }
-            $owner->{$attr} = null;
-            $this->log('flag remove only', ['toDelete' => $this->toDeleteId]);
             return;
         }
 
         // 4) Nada mudou → mantém
         $owner->{$attr} = $this->oldId;
-        $this->log('no change -> keep', ['id' => $this->oldId]);
     }
 
     public function deleteOldIfNeeded(AfterSaveEvent $event): void
