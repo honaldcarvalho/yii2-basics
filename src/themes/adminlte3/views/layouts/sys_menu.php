@@ -1,11 +1,14 @@
 <?php
 use weebz\yii2basics\controllers\ControllerCommon;
 use weebz\yii2basics\controllers\AuthorizationController as Authz;
-use app\models\SysMenu;
 use weebz\yii2basics\models\Configuration;
+use weebz\yii2basics\models\Role;
 use weebz\yii2basics\widgets\Menu as WidgetsMenu;
+use app\models\SysMenu;
 
-if (Yii::$app->user->isGuest) return false;
+if (Yii::$app->user->isGuest) {
+    return false;
+}
 
 $params = Configuration::get();
 $this->registerJS(<<<JS
@@ -22,35 +25,43 @@ if (!empty($params->file_id) && $params->file !== null) {
     $login_image = "<img src='{$assetsDir}/img/croacworks-logo-hq.png' alt='{$params->title}' class='brand-image elevation-3' style='opacity:.8'>";
 }
 
-/** Verificação de permissão: controller FQCN + actions ("a;b;c" ou "*") */
-function canSeeMenuItem(?string $controllerFQCN, ?string $actions): bool
+/**
+ * Regra de exibição baseada em permissões:
+ * - $visibleCsv: lista de actions separadas por ';' (ex.: "index;view;create").
+ * - Se $visibleCsv = '*' → aparece se existir QUALQUER role ativa para esse controller.
+ * - Se $visibleCsv vazio → usa $fallbackActionCsv; se também vazio → comporta como '*'.
+ */
+function allowedByVisible(?string $controllerFQCN, ?string $visibleCsv, ?string $fallbackActionCsv = null): bool
 {
     if (Authz::isGuest()) return false;
     if (Authz::isAdmin()) return true;
 
     $controllerFQCN = trim((string)$controllerFQCN);
-    $actions        = trim((string)$actions);
-
     if ($controllerFQCN === '') return false;
 
-    if ($actions === '' || $actions === '*') {
-        // Qualquer permissão no controller já habilita a visualização
+    $csv = trim((string)$visibleCsv);
+    if ($csv === '') {
+        $csv = trim((string)$fallbackActionCsv);
+        if ($csv === '') $csv = '*';
+    }
+
+    if ($csv === '*') {
         $groups = Authz::getUserGroups() ?? [];
-        return \weebz\yii2basics\models\Role::find()
+        return Role::find()
             ->where(['controller' => $controllerFQCN, 'status' => 1])
             ->andWhere(['in', 'group_id', $groups])
             ->exists();
     }
 
-    foreach (explode(';', $actions) as $act) {
-        $act = trim($act);
-        if ($act === '') continue;
-        if (Authz::verAuthorization($controllerFQCN, $act)) return true;
+    foreach (array_filter(array_map('trim', explode(';', $csv)), 'strlen') as $act) {
+        if (Authz::verAuthorization($controllerFQCN, $act)) {
+            return true;
+        }
     }
     return false;
 }
 
-/** Monta nós recursivamente a partir de sys_menus */
+/** Monta recursivamente os nós do menu a partir de sys_menus */
 function getNodes($parentId = null): array
 {
     $items = SysMenu::find()
@@ -63,35 +74,39 @@ function getNodes($parentId = null): array
     $currentAction = Yii::$app->controller->action->id;
 
     foreach ($items as $item) {
-        $children = getNodes($item->id);
-        $isGroup  = ($item->url === '#');
+        // Hard toggles
+        if (!$item->show) continue;
+        if ($item->only_admin && !Authz::isAdmin()) continue;
 
-        // Somente admin?
-        if ($item->only_admin && !Authz::isAdmin()) {
-            continue;
-        }
+        $isGroup  = ($item->url === '#');
+        $children = getNodes($item->id);
 
         // Visibilidade
         if ($isGroup) {
+            // Grupo aparece se tiver ao menos um filho visível
             $isVisible = false;
             foreach ($children as $c) {
                 if (!empty($c['visible'])) { $isVisible = true; break; }
             }
         } else {
-            $isVisible = canSeeMenuItem($item->controller, $item->action);
+            $isVisible = allowedByVisible($item->controller, $item->visible, $item->action);
         }
 
-        // Active
+        // Active (apenas itens simples com controller)
         $active = false;
         if (!$isGroup && $item->controller) {
             $actions = trim((string)$item->action);
             if ($item->controller === $currentFQCN) {
-                $active = ($actions === '' || $actions === '*')
-                    ? true
-                    : in_array($currentAction, array_map('trim', explode(';', $actions)), true);
+                if ($actions === '' || $actions === '*') {
+                    $active = true;
+                } else {
+                    $allowed = array_map('trim', explode(';', $actions));
+                    $active  = in_array($currentAction, $allowed, true);
+                }
             }
         }
 
+        // Nó
         $node = [
             'label'     => Yii::t('app', $item->label),
             'icon'      => (string)$item->icon,
@@ -106,6 +121,7 @@ function getNodes($parentId = null): array
             $node['active'] = $active;
         }
 
+        // Inclui se visível ou (grupo com filhos)
         if ($isVisible || ($isGroup && !empty($children))) {
             $nodes[] = $node;
         }
@@ -115,12 +131,15 @@ function getNodes($parentId = null): array
 }
 ?>
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
     <a href="<?= Yii::getAlias('/'); ?>" class="brand-link">
         <?= $login_image ?>
         <span class="brand-text font-weight-light"><?= $params->title ?></span>
     </a>
 
+    <!-- Sidebar -->
     <div class="sidebar">
+        <!-- User -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image user-image">
                 <?php if (Yii::$app->user->identity->file): ?>
@@ -134,6 +153,7 @@ function getNodes($parentId = null): array
             </div>
         </div>
 
+        <!-- Search -->
         <div class="form-inline">
             <div class="input-group" data-widget="sidebar-search">
                 <input class="form-control form-control-sidebar" type="search" placeholder="<?= Yii::t('app', 'Search') ?>" aria-label="<?= Yii::t('app', 'Search') ?>">
@@ -143,6 +163,7 @@ function getNodes($parentId = null): array
             </div>
         </div>
 
+        <!-- Menu -->
         <nav class="mt-2">
             <?php
                 $nodes = getNodes(null);
