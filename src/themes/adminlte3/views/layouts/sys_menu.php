@@ -4,7 +4,7 @@ use weebz\yii2basics\controllers\AuthorizationController as Authz;
 use weebz\yii2basics\models\Configuration;
 use weebz\yii2basics\models\Role;
 use weebz\yii2basics\widgets\Menu as WidgetsMenu;
-use app\models\SysMenu;
+use weebz\yii2basics\models\SysMenu;
 
 if (Yii::$app->user->isGuest) {
     return false;
