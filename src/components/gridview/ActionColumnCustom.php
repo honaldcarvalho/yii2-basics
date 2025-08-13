@@ -12,7 +12,7 @@ use Yii;
 use yii\helpers\Html;
 use weebz\yii2basics\controllers\AuthorizationController as AuthController;
 
-class ActionColumn extends \yii\grid\ActionColumn
+class ActionColumnCustom extends \yii\grid\ActionColumn
 {
     public $template = '{view}{update}{delete}';
     public $verGroup = true;
