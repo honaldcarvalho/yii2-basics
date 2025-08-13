@@ -746,7 +746,7 @@ JS;
               </div>
             </div>
             <div class="modal-footer">
-              <button type="button" id="<?= $cropId ?>" class="btn btn-outline-primary">
+              <button type="button" id="<?= $cropId ?>" class="btn btn-success">
                 <i class="fas fa-crop"></i> <?= Html::encode($this->labelCrop) ?>
               </button>
               <button type="button" id="<?= $cancelId ?>" class="btn btn-secondary" data-bs-dismiss="modal">
