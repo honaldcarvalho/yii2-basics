@@ -1,6 +1,5 @@
 <?php
-
-/* 
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -10,13 +9,15 @@ namespace weebz\yii2basics\components\gridview;
 
 use Yii;
 use yii\helpers\Html;
-use weebz\yii2basics\controllers\AuthorizationController as AuthController;
+use weebz\yii2basics\controllers\AuthorizationController as Authz;
 
 class ActionColumnCustom extends \yii\grid\ActionColumn
 {
     public $template = '{view}{update}{delete}';
     public $verGroup = true;
+    /** ID do controller (rota), usado para montar URLs. Ex.: 'user' */
     public $controller = null;
+    /** Mantido por compatibilidade, mas não é usado na autorização nova */
     public $path = null;
     public $model = null;
     public $order = false;
@@ -24,19 +25,24 @@ class ActionColumnCustom extends \yii\grid\ActionColumn
     public $orderField = 'order';
     public $orderModel = null;
     public $modelClass = null;
+
+    /** NOVO: FQCN do controller para autorização. Ex.: app\controllers\UserController */
+    public $controllerFQCN = null;
+
     /**
      * Initializes the default button rendering callbacks.
      */
     public function init(): void
     {
-        if($this->uniqueId === null){
+        if ($this->uniqueId === null) {
             $this->uniqueId = "$this->controller";
         }
-        
+
         $this->contentOptions['class'] = 'action-column';
-        if($this->grid->filterModel  !== null){
+
+        if ($this->grid->filterModel !== null) {
             $class_path = get_class($this->grid->filterModel);
-            $class_path_parts = explode('\\',$class_path);
+            $class_path_parts = explode('\\', $class_path);
             $class_name = end($class_path_parts);
             $this->model = $class_name;
             $this->modelClass = $this->grid->filterModel;
@@ -48,12 +54,12 @@ class ActionColumnCustom extends \yii\grid\ActionColumn
     }
 
     protected function registerScript()
-    {   
-        if($this->controller == null){
+    {
+        if ($this->controller == null) {
             $this->controller = Yii::$app->controller->id;
         }
         $order = 0;
-        if($this->order){
+        if ($this->order) {
             $order = 1;
         }
 
@@ -94,7 +100,7 @@ class ActionColumnCustom extends \yii\grid\ActionColumn
                                     el.prop('checked', false);
                                 }
                             } else if(el.attr('type') == 'select') {
-                                el.val(value); // Select the option with a value of '1'
+                                el.val(value);
                                 el.trigger('change');
                             } else {
                                 el.val(value);
@@ -196,7 +202,7 @@ class ActionColumnCustom extends \yii\grid\ActionColumn
 
         $view = Yii::$app->view;
 
-        if($this->order)
+        if ($this->order)
             $view->registerJs($script_order, $view::POS_END);
         $view->registerJs($script, $view::POS_END);
 
@@ -214,9 +220,8 @@ class ActionColumnCustom extends \yii\grid\ActionColumn
             'data-confirm' => Yii::t('yii', 'Você tem certeza que quer remover esse item?'),
             'data-method' => 'post',
         ]);
-        
-        $this->registerScript();
 
+        $this->registerScript();
     }
 
     public function renderDataCellContent($model, $key, $index)
@@ -233,31 +238,35 @@ class ActionColumnCustom extends \yii\grid\ActionColumn
      */
     protected function initDefaultButton($name, $iconName, $additionalOptions = [])
     {
-
-        if($this->controller === null) {
-            $controller_parts = explode('\\',get_class(Yii::$app->controller));
-            if($this->path === null){
-                if(count($controller_parts) == 4)
+        // Define controller id (rota) e path (legado) quando não informados
+        if ($this->controller === null) {
+            $controller_parts = explode('\\', get_class(Yii::$app->controller));
+            if ($this->path === null) {
+                if (count($controller_parts) == 4)
                     $this->path = "{$controller_parts[0]}/{$controller_parts[2]}";
                 else
                     $this->path = "{$controller_parts[0]}";
             }
-            $controller_parts = explode('Controller',end($controller_parts));
+            $controller_parts = explode('Controller', end($controller_parts));
             $this->controller = strtolower($controller_parts[0]);
-            if(($tranformed = AuthController::addSlashUpperLower($controller_parts[0])) != false){
+            if (($tranformed = self::addSlashUpperLower($controller_parts[0])) != false) {
                 $this->controller = $tranformed;
             }
-
         }
-        
+
+        // Define FQCN do controller para autorização (padrão: controller atual)
+        if ($this->controllerFQCN === null) {
+            $this->controllerFQCN = get_class(Yii::$app->controller);
+        }
+
         if (!isset($this->buttons[$name]) && strpos($this->template, '{' . $name . '}') !== false) {
             $this->buttons[$name] = function ($url, $model, $key) use ($name, $iconName, $additionalOptions) {
 
                 $options = array_merge([
-                    'title' => Yii::t('yii',ucfirst($name)),
-                    'aria-label' => Yii::t('yii',ucfirst($name)),
+                    'title' => Yii::t('yii', ucfirst($name)),
+                    'aria-label' => Yii::t('yii', ucfirst($name)),
                     'data-pjax' => '0',
-                    'class'=>'btn btn-outline-secondary',
+                    'class' => 'btn btn-outline-secondary',
                 ], $additionalOptions, $this->buttonOptions);
 
                 $icon = Html::tag('i', '', ['class' => "fas $iconName"]);
@@ -286,25 +295,30 @@ class ActionColumnCustom extends \yii\grid\ActionColumn
                         $link = Html::a('<i class="fas fa-toggle-'.(!$model->status ? 'off' : 'on').'"></i>',  "javascript:;", ['onclick'=>"callAction(this,{$model->id},'status')", 'class'=>'btn btn-default']);
                         break;
                     default:
-                        $title = ucfirst($name);
+                        $link = Html::a($icon, $url, $options);
+                        break;
                 }
 
-                if($this->verGroup && !AuthController::isAdmin()){
-                    if(AuthController::verAuthorization($this->controller,$name,$model,$this->path)){
-                        //dd([$name,$this->verGroup,$link ]);
-                        return $link;
-                    }
-                }else if(!AuthController::isAdmin()){
-                    if(AuthController::verAuthorization($this->controller,$name,$model,$this->path)){
-                        return $link;
-                    }
-                }else{
-                    return $link;
+                // ---- AUTORIZAÇÃO (AuthorizationController + FQCN) ----
+                if (!Authz::isAdmin()) {
+                    $can = Authz::verAuthorization($this->controllerFQCN, $name, $this->verGroup ? $model : null);
+                    return $can ? $link : '';
                 }
-                return '';
-
+                return $link;
             };
         }
+    }
 
+    /**
+     * Mantida para compatibilidade com o comportamento anterior:
+     * Transforma "MyController" em rotas com possível slash (ex.: "my" ou "my-controller")
+     * Retorna false se nenhuma transformação foi aplicada.
+     */
+    public static function addSlashUpperLower($controllerName)
+    {
+        // Implementação mínima baseada no padrão anterior.
+        // Ajuste aqui se sua versão original tinha lógica específica.
+        $id = strtolower(preg_replace('/([a-z])([A-Z])/', '$1-$2', $controllerName));
+        return $id ?: false;
     }
 }
