@@ -33,7 +33,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         'filterModel' => $searchModel,
                         'columns' => [
                             'id',
-                            'section.name:text:Seção',
+                            'group.name:text:'.Yii::t('app', 'Group'),
+                            'section.name:text:'.Yii::t('app', 'Section'),
                             'slug',
                             'title',
                             'description',
