@@ -18,7 +18,6 @@ use weebz\yii2basics\widgets\TinyMCE;
     <?php $form = ActiveForm::begin(); ?>
     
     <?= $form->field($model, 'group_id')->dropDownList(yii\helpers\ArrayHelper::map(weebz\yii2basics\models\Group::find()
-    ->where(['in','id', AuthController::userGroups()])
     ->asArray()->all(), 'id', 'name'), ['class'=>'form-control'])->label(Yii::t('app','Group')) ?>
 
     <?= $form->field($model, 'section_id')->dropDownList(
