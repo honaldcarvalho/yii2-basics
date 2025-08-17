@@ -10,12 +10,10 @@ class WeebzAsset extends AssetBundle
 
     public $css = [
         'css/custom.css',
-        'plugins/bootstrap/css/bootstrap-grid.min.css',
         'css/adminlte.min.css',
     ];
     
     public $js = [
-        'plugins/bootstrap/js/bootstrap.bundle.min.js',
         'js/adminlte.min.js',
         'js/utils.js',
         'js/t.js',
