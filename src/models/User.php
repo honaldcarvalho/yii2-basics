@@ -125,123 +125,17 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         ];
     }
 
-    /**
-     * Creates data provider instance with search query applied
-     *
-     * @param array $params
-     *
-     * @return ActiveDataProvider
-     */
-    public function search($params, $options = ['pageSize' => 10, 'orderBy' => ['id' => SORT_DESC], 'order' => false],)
+    public function search($params, $formName = null)
     {
-        $this->scenario = self::SCENARIO_SEARCH;
+        $query = User::find();
 
-        $className = self::getClass();
-        $table = static::tableName();
-        $pageSize = 10;
-        $order = false;
-        $orderField = false;
-
-        $query = static::find();
-
-        if (isset($options['select'])) {
-            $query->select($options['select']);
-        }
-
-        $sort = [
-            'defaultOrder' => ['id' => SORT_DESC], // padrão
-        ];
-
-        if (isset($options['orderBy'])) {
-            $sort['defaultOrder'] = $options['orderBy'];
-        }
-
-        if (isset($options['pageSize'])) {
-            $pageSize = $options['pageSize'];
-        }
-
-        /**
-            AQUI FAZ A VERIFICAÇÃO SE TEM UM ITEM DE ORDENAMENTO QUE MUDA A TAMANHO DA LISTAGEM. CASO SEJA FORNECIDO UM CAMPO FLAG E ELE NÃO SEJA NULO/VAZIO
-            O TAMANHO PASSA PARA 10000
-         */
-        if (isset($options['order']) && $options['order'] && !empty($options['order']) && count($params) > 0) {
-            $query->orderBy([$options['order']['field'] => SORT_ASC]);
-
-            if (
-                (
-                    isset($options['order']['flag']) &&
-                    $options['order']['flag'] != false &&
-                    isset($params[$className][$options['order']['flag']]) &&
-                    !empty($params[$className][$options['order']['flag']])
-                )
-            ) {
-                foreach ($params["{$className}"] as $field => $search) {
-                    if (!empty($search)) {
-                        $pageSize = 10000;
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (isset($options['join'])) {
-            if (is_array($options['join'])) {
-                foreach ($options['join'] as $model) {
-                    [$method, $table, $criteria] = $model;
-                    $query->join($method, $table, $criteria);
-                }
-            }
-        }
-
-        if (isset($options['groupModel'])) {
-            $field =  AuthController::addSlashUpperLower($className);
-            $query->leftJoin($options['groupModel']['table'], "{$table}.{$options['groupModel']['field']} = {$options['groupModel']['table']}.id");
-        }
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'pagination' => [
-                'pageSize' => $pageSize
-            ],
-            'sort' => $sort,
         ]);
 
-        $this->load($params);
-
-        // grid filtering conditions
-        $user = AuthController::User();
-
-        if ($this->verGroup && $user) {
-            // IDs dos grupos do usuário
-            $directGroupIds = $user->getUserGroupsId();
-
-            // IDs de todos os grupos descendentes (herdados via parent_id)
-            $group_ids = Group::getAllDescendantIds($directGroupIds);
-
-            // Se quiser sempre garantir acesso ao grupo ID 1 (admin), mantenha isso:
-            $group_ids[] = 1;
-
-            $table = static::tableName();
-
-            // Caminho definido no modelo, se existir
-            $groupPath = method_exists($this, 'groupRelationPath') ? static::groupRelationPath() : null;
-
-            if ($groupPath) {
-                $relationPath = '';
-                foreach ($groupPath as $i => $relation) {
-                    $relationPath .= ($i > 0 ? '.' : '') . $relation;
-                    $query->joinWith([$relationPath]);
-                }
-
-                $tableAlias = Yii::createObject(static::class)->getRelation(end($groupPath))->modelClass::tableName();
-                $query->andWhere(["{$tableAlias}.group_id" => $group_ids]);
-            } elseif (isset($options['groupModel'])) {
-                $query->andFilterWhere(['in', "{$options['groupModel']['table']}.group_id", $group_ids]);
-            } elseif ($this->hasAttribute('group_id')) {
-                $query->andFilterWhere(["{$table}.group_id" => $group_ids]);
-            }
-        }
+        $this->load($params, $formName);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -249,65 +143,33 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             return $dataProvider;
         }
 
-        //create criteria by search type
-        foreach ($params as $field => $search) {
+        // grid filtering conditions
+        $query->andFilterWhere([
+            'id' => $this->id,
+            'group_id' => $this->group_id,
+            'file_id' => $this->file_id,
+            'language_id' => $this->language_id,
+            'status' => $this->status,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+            'token_validate' => $this->token_validate,
+            'health_professional' => $this->health_professional,
+        ]);
 
-            if ($field == 'page')
-                continue;
+        $query->andFilterWhere(['like', 'fullname', $this->fullname])
+            ->andFilterWhere(['like', 'cpf_cnpj', $this->cpf_cnpj])
+            ->andFilterWhere(['like', 'username', $this->username])
+            ->andFilterWhere(['like', 'auth_key', $this->auth_key])
+            ->andFilterWhere(['like', 'password_hash', $this->password_hash])
+            ->andFilterWhere(['like', 'password_reset_token', $this->password_reset_token])
+            ->andFilterWhere(['like', 'verification_token', $this->verification_token])
+            ->andFilterWhere(['like', 'email', $this->email])
+            ->andFilterWhere(['like', 'phone', $this->phone])
+            ->andFilterWhere(['like', 'theme', $this->theme])
+            ->andFilterWhere(['like', 'access_token', $this->access_token]);
 
-            $field_type = gettype($search);
-            $field_parts = explode(':', $field);
-            if (count($field_parts) > 1) {
-                [$field, $field_type] = $field_parts;
-            }
-
-            if (!isset($params["{$className}"]))
-                continue;
-
-            foreach ($params["{$className}"] as $field => $search) {
-
-                $field_type = gettype($search);
-                if (is_numeric($search) && (int)$search == $search) {
-                    $field_type = "number";
-                }
-                $field_parts = explode(':', $field);
-
-                if (count($field_parts) > 1) {
-                    [$field, $field_type] = $field_parts;
-                }
-
-                if ($field_type == 'custom') {
-                    $query->andFilterWhere(["$table.$field", $search[0], $search[1]]);
-                } else if ($field_type == 'between') {
-                    $query->andFilterWhere(['between', "$table.$field", $search[0], $search[1]]);
-                } else if ($field_type == 'string') {
-                    if (str_contains($field, 'sod') || str_contains($field, 'eod')) {
-                        [$field_date, $pos] = explode('FDT', $field);
-                        if ($pos == 'sod') {
-                            $query->andFilterWhere(['>=', "$table.$field_date", $search]);
-                        } else if ($pos == 'eod') {
-                            $query->andFilterWhere(['<=', "$table.$field_date", $search]);
-                        }
-                    } else {
-                        $query->andFilterWhere(['like', "$table.$field", $search]);
-                    }
-                } else if (str_contains($field, 'sod') || str_contains($field, 'eod')) {
-                    [$field_date, $pos] = explode('FDT', $field);
-                    if ($pos == 'sod') {
-                        $query->andFilterWhere(['>=', "$table." . $field_date, $search]);
-                    } else if ($pos == 'eod') {
-                        $query->andFilterWhere(['<=', "$table." . $field_date, $search]);
-                    }
-                } else {
-                    $query->andFilterWhere(["$table.$field" => $search]);
-                }
-            }
-        }
-        // $query = $dataProvider->query;
-        // dd($query->createCommand()->getRawSql());
         return $dataProvider;
     }
-
     /**
      * {@inheritdoc}
      */
