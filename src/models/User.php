@@ -4,7 +4,8 @@ namespace weebz\yii2basics\models;
 
 use Yii;
 use yii\web\IdentityInterface;
-
+use yii\base\Model;
+use yii\data\ActiveDataProvider;
 /**
  * This is the model class for table "user".
  *
