@@ -18,7 +18,6 @@
         "yiisoft/yii2-imagine": "^2.3",
         "yiisoft/yii2-httpclient": "*",
         "yiithings/yii2-dotenv": "*",
-        "weebz/yii2export": "dev-master",
         "kartik-v/yii2-widget-select2": "dev-master",
         "kartik-v/yii2-bootstrap5-dropdown": "^1.0",
         "kartik-v/yii2-widget-datetimepicker": "dev-master",
