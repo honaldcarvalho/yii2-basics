@@ -901,4 +901,35 @@ class ControllerCommon extends \yii\web\Controller
         // Trim and return.
         return trim($string);
     }
+
+    function getFileIcon($extension)
+    {
+        $extension = strtolower($extension);
+
+        $map = [
+            'pdf'  => 'fa-file-pdf',
+            'doc'  => 'fa-file-word',
+            'docx' => 'fa-file-word',
+            'xls'  => 'fa-file-excel',
+            'xlsx' => 'fa-file-excel',
+            'ppt'  => 'fa-file-powerpoint',
+            'pptx' => 'fa-file-powerpoint',
+            'jpg'  => 'fa-file-image',
+            'jpeg' => 'fa-file-image',
+            'png'  => 'fa-file-image',
+            'gif'  => 'fa-file-image',
+            'zip'  => 'fa-file-zipper',
+            'rar'  => 'fa-file-zipper',
+            'txt'  => 'fa-file-lines',
+            'csv'  => 'fa-file-csv',
+            'mp3'  => 'fa-file-audio',
+            'wav'  => 'fa-file-audio',
+            'mp4'  => 'fa-file-video',
+            'avi'  => 'fa-file-video',
+        ];
+
+        return $map[$extension] ?? 'fa-file'; // fallback
+    }
+
+
 }
