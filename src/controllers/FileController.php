@@ -13,7 +13,14 @@ use yii\web\UploadedFile;
  */
 class FileController extends AuthController
 {
-
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct($id, $module, $config = array())
+    {
+        parent::__construct($id, $module, $config);;
+        $this->free[] = 'open';
+    }
     /**
      * Lists all File models.
      *
@@ -38,6 +45,87 @@ class FileController extends AuthController
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
+    }
+
+    public function actionOpen(string $slug)
+    {
+        /** @var File|null $file */
+        $file = File::find()->where(['slug' => $slug])->one();
+        if (!$file) {
+            throw new NotFoundHttpException('Link inválido ou arquivo não encontrado.');
+        }
+
+        // (Opcional) checagem de permissão/tenant
+        // if (!Yii::$app->user->isGuest && !$this->usuarioPodeVer($file)) {
+        //     throw new ForbiddenHttpException('Sem permissão.');
+        // }
+
+        // Caminho físico (bloqueie acesso direto via .htaccess em /web/files)
+        $base = Yii::getAlias('@webroot/files');
+        $rel  = ltrim((string)$file->path, '/\\');   // ex.: docs/abc.pdf
+        $abs  = realpath($base . DIRECTORY_SEPARATOR . $rel);
+
+        if (!$abs || !is_file($abs) || !str_starts_with($abs, realpath($base))) {
+            throw new NotFoundHttpException('Arquivo indisponível.');
+        }
+
+        // --- Política de expiração: se expirou, rotaciona slug e renova +1 dia ---
+        $now = time();
+        $expired = !empty($file->expires_at) && (int)$file->expires_at < $now;
+
+        if ($expired) {
+            $this->rotateSlugAndRenew($file); // não impacta a entrega desta requisição
+        }
+
+        // Descobre o mime (ou use $file->mime se você já salvar)
+        $mime = @mime_content_type($abs) ?: ($file->mime ?? 'application/octet-stream');
+
+        // Cabeçalhos seguros (evita cachear URL opaca por muito tempo)
+        $res = Yii::$app->response;
+        $res->format = \yii\web\Response::FORMAT_RAW;
+        $res->headers->set('Content-Type', $mime);
+        $res->headers->set('Content-Disposition', 'inline; filename="' . basename($abs) . '"');
+        $res->headers->set('Cache-Control', 'no-store, private, max-age=0');
+        $res->headers->set('Pragma', 'no-cache');
+
+        // --- Opção 1: enviar bytes pelo PHP ---
+        return file_get_contents($abs);
+
+        // --- Opção 2: se usar mod_xsendfile no Apache, troque pelo bloco abaixo ---
+        // $res->headers->set('X-Sendfile', $abs);
+        // return $res;
+    }
+
+    /**
+     * Gera um novo slug único e define novo expires_at (+1 dia).
+     * Salva apenas esses campos (sem validar).
+     */
+    protected function rotateSlugAndRenew(File $file): void
+    {
+        $newSlug = $this->generateUniqueSlug(32);
+        $newExp  = time() + 86400; // +1 dia
+
+        // Atualiza sem validar o resto
+        try {
+            $file->updateAttributes([
+                'slug'       => $newSlug,
+                'expires_at' => $newExp,
+            ]);
+        } catch (\Throwable $e) {
+            Yii::error(['slug_rotate_fail' => $e->getMessage(), 'file_id' => $file->id], __METHOD__);
+            // falhou a rotação? seguimos servindo o arquivo nesta request mesmo assim.
+        }
+    }
+
+    /**
+     * Gera slug único (checa colisão na tabela).
+     */
+    protected function generateUniqueSlug(int $len = 32): string
+    {
+        do {
+            $candidate = Yii::$app->security->generateRandomString($len);
+        } while (File::find()->where(['slug' => $candidate])->exists());
+        return $candidate;
     }
 
     /**
