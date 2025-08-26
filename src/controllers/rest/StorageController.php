@@ -153,6 +153,20 @@ class StorageController extends ControllerRest
         }
     }
 
+    static function generateUniqueSlug(int $len = 32): string
+    {
+        do {
+            $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            $n = strlen($alphabet);
+            $s = '';
+            for ($i = 0; $i < $len; $i++) {
+                $s .= $alphabet[random_int(0, $n - 1)];
+            }
+            $candidate = $s;
+        } while (File::find()->where(['slug' => $candidate])->exists());
+        return $candidate;
+    }
+
     static function createThumbnail($srcImagePath, $destImagePath, $thumbWidth = 160, $thumbHeight = 99)
     {
         // Abre a imagem original
@@ -412,9 +426,14 @@ class StorageController extends ControllerRest
 
                     $errors[] = $temp_file->saveAs($filePathRoot, ['quality' => $quality]);
                 }
+                
+                $slug = self::generateUniqueSlug(32);
+                $expires_at = time() + 3600;
 
                 $file_uploaded = [
                     'group_id' => $group_id,
+                    'slug' => $slug,
+                    'expires_at' => $expires_at,
                     'folder_id' => $folder_id,
                     'name' => $name,
                     'description' => $description,
