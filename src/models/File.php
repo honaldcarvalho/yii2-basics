@@ -10,6 +10,7 @@ use Yii;
  * @property int $id
  * @property int|null $group_id
  * @property int|null $folder_id
+ * @property string $slug
  * @property string $name
  * @property string|null $description
  * @property string $path
@@ -22,6 +23,7 @@ use Yii;
  * @property int $duration
  * @property int $caption
  * @property int $status
+ * @property string|null $expires_at
  * @property string|null $created_at
  * @property string|null $updated_at
  *
@@ -64,7 +66,7 @@ class File extends ModelCommon
         return [
             [['folder_id', 'size','duration','caption','status'], 'integer'],
             [['name', 'path', 'url', 'extension', 'size'],'required','on'=>self::SCENARIO_DEFAULT],
-            [['created_at', 'updated_at'], 'safe'],
+            [['created_at', 'updated_at','expires_at'], 'safe'],
             [['name', 'path', 'url', 'pathThumb', 'urlThumb'], 'string', 'max' => 300],
             [['description'], 'string', 'max' => 255],
             [['extension','type'], 'string', 'max' => 6],
