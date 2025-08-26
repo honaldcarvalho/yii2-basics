@@ -902,7 +902,7 @@ class ControllerCommon extends \yii\web\Controller
         return trim($string);
     }
 
-    function getFileIcon($extension)
+    static function getFileIcon($extension)
     {
         $extension = strtolower($extension);
 
