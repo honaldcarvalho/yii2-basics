@@ -18,7 +18,7 @@ class m250825_000002_add_slug_and_expires_to_files extends Migration
         $rows = (new \yii\db\Query())->from('{{%files}}')->select(['id'])->all();
         foreach ($rows as $row) {
             $slug = $this->generateSlug(32);
-            $expires = time() + 60; // 1 dia (24h * 60m * 60s)
+            $expires = time() + 3600; // 1 hora (60m * 60s)
             $this->update('{{%files}}', [
                 'slug'       => $slug,
                 'expires_at' => $expires,

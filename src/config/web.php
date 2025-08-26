@@ -99,6 +99,7 @@ $config = [
                 'menu','params','configuration','meta-tag','email-service','license-type','license','log','folder','file','role',
                 'section','page','notification','notification-message','rest/mail','rest/storage','rest/auth','rest/address','rest/instagram','rest/youtube','rest/cron'],'common'),
             [
+                'f/<slug:[A-Za-z0-9]{8,64}>' => 'file/open',
                 "site/clear-cache/<key:\w+>" => "site/clear-cache",
                 "page/show/<id:\w+>" => "page/show",
                 '<controller:\w+>/<id:\d+>' => '<controller>/view',			
