@@ -17,13 +17,24 @@ class m250825_000002_add_slug_and_expires_to_files extends Migration
         // popula registros existentes
         $rows = (new \yii\db\Query())->from('{{%files}}')->select(['id'])->all();
         foreach ($rows as $row) {
-            $slug = Yii::$app->security->generateRandomString(32);
+            $slug = $this->generateSlug(32);
             $expires = time() + 86400; // 1 dia (24h * 60m * 60s)
             $this->update('{{%files}}', [
                 'slug'       => $slug,
                 'expires_at' => $expires,
             ], ['id' => $row['id']]);
         }
+    }
+
+    private function generateSlug($len = 16)
+    {
+        $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        $n = strlen($alphabet);
+        $s = '';
+        for ($i = 0; $i < $len; $i++) {
+            $s .= $alphabet[random_int(0, $n - 1)];
+        }
+        return $s;
     }
 
     public function safeDown()

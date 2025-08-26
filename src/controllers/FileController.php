@@ -122,8 +122,15 @@ class FileController extends AuthController
      */
     protected function generateUniqueSlug(int $len = 32): string
     {
+
         do {
-            $candidate = Yii::$app->security->generateRandomString($len);
+            $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            $n = strlen($alphabet);
+            $s = '';
+            for ($i = 0; $i < $len; $i++) {
+                $s .= $alphabet[random_int(0, $n - 1)];
+            }
+            $candidate = $s;
         } while (File::find()->where(['slug' => $candidate])->exists());
         return $candidate;
     }
