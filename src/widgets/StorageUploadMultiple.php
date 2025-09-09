@@ -447,6 +447,7 @@ class StorageUploadMultiple extends Widget
                         descInput.classList.add('form-control');
                         descInput.placeholder = 'Descrição do arquivo';
                         descInput.name = `description-\${index}`;
+                        descInput.value = file.name;
                         cellDescription.appendChild(descInput);
 
                         row.id = "row_" + index;
