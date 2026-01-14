@@ -155,7 +155,7 @@ class YoutubeMedia extends ModelCommon
         return $videos;
     }
 
-static function get_channel_videos($log = true, $group_id = null)
+    static function get_channel_videos($log = true, $group_id = null)
     {
         $results = [];
 
