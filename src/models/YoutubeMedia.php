@@ -282,7 +282,7 @@ static function get_channel_videos($log = true, $group_id = null) {
                 }
                 curl_close($ch);
             } catch (Exception $ex) {
-                dd(['erros'=>$ex]);
+                dd($ex);
             }
         }
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
