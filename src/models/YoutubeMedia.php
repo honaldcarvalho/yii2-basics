@@ -183,7 +183,7 @@ class YoutubeMedia extends ModelCommon
             // Convert Channel ID to Uploads Playlist ID
             $playlistId = 'UU' . substr($channelId, 2);
 
-            $playlistUrl = "https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&playlistId={$playlistId}&maxResults=15&key={$key}";
+            $playlistUrl = "https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&playlistId={$playlistId}&maxResults=150&key={$key}";
 
             $playlistData = null;
 
