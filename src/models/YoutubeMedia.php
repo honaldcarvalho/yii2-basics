@@ -217,7 +217,7 @@ class YoutubeMedia extends ModelCommon
 
                             $durationIso = $item->contentDetails->duration;
                             try {
-                                $interval = new DateInterval($durationIso);
+                                $interval = new \DateInterval($durationIso);
                                 $seconds = ($interval->h * 3600) + ($interval->i * 60) + $interval->s;
 
                                 if ($seconds <= 60) {
@@ -285,7 +285,7 @@ class YoutubeMedia extends ModelCommon
                 }
                 curl_close($ch);
             } catch (Exception $ex) {
-                dd($ex);
+                print_r($ex);
             }
         }
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
