@@ -232,7 +232,7 @@ class YoutubeMedia extends ModelCommon
                                 try {
                                     $interval = new \DateInterval($durationIso);
                                     $seconds = ($interval->h * 3600) + ($interval->i * 60) + $interval->s;
-                                    if ($seconds <= 30) {
+                                    if ($seconds <= 60) {
                                         echo "Skipping Short: {$item->id} ({$seconds}s)\n";
                                         continue;
                                     }
