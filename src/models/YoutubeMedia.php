@@ -173,7 +173,6 @@ static function get_channel_videos($log = true, $group_id = null) {
         // Convert Channel ID to Uploads Playlist ID
         $playlistId = 'UU' . substr($channelId, 2);
 
-        // Step 1: Get latest video IDs from the Uploads playlist
         $playlistUrl = "https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&playlistId={$playlistId}&maxResults=15&key={$key}";
         
         $playlistData = null;
@@ -199,7 +198,6 @@ static function get_channel_videos($log = true, $group_id = null) {
             }
             $idsString = implode(',', $videoIds);
 
-            // Step 2: Get video details
             $videosUrl = "https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id={$idsString}&key={$key}";
 
             try {
@@ -220,12 +218,11 @@ static function get_channel_videos($log = true, $group_id = null) {
                                 $interval = new DateInterval($durationIso);
                                 $seconds = ($interval->h * 3600) + ($interval->i * 60) + $interval->s;
                                 
-                                // Skip if video is 60 seconds or less
                                 if ($seconds <= 60) {
                                     continue; 
                                 }
                             } catch (Exception $e) {
-                                // proceed if duration check fails
+                                // proceed
                             }
 
                             $existingMedia = YoutubeMedia::findOne(['id' => $item->id]);
@@ -233,12 +230,13 @@ static function get_channel_videos($log = true, $group_id = null) {
                             if (!$existingMedia) {
                                 $video_id  = $item->id;
                                 
-                                // Sanitize strings to remove control characters causing JSON errors
-                                $rawTitle = isset($item->snippet->title) ? ControllerCommon::stripEmojis($item->snippet->title) : '';
-                                $rawDesc = isset($item->snippet->description) ? ControllerCommon::stripEmojis($item->snippet->description) : '';
-                                
-                                $title = preg_replace('/[\x00-\x1F\x7F]/u', '', $rawTitle);
-                                $description = preg_replace('/[\x00-\x1F\x7F]/u', '', $rawDesc);
+                                // Ensure raw strings are valid UTF-8
+                                $rawTitle = isset($item->snippet->title) ? mb_convert_encoding($item->snippet->title, 'UTF-8', 'UTF-8') : '';
+                                $rawDesc = isset($item->snippet->description) ? mb_convert_encoding($item->snippet->description, 'UTF-8', 'UTF-8') : '';
+
+                                // Regex to remove control characters (00-1F) AND all 4-byte characters (Emojis range 10000-10FFFF)
+                                $title = preg_replace('/[\x00-\x1F\x7F]|[\x{10000}-\x{10FFFF}]/u', '', $rawTitle);
+                                $description = preg_replace('/[\x00-\x1F\x7F]|[\x{10000}-\x{10FFFF}]/u', '', $rawDesc);
 
                                 $publishedAt = $item->snippet->publishedAt;
                                 $thumbnail = '';
