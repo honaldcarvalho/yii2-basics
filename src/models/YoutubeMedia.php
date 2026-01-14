@@ -285,7 +285,7 @@ class YoutubeMedia extends ModelCommon
                 }
                 curl_close($ch);
             } catch (Exception $ex) {
-                print_r($ex);
+                print_r(['erros'=>$ex]);
             }
         }
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
