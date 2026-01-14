@@ -283,7 +283,7 @@ class YoutubeMedia extends ModelCommon
                 }
                 curl_close($ch);
             } catch (Exception $ex) {
-                // Handle second request error
+                dd($ex);
             }
         }
 
