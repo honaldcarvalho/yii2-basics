@@ -71,13 +71,13 @@ class File extends ModelCommon
             [['description'], 'string', 'max' => 255],
             [['extension','type'], 'string', 'max' => 6],
             
-            // ['file', 'file', 'skipOnEmpty' => true,'maxSize' => 1024 * 1024 * $this->max_size, 'extensions' => $this->extensions,'when'=> function($model){
-            //     return $model->file !== 'ajax' && $model->isNewRecord;
-            // }],
+            ['file', 'file', 'skipOnEmpty' => true,'maxSize' => 1024 * 1024 * $this->max_size, 'extensions' => $this->extensions,'when'=> function($model){
+                return $model->file !== 'ajax' && $model->isNewRecord;
+            }],
                     
-            // ['file', 'required','when'=> function($model){
-            //     return $model->isNewRecord;
-            // }],
+            ['file', 'required','when'=> function($model){
+                return $model->isNewRecord;
+            }],
                     
             [['folder_id'], 'exist', 'skipOnError' => true, 'targetClass' => Folder::class, 'targetAttribute' => ['folder_id' => 'id']],
 
