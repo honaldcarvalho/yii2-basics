@@ -176,7 +176,6 @@ static function get_channel_videos($log = true, $group_id = null) {
         $playlistUrl = "https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&playlistId={$playlistId}&maxResults=15&key={$key}";
         
         $playlistData = null;
-        dd($playlistUrl);
         try {
             $ch = curl_init($playlistUrl);
             curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
