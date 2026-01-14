@@ -54,5 +54,5 @@ class CronController extends \yii\rest\Controller {
             print_r($th);
         }
         return $data;
-
+    }
 }
