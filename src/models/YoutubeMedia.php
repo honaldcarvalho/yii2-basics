@@ -307,7 +307,8 @@ class YoutubeMedia extends ModelCommon
                 }
                 curl_close($ch);
             }
-
+            echo "\nExecução finalizada com sucesso.\n";
+            exit();
             return $videos;
         } catch (\Throwable $globalEx) {
             // This catches the specific error that was causing "Internal Server Error"
