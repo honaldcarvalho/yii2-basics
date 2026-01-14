@@ -48,10 +48,10 @@ class YoutubeMedia extends ModelCommon
     public function rules()
     {
         return [
-            [['id'], 'required','on'=>self::SCENARIO_DEFAULT],
+            [['id'], 'required', 'on' => self::SCENARIO_DEFAULT],
             [['status'], 'integer'],
             [['id'], 'string', 'max' => 50],
-            [['title', 'thumbnail','description'], 'string', 'max' => 255],
+            [['title', 'thumbnail', 'description'], 'string', 'max' => 255],
             [['id'], 'unique'],
             [['group_id'], 'exist', 'skipOnError' => true, 'targetClass' => Group::class, 'targetAttribute' => ['group_id' => 'id']],
         ];
@@ -70,19 +70,20 @@ class YoutubeMedia extends ModelCommon
         ];
     }
 
-    static function get_channel_videos($log = true,$group_id = null) {
+    static function old_get_channel_videos($log = true, $group_id = null)
+    {
 
         $results = [];
 
-        if($group_id === null)
+        if ($group_id === null)
             $group_id = AuthController::userGroup();
 
         $videos = [];
-        $channelId = Parameter::findOne(['name'=>'youtube_channelId'])->value;
-        $key = Parameter::findOne(['name'=>'youtube_key'])->value;
+        $channelId = Parameter::findOne(['name' => 'youtube_channelId'])->value;
+        $key = Parameter::findOne(['name' => 'youtube_key'])->value;
 
         $url = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={$channelId}&maxResults=15&order=date&key={$key}";
-    
+
         try {
             $ch = curl_init($url);
             curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
@@ -95,30 +96,30 @@ class YoutubeMedia extends ModelCommon
             $result = [];
         }
 
-        if($result !== false && !empty($result)){
+        if ($result !== false && !empty($result)) {
 
             $data  = json_decode($result);
             $group_id = AuthController::userGroup();
-            foreach ( $data->items as $item ) {
+            foreach ($data->items as $item) {
                 $existingMedia = YoutubeMedia::findOne(['id' => $item->id->videoId]);
                 if (!$existingMedia) {
-                    if ( $item->id->kind === 'youtube#video' ) {
+                    if ($item->id->kind === 'youtube#video') {
                         $video_id  = $item->id->videoId;
                         $title     = isset($item->snippet->title) ?  ControllerCommon::stripEmojis($item->snippet->title) : '';
                         $description     = isset($item->snippet->description) ?  ControllerCommon::stripEmojis($item->snippet->description) : '';
                         $publishedAt     = $item->snippet->publishedAt;
                         $thumbnail = '';
-            
-                        if ( isset( $item->snippet->thumbnails->maxres ) ) {
+
+                        if (isset($item->snippet->thumbnails->maxres)) {
                             $thumbnail = $item->snippet->thumbnails->maxres->url;
-                        } elseif ( isset( $item->snippet->thumbnails->standard ) ) {
+                        } elseif (isset($item->snippet->thumbnails->standard)) {
                             $thumbnail = $item->snippet->thumbnails->standard->url;
-                        //} elseif ( isset( $item->snippet->thumbnails->high ) ) {
-                        //    $thumbnail = $item->snippet->thumbnails->high->url;
-                        } elseif ( isset( $item->snippet->thumbnails->medium ) ) {
+                            //} elseif ( isset( $item->snippet->thumbnails->high ) ) {
+                            //    $thumbnail = $item->snippet->thumbnails->high->url;
+                        } elseif (isset($item->snippet->thumbnails->medium)) {
                             $thumbnail = $item->snippet->thumbnails->medium->url;
                         }
-            
+
                         $videos[] = [
                             'id'   => $video_id,
                             'group_id'   => $group_id,
@@ -126,33 +127,167 @@ class YoutubeMedia extends ModelCommon
                             'thumbnail' => $thumbnail,
                             'description' => $description,
                             'created_at' => date('Y-m-d H:i:s', strtotime($publishedAt)),
-                            $result = Yii::$app->db->createCommand()->upsert('youtube', 
-                            [
-                                'id'   => $video_id,
-                                'title'     => $title,
-                                'thumbnail' => $thumbnail,
-                                'description' => $description,
-                                'created_at' => date('Y-m-d H:i:s', strtotime($publishedAt)),
-                            ]
+                            $result = Yii::$app->db->createCommand()->upsert(
+                                'youtube',
+                                [
+                                    'id'   => $video_id,
+                                    'title'     => $title,
+                                    'thumbnail' => $thumbnail,
+                                    'description' => $description,
+                                    'created_at' => date('Y-m-d H:i:s', strtotime($publishedAt)),
+                                ]
                             )->execute()
                         ];
-                        if($result){
+                        if ($result) {
                             echo "Media {$item->id->videoId} added.\n";
-                        }else{
+                        } else {
                             echo "Erro on add Media {$item->id->videoId}.\n";
                         }
-            
                     }
                 } else {
                     $videos[$item->id->videoId] = "Media {$item->id->videoId} already exists.\n";
                     echo "Media {$item->id->videoId} already exists.\n";
                 }
             }
-
-        }  
+        }
 
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return $videos;
     }
 
+    static function get_channel_videos($log = true, $group_id = null)
+    {
+
+        $results = [];
+
+        if ($group_id === null)
+            $group_id = AuthController::userGroup();
+
+        $videos = [];
+        $channelId = Parameter::findOne(['name' => 'youtube_channelId'])->value;
+        $key = Parameter::findOne(['name' => 'youtube_key'])->value;
+
+        // Validation to prevent global search
+        if (empty($channelId) || empty($key)) {
+            return [];
+        }
+
+        // Convert Channel ID (UC...) to Uploads Playlist ID (UU...)
+        $playlistId = 'UU' . substr($channelId, 2);
+
+        // Step 1: Get latest video IDs from the Uploads playlist
+        $playlistUrl = "https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&playlistId={$playlistId}&maxResults=15&key={$key}";
+
+        $playlistData = null;
+        try {
+            $ch = curl_init($playlistUrl);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+            $playlistResult = curl_exec($ch);
+            if (!curl_errno($ch)) {
+                $playlistData = json_decode($playlistResult);
+            }
+            curl_close($ch);
+        } catch (Exception $ex) {
+            $playlistData = null;
+        }
+
+        if (isset($playlistData->items) && !empty($playlistData->items)) {
+
+            // Collect video IDs
+            $videoIds = [];
+            foreach ($playlistData->items as $item) {
+                $videoIds[] = $item->contentDetails->videoId;
+            }
+            $idsString = implode(',', $videoIds);
+
+            // Step 2: Get video details (Snippet + ContentDetails for Duration)
+            $videosUrl = "https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id={$idsString}&key={$key}";
+
+            try {
+                $ch = curl_init($videosUrl);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+                $videosResult = curl_exec($ch);
+
+                if (!curl_errno($ch)) {
+                    $videosData = json_decode($videosResult);
+
+                    if (isset($videosData->items)) {
+                        foreach ($videosData->items as $item) {
+
+                            // Filter Shorts based on duration (60 seconds)
+                            $durationIso = $item->contentDetails->duration;
+                            try {
+                                $interval = new DateInterval($durationIso);
+                                $seconds = ($interval->h * 3600) + ($interval->i * 60) + $interval->s;
+
+                                // Skip if video is 60 seconds or less
+                                if ($seconds <= 60) {
+                                    continue;
+                                }
+                            } catch (Exception $e) {
+                                // If duration parsing fails, assume it's a valid video and proceed
+                            }
+
+                            $existingMedia = YoutubeMedia::findOne(['id' => $item->id]);
+
+                            if (!$existingMedia) {
+                                $video_id  = $item->id;
+                                $title     = isset($item->snippet->title) ? ControllerCommon::stripEmojis($item->snippet->title) : '';
+                                $description = isset($item->snippet->description) ? ControllerCommon::stripEmojis($item->snippet->description) : '';
+                                $publishedAt = $item->snippet->publishedAt;
+                                $thumbnail = '';
+
+                                if (isset($item->snippet->thumbnails->maxres)) {
+                                    $thumbnail = $item->snippet->thumbnails->maxres->url;
+                                } elseif (isset($item->snippet->thumbnails->standard)) {
+                                    $thumbnail = $item->snippet->thumbnails->standard->url;
+                                } elseif (isset($item->snippet->thumbnails->medium)) {
+                                    $thumbnail = $item->snippet->thumbnails->medium->url;
+                                }
+
+                                $videos[] = [
+                                    'id'   => $video_id,
+                                    'group_id'   => $group_id,
+                                    'title'     => $title,
+                                    'thumbnail' => $thumbnail,
+                                    'description' => $description,
+                                    'created_at' => date('Y-m-d H:i:s', strtotime($publishedAt)),
+                                ];
+
+                                $result = Yii::$app->db->createCommand()->upsert(
+                                    'youtube',
+                                    [
+                                        'id'   => $video_id,
+                                        'title'     => $title,
+                                        'thumbnail' => $thumbnail,
+                                        'description' => $description,
+                                        'created_at' => date('Y-m-d H:i:s', strtotime($publishedAt)),
+                                    ]
+                                )->execute();
+
+                                if ($result) {
+                                    echo "Media {$video_id} added.\n";
+                                } else {
+                                    echo "Erro on add Media {$video_id}.\n";
+                                }
+                            } else {
+                                $videos[$item->id] = "Media {$item->id} already exists.\n";
+                                echo "Media {$item->id} already exists.\n";
+                            }
+                        }
+                    }
+                }
+                curl_close($ch);
+            } catch (Exception $ex) {
+                // Handle second request error
+            }
+        }
+
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return $videos;
+    }
 }
