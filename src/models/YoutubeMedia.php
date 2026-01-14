@@ -155,8 +155,17 @@ class YoutubeMedia extends ModelCommon
         return $videos;
     }
 
-    static function get_channel_videos($log = true, $group_id = null)
-    {
+static function get_channel_videos($log = true, $group_id = null)
+{
+    // Enable verbose error reporting for CLI debugging
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+
+    // Disable JSON formatting to prevent conflict with echo output
+    Yii::$app->response->format = \yii\web\Response::FORMAT_RAW;
+
+    try {
         $results = [];
 
         if ($group_id === null)
@@ -167,6 +176,7 @@ class YoutubeMedia extends ModelCommon
         $key = Parameter::findOne(['name' => 'youtube_key'])->value;
 
         if (empty($channelId) || empty($key)) {
+            echo "Error: Missing Channel ID or Key parameters.\n";
             return [];
         }
 
@@ -176,6 +186,8 @@ class YoutubeMedia extends ModelCommon
         $playlistUrl = "https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&playlistId={$playlistId}&maxResults=15&key={$key}";
 
         $playlistData = null;
+        
+        // Inner try-catch for playlist fetching
         try {
             $ch = curl_init($playlistUrl);
             curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
@@ -184,6 +196,8 @@ class YoutubeMedia extends ModelCommon
             $playlistResult = curl_exec($ch);
             if (!curl_errno($ch)) {
                 $playlistData = json_decode($playlistResult);
+            } else {
+                 echo "Curl Error (Playlist): " . curl_error($ch) . "\n";
             }
             curl_close($ch);
         } catch (\Throwable $ex) {
@@ -201,112 +215,110 @@ class YoutubeMedia extends ModelCommon
 
             $videosUrl = "https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id={$idsString}&key={$key}";
 
-            try {
-                $ch = curl_init($videosUrl);
-                curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-                $videosResult = curl_exec($ch);
+            $ch = curl_init($videosUrl);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+            $videosResult = curl_exec($ch);
 
-                if (!curl_errno($ch)) {
-                    $videosData = json_decode($videosResult);
+            if (!curl_errno($ch)) {
+                $videosData = json_decode($videosResult);
 
-                    if (isset($videosData->items)) {
-                        // Substitua o foreach original por este:
-                        foreach ($videosData->items as $item) {
+                if (isset($videosData->items)) {
+                    foreach ($videosData->items as $item) {
+                        try {
+                            // Duration check (Shorts filter)
+                            $durationIso = $item->contentDetails->duration;
                             try {
-                                // Verifica duração
-                                $durationIso = $item->contentDetails->duration;
-                                try {
-                                    $interval = new \DateInterval($durationIso);
-                                    $seconds = ($interval->h * 3600) + ($interval->i * 60) + $interval->s;
-                                    if ($seconds <= 60) continue;
-                                } catch (\Exception $e) { /* ignora erro de data */
+                                $interval = new \DateInterval($durationIso);
+                                $seconds = ($interval->h * 3600) + ($interval->i * 60) + $interval->s;
+                                if ($seconds <= 60) {
+                                    echo "Skipping Short: {$item->id} ({$seconds}s)\n";
+                                    continue;
                                 }
-
-                                $existingMedia = YoutubeMedia::findOne(['id' => $item->id]);
-
-                                if (!$existingMedia) {
-                                    $video_id  = $item->id;
-
-                                    // DEBUG: Avisa que começou a tratar o vídeo
-                                    echo "Processando video novo: {$video_id}...\n";
-
-                                    // Tratamento de texto (O erro provavel está aqui)
-                                    $rawTitle = isset($item->snippet->title) ? $item->snippet->title : '';
-                                    $rawDesc = isset($item->snippet->description) ? $item->snippet->description : '';
-
-                                    // Verifica se as funções existem antes de usar
-                                    if (!function_exists('mb_convert_encoding')) {
-                                        throw new \Exception("A extensão PHP 'mbstring' não está instalada no servidor.");
-                                    }
-
-                                    // Força UTF-8
-                                    $rawTitle = mb_convert_encoding($rawTitle, 'UTF-8', 'UTF-8');
-                                    $rawDesc = mb_convert_encoding($rawDesc, 'UTF-8', 'UTF-8');
-
-                                    // Limpeza de caracteres especiais
-                                    $title = preg_replace('/[\x00-\x1F\x7F]|[\x{10000}-\x{10FFFF}]/u', '', $rawTitle);
-                                    $description = preg_replace('/[\x00-\x1F\x7F]|[\x{10000}-\x{10FFFF}]/u', '', $rawDesc);
-
-                                    // Trunca para evitar estouro de banco
-                                    $title = mb_substr($title, 0, 250);
-                                    $description = mb_substr($description, 0, 5000);
-
-                                    $publishedAt = $item->snippet->publishedAt;
-
-                                    // Pega thumbnail
-                                    $thumbnail = '';
-                                    if (isset($item->snippet->thumbnails->maxres)) {
-                                        $thumbnail = $item->snippet->thumbnails->maxres->url;
-                                    } elseif (isset($item->snippet->thumbnails->standard)) {
-                                        $thumbnail = $item->snippet->thumbnails->standard->url;
-                                    } elseif (isset($item->snippet->thumbnails->medium)) {
-                                        $thumbnail = $item->snippet->thumbnails->medium->url;
-                                    }
-
-                                    // Tenta salvar
-                                    $result = Yii::$app->db->createCommand()->upsert('youtube', [
-                                        'id'   => $video_id,
-                                        'group_id' => $group_id, // Garante que o group_id está aqui
-                                        'title'     => $title,
-                                        'thumbnail' => $thumbnail,
-                                        'description' => $description,
-                                        'created_at' => date('Y-m-d H:i:s', strtotime($publishedAt)),
-                                    ])->execute();
-
-                                    if ($result) {
-                                        echo "Media {$video_id} added.\n";
-                                    } else {
-                                        echo "Erro ao salvar Media {$video_id} (retorno falso).\n";
-                                    }
-                                } else {
-                                    echo "Media {$item->id} already exists.\n";
-                                }
-                            } catch (\Throwable $e) {
-                                // ESSE BLOCO VAI MOSTRAR O ERRO REAL
-                                // Limpa qualquer buffer anterior para o erro aparecer na tela
-                                if (ob_get_level()) ob_end_clean();
-
-                                echo "\n\n========================================\n";
-                                echo "ERRO FATAL ENCONTRADO:\n";
-                                echo "Vídeo ID: " . ($item->id ?? 'desconhecido') . "\n";
-                                echo "Mensagem: " . $e->getMessage() . "\n";
-                                echo "Arquivo: " . $e->getFile() . " na linha " . $e->getLine() . "\n";
-                                echo "========================================\n\n";
-                                die(); // Para o script imediatamente
+                            } catch (\Exception $e) { 
+                                // Ignore date parsing errors
                             }
+
+                            $existingMedia = YoutubeMedia::findOne(['id' => $item->id]);
+
+                            if (!$existingMedia) {
+                                $video_id  = $item->id;
+                                echo "Processing new video: {$video_id}...\n";
+
+                                $rawTitle = isset($item->snippet->title) ? $item->snippet->title : '';
+                                $rawDesc = isset($item->snippet->description) ? $item->snippet->description : '';
+
+                                if (!function_exists('mb_convert_encoding')) {
+                                    throw new \Exception("PHP extension 'mbstring' is missing.");
+                                }
+
+                                $rawTitle = mb_convert_encoding($rawTitle, 'UTF-8', 'UTF-8');
+                                $rawDesc = mb_convert_encoding($rawDesc, 'UTF-8', 'UTF-8');
+
+                                // Sanitize special characters
+                                $title = preg_replace('/[\x00-\x1F\x7F]|[\x{10000}-\x{10FFFF}]/u', '', $rawTitle);
+                                $description = preg_replace('/[\x00-\x1F\x7F]|[\x{10000}-\x{10FFFF}]/u', '', $rawDesc);
+
+                                $title = mb_substr($title, 0, 250);
+                                $description = mb_substr($description, 0, 5000);
+
+                                $publishedAt = $item->snippet->publishedAt;
+
+                                $thumbnail = '';
+                                if (isset($item->snippet->thumbnails->maxres)) {
+                                    $thumbnail = $item->snippet->thumbnails->maxres->url;
+                                } elseif (isset($item->snippet->thumbnails->standard)) {
+                                    $thumbnail = $item->snippet->thumbnails->standard->url;
+                                } elseif (isset($item->snippet->thumbnails->medium)) {
+                                    $thumbnail = $item->snippet->thumbnails->medium->url;
+                                }
+
+                                $result = Yii::$app->db->createCommand()->upsert('youtube', [
+                                    'id'   => $video_id,
+                                    'group_id' => $group_id,
+                                    'title'     => $title,
+                                    'thumbnail' => $thumbnail,
+                                    'description' => $description,
+                                    'created_at' => date('Y-m-d H:i:s', strtotime($publishedAt)),
+                                ])->execute();
+
+                                if ($result) {
+                                    echo "Media {$video_id} added.\n";
+                                } else {
+                                    echo "Error saving Media {$video_id}.\n";
+                                }
+                                
+                                // Flush buffer to send output to curl immediately
+                                if (ob_get_length()) ob_flush();
+                                flush();
+
+                            } else {
+                                echo "Media {$item->id} already exists.\n";
+                            }
+                        } catch (\Throwable $e) {
+                            echo "\n[ITEM ERROR] Video ID: " . ($item->id ?? 'unknown') . "\n";
+                            echo "Message: " . $e->getMessage() . "\n";
+                            // Continue loop even if one fails
                         }
                     }
-                } else {
-                    echo "Curl Error: " . curl_error($ch) . "\n";
                 }
-                curl_close($ch);
-            } catch (\Throwable $ex) {
-                echo "General Error: " . $ex->getMessage() . "\n";
+            } else {
+                echo "Curl Error (Videos): " . curl_error($ch) . "\n";
             }
+            curl_close($ch);
         }
-        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
         return $videos;
+
+    } catch (\Throwable $globalEx) {
+        // This catches the specific error that was causing "Internal Server Error"
+        if (ob_get_level()) ob_end_clean();
+        echo "\n\n================ FATAL ERROR ================\n";
+        echo "Message: " . $globalEx->getMessage() . "\n";
+        echo "File: " . $globalEx->getFile() . " Line: " . $globalEx->getLine() . "\n";
+        echo "Trace:\n" . $globalEx->getTraceAsString() . "\n";
+        echo "=============================================\n";
+        die();
     }
 }
