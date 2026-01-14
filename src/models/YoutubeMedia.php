@@ -187,6 +187,7 @@ static function get_channel_videos($log = true, $group_id = null) {
             }
             curl_close($ch);
         } catch (Exception $ex) {
+            print_r($ex);
             $playlistData = null;
         }
 
