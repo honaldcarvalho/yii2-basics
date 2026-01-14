@@ -48,11 +48,6 @@ class CronController extends \yii\rest\Controller {
     }
 
     public function actionYload(){
-        try {
-            $data = YoutubeMedia::get_channel_videos(true,2);
-        } catch (\Throwable $th) {
-            print_r($th);
-        }
-        return $data;
+        return YoutubeMedia::get_channel_videos(true,2);
     }
 }
