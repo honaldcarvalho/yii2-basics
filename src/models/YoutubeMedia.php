@@ -212,19 +212,16 @@ class YoutubeMedia extends ModelCommon
                     $videosData = json_decode($videosResult);
 
                     if (isset($videosData->items)) {
+                        // Substitua o foreach original por este:
                         foreach ($videosData->items as $item) {
-                            // Wrapped each item in a try-catch to identify specific video errors without crashing the whole script
                             try {
+                                // Verifica duração
                                 $durationIso = $item->contentDetails->duration;
                                 try {
                                     $interval = new \DateInterval($durationIso);
                                     $seconds = ($interval->h * 3600) + ($interval->i * 60) + $interval->s;
-
-                                    if ($seconds <= 60) {
-                                        continue;
-                                    }
-                                } catch (\Exception $e) {
-                                    // proceed
+                                    if ($seconds <= 60) continue;
+                                } catch (\Exception $e) { /* ignora erro de data */
                                 }
 
                                 $existingMedia = YoutubeMedia::findOne(['id' => $item->id]);
@@ -232,15 +229,34 @@ class YoutubeMedia extends ModelCommon
                                 if (!$existingMedia) {
                                     $video_id  = $item->id;
 
-                                    $rawTitle = isset($item->snippet->title) ? mb_convert_encoding($item->snippet->title, 'UTF-8', 'UTF-8') : '';
-                                    $rawDesc = isset($item->snippet->description) ? mb_convert_encoding($item->snippet->description, 'UTF-8', 'UTF-8') : '';
+                                    // DEBUG: Avisa que começou a tratar o vídeo
+                                    echo "Processando video novo: {$video_id}...\n";
 
+                                    // Tratamento de texto (O erro provavel está aqui)
+                                    $rawTitle = isset($item->snippet->title) ? $item->snippet->title : '';
+                                    $rawDesc = isset($item->snippet->description) ? $item->snippet->description : '';
+
+                                    // Verifica se as funções existem antes de usar
+                                    if (!function_exists('mb_convert_encoding')) {
+                                        throw new \Exception("A extensão PHP 'mbstring' não está instalada no servidor.");
+                                    }
+
+                                    // Força UTF-8
+                                    $rawTitle = mb_convert_encoding($rawTitle, 'UTF-8', 'UTF-8');
+                                    $rawDesc = mb_convert_encoding($rawDesc, 'UTF-8', 'UTF-8');
+
+                                    // Limpeza de caracteres especiais
                                     $title = preg_replace('/[\x00-\x1F\x7F]|[\x{10000}-\x{10FFFF}]/u', '', $rawTitle);
                                     $description = preg_replace('/[\x00-\x1F\x7F]|[\x{10000}-\x{10FFFF}]/u', '', $rawDesc);
 
-                                    $publishedAt = $item->snippet->publishedAt;
-                                    $thumbnail = '';
+                                    // Trunca para evitar estouro de banco
+                                    $title = mb_substr($title, 0, 250);
+                                    $description = mb_substr($description, 0, 5000);
 
+                                    $publishedAt = $item->snippet->publishedAt;
+
+                                    // Pega thumbnail
+                                    $thumbnail = '';
                                     if (isset($item->snippet->thumbnails->maxres)) {
                                         $thumbnail = $item->snippet->thumbnails->maxres->url;
                                     } elseif (isset($item->snippet->thumbnails->standard)) {
@@ -249,50 +265,36 @@ class YoutubeMedia extends ModelCommon
                                         $thumbnail = $item->snippet->thumbnails->medium->url;
                                     }
 
-                                    $videos[] = [
+                                    // Tenta salvar
+                                    $result = Yii::$app->db->createCommand()->upsert('youtube', [
                                         'id'   => $video_id,
-                                        'group_id'   => $group_id,
+                                        'group_id' => $group_id, // Garante que o group_id está aqui
                                         'title'     => $title,
                                         'thumbnail' => $thumbnail,
                                         'description' => $description,
                                         'created_at' => date('Y-m-d H:i:s', strtotime($publishedAt)),
-                                    ];
-
-                                    try {
-                                        $result = Yii::$app->db->createCommand()->upsert(
-                                            'youtube',
-                                            [
-                                                'id'   => $video_id,
-                                                'title'     => $title,
-                                                'thumbnail' => $thumbnail,
-                                                'description' => $description,
-                                                'created_at' => date('Y-m-d H:i:s', strtotime($publishedAt)),
-                                            ]
-                                        )->execute();
-                                    } catch (\Throwable $e) {
-                                        // Force output of the real error to the terminal
-                                        echo "\n\n================ ERROR DEBUG ================\n";
-                                        echo "VIDEO ID: " . $video_id . "\n";
-                                        echo "ERROR MESSAGE: " . $e->getMessage() . "\n";
-                                        if (property_exists($e, 'errorInfo')) {
-                                            echo "SQL DETAIL: " . print_r($e->errorInfo, true) . "\n";
-                                        }
-                                        echo "=============================================\n\n";
-                                        die(); // Stop execution immediately so you can read the error
-                                    }
+                                    ])->execute();
 
                                     if ($result) {
                                         echo "Media {$video_id} added.\n";
                                     } else {
-                                        echo "Error on add Media {$video_id} (No exception thrown, but result false).\n";
+                                        echo "Erro ao salvar Media {$video_id} (retorno falso).\n";
                                     }
                                 } else {
-                                    $videos[$item->id] = "Media {$item->id} already exists.\n";
                                     echo "Media {$item->id} already exists.\n";
                                 }
-                            } catch (\Throwable $t) {
-                                // Catching Throwable ensures we catch Fatal Errors and TypeErrors, not just Exceptions
-                                echo "CRITICAL ERROR processing video {$item->id}: " . $t->getMessage() . " in " . $t->getFile() . ":" . $t->getLine() . "\n";
+                            } catch (\Throwable $e) {
+                                // ESSE BLOCO VAI MOSTRAR O ERRO REAL
+                                // Limpa qualquer buffer anterior para o erro aparecer na tela
+                                if (ob_get_level()) ob_end_clean();
+
+                                echo "\n\n========================================\n";
+                                echo "ERRO FATAL ENCONTRADO:\n";
+                                echo "Vídeo ID: " . ($item->id ?? 'desconhecido') . "\n";
+                                echo "Mensagem: " . $e->getMessage() . "\n";
+                                echo "Arquivo: " . $e->getFile() . " na linha " . $e->getLine() . "\n";
+                                echo "========================================\n\n";
+                                die(); // Para o script imediatamente
                             }
                         }
                     }
