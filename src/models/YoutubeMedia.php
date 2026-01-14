@@ -155,9 +155,8 @@ class YoutubeMedia extends ModelCommon
         return $videos;
     }
 
-    static function get_channel_videos($log = true, $group_id = null)
+static function get_channel_videos($log = true, $group_id = null)
     {
-
         $results = [];
 
         if ($group_id === null)
@@ -187,8 +186,8 @@ class YoutubeMedia extends ModelCommon
                 $playlistData = json_decode($playlistResult);
             }
             curl_close($ch);
-        } catch (Exception $ex) {
-            print_r($ex);
+        } catch (\Throwable $ex) {
+            echo "Error fetching playlist: " . $ex->getMessage() . "\n";
             $playlistData = null;
         }
 
@@ -214,78 +213,83 @@ class YoutubeMedia extends ModelCommon
 
                     if (isset($videosData->items)) {
                         foreach ($videosData->items as $item) {
-
-                            $durationIso = $item->contentDetails->duration;
+                            // Wrapped each item in a try-catch to identify specific video errors without crashing the whole script
                             try {
-                                $interval = new \DateInterval($durationIso);
-                                $seconds = ($interval->h * 3600) + ($interval->i * 60) + $interval->s;
+                                $durationIso = $item->contentDetails->duration;
+                                try {
+                                    $interval = new \DateInterval($durationIso);
+                                    $seconds = ($interval->h * 3600) + ($interval->i * 60) + $interval->s;
 
-                                if ($seconds <= 60) {
-                                    continue;
-                                }
-                            } catch (Exception $e) {
-                                // proceed
-                            }
-
-                            $existingMedia = YoutubeMedia::findOne(['id' => $item->id]);
-
-                            if (!$existingMedia) {
-                                $video_id  = $item->id;
-
-                                // Ensure raw strings are valid UTF-8
-                                $rawTitle = isset($item->snippet->title) ? mb_convert_encoding($item->snippet->title, 'UTF-8', 'UTF-8') : '';
-                                $rawDesc = isset($item->snippet->description) ? mb_convert_encoding($item->snippet->description, 'UTF-8', 'UTF-8') : '';
-
-                                // Regex to remove control characters (00-1F) AND all 4-byte characters (Emojis range 10000-10FFFF)
-                                $title = preg_replace('/[\x00-\x1F\x7F]|[\x{10000}-\x{10FFFF}]/u', '', $rawTitle);
-                                $description = preg_replace('/[\x00-\x1F\x7F]|[\x{10000}-\x{10FFFF}]/u', '', $rawDesc);
-
-                                $publishedAt = $item->snippet->publishedAt;
-                                $thumbnail = '';
-
-                                if (isset($item->snippet->thumbnails->maxres)) {
-                                    $thumbnail = $item->snippet->thumbnails->maxres->url;
-                                } elseif (isset($item->snippet->thumbnails->standard)) {
-                                    $thumbnail = $item->snippet->thumbnails->standard->url;
-                                } elseif (isset($item->snippet->thumbnails->medium)) {
-                                    $thumbnail = $item->snippet->thumbnails->medium->url;
+                                    if ($seconds <= 60) {
+                                        continue;
+                                    }
+                                } catch (\Exception $e) {
+                                    // proceed
                                 }
 
-                                $videos[] = [
-                                    'id'   => $video_id,
-                                    'group_id'   => $group_id,
-                                    'title'     => $title,
-                                    'thumbnail' => $thumbnail,
-                                    'description' => $description,
-                                    'created_at' => date('Y-m-d H:i:s', strtotime($publishedAt)),
-                                ];
+                                $existingMedia = YoutubeMedia::findOne(['id' => $item->id]);
 
-                                $result = Yii::$app->db->createCommand()->upsert(
-                                    'youtube',
-                                    [
+                                if (!$existingMedia) {
+                                    $video_id  = $item->id;
+
+                                    $rawTitle = isset($item->snippet->title) ? mb_convert_encoding($item->snippet->title, 'UTF-8', 'UTF-8') : '';
+                                    $rawDesc = isset($item->snippet->description) ? mb_convert_encoding($item->snippet->description, 'UTF-8', 'UTF-8') : '';
+
+                                    $title = preg_replace('/[\x00-\x1F\x7F]|[\x{10000}-\x{10FFFF}]/u', '', $rawTitle);
+                                    $description = preg_replace('/[\x00-\x1F\x7F]|[\x{10000}-\x{10FFFF}]/u', '', $rawDesc);
+
+                                    $publishedAt = $item->snippet->publishedAt;
+                                    $thumbnail = '';
+
+                                    if (isset($item->snippet->thumbnails->maxres)) {
+                                        $thumbnail = $item->snippet->thumbnails->maxres->url;
+                                    } elseif (isset($item->snippet->thumbnails->standard)) {
+                                        $thumbnail = $item->snippet->thumbnails->standard->url;
+                                    } elseif (isset($item->snippet->thumbnails->medium)) {
+                                        $thumbnail = $item->snippet->thumbnails->medium->url;
+                                    }
+
+                                    $videos[] = [
                                         'id'   => $video_id,
+                                        'group_id'   => $group_id,
                                         'title'     => $title,
                                         'thumbnail' => $thumbnail,
                                         'description' => $description,
                                         'created_at' => date('Y-m-d H:i:s', strtotime($publishedAt)),
-                                    ]
-                                )->execute();
+                                    ];
 
-                                if ($result) {
-                                    echo "Media {$video_id} added.\n";
+                                    $result = Yii::$app->db->createCommand()->upsert(
+                                        'youtube',
+                                        [
+                                            'id'   => $video_id,
+                                            'title'     => $title,
+                                            'thumbnail' => $thumbnail,
+                                            'description' => $description,
+                                            'created_at' => date('Y-m-d H:i:s', strtotime($publishedAt)),
+                                        ]
+                                    )->execute();
+
+                                    if ($result) {
+                                        echo "Media {$video_id} added.\n";
+                                    } else {
+                                        echo "Error on add Media {$video_id} (No exception thrown, but result false).\n";
+                                    }
                                 } else {
-                                    echo "Erro on add Media {$video_id}.\n";
+                                    $videos[$item->id] = "Media {$item->id} already exists.\n";
+                                    echo "Media {$item->id} already exists.\n";
                                 }
-                            } else {
-                                $videos[$item->id] = "Media {$item->id} already exists.\n";
-                                echo "Media {$item->id} already exists.\n";
+                            } catch (\Throwable $t) {
+                                // Catching Throwable ensures we catch Fatal Errors and TypeErrors, not just Exceptions
+                                echo "CRITICAL ERROR processing video {$item->id}: " . $t->getMessage() . " in " . $t->getFile() . ":" . $t->getLine() . "\n";
                             }
                         }
                     }
+                } else {
+                    echo "Curl Error: " . curl_error($ch) . "\n";
                 }
                 curl_close($ch);
-            } catch (Exception $ex) {
-                print_r(['erros'=>$ex]);
+            } catch (\Throwable $ex) {
+                echo "General Error: " . $ex->getMessage() . "\n";
             }
         }
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
