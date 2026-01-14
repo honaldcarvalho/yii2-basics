@@ -13,7 +13,7 @@ use weebz\yii2basics\models\YoutubeMedia;
 class YoutubeController extends AuthController {
 
     public function actionLoadMedias(){
-        return "no";
+        return YoutubeMedia::get_channel_videos(false);
     }
 
     public function actionListMedias(){
