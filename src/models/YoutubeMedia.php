@@ -258,16 +258,28 @@ class YoutubeMedia extends ModelCommon
                                         'created_at' => date('Y-m-d H:i:s', strtotime($publishedAt)),
                                     ];
 
-                                    $result = Yii::$app->db->createCommand()->upsert(
-                                        'youtube',
-                                        [
-                                            'id'   => $video_id,
-                                            'title'     => $title,
-                                            'thumbnail' => $thumbnail,
-                                            'description' => $description,
-                                            'created_at' => date('Y-m-d H:i:s', strtotime($publishedAt)),
-                                        ]
-                                    )->execute();
+                                    try {
+                                        $result = Yii::$app->db->createCommand()->upsert(
+                                            'youtube',
+                                            [
+                                                'id'   => $video_id,
+                                                'title'     => $title,
+                                                'thumbnail' => $thumbnail,
+                                                'description' => $description,
+                                                'created_at' => date('Y-m-d H:i:s', strtotime($publishedAt)),
+                                            ]
+                                        )->execute();
+                                    } catch (\Throwable $e) {
+                                        // Force output of the real error to the terminal
+                                        echo "\n\n================ ERROR DEBUG ================\n";
+                                        echo "VIDEO ID: " . $video_id . "\n";
+                                        echo "ERROR MESSAGE: " . $e->getMessage() . "\n";
+                                        if (property_exists($e, 'errorInfo')) {
+                                            echo "SQL DETAIL: " . print_r($e->errorInfo, true) . "\n";
+                                        }
+                                        echo "=============================================\n\n";
+                                        die(); // Stop execution immediately so you can read the error
+                                    }
 
                                     if ($result) {
                                         echo "Media {$video_id} added.\n";
