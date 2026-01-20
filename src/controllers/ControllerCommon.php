@@ -395,7 +395,7 @@ class ControllerCommon extends \yii\web\Controller
             foreach ($items as $key => $value) {
                 $model = $modelClassNamespace::find()->where(['id' => $value])->one();
                 $model->{$field} =  $key + 1;
-                $resuts[$value] = ['save' => $model->save(), 'model' => $model, 'key' => $key + 1];
+                $resuts[$value] = ['save' => $model->save(),'error' => $model->getErrors(), 'model' => $model, 'key' => $key + 1];
             }
         }
 
