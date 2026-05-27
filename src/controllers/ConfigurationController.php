@@ -226,19 +226,4 @@ class ConfigurationController extends AuthController
             'model' => $model,
         ]);
     }
-
-    /**
-     * Finds the Configuration model based on its primary key value.
-     * @param int $id ID
-     * @return Configuration|null
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function findModel($id)
-    {
-        if (($model = Configuration::findOne($id)) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The requested page does not exist.');
-    }
 }
