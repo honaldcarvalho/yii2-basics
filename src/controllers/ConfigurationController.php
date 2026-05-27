@@ -198,11 +198,47 @@ class ConfigurationController extends AuthController
             $transaction->commit();
             Yii::$app->session->setFlash('success', 'Configuração clonada com sucesso.');
             return $this->redirect(['view', 'id' => $clone->id]);
-        } catch (\Throwable $e) {
+        } catch (\Exception $e) {
             $transaction->rollBack();
-            Yii::error("Erro ao clonar configuração: " . $e->getMessage(), __METHOD__);
-            Yii::$app->session->setFlash('error', 'Erro ao clonar a configuração: ' . $e->getMessage());
-            return $this->redirect(['view', 'id' => $id]);
+            Yii::$app->session->setFlash('error', 'Erro ao clonar: ' . $e->getMessage());
+            return $this->redirect(['index']);
         }
+    }
+
+    /**
+     * Manages i18n configuration settings.
+     * @return mixed
+     */
+    public function actionI18n()
+    {
+        $model = Configuration::findOne(1);
+
+        if (!$model) {
+            throw new NotFoundHttpException('The main configuration was not found.');
+        }
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'i18n settings updated successfully.');
+            return $this->refresh();
+        }
+
+        return $this->render('i18n', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Finds the Configuration model based on its primary key value.
+     * @param int $id ID
+     * @return Configuration|null
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function findModel($id)
+    {
+        if (($model = Configuration::findOne($id)) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }
