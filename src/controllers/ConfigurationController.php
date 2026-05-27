@@ -9,6 +9,7 @@ use weebz\yii2basics\models\Configuration;
 use weebz\yii2basics\models\MetaTag;
 use weebz\yii2basics\models\Parameter;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * ConfigurationController implements the CRUD actions for Configuration model.
