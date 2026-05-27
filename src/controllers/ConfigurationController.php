@@ -226,4 +226,120 @@ class ConfigurationController extends AuthController
             'model' => $model,
         ]);
     }
+
+    /**
+     * Ajax action to check API connectivity (Ping).
+     */
+    public function actionI18nPing()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        
+        $config = Configuration::get();
+        $url = Yii::$app->request->post('url') ?: $config->i18n_api_url;
+        $token = Yii::$app->request->post('token') ?: $config->i18n_api_token;
+
+        if (!$url) {
+            return ['success' => false, 'message' => 'API URL is not configured.'];
+        }
+
+        try {
+            $client = new \yii\httpclient\Client();
+            $response = $client->createRequest()
+                ->setMethod('GET')
+                ->setUrl(rtrim($url, '/') . '/api/pull')
+                ->addHeaders(['Authorization' => 'Bearer ' . $token])
+                ->setOptions(['timeout' => 5])
+                ->send();
+
+            if ($response->isOk) {
+                return ['success' => true, 'message' => 'Connected successfully!'];
+            }
+            
+            return ['success' => false, 'message' => 'Connection failed. HTTP Code: ' . $response->statusCode];
+        } catch (\Exception $e) {
+            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+        }
+    }
+
+    /**
+     * Ajax action to login into the central API and update local token.
+     */
+    public function actionI18nLogin()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        
+        $url = Yii::$app->request->post('url');
+        $username = Yii::$app->request->post('username');
+        $password = Yii::$app->request->post('password');
+
+        if (!$url || !$username || !$password) {
+            return ['success' => false, 'message' => 'URL, Username and Password are required.'];
+        }
+
+        try {
+            $client = new \yii\httpclient\Client();
+            $response = $client->createRequest()
+                ->setMethod('POST')
+                ->setUrl(rtrim($url, '/') . '/api/login')
+                ->setData(['username' => $username, 'password' => $password])
+                ->send();
+
+            if ($response->isOk && isset($response->data['token'])) {
+                $token = $response->data['token'];
+
+                $config = Configuration::get();
+                $config->i18n_api_url = $url;
+                $config->i18n_api_token = $token;
+                
+                if ($config->save(false)) {
+                    return ['success' => true, 'token' => $token, 'message' => 'Login successful! Settings updated in Database.'];
+                }
+
+                return ['success' => false, 'message' => 'Login OK, but failed to save settings.'];
+            }
+            
+            $error = $response->data['error'] ?? 'Invalid credentials or API error.';
+            return ['success' => false, 'message' => $error];
+        } catch (\Exception $e) {
+            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+        }
+    }
+
+    /**
+     * Ajax action to trigger a full translation pull from the central API.
+     */
+    public function actionI18nSync()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        try {
+            $service = new \app\services\TranslationSyncService();
+            $stats = $service->pull();
+
+            return [
+                'success' => true,
+                'message' => Yii::t('app', 'Sync completed. {source} new sources, {trans} translations updated.', [
+                    'source' => $stats['source_added'],
+                    'trans'  => $stats['translations_upserted'],
+                ]),
+            ];
+        } catch (\Exception $e) {
+            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+        }
+    }
+
+    /**
+     * Finds the Configuration model based on its primary key value.
+     * @param int $id ID
+     * @return Configuration|null
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function findModel($id)
+    {
+        if (($model = Configuration::findOne($id)) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
 }
