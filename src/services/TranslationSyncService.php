@@ -1,11 +1,11 @@
 <?php
 
-namespace app\services;
+namespace weebz\yii2basics\services;
 
 use Yii;
 use yii\db\Query;
 use yii\helpers\Json;
-use app\models\Configuration;
+use weebz\yii2basics\models\Configuration;
 
 /**
  * Service to sync translations from the central i18n API.
@@ -35,7 +35,7 @@ class TranslationSyncService
             $this->apiUrl   = $row['i18n_api_url']   ?? null;
             $this->apiToken = $row['i18n_api_token'] ?? null;
         } else {
-            $config = Configuration::get();
+            $config = \weebz\yii2basics\models\Configuration::get();
             $this->apiUrl   = $config->i18n_api_url;
             $this->apiToken = $config->i18n_api_token;
         }

@@ -314,7 +314,7 @@ class ConfigurationController extends AuthController
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         try {
-            $service = new \app\services\TranslationSyncService();
+            $service = new \weebz\yii2basics\services\TranslationSyncService();
             $stats = $service->pull();
 
             return [
