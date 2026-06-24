@@ -176,6 +176,7 @@ class AppendModel extends \yii\bootstrap5\Widget
                 'path' =>  $this->path,
                 'controller' => $this->controller,
                 'uniqueId' => "{$this->uniqueId}",
+                'pjaxContainerId' => "#list-{$this->uniqueId}-grid",
                 'order' => $this->order,
                 'orderField' => $this->orderField,
                 'orderModel' => $this->orderModel,

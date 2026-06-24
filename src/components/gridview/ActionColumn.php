@@ -24,6 +24,7 @@ class ActionColumn extends \yii\grid\ActionColumn
     public $orderField = 'order';
     public $orderModel = null;
     public $modelClass = null;
+    public $pjaxContainerId = null;
     /**
      * Initializes the default button rendering callbacks.
      */
@@ -31,6 +32,10 @@ class ActionColumn extends \yii\grid\ActionColumn
     {
         if($this->uniqueId === null){
             $this->uniqueId = "$this->controller";
+        }
+
+        if ($this->pjaxContainerId === null) {
+            $this->pjaxContainerId = "#grid-{$this->uniqueId}";
         }
         
         $this->contentOptions['class'] = 'action-column';
@@ -130,7 +135,7 @@ class ActionColumn extends \yii\grid\ActionColumn
                     url: `/{$this->controller}/\${action}?id=\${id}`
                 }).done(function(response) {        
                     toastr.success("Success!");  
-                    $.pjax.reload({container: "#grid-{$this->uniqueId}", async: false}); 
+                    $.pjax.reload({container: "{$this->pjaxContainerId}", async: false}); 
                     return false;
                 }).fail(function (response) {
                     toastr.error("Fail!");
@@ -174,7 +179,7 @@ class ActionColumn extends \yii\grid\ActionColumn
                     data: {'items':items,'field':'{$this->orderField}','modelClass':'$this->orderModel'}
                 }).done(function(response) {        
                     toastr.success("atualizado");  
-                    $.pjax.reload({container: "#grid-{$this->uniqueId}", async: false}); 
+                    $.pjax.reload({container: "{$this->pjaxContainerId}", async: false}); 
                     setSortable();
                 }).fail(function (response) {
                     toastr.error("Error ao atualizar a ordem. Recarregue a pagina");

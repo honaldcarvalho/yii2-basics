@@ -38,7 +38,7 @@ class Rule extends ModelCommon
     {
         return [
             [['user_id', 'group_id', 'status'], 'integer'],
-            [['controller', 'actions'], 'required'],
+            [['controller', 'actions'], 'required','on'=> ['CREATE','UPDATE']],
             [['controller'], 'string', 'max' => 255],
             [['origin'], 'string'],
             [['group_id'], 'exist', 'skipOnError' => true, 'targetClass' => Group::class, 'targetAttribute' => ['group_id' => 'id']],

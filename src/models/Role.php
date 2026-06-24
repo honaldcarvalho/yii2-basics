@@ -31,7 +31,7 @@ class Role extends ModelCommon
     public function rules()
     {
         return [
-            [['controller'], 'required','on'=> 'CREATE'],
+            [['controller','actions'], 'required','on'=> ['CREATE','UPDATE']],
             [['controller', 'actions', 'origin'], 'string'],
             [['user_id', 'group_id', 'status'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
