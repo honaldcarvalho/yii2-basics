@@ -12,9 +12,20 @@ class m260527_063714_add_i18n_menu_item extends Migration
      */
     public function safeUp()
     {
+        $systemMenu = (new \yii\db\Query())
+            ->select('id')
+            ->from('{{%menus}}')
+            ->where(['label' => 'System'])
+            ->scalar();
+
+        if (!$systemMenu) {
+            echo "    > System menu not found, skipping i18n menu item insertion.\n";
+            return;
+        }
+
         $this->insert('{{%menus}}', [
             'label' => 'i18n',
-            'menu_id' => 1, // System Menu
+            'menu_id' => $systemMenu,
             'icon' => 'language',
             'icon_style' => 'fas',
             'url' => '/configuration/i18n',
